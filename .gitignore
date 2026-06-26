@@ -44,6 +44,9 @@ PublishOutput/
 # User secrets and local configurations
 appsettings.Local.json
 
+# Logs
+[Ll]ogs/
+
 # ==========================================
 # Angular / Node.js Frontend Exclusions
 # ==========================================

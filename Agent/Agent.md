@@ -26,7 +26,7 @@
 
 ## 1. Project Overview
 
-**Frontend:** Angular (v17+), standalone component architecture, Angular Material, signals-based state management, reactive forms.
+**Frontend:** Angular (v20+), standalone component architecture, Angular Material, signals-based state management, reactive forms.
 
 **Backend:** ASP.NET C# Web API. All API contracts (endpoints, request/response DTOs, status codes) are documented in spec sheets. Do not infer or assume any backend behavior beyond what is explicitly written in the active spec sheet.
 

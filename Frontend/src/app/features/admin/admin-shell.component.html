@@ -1,0 +1,162 @@
+<mat-sidenav-container>
+  <mat-sidenav
+    #sidenav
+    [mode]="isMobile() ? 'over' : 'side'"
+    [opened]="isMobile() ? sidebarOpen() : true"
+    aria-label="Main navigation"
+  >
+    <mat-toolbar color="primary">Admin Panel</mat-toolbar>
+
+    <mat-nav-list>
+      <!-- Dashboard -->
+      <a
+        mat-list-item
+        routerLink="/operations/admin/dashboard"
+        routerLinkActive="active"
+        (click)="onNavClick()"
+      >
+        <mat-icon matListItemIcon aria-hidden="true">dashboard</mat-icon>
+        <span matListItemTitle>Dashboard</span>
+      </a>
+      <mat-divider></mat-divider>
+
+      <h3 matSubheader>Management</h3>
+      <a
+        mat-list-item
+        routerLink="/operations/admin/management/room"
+        routerLinkActive="active"
+        (click)="onNavClick()"
+      >
+        <mat-icon matListItemIcon aria-hidden="true">meeting_room</mat-icon>
+        <span matListItemTitle>Rooms</span>
+      </a>
+      <a
+        mat-list-item
+        routerLink="/operations/admin/management/room-type"
+        routerLinkActive="active"
+        (click)="onNavClick()"
+      >
+        <mat-icon matListItemIcon aria-hidden="true">bed</mat-icon>
+        <span matListItemTitle>Room Types</span>
+      </a>
+      <a
+        mat-list-item
+        routerLink="/operations/admin/management/staff"
+        routerLinkActive="active"
+        (click)="onNavClick()"
+      >
+        <mat-icon matListItemIcon aria-hidden="true">people</mat-icon>
+        <span matListItemTitle>Staff</span>
+      </a>
+      <a
+        mat-list-item
+        routerLink="/operations/admin/management/amenities"
+        routerLinkActive="active"
+        (click)="onNavClick()"
+      >
+        <mat-icon matListItemIcon aria-hidden="true">spa</mat-icon>
+        <span matListItemTitle>Amenities</span>
+      </a>
+      <a
+        mat-list-item
+        routerLink="/operations/admin/management/menu"
+        routerLinkActive="active"
+        (click)="onNavClick()"
+      >
+        <mat-icon matListItemIcon aria-hidden="true">restaurant_menu</mat-icon>
+        <span matListItemTitle>Menu</span>
+      </a>
+      <mat-divider></mat-divider>
+
+      <h3 matSubheader>Oversight</h3>
+      <a
+        mat-list-item
+        routerLink="/operations/admin/oversight/analytics"
+        routerLinkActive="active"
+        (click)="onNavClick()"
+      >
+        <mat-icon matListItemIcon aria-hidden="true">insights</mat-icon>
+        <span matListItemTitle>Analytics</span>
+      </a>
+      <a
+        mat-list-item
+        routerLink="/operations/admin/oversight/auditlogs"
+        routerLinkActive="active"
+        (click)="onNavClick()"
+      >
+        <mat-icon matListItemIcon aria-hidden="true">history</mat-icon>
+        <span matListItemTitle>Audit Logs</span>
+      </a>
+      <a
+        mat-list-item
+        routerLink="/operations/admin/oversight/billings-receipts"
+        routerLinkActive="active"
+        (click)="onNavClick()"
+      >
+        <mat-icon matListItemIcon aria-hidden="true">receipt</mat-icon>
+        <span matListItemTitle>Billing & Receipts</span>
+      </a>
+      <a
+        mat-list-item
+        routerLink="/operations/admin/oversight/feedback"
+        routerLinkActive="active"
+        (click)="onNavClick()"
+      >
+        <mat-icon matListItemIcon aria-hidden="true">feedback</mat-icon>
+        <span matListItemTitle>Feedback</span>
+      </a>
+      <mat-divider></mat-divider>
+
+      <a
+        mat-list-item
+        routerLink="/operations/admin/profile"
+        routerLinkActive="active"
+        (click)="onNavClick()"
+      >
+        <mat-icon matListItemIcon aria-hidden="true">account_circle</mat-icon>
+        <span matListItemTitle>Profile</span>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      @if (isMobile()) {
+      <button
+        mat-icon-button
+        (click)="sidebarOpen.set(!sidebarOpen())"
+      >
+        <mat-icon aria-hidden="true">menu</mat-icon>
+      </button>
+      }
+      <span>Hotel Management</span>
+      <span class="spacer"></span>
+      <span>{{ userDisplayName() }}</span>
+      <button
+        mat-icon-button
+        [matMenuTriggerFor]="userMenu"
+        aria-label="Open user menu"
+      >
+        <mat-icon aria-hidden="true">account_circle</mat-icon>
+      </button>
+      <mat-menu #userMenu="matMenu">
+        <button
+          mat-menu-item
+          routerLink="/operations/admin/profile"
+        >
+          <mat-icon aria-hidden="true">manage_accounts</mat-icon> Profile
+        </button>
+        <button
+          mat-menu-item
+          (click)="logout()"
+        >
+          <mat-icon aria-hidden="true">logout</mat-icon> Logout
+        </button>
+      </mat-menu>
+    </mat-toolbar>
+
+    <div class="content">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
