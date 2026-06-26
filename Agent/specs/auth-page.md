@@ -1,6 +1,6 @@
 # Specsheet: AuthPage (Login/Register) + Core Auth Infrastructure
 
-### 1. Purpose
+### 0. Purpose
 
 - Provide a single‑page interface for **login** and **registration**.
 - Switch between forms via toggle buttons without changing route.
@@ -9,7 +9,7 @@
 - On error: show inline error message.
 - If user already logged in (valid JWT), visiting `/auth` redirects to role dashboard immediately.
 
-### 2. Route & Navigation
+### 1. Route & Navigation
 
 - **Path**: `/auth`
 - **Route config** (in `app.routes.ts`):
@@ -23,17 +23,27 @@
   ```
 - **Not linked from any navbar** – this page is only for unauthenticated users.
 
-### 3. Authorization
+### 2. Authorization
 
 - No authentication required to view.
 - `AuthRedirectGuard` (functional guard) checks `AuthService.isAuthenticated()`. If `true` → redirect to user’s role dashboard (map below); if `false` → allow.
 
-### 4. Required Supporting Infrastructure (built in this same spec)
+### 3. Required Supporting Infrastructure (built in this same spec)
 
 - `AuthService` (`core/services/auth.service.ts`)
 - `AuthRedirectGuard` (`core/guards/auth-redirect.guard.ts`)
 - `jwt-decode` utility (`core/utils/jwt-decode.ts`)
 - `LoginResponse` interface (types)
+
+### 4. API Endpoints (Backend)
+
+- **Base URL**: `http://localhost:5264/api/v1` (from `environment.development.ts` / `environment.ts`)
+- **Login**: `POST /auth/login`
+  - Request body: `LoginRequestDTO` (Swagger: `{ email: string, password: string }`)
+  - Response: `{ token": "string","role": "string","firstName": "string","lastName": "string"}` (assumed JWT; we’ll type it as `LoginResponse`)
+- **Register**: `POST /auth/register`
+  - Request body: `RegisterRequestDTO` (Swagger: `{ email: string, password: string, firstName: string, lastName: string }`)
+  - Response: 200 OK with no body (or a success object; we’ll treat 2xx as success)
 
 ### 5. Component API (AuthPageComponent)
 
@@ -219,6 +229,163 @@ src/
 - `AuthRedirectGuard` test: mock AuthService, expect redirect UrlTree or true.
 - Form validation tests: invalid email, short password, etc.
 - Integration test for `AuthPageComponent`: toggle forms, submit, handle success/error.
+
+### 17. Final Self-Review (Mandatory)
+
+Before completing the task, the AI agent **must perform a full implementation audit** against this specsheet. Do **not** skip this step.
+
+#### Verification Checklist
+
+Verify that all of the following have been completed:
+
+##### Project Structure
+
+- [ ] All required files were created in the correct locations.
+- [ ] No unnecessary files or folders were added.
+- [ ] Standalone component architecture was preserved.
+
+##### Auth Infrastructure
+
+- [ ] `AuthService` implemented exactly as specified.
+- [ ] `AuthApiService` implemented using `HttpClient`.
+- [ ] `jwtDecode()` utility implemented.
+- [ ] `LoginResponse` interface created.
+- [ ] `AuthRedirectGuard` implemented as a functional guard.
+- [ ] JWT expiry checking implemented.
+- [ ] LocalStorage persistence implemented.
+- [ ] Role extraction implemented.
+- [ ] Role-to-route mapping matches the specification exactly.
+
+##### Routing
+
+- [ ] `/auth` route added exactly as specified.
+- [ ] Guard attached correctly.
+- [ ] Authenticated users are redirected.
+- [ ] Unauthenticated users can access `/auth`.
+
+##### AuthPageComponent
+
+- [ ] Uses Signals for local state.
+- [ ] Uses Reactive Forms.
+- [ ] Uses Angular Material components.
+- [ ] Uses standalone components.
+- [ ] Login/Register toggle implemented.
+- [ ] Loading state implemented.
+- [ ] Success state implemented.
+- [ ] Error state implemented.
+
+##### Login Form
+
+- [ ] Email validation matches the regex exactly.
+- [ ] Password validation matches the regex exactly.
+- [ ] Invalid controls display `mat-error`.
+- [ ] First invalid control receives focus.
+- [ ] Submit emits only valid form data.
+
+##### Register Form
+
+- [ ] Email validation implemented.
+- [ ] Password validation implemented.
+- [ ] First Name validation implemented.
+- [ ] Last Name validation implemented.
+- [ ] Submit emits only valid form data.
+
+##### Alert Component
+
+- [ ] Supports success alerts.
+- [ ] Supports error alerts.
+- [ ] Dismiss button implemented.
+- [ ] `aria-live="polite"` included.
+
+##### API Integration
+
+- [ ] Login calls `/auth/login`.
+- [ ] Register calls `/auth/register`.
+- [ ] Base URL comes from `environment`.
+- [ ] `finalize()` used to reset loading.
+- [ ] Proper error handling implemented.
+- [ ] Success handling implemented.
+
+##### Login Flow
+
+- [ ] Token stored.
+- [ ] JWT decoded.
+- [ ] Role extracted.
+- [ ] Token logged.
+- [ ] Role logged.
+- [ ] Success message shown.
+- [ ] Redirect occurs after ~800 ms.
+
+##### Register Flow
+
+- [ ] Success message displayed.
+- [ ] Login tab selected after success.
+- [ ] Errors displayed inline.
+
+##### Accessibility
+
+- [ ] `aria-live` implemented.
+- [ ] `aria-describedby` implemented.
+- [ ] Toggle buttons expose `aria-pressed`.
+- [ ] All inputs have `mat-label`.
+- [ ] Focus moves to first invalid field.
+
+##### Responsive Design
+
+- [ ] Mobile layout implemented.
+- [ ] Desktop layout implemented.
+- [ ] Max width and spacing match specification.
+
+##### Cleanup
+
+- [ ] Uses `takeUntilDestroyed()` where appropriate.
+- [ ] No memory leaks introduced.
+
+### Final Compliance Report
+
+After completing the implementation, provide a report in the following format:
+
+```text
+Specification Compliance Report
+
+Files Created:
+✓ auth.service.ts
+✓ auth-api.service.ts
+✓ auth-redirect.guard.ts
+✓ jwt-decode.ts
+✓ auth.models.ts
+✓ auth-page.component.ts
+✓ auth-page.component.html
+✓ auth-page.component.scss
+✓ login-form.component.ts
+✓ register-form.component.ts
+✓ alert.component.ts
+
+Requirements Implemented:
+✓ Auth infrastructure
+✓ JWT decoding
+✓ Route guard
+✓ Login flow
+✓ Registration flow
+✓ Angular Material UI
+✓ Reactive Forms
+✓ Signals
+✓ Accessibility
+✓ Responsive layout
+
+Known Deviations:
+None
+
+OR
+
+Known Deviations:
+- Dashboard routes intentionally redirect to currently non-existent pages (expected per specification).
+- Backend response assumed to match documented API.
+```
+
+### Critical Rule
+
+**Do not claim that a requirement has been implemented unless it actually exists in the generated code. If any requirement cannot be implemented, explicitly list it under "Known Deviations" with the reason. Do not silently omit or partially implement any requirement.**
 
 ---
 

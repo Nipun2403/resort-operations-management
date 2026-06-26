@@ -1,0 +1,23 @@
+<div class="auth-container">
+  <mat-card>
+    <mat-card-header>
+      <div class="toggle-buttons">
+        <button mat-button (click)="isLoginMode.set(true)" [class.active]="isLoginMode()" [attr.aria-pressed]="isLoginMode()">Login</button>
+        <button mat-button (click)="isLoginMode.set(false)" [class.active]="!isLoginMode()" [attr.aria-pressed]="!isLoginMode()">Register</button>
+      </div>
+    </mat-card-header>
+    <mat-card-content>
+      @if (isLoginMode()) {
+        <app-login-form (submitted)="onLogin($event)" [loading]="loading()" />
+      } @else {
+        <app-register-form (submitted)="onRegister($event)" [loading]="loading()" />
+      }
+      @if (errorMessage(); as msg) {
+        <app-alert type="error" [message]="msg" (closed)="errorMessage.set(null)" />
+      }
+      @if (successMessage(); as msg) {
+        <app-alert type="success" [message]="msg" (closed)="successMessage.set(null)" />
+      }
+    </mat-card-content>
+  </mat-card>
+</div>

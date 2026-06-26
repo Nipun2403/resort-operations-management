@@ -1,0 +1,64 @@
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 16px;
+  box-sizing: border-box;
+
+  mat-card {
+    width: 100%;
+    max-width: 450px;
+    box-sizing: border-box;
+  }
+
+  mat-card-header {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+    width: 100%;
+  }
+
+  .toggle-buttons {
+    display: flex;
+    width: 100%;
+    gap: 8px;
+
+    button {
+      flex: 1;
+      padding: 12px;
+      font-weight: 500;
+      border-radius: 4px;
+      transition: background-color 0.2s, color 0.2s;
+
+      &.active {
+        background-color: #3f51b5;
+        color: #fff;
+      }
+    }
+  }
+
+  mat-card-content {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 767px) {
+  .auth-container {
+    align-items: flex-start;
+    padding-top: 48px;
+
+    mat-card {
+      margin: 0;
+    }
+
+    .toggle-buttons {
+      flex-direction: column;
+      
+      button {
+        width: 100%;
+      }
+    }
+  }
+}
