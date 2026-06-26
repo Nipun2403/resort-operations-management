@@ -21,7 +21,7 @@ export const routes: Routes = [
       {
         path: 'dashboard',
         loadComponent: () => import('./features/admin/pages/dashboard.component')
-          .then(m => m.PlaceholderDashboardComponent)
+          .then(m => m.DashboardComponent)
       },
       {
         path: 'management',

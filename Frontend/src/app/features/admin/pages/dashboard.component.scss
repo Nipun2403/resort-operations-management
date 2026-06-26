@@ -1,0 +1,185 @@
+.dashboard {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: relative;
+
+  // Toast notification
+  .toast {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.3s ease;
+
+    &.success {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+      border: 1px solid #a5d6a7;
+    }
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  // Top bar
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+
+    .date-filter {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+
+      mat-form-field {
+        width: 160px;
+      }
+    }
+  }
+
+  // KPI Row
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+
+    .kpi-card {
+      padding: 8px;
+
+      mat-card-title {
+        font-size: 0.85rem;
+        color: rgba(0, 0, 0, 0.6);
+        margin-bottom: 8px;
+      }
+
+      .value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1976d2;
+      }
+    }
+  }
+
+  // Middle row
+  .middle-row {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+
+    .charts {
+      flex: 2;
+      display: flex;
+      gap: 16px;
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+      }
+
+      .chart-container {
+        flex: 1;
+        min-height: 280px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+        border-radius: 8px;
+        padding: 16px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+
+        .chart {
+          width: 100%;
+          height: 260px;
+        }
+      }
+    }
+
+    .health-cards {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+
+      mat-card {
+        mat-card-title {
+          font-size: 0.9rem;
+          color: rgba(0, 0, 0, 0.6);
+          margin-bottom: 8px;
+        }
+
+        .count {
+          display: flex;
+          align-items: center;
+          font-size: 2.5rem;
+          font-weight: 700;
+          color: #f57c00;
+          padding: 8px 0;
+        }
+      }
+    }
+  }
+
+  // Movement table
+  .movement-table {
+    background: #fff;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
+
+    h2 {
+      margin: 0 0 16px;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    table {
+      width: 100%;
+
+      th {
+        font-weight: 600;
+        color: rgba(0, 0, 0, 0.7);
+      }
+
+      td {
+        font-size: 0.875rem;
+      }
+    }
+
+    .empty-state {
+      text-align: center;
+      color: rgba(0, 0, 0, 0.4);
+      padding: 24px 0;
+      margin: 0;
+    }
+  }
+}

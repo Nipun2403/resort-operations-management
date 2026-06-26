@@ -1,0 +1,193 @@
+<div class="dashboard">
+
+  <!-- Toast notification -->
+  @if (ticketCreatedMessage()) {
+    <div class="toast success" role="status" aria-live="polite">
+      <mat-icon>check_circle</mat-icon>
+      {{ ticketCreatedMessage() }}
+    </div>
+  }
+
+  <!-- Top bar -->
+  <div class="top-bar">
+    <div class="date-filter">
+      <mat-form-field appearance="outline">
+        <mat-label>Start date</mat-label>
+        <input
+          matInput
+          [matDatepicker]="startPicker"
+          [formControl]="startDateCtrl"
+        />
+        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>End date</mat-label>
+        <input
+          matInput
+          [matDatepicker]="endPicker"
+          [formControl]="endDateCtrl"
+        />
+        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+      </mat-form-field>
+
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="applyDateFilter()"
+      >
+        Apply
+      </button>
+
+      <button
+        mat-button
+        (click)="clearDateFilter()"
+      >
+        Clear
+      </button>
+    </div>
+
+    <button
+      mat-raised-button
+      color="accent"
+      (click)="openCreateTicketDialog()"
+    >
+      <mat-icon>add_task</mat-icon> Create Internal Ticket
+    </button>
+  </div>
+
+  <!-- KPI Cards (6) -->
+  <div class="kpi-row">
+    @for (kpi of kpiCards(); track kpi.label) {
+      <mat-card class="kpi-card">
+        <mat-card-title>{{ kpi.label }}</mat-card-title>
+        <mat-card-content>
+          <span class="value">{{ kpi.value }}</span>
+        </mat-card-content>
+      </mat-card>
+    }
+  </div>
+
+  <!-- Middle row: Charts + Department Health -->
+  <div class="middle-row">
+    <div class="charts">
+      <div class="chart-container" aria-label="Revenue chart">
+        @if (analyticsLoading()) {
+          <mat-spinner diameter="40"></mat-spinner>
+        } @else if (analyticsError()) {
+          <app-alert
+            type="error"
+            [message]="analyticsError()!"
+            (closed)="analyticsError.set(null)"
+          >
+            <button mat-button (click)="loadAnalytics()">Retry</button>
+          </app-alert>
+        } @else {
+          <div
+            echarts
+            [options]="revenueChartOptions()"
+            class="chart"
+          ></div>
+        }
+      </div>
+
+      <div class="chart-container" aria-label="Expenditure chart">
+        @if (!analyticsLoading() && !analyticsError()) {
+          <div
+            echarts
+            [options]="expenditureChartOptions()"
+            class="chart"
+          ></div>
+        }
+      </div>
+    </div>
+
+    <div class="health-cards">
+      @if (pendingError()) {
+        <app-alert
+          type="error"
+          [message]="pendingError()!"
+          (closed)="pendingError.set(null)"
+        >
+          <button mat-button (click)="loadPendingCounts()">Retry</button>
+        </app-alert>
+      }
+      <mat-card>
+        <mat-card-title>Housekeeping Pending</mat-card-title>
+        <mat-card-content class="count">
+          @if (pendingLoading()) {
+            <mat-spinner diameter="30"></mat-spinner>
+          } @else {
+            {{ housekeepingPendingCount() }}
+          }
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-title>Maintenance Pending</mat-card-title>
+        <mat-card-content class="count">
+          @if (pendingLoading()) {
+            <mat-spinner diameter="30"></mat-spinner>
+          } @else {
+            {{ maintenancePendingCount() }}
+          }
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Today's Movement Table -->
+  <div class="movement-table">
+    <h2>Today's Movement</h2>
+    @if (auditLoading()) {
+      <mat-spinner diameter="30"></mat-spinner>
+    } @else if (auditError()) {
+      <app-alert
+        type="error"
+        [message]="auditError()!"
+        (closed)="auditError.set(null)"
+      >
+        <button mat-button (click)="loadAuditLogs()">Retry</button>
+      </app-alert>
+    } @else {
+      <table
+        mat-table
+        [dataSource]="auditEntries()"
+        aria-label="Recent audit logs"
+      >
+        <ng-container matColumnDef="timestamp">
+          <th mat-header-cell *matHeaderCellDef>Time</th>
+          <td mat-cell *matCellDef="let entry">{{ entry.timestamp | date:'shortTime' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="entity">
+          <th mat-header-cell *matHeaderCellDef>Entity</th>
+          <td mat-cell *matCellDef="let entry">{{ entry.entityName }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef>Action</th>
+          <td mat-cell *matCellDef="let entry">{{ entry.action }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="changedBy">
+          <th mat-header-cell *matHeaderCellDef>Changed By</th>
+          <td mat-cell *matCellDef="let entry">{{ entry.changedByName }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="summary">
+          <th mat-header-cell *matHeaderCellDef>Summary</th>
+          <td mat-cell *matCellDef="let entry">{{ getAuditSummary(entry) }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+      @if (auditEntries().length === 0 && !auditLoading()) {
+        <p class="empty-state">No recent activity.</p>
+      }
+    }
+  </div>
+</div>

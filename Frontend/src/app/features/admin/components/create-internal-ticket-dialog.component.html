@@ -1,0 +1,58 @@
+<h2 mat-dialog-title>Create Internal Ticket</h2>
+<button mat-icon-button mat-dialog-close class="close-btn" aria-label="Close dialog">
+  <mat-icon>close</mat-icon>
+</button>
+
+<mat-dialog-content>
+  @if (errorMessage()) {
+    <div class="dialog-error">{{ errorMessage() }}</div>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <div class="field-group">
+      <label class="field-label">Ticket Type</label>
+      <mat-radio-group formControlName="type" class="radio-group">
+        <mat-radio-button value="housekeeping">Housekeeping</mat-radio-button>
+        <mat-radio-button value="maintenance">Maintenance</mat-radio-button>
+      </mat-radio-group>
+    </div>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Location</mat-label>
+      <input matInput formControlName="location" placeholder="e.g. Room 101, Lobby" />
+      @if (form.get('location')?.hasError('required') && form.get('location')?.touched) {
+        <mat-error>Location is required.</mat-error>
+      }
+      @if (form.get('location')?.hasError('maxlength')) {
+        <mat-error>Location must not exceed 200 characters.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description" rows="4" placeholder="Describe the issue..."></textarea>
+      @if (form.get('description')?.hasError('required') && form.get('description')?.touched) {
+        <mat-error>Description is required.</mat-error>
+      }
+      @if (form.get('description')?.hasError('minlength')) {
+        <mat-error>Description must be at least 5 characters.</mat-error>
+      }
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="form.invalid || loading()"
+    (click)="submit()"
+  >
+    @if (loading()) {
+      <mat-spinner diameter="20"></mat-spinner>
+    } @else {
+      Submit
+    }
+  </button>
+</mat-dialog-actions>
