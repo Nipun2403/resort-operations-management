@@ -44,7 +44,7 @@ export class AdminShellComponent {
   );
 
   sidebarOpen = signal(false);
-  userDisplayName = signal('Admin User'); // TODO: later replace with user profile from AuthService after /auth/me is implemented
+  userDisplayName = this.authService.fullName;
 
   onNavClick(): void {
     if (this.isMobile()) {

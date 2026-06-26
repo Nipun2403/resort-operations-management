@@ -1,5 +1,5 @@
 import { Injectable, signal, computed } from '@angular/core';
-import { jwtDecode } from '../utils/jwt-decode';
+import { jwtDecode, JwtPayload } from '../utils/jwt-decode';
 
 @Injectable({
   providedIn: 'root'
@@ -7,35 +7,51 @@ import { jwtDecode } from '../utils/jwt-decode';
 export class AuthService {
   token = signal<string | null>(null);
   role = signal<string | null>(null);
+  private _decodedToken = signal<JwtPayload | null>(null);
 
   isAuthenticated = computed(() => !!this.token() && !this.isTokenExpired());
+  fullName = computed(() => {
+    const t = this._decodedToken();
+    if (!t) {
+      return 'Admin';
+    }
+    const name = `${t.firstName || ''} ${t.lastName || ''}`.trim();
+    return name || t.role || 'Admin';
+  });
 
   constructor() {
     const savedToken = localStorage.getItem('token');
     if (savedToken) {
       this.token.set(savedToken);
-      const decoded = jwtDecode(savedToken);
-      if (decoded && decoded.role) {
-        this.role.set(decoded.role);
-      }
+      this.decodeAndStore(savedToken);
     }
   }
 
   handleLogin(token: string): void {
     localStorage.setItem('token', token);
     this.token.set(token);
-    const decoded = jwtDecode(token);
-    if (decoded && decoded.role) {
-      this.role.set(decoded.role);
-    } else {
-      this.role.set(null);
-    }
+    this.decodeAndStore(token);
   }
 
   logout(): void {
     localStorage.removeItem('token');
     this.token.set(null);
-    this.role.set(null);
+    this.decodeAndStore(null);
+  }
+
+  private decodeAndStore(token: string | null): void {
+    if (token) {
+      const decoded = jwtDecode(token);
+      this._decodedToken.set(decoded);
+      if (decoded && decoded.role) {
+        this.role.set(decoded.role);
+      } else {
+        this.role.set(null);
+      }
+    } else {
+      this._decodedToken.set(null);
+      this.role.set(null);
+    }
   }
 
   private isTokenExpired(): boolean {

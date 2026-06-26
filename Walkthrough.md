@@ -1,6 +1,6 @@
-# Walkthrough: Admin Shell & Route Configuration
+# Walkthrough: Admin Shell – Profile Navigation & User Display Update (Patch)
 
-We have successfully implemented the Admin Shell (`/operations/admin`) layout, child route configuration, and authorization guards in the Angular application, following the `Agent.md` governing protocol and `admin-shell.md` specification.
+We have successfully patched the Admin Shell layout, the `AuthService`, and the `jwt-decode.ts` utility to customize profile navigation and user name rendering on the header.
 
 ## Verification & Validation Results
 
@@ -10,12 +10,12 @@ We have successfully implemented the Admin Shell (`/operations/admin`) layout, c
 ```bash
  RUN  v4.1.9 /Users/peewee/personal/repos/Hotel_Management_Full/Frontend
 
- ✓  Frontend  src/app/app.spec.ts (1 test) 19ms
+ ✓  Frontend  src/app/app.spec.ts (1 test) 21ms
 
  Test Files  1 passed (1)
       Tests  1 passed (1)
-   Start at  19:37:57
-   Duration  1.49s (transform 49ms, setup 307ms, import 66ms, tests 19ms, environment 722ms)
+   Start at  20:23:53
+   Duration  1.89s (transform 305ms, setup 248ms, import 314ms, tests 21ms, environment 914ms)
 ```
 
 ### Build Verification
@@ -23,18 +23,10 @@ We have successfully implemented the Admin Shell (`/operations/admin`) layout, c
 - **Results**: Build completed successfully with no warnings or errors.
 ```bash
 Initial chunk files | Names                          |  Raw size | Estimated transfer size
-main-FAYG6MRK.js    | main                           | 288.62 kB |                77.51 kB
+main-CXUD6CHX.js    | main                           | 289.17 kB |                77.59 kB
 styles-OPUTW5UJ.css | styles                         |   8.04 kB |                 1.29 kB
 
-                    | Initial total                  | 296.67 kB |                78.81 kB
-
-Lazy chunk files    | Names                          |  Raw size | Estimated transfer size
-chunk-BZPEhGTs.js   | admin-shell-component          | 137.53 kB |                26.20 kB
-chunk-BhDkN8JC.js   | -                              | 131.32 kB |                26.78 kB
-chunk-UqlCh3g_.js   | auth-page-component            | 100.23 kB |                17.19 kB
-chunk-1oLAJfNu.js   | billing-receipts-component     | 399 bytes |               399 bytes
-chunk-BPUx53D1.js   | room-type-management-component | 398 bytes |               398 bytes
-...
+                    | Initial total                  | 297.21 kB |                78.89 kB
 ```
 
 ---
@@ -44,51 +36,31 @@ chunk-BPUx53D1.js   | room-type-management-component | 398 bytes |              
 ```text
 ================================================================================
 SPEC IMPLEMENTATION COMPLIANCE REPORT
-Spec: admin-shell.md
+Spec: admin-shell-patch.md
 Date: 2026-06-26
 ================================================================================
 
 FILES CREATED
 -------------
-✓ src/app/core/guards/admin.guard.ts
-✓ src/app/features/admin/pages/dashboard.component.ts
-✓ src/app/features/admin/pages/profile.component.ts
-✓ src/app/features/admin/pages/management/room-management.component.ts
-✓ src/app/features/admin/pages/management/room-type-management.component.ts
-✓ src/app/features/admin/pages/management/staff-management.component.ts
-✓ src/app/features/admin/pages/management/amenities-management.component.ts
-✓ src/app/features/admin/pages/management/menu-management.component.ts
-✓ src/app/features/admin/pages/oversight/analytics.component.ts
-✓ src/app/features/admin/pages/oversight/audit-logs.component.ts
-✓ src/app/features/admin/pages/oversight/billing-receipts.component.ts
-✓ src/app/features/admin/pages/oversight/feedback.component.ts
-✓ src/app/features/admin/admin-shell.component.ts
-✓ src/app/features/admin/admin-shell.component.html
-✓ src/app/features/admin/admin-shell.component.scss
+None.
 
 FILES MODIFIED (existing files updated per spec)
 -------------------------------------------------
-✓ src/app/app.routes.ts — Configured operations/admin child routes and adminGuard.
-✓ src/app/app.spec.ts — Updated app title test to match the layout modifications.
+✓ src/app/core/utils/jwt-decode.ts — Expose strongly-typed JwtPayload interface with fallback claim mapping.
+✓ src/app/core/services/auth.service.ts — Added private _decodedToken and computed fullName signals.
+✓ src/app/features/admin/admin-shell.component.ts — Bound userDisplayName to authService.fullName.
+✓ src/app/features/admin/admin-shell.component.html — Removed profile link from sidebar, added conditional mobile visibility for name.
 
 REQUIREMENTS IMPLEMENTED
-------------------------
-✓ Admin Guard
-  ✓ adminGuard checks isAuthenticated and role is Admin
-  ✓ Redirects unauthorized access to /auth
-✓ Admin Shell Layout
-  ✓ Standalone component with Sidenav container and BreakpointObserver map
-  ✓ Mobile toggle menu logic and hamburger icon
-  ✓ Active navigation links highlighted with active class
-  ✓ Sidebar list contains 11 leaf paths matching route spec
-  ✓ Toolbar logout button calls AuthService.logout()
-✓ Responsive Styles
-  ✓ Desktop sidebar always visible, Mobile sidebar overlay with toggling
-  ✓ Layout bounds sized at 100vh viewport height
-✓ Accessibility
-  ✓ Sidebar with aria-label="Main navigation"
-  ✓ Mat-icons set with aria-hidden="true"
-  ✓ Toolbar buttons set with aria-label
+-------------
+✓ Sidenav Navigation Clean-up
+  ✓ Removed Profile mat-list-item and its preceding mat-divider.
+✓ Header Display Name Update
+  ✓ Display name bound to read-only computed signal mapping firstName/lastName from JWT.
+  ✓ Display name hidden on screens <= 768px (using `@if (!isMobile())`).
+✓ JWT Decoding Extensions
+  ✓ Utility maps alternative token claim names (like given_name/family_name) to firstName/lastName.
+  ✓ Graceful fallback to 'Admin' (role) if token name claims are not found.
 
 KNOWN DEVIATIONS
 ----------------

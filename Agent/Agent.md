@@ -300,7 +300,7 @@ Rules:
 - Angular Material component usage must match the spec — use `mat-card`, `mat-form-field`, `mat-button`, etc. exactly as named.
 - CSS classes must match the spec's template to serve as styling hooks.
 - Accessibility attributes (`aria-*`, `role`, `aria-live`, `aria-describedby`, `aria-pressed`) must be placed exactly where the spec defines them.
-- `@if` / `@else` / `@for` blocks must be used (Angular 17+ control flow syntax) unless the spec explicitly shows `*ngIf` / `*ngFor`.
+- `@if` / `@else` / `@for` blocks must be used (Angular 20+ control flow syntax) unless the spec explicitly shows `*ngIf` / `*ngFor`.
 
 **Verify before proceeding:**
 
@@ -402,7 +402,7 @@ Answer every question before writing code. If any answer is "No" or "Unknown," r
 
 ### 6.1 Version and Architecture
 
-- Angular 17+ with standalone component architecture.
+- Angular 20+ with standalone component architecture.
 - Do not create `NgModule` declarations unless a spec explicitly requires one.
 - Use `@if`, `@for`, `@switch` control flow syntax (not `*ngIf`, `*ngFor`) unless a spec explicitly uses the old syntax.
 
