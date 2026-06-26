@@ -18157,3 +18157,301 @@ SELECT EXISTS (
 2026-06-26 14:59:22.934 +05:30 [DBG] Connection id "0HNMJCJUP15SJ" sending FIN because: "The Socket transport's send loop completed gracefully."
 2026-06-26 14:59:22.934 +05:30 [DBG] Connection id "0HNMJCJUP15SM" sending FIN because: "The Socket transport's send loop completed gracefully."
 2026-06-26 14:59:22.937 +05:30 [DBG] Hosting stopped
+2026-06-26 17:10:08.180 +05:30 [DBG] An 'IServiceProvider' was created for internal use by Entity Framework.
+2026-06-26 17:10:08.628 +05:30 [DBG] Entity Framework Core 10.0.8 initialized 'ApplicationDbContext' using provider 'Npgsql.EntityFrameworkCore.PostgreSQL:10.0.2+c46789c136fa63fe5a97577f79c54e1c0ec0e9ef' with options: None
+2026-06-26 17:10:08.642 +05:30 [DBG] Compiling query expression: 
+'DbSet<User>()
+    .Any()'
+2026-06-26 17:10:08.746 +05:30 [DBG] Generated query execution expression: 
+'queryContext => SingleQueryingEnumerable.Create<bool>(
+    relationalQueryContext: (RelationalQueryContext)queryContext, 
+    relationalCommandResolver: parameters => [LIFTABLE Constant: RelationalCommandCache.QueryExpression(
+        Projection Mapping:
+            EmptyProjectionMember -> 0
+        SELECT EXISTS (
+            SELECT 1
+            FROM Users AS u)) | Resolver: c => new RelationalCommandCache(
+        c.Dependencies.MemoryCache, 
+        c.RelationalDependencies.QuerySqlGeneratorFactory, 
+        c.RelationalDependencies.RelationalParameterBasedSqlProcessorFactory, 
+        Projection Mapping:
+            EmptyProjectionMember -> 0
+        SELECT EXISTS (
+            SELECT 1
+            FROM Users AS u), 
+        False, 
+        Parameter
+    )].GetRelationalCommandTemplate(parameters), 
+    readerColumns: null, 
+    shaper: (queryContext, dataReader, resultContext, resultCoordinator) => 
+    {
+        bool? value1;
+        value1 = dataReader.IsDBNull(0) ? default(bool?) : (bool?)dataReader.GetBoolean(0);
+        return (bool)value1;
+    }, 
+    contextType: HotelManagement.DAL.Context.ApplicationDbContext, 
+    standAloneStateManager: False, 
+    detailedErrorsEnabled: False, 
+    threadSafetyChecksEnabled: True)
+    .Single()'
+2026-06-26 17:10:08.868 +05:30 [DBG] Creating DbConnection.
+2026-06-26 17:10:08.994 +05:30 [DBG] Created DbConnection. (127ms).
+2026-06-26 17:10:08.998 +05:30 [DBG] Opening connection to database 'hotelTestdb' on server 'tcp://localhost:5432'.
+2026-06-26 17:10:10.272 +05:30 [DBG] Opened connection to database 'hotelTestdb' on server 'tcp://localhost:5432'.
+2026-06-26 17:10:10.279 +05:30 [DBG] Creating DbCommand for 'ExecuteReader'.
+2026-06-26 17:10:10.292 +05:30 [DBG] Created DbCommand for 'ExecuteReader' (8ms).
+2026-06-26 17:10:10.293 +05:30 [DBG] Initialized DbCommand for 'ExecuteReader' (16ms).
+2026-06-26 17:10:10.296 +05:30 [DBG] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT EXISTS (
+    SELECT 1
+    FROM "Users" AS u)
+2026-06-26 17:10:10.321 +05:30 [INF] Executed DbCommand (25ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT EXISTS (
+    SELECT 1
+    FROM "Users" AS u)
+2026-06-26 17:10:10.344 +05:30 [DBG] Closing data reader to 'hotelTestdb' on server 'tcp://localhost:5432'.
+2026-06-26 17:10:10.348 +05:30 [DBG] A data reader for 'hotelTestdb' on server 'tcp://localhost:5432' is being disposed after spending 25ms reading results.
+2026-06-26 17:10:10.349 +05:30 [DBG] Closing connection to database 'hotelTestdb' on server 'tcp://localhost:5432'.
+2026-06-26 17:10:10.351 +05:30 [DBG] Closed connection to database 'hotelTestdb' on server 'tcp://localhost:5432' (1ms).
+2026-06-26 17:10:10.352 +05:30 [DBG] 'ApplicationDbContext' disposed.
+2026-06-26 17:10:10.352 +05:30 [DBG] Disposing connection to database 'hotelTestdb' on server 'tcp://localhost:5432'.
+2026-06-26 17:10:10.353 +05:30 [DBG] Disposed connection to database 'hotelTestdb' on server 'tcp://localhost:5432' (0ms).
+2026-06-26 17:10:10.381 +05:30 [DBG] Registered model binder providers, in the following order: ["CustomDateTimeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.BinderTypeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.ServicesModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.BodyModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.HeaderModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.FloatingPointTypeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.EnumTypeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.DateTimeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.SimpleTypeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.TryParseModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.CancellationTokenModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.ByteArrayModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.FormFileModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.FormCollectionModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.KeyValuePairModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.DictionaryModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.ArrayModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.CollectionModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.ComplexObjectModelBinderProvider"]
+2026-06-26 17:10:10.419 +05:30 [DBG] Registered SignalR Protocol: json, implemented by Microsoft.AspNetCore.SignalR.Protocol.JsonHubProtocol.
+2026-06-26 17:10:10.425 +05:30 [DBG] Hosting starting
+2026-06-26 17:10:10.441 +05:30 [INF] User profile is available. Using '/Users/peewee/.aspnet/DataProtection-Keys' as key repository; keys will not be encrypted at rest.
+2026-06-26 17:10:10.445 +05:30 [DBG] Reading data from file '/Users/peewee/.aspnet/DataProtection-Keys/key-95c554fe-54d2-4522-962f-6a1f44e0b0d2.xml'.
+2026-06-26 17:10:10.451 +05:30 [DBG] Found key {95c554fe-54d2-4522-962f-6a1f44e0b0d2}.
+2026-06-26 17:10:10.456 +05:30 [DBG] Considering key {95c554fe-54d2-4522-962f-6a1f44e0b0d2} with expiration date 2026-08-23 09:39:54Z as default key.
+2026-06-26 17:10:10.457 +05:30 [DBG] Forwarded activator type request from Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel.AuthenticatedEncryptorDescriptorDeserializer, Microsoft.AspNetCore.DataProtection, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60 to Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel.AuthenticatedEncryptorDescriptorDeserializer, Microsoft.AspNetCore.DataProtection, Culture=neutral, PublicKeyToken=adb9793829ddae60
+2026-06-26 17:10:10.458 +05:30 [DBG] Using managed symmetric algorithm 'System.Security.Cryptography.Aes'.
+2026-06-26 17:10:10.458 +05:30 [DBG] Using managed keyed hash algorithm 'System.Security.Cryptography.HMACSHA256'.
+2026-06-26 17:10:10.462 +05:30 [DBG] Using key {95c554fe-54d2-4522-962f-6a1f44e0b0d2} as the default key.
+2026-06-26 17:10:10.462 +05:30 [DBG] Key ring with default key {95c554fe-54d2-4522-962f-6a1f44e0b0d2} was loaded during application startup.
+2026-06-26 17:10:10.512 +05:30 [DBG] Middleware configuration started with options: {AllowedHosts = *, AllowEmptyHosts = True, IncludeFailureMessage = True}
+2026-06-26 17:10:10.512 +05:30 [DBG] Wildcard detected, all requests with hosts will be allowed.
+2026-06-26 17:10:10.519 +05:30 [INF] Now listening on: http://localhost:5264
+2026-06-26 17:10:10.519 +05:30 [DBG] Loaded hosting startup assembly HotelManagement.API
+2026-06-26 17:10:10.519 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-06-26 17:10:10.519 +05:30 [INF] Hosting environment: Development
+2026-06-26 17:10:10.519 +05:30 [INF] Content root path: /Users/peewee/personal/repos/Hotel_Management_Full/Backend/HotelManagement.API
+2026-06-26 17:10:10.520 +05:30 [DBG] Hosting started
+2026-06-26 17:10:10.618 +05:30 [DBG] Connection id "0HNMJEUMV6VKV" accepted.
+2026-06-26 17:10:10.619 +05:30 [DBG] Connection id "0HNMJEUMV6VKV" started.
+2026-06-26 17:10:10.619 +05:30 [DBG] Connection id "0HNMJEUMV6VL0" accepted.
+2026-06-26 17:10:10.619 +05:30 [DBG] Connection id "0HNMJEUMV6VL0" started.
+2026-06-26 17:10:11.426 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5264/swagger/index.html - null null
+2026-06-26 17:10:11.463 +05:30 [DBG] Connection id "0HNMJEUMV6VKV" completed keep alive response.
+2026-06-26 17:10:11.464 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5264/swagger/index.html - 200 null text/html;charset=utf-8 38.8804ms
+2026-06-26 17:10:11.587 +05:30 [INF] Request starting HTTP/1.1 GET http://localhost:5264/swagger/v1/swagger.json - null null
+2026-06-26 17:10:11.602 +05:30 [DBG] Executing API description provider 'DefaultApiDescriptionProvider' from assembly Microsoft.AspNetCore.Mvc.ApiExplorer v10.0.0.0.
+2026-06-26 17:10:11.705 +05:30 [DBG] Connection id "0HNMJEUMV6VKV" completed keep alive response.
+2026-06-26 17:10:11.706 +05:30 [INF] Request finished HTTP/1.1 GET http://localhost:5264/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 118.4463ms
+2026-06-26 17:10:16.623 +05:30 [INF] Request starting HTTP/1.1 POST http://localhost:5264/api/v1/auth/login - application/json 57
+2026-06-26 17:10:16.632 +05:30 [DBG] POST requests are not supported
+2026-06-26 17:10:16.732 +05:30 [DBG] 1 candidate(s) found for the request path '/api/v1/auth/login'
+2026-06-26 17:10:16.733 +05:30 [DBG] Endpoint 'HotelManagement.API.Controllers.AuthController.Login (HotelManagement.API)' with route pattern 'api/v1/auth/login' is valid for the request path '/api/v1/auth/login'
+2026-06-26 17:10:16.733 +05:30 [DBG] Request matched endpoint 'HotelManagement.API.Controllers.AuthController.Login (HotelManagement.API)'
+2026-06-26 17:10:16.734 +05:30 [DBG] The request has an origin header: 'http://localhost:5264'.
+2026-06-26 17:10:16.734 +05:30 [INF] CORS policy execution failed.
+2026-06-26 17:10:16.734 +05:30 [INF] Request origin http://localhost:5264 does not have permission to access the resource.
+2026-06-26 17:10:16.798 +05:30 [DBG] AuthenticationScheme: Bearer was not authenticated.
+2026-06-26 17:10:16.799 +05:30 [INF] Executing endpoint 'HotelManagement.API.Controllers.AuthController.Login (HotelManagement.API)'
+2026-06-26 17:10:16.808 +05:30 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(HotelManagement.BLL.DTOs.LoginRequestDTO) on controller HotelManagement.API.Controllers.AuthController (HotelManagement.API).
+2026-06-26 17:10:16.809 +05:30 [DBG] Execution plan of authorization filters (in the following order): ["None"]
+2026-06-26 17:10:16.809 +05:30 [DBG] Execution plan of resource filters (in the following order): ["None"]
+2026-06-26 17:10:16.809 +05:30 [DBG] Execution plan of action filters (in the following order): ["Microsoft.AspNetCore.Mvc.ModelBinding.UnsupportedContentTypeFilter (Order: -3000)","Microsoft.AspNetCore.Mvc.Infrastructure.ModelStateInvalidFilter (Order: -2000)"]
+2026-06-26 17:10:16.809 +05:30 [DBG] Execution plan of exception filters (in the following order): ["None"]
+2026-06-26 17:10:16.809 +05:30 [DBG] Execution plan of result filters (in the following order): ["Microsoft.AspNetCore.Mvc.Infrastructure.ClientErrorResultFilter (Order: -2000)"]
+2026-06-26 17:10:16.810 +05:30 [DBG] Executing controller factory for controller HotelManagement.API.Controllers.AuthController (HotelManagement.API)
+2026-06-26 17:10:16.838 +05:30 [DBG] Entity Framework Core 10.0.8 initialized 'ApplicationDbContext' using provider 'Npgsql.EntityFrameworkCore.PostgreSQL:10.0.2+c46789c136fa63fe5a97577f79c54e1c0ec0e9ef' with options: None
+2026-06-26 17:10:16.839 +05:30 [DBG] Executed controller factory for controller HotelManagement.API.Controllers.AuthController (HotelManagement.API)
+2026-06-26 17:10:16.840 +05:30 [DBG] Attempting to bind parameter 'request' of type 'HotelManagement.BLL.DTOs.LoginRequestDTO' ...
+2026-06-26 17:10:16.841 +05:30 [DBG] Attempting to bind parameter 'request' of type 'HotelManagement.BLL.DTOs.LoginRequestDTO' using the name '' in request data ...
+2026-06-26 17:10:16.841 +05:30 [DBG] Selected input formatter 'Microsoft.AspNetCore.Mvc.Formatters.SystemTextJsonInputFormatter' for content type 'application/json'.
+2026-06-26 17:10:16.843 +05:30 [DBG] Connection id "0HNMJEUMV6VKV", Request id "0HNMJEUMV6VKV:00000003": started reading request body.
+2026-06-26 17:10:16.843 +05:30 [DBG] Connection id "0HNMJEUMV6VKV", Request id "0HNMJEUMV6VKV:00000003": done reading request body.
+2026-06-26 17:10:16.846 +05:30 [DBG] JSON input formatter succeeded, deserializing to type 'HotelManagement.BLL.DTOs.LoginRequestDTO'
+2026-06-26 17:10:16.846 +05:30 [DBG] Done attempting to bind parameter 'request' of type 'HotelManagement.BLL.DTOs.LoginRequestDTO'.
+2026-06-26 17:10:16.846 +05:30 [DBG] Done attempting to bind parameter 'request' of type 'HotelManagement.BLL.DTOs.LoginRequestDTO'.
+2026-06-26 17:10:16.846 +05:30 [DBG] Attempting to validate the bound parameter 'request' of type 'HotelManagement.BLL.DTOs.LoginRequestDTO' ...
+2026-06-26 17:10:16.849 +05:30 [DBG] Done attempting to validate the bound parameter 'request' of type 'HotelManagement.BLL.DTOs.LoginRequestDTO'.
+2026-06-26 17:10:16.859 +05:30 [DBG] Compiling query expression: 
+'DbSet<User>()
+    .FirstOrDefault(u => u.Email.ToLower() == @ToLower)'
+2026-06-26 17:10:16.909 +05:30 [DBG] Generated query execution expression: 
+'queryContext => ShapedQueryCompilingExpressionVisitor.SingleOrDefaultAsync<User>(
+    asyncEnumerable: SingleQueryingEnumerable.Create<User>(
+        relationalQueryContext: (RelationalQueryContext)queryContext, 
+        relationalCommandResolver: parameters => [LIFTABLE Constant: RelationalCommandCache.QueryExpression(
+            Projection Mapping:
+                EmptyProjectionMember -> Dictionary<IPropertyBase, int> { [Property: User.Id (int) Required PK AfterSave:Throw ValueGenerated.OnAdd, 0], [Property: User.CreatedAt (DateTime) Required, 1], [Property: User.Email (string) Required, 2], [Property: User.FirstName (string) Required, 3], [Property: User.IsActive (bool) Required, 4], [Property: User.LastName (string) Required, 5], [Property: User.PasswordHash (string) Required, 6], [Property: User.Role (string) Required, 7] }
+            SELECT TOP(1) u.Id, u.CreatedAt, u.Email, u.FirstName, u.IsActive, u.LastName, u.PasswordHash, u.Role
+            FROM Users AS u
+            WHERE lower(u.Email) == @ToLower) | Resolver: c => new RelationalCommandCache(
+            c.Dependencies.MemoryCache, 
+            c.RelationalDependencies.QuerySqlGeneratorFactory, 
+            c.RelationalDependencies.RelationalParameterBasedSqlProcessorFactory, 
+            Projection Mapping:
+                EmptyProjectionMember -> Dictionary<IPropertyBase, int> { [Property: User.Id (int) Required PK AfterSave:Throw ValueGenerated.OnAdd, 0], [Property: User.CreatedAt (DateTime) Required, 1], [Property: User.Email (string) Required, 2], [Property: User.FirstName (string) Required, 3], [Property: User.IsActive (bool) Required, 4], [Property: User.LastName (string) Required, 5], [Property: User.PasswordHash (string) Required, 6], [Property: User.Role (string) Required, 7] }
+            SELECT TOP(1) u.Id, u.CreatedAt, u.Email, u.FirstName, u.IsActive, u.LastName, u.PasswordHash, u.Role
+            FROM Users AS u
+            WHERE lower(u.Email) == @ToLower, 
+            False, 
+            Parameter
+        )].GetRelationalCommandTemplate(parameters), 
+        readerColumns: null, 
+        shaper: (queryContext, dataReader, resultContext, resultCoordinator) => 
+        {
+            User entity;
+            entity = 
+            {
+                MaterializationContext materializationContext1;
+                IEntityType entityType1;
+                User instance1;
+                InternalEntityEntry entry1;
+                bool hasNullKey1;
+                materializationContext1 = new MaterializationContext(
+                    [LIFTABLE Constant: ValueBuffer | Resolver: _ => (object)ValueBuffer.Empty], 
+                    queryContext.Context
+                );
+                instance1 = default(User);
+                entry1 = queryContext.TryGetEntry(
+                    key: [LIFTABLE Constant: Key: User.Id PK | Resolver: c => c.Dependencies.Model.FindEntityType("HotelManagement.DAL.Entities.User").FindPrimaryKey()], 
+                    keyValues: new object[]{ (object)dataReader.GetInt32(0) }, 
+                    throwOnNullKey: True, 
+                    hasNullKey: hasNullKey1);
+                !(hasNullKey1) ? entry1 != default(InternalEntityEntry) ? 
+                {
+                    entityType1 = entry1.EntityType;
+                    return instance1 = (User)entry1.Entity;
+                } : 
+                {
+                    ISnapshot shadowSnapshot1;
+                    shadowSnapshot1 = [LIFTABLE Constant: Snapshot | Resolver: _ => Snapshot.Empty];
+                    entityType1 = [LIFTABLE Constant: EntityType: User | Resolver: namelessParameter{0} => namelessParameter{0}.Dependencies.Model.FindEntityType("HotelManagement.DAL.Entities.User")];
+                    instance1 = switch (entityType1)
+                    {
+                        case [LIFTABLE Constant: EntityType: User | Resolver: namelessParameter{1} => namelessParameter{1}.Dependencies.Model.FindEntityType("HotelManagement.DAL.Entities.User")]: 
+                            {
+                                return 
+                                {
+                                    User instance;
+                                    instance = new User();
+                                    instance.<Id>k__BackingField = dataReader.GetInt32(0);
+                                    instance.<CreatedAt>k__BackingField = dataReader.GetDateTime(1);
+                                    instance.<Email>k__BackingField = dataReader.GetString(2);
+                                    instance.<FirstName>k__BackingField = dataReader.GetString(3);
+                                    instance.<IsActive>k__BackingField = dataReader.GetBoolean(4);
+                                    instance.<LastName>k__BackingField = dataReader.GetString(5);
+                                    instance.<PasswordHash>k__BackingField = dataReader.GetString(6);
+                                    instance.<Role>k__BackingField = dataReader.GetString(7);
+                                    (instance is IInjectableService) ? ((IInjectableService)instance).Injected(
+                                        context: materializationContext1.Context, 
+                                        entity: instance, 
+                                        queryTrackingBehavior: TrackAll, 
+                                        structuralType: [LIFTABLE Constant: EntityType: User | Resolver: namelessParameter{2} => namelessParameter{2}.Dependencies.Model.FindEntityType("HotelManagement.DAL.Entities.User")]) : default(void);
+                                    return instance;
+                                }}
+                        default: 
+                            default(User)
+                    }
+                    ;
+                    entry1 = entityType1 == default(IEntityType) ? default(InternalEntityEntry) : queryContext.StartTracking(
+                        entityType: entityType1, 
+                        entity: instance1, 
+                        snapshot: shadowSnapshot1);
+                    return instance1;
+                } : default(void);
+                return instance1;
+            };
+            return entity;
+        }, 
+        contextType: HotelManagement.DAL.Context.ApplicationDbContext, 
+        standAloneStateManager: False, 
+        detailedErrorsEnabled: False, 
+        threadSafetyChecksEnabled: True), 
+    cancellationToken: queryContext.CancellationToken)'
+2026-06-26 17:10:16.919 +05:30 [DBG] Creating DbConnection.
+2026-06-26 17:10:16.920 +05:30 [DBG] Created DbConnection. (0ms).
+2026-06-26 17:10:16.920 +05:30 [DBG] Opening connection to database 'hotelTestdb' on server 'tcp://localhost:5432'.
+2026-06-26 17:10:16.921 +05:30 [DBG] Opened connection to database 'hotelTestdb' on server 'tcp://localhost:5432'.
+2026-06-26 17:10:16.921 +05:30 [DBG] Creating DbCommand for 'ExecuteReader'.
+2026-06-26 17:10:16.921 +05:30 [DBG] Created DbCommand for 'ExecuteReader' (0ms).
+2026-06-26 17:10:16.922 +05:30 [DBG] Initialized DbCommand for 'ExecuteReader' (1ms).
+2026-06-26 17:10:16.923 +05:30 [DBG] Executing DbCommand [Parameters=[@ToLower='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."FirstName", u."IsActive", u."LastName", u."PasswordHash", u."Role"
+FROM "Users" AS u
+WHERE lower(u."Email") = @ToLower
+LIMIT 1
+2026-06-26 17:10:16.932 +05:30 [INF] Executed DbCommand (10ms) [Parameters=[@ToLower='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."FirstName", u."IsActive", u."LastName", u."PasswordHash", u."Role"
+FROM "Users" AS u
+WHERE lower(u."Email") = @ToLower
+LIMIT 1
+2026-06-26 17:10:16.934 +05:30 [DBG] Closing data reader to 'hotelTestdb' on server 'tcp://localhost:5432'.
+2026-06-26 17:10:16.935 +05:30 [DBG] A data reader for 'hotelTestdb' on server 'tcp://localhost:5432' is being disposed after spending 2ms reading results.
+2026-06-26 17:10:16.936 +05:30 [DBG] Closing connection to database 'hotelTestdb' on server 'tcp://localhost:5432'.
+2026-06-26 17:10:16.936 +05:30 [DBG] Closed connection to database 'hotelTestdb' on server 'tcp://localhost:5432' (0ms).
+2026-06-26 17:10:16.938 +05:30 [DBG] List of registered output formatters, in the following order: ["Microsoft.AspNetCore.Mvc.Formatters.HttpNoContentOutputFormatter","Microsoft.AspNetCore.Mvc.Formatters.StringOutputFormatter","Microsoft.AspNetCore.Mvc.Formatters.StreamOutputFormatter","Microsoft.AspNetCore.Mvc.Formatters.SystemTextJsonOutputFormatter"]
+2026-06-26 17:10:16.938 +05:30 [DBG] No information found on request to perform content negotiation.
+2026-06-26 17:10:16.938 +05:30 [DBG] Attempting to select an output formatter without using a content type as no explicit content types were specified for the response.
+2026-06-26 17:10:16.938 +05:30 [DBG] Attempting to select the first formatter in the output formatters list which can write the result.
+2026-06-26 17:10:16.939 +05:30 [DBG] Selected output formatter 'Microsoft.AspNetCore.Mvc.Formatters.StringOutputFormatter' and content type 'text/plain' to write the response.
+2026-06-26 17:10:16.939 +05:30 [INF] Executing UnauthorizedObjectResult, writing value of type 'System.String'.
+2026-06-26 17:10:16.941 +05:30 [INF] Executed action HotelManagement.API.Controllers.AuthController.Login (HotelManagement.API) in 130.1041ms
+2026-06-26 17:10:16.941 +05:30 [INF] Executed endpoint 'HotelManagement.API.Controllers.AuthController.Login (HotelManagement.API)'
+2026-06-26 17:10:16.942 +05:30 [INF] HTTP POST /api/v1/auth/login responded 401 in 305.9152 ms
+2026-06-26 17:10:16.943 +05:30 [DBG] Connection id "0HNMJEUMV6VKV" completed keep alive response.
+2026-06-26 17:10:16.944 +05:30 [DBG] 'ApplicationDbContext' disposed.
+2026-06-26 17:10:16.944 +05:30 [DBG] Disposing connection to database 'hotelTestdb' on server 'tcp://localhost:5432'.
+2026-06-26 17:10:16.945 +05:30 [DBG] Disposed connection to database 'hotelTestdb' on server 'tcp://localhost:5432' (0ms).
+2026-06-26 17:10:16.945 +05:30 [INF] Request finished HTTP/1.1 POST http://localhost:5264/api/v1/auth/login - 401 null text/plain; charset=utf-8 321.8901ms
+2026-06-26 17:11:00.870 +05:30 [INF] Request starting HTTP/1.1 POST http://localhost:5264/api/v1/auth/register - application/json 100
+2026-06-26 17:11:00.873 +05:30 [DBG] POST requests are not supported
+2026-06-26 17:11:00.881 +05:30 [DBG] 1 candidate(s) found for the request path '/api/v1/auth/register'
+2026-06-26 17:11:00.882 +05:30 [DBG] Endpoint 'HotelManagement.API.Controllers.AuthController.Register (HotelManagement.API)' with route pattern 'api/v1/auth/register' is valid for the request path '/api/v1/auth/register'
+2026-06-26 17:11:00.883 +05:30 [DBG] Request matched endpoint 'HotelManagement.API.Controllers.AuthController.Register (HotelManagement.API)'
+2026-06-26 17:11:00.885 +05:30 [DBG] The request has an origin header: 'http://localhost:5264'.
+2026-06-26 17:11:00.885 +05:30 [INF] CORS policy execution failed.
+2026-06-26 17:11:00.886 +05:30 [INF] Request origin http://localhost:5264 does not have permission to access the resource.
+2026-06-26 17:11:00.890 +05:30 [DBG] AuthenticationScheme: Bearer was not authenticated.
+2026-06-26 17:11:00.891 +05:30 [INF] Executing endpoint 'HotelManagement.API.Controllers.AuthController.Register (HotelManagement.API)'
+2026-06-26 17:11:00.906 +05:30 [INF] Route matched with {action = "Register", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Register(HotelManagement.BLL.DTOs.RegisterRequestDTO) on controller HotelManagement.API.Controllers.AuthController (HotelManagement.API).
+2026-06-26 17:11:00.912 +05:30 [DBG] Execution plan of authorization filters (in the following order): ["None"]
+2026-06-26 17:11:00.912 +05:30 [DBG] Execution plan of resource filters (in the following order): ["None"]
+2026-06-26 17:11:00.912 +05:30 [DBG] Execution plan of action filters (in the following order): ["Microsoft.AspNetCore.Mvc.ModelBinding.UnsupportedContentTypeFilter (Order: -3000)","Microsoft.AspNetCore.Mvc.Infrastructure.ModelStateInvalidFilter (Order: -2000)"]
+2026-06-26 17:11:00.912 +05:30 [DBG] Execution plan of exception filters (in the following order): ["None"]
+2026-06-26 17:11:00.912 +05:30 [DBG] Execution plan of result filters (in the following order): ["Microsoft.AspNetCore.Mvc.Infrastructure.ClientErrorResultFilter (Order: -2000)"]
+2026-06-26 17:11:00.913 +05:30 [DBG] Executing controller factory for controller HotelManagement.API.Controllers.AuthController (HotelManagement.API)
+2026-06-26 17:11:00.927 +05:30 [DBG] Entity Framework Core 10.0.8 initialized 'ApplicationDbContext' using provider 'Npgsql.EntityFrameworkCore.PostgreSQL:10.0.2+c46789c136fa63fe5a97577f79c54e1c0ec0e9ef' with options: None
+2026-06-26 17:11:00.927 +05:30 [DBG] Executed controller factory for controller HotelManagement.API.Controllers.AuthController (HotelManagement.API)
+2026-06-26 17:11:00.927 +05:30 [DBG] Attempting to bind parameter 'request' of type 'HotelManagement.BLL.DTOs.RegisterRequestDTO' ...
+2026-06-26 17:11:01.061 +05:30 [DBG] Attempting to bind parameter 'request' of type 'HotelManagement.BLL.DTOs.RegisterRequestDTO' using the name '' in request data ...
+2026-06-26 17:11:01.062 +05:30 [DBG] Selected input formatter 'Microsoft.AspNetCore.Mvc.Formatters.SystemTextJsonInputFormatter' for content type 'application/json'.
+2026-06-26 17:11:01.065 +05:30 [DBG] Connection id "0HNMJEUMV6VKV", Request id "0HNMJEUMV6VKV:00000004": started reading request body.
+2026-06-26 17:11:01.081 +05:30 [DBG] Connection id "0HNMJEUMV6VKV", Request id "0HNMJEUMV6VKV:00000004": done reading request body.
+2026-06-26 17:11:01.084 +05:30 [DBG] JSON input formatter succeeded, deserializing to type 'HotelManagement.BLL.DTOs.RegisterRequestDTO'
+2026-06-26 17:11:01.084 +05:30 [DBG] Done attempting to bind parameter 'request' of type 'HotelManagement.BLL.DTOs.RegisterRequestDTO'.
+2026-06-26 17:11:01.085 +05:30 [DBG] Done attempting to bind parameter 'request' of type 'HotelManagement.BLL.DTOs.RegisterRequestDTO'.
+2026-06-26 17:11:01.085 +05:30 [DBG] Attempting to validate the bound parameter 'request' of type 'HotelManagement.BLL.DTOs.RegisterRequestDTO' ...
+2026-06-26 17:11:01.097 +05:30 [DBG] Done attempting to validate the bound parameter 'request' of type 'HotelManagement.BLL.DTOs.RegisterRequestDTO'.
+2026-06-26 17:11:01.114 +05:30 [DBG] The request has model state errors, returning an error response.
+2026-06-26 17:11:01.116 +05:30 [DBG] Request was short circuited at action filter 'Microsoft.AspNetCore.Mvc.Infrastructure.ModelStateInvalidFilter'.
+2026-06-26 17:11:01.117 +05:30 [DBG] List of registered output formatters, in the following order: ["Microsoft.AspNetCore.Mvc.Formatters.HttpNoContentOutputFormatter","Microsoft.AspNetCore.Mvc.Formatters.StringOutputFormatter","Microsoft.AspNetCore.Mvc.Formatters.StreamOutputFormatter","Microsoft.AspNetCore.Mvc.Formatters.SystemTextJsonOutputFormatter"]
+2026-06-26 17:11:01.128 +05:30 [DBG] No information found on request to perform content negotiation.
+2026-06-26 17:11:01.129 +05:30 [DBG] Attempting to select the first output formatter in the output formatters list which supports a content type from the explicitly specified content types '["application/problem+json","application/problem+xml","application/problem+json","application/problem+xml"]'.
+2026-06-26 17:11:01.135 +05:30 [DBG] Selected output formatter 'Microsoft.AspNetCore.Mvc.Formatters.SystemTextJsonOutputFormatter' and content type 'application/problem+json' to write the response.
+2026-06-26 17:11:01.135 +05:30 [INF] Executing BadRequestObjectResult, writing value of type 'Microsoft.AspNetCore.Mvc.ValidationProblemDetails'.
+2026-06-26 17:11:01.157 +05:30 [INF] Executed action HotelManagement.API.Controllers.AuthController.Register (HotelManagement.API) in 244.8342ms
+2026-06-26 17:11:01.160 +05:30 [INF] Executed endpoint 'HotelManagement.API.Controllers.AuthController.Register (HotelManagement.API)'
+2026-06-26 17:11:01.160 +05:30 [INF] HTTP POST /api/v1/auth/register responded 400 in 286.9170 ms
+2026-06-26 17:11:01.160 +05:30 [DBG] Connection id "0HNMJEUMV6VKV" completed keep alive response.
+2026-06-26 17:11:01.160 +05:30 [DBG] 'ApplicationDbContext' disposed.
+2026-06-26 17:11:01.173 +05:30 [INF] Request finished HTTP/1.1 POST http://localhost:5264/api/v1/auth/register - 400 null application/problem+json; charset=utf-8 303.3755ms
+2026-06-26 17:12:21.724 +05:30 [DBG] Connection id "0HNMJEUMV6VL0" disconnecting.
+2026-06-26 17:12:21.738 +05:30 [DBG] Connection id "0HNMJEUMV6VL0" stopped.
+2026-06-26 17:12:21.748 +05:30 [DBG] Connection id "0HNMJEUMV6VL0" sending FIN because: "The Socket transport's send loop completed gracefully."
+2026-06-26 17:13:11.785 +05:30 [DBG] Connection id "0HNMJEUMV6VKV" disconnecting.
+2026-06-26 17:13:11.786 +05:30 [DBG] Connection id "0HNMJEUMV6VKV" stopped.
+2026-06-26 17:13:11.787 +05:30 [DBG] Connection id "0HNMJEUMV6VKV" sending FIN because: "The Socket transport's send loop completed gracefully."
