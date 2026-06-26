@@ -1,0 +1,208 @@
+2026-06-13 13:44:43.670 +05:30 [DBG] An 'IServiceProvider' was created for internal use by Entity Framework.
+2026-06-13 13:44:44.046 +05:30 [DBG] Entity Framework Core 10.0.8 initialized 'ApplicationDbContext' using provider 'Npgsql.EntityFrameworkCore.PostgreSQL:10.0.2+c46789c136fa63fe5a97577f79c54e1c0ec0e9ef' with options: None
+2026-06-13 13:44:44.058 +05:30 [DBG] Compiling query expression: 
+'DbSet<User>()
+    .Any()'
+2026-06-13 13:44:44.154 +05:30 [DBG] Generated query execution expression: 
+'queryContext => SingleQueryingEnumerable.Create<bool>(
+    relationalQueryContext: (RelationalQueryContext)queryContext, 
+    relationalCommandResolver: parameters => [LIFTABLE Constant: RelationalCommandCache.QueryExpression(
+        Projection Mapping:
+            EmptyProjectionMember -> 0
+        SELECT EXISTS (
+            SELECT 1
+            FROM Users AS u)) | Resolver: c => new RelationalCommandCache(
+        c.Dependencies.MemoryCache, 
+        c.RelationalDependencies.QuerySqlGeneratorFactory, 
+        c.RelationalDependencies.RelationalParameterBasedSqlProcessorFactory, 
+        Projection Mapping:
+            EmptyProjectionMember -> 0
+        SELECT EXISTS (
+            SELECT 1
+            FROM Users AS u), 
+        False, 
+        Parameter
+    )].GetRelationalCommandTemplate(parameters), 
+    readerColumns: null, 
+    shaper: (queryContext, dataReader, resultContext, resultCoordinator) => 
+    {
+        bool? value1;
+        value1 = dataReader.IsDBNull(0) ? default(bool?) : (bool?)dataReader.GetBoolean(0);
+        return (bool)value1;
+    }, 
+    contextType: HotelManagement.DAL.Context.ApplicationDbContext, 
+    standAloneStateManager: False, 
+    detailedErrorsEnabled: False, 
+    threadSafetyChecksEnabled: True)
+    .Single()'
+2026-06-13 13:44:44.164 +05:30 [DBG] Creating DbConnection.
+2026-06-13 13:44:44.180 +05:30 [DBG] Created DbConnection. (15ms).
+2026-06-13 13:44:44.182 +05:30 [DBG] Opening connection to database 'HotelResortDB' on server 'tcp://localhost:5432'.
+2026-06-13 13:44:44.920 +05:30 [DBG] Opened connection to database 'HotelResortDB' on server 'tcp://localhost:5432'.
+2026-06-13 13:44:44.922 +05:30 [DBG] Creating DbCommand for 'ExecuteReader'.
+2026-06-13 13:44:44.924 +05:30 [DBG] Created DbCommand for 'ExecuteReader' (1ms).
+2026-06-13 13:44:44.925 +05:30 [DBG] Initialized DbCommand for 'ExecuteReader' (3ms).
+2026-06-13 13:44:44.927 +05:30 [DBG] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT EXISTS (
+    SELECT 1
+    FROM "Users" AS u)
+2026-06-13 13:44:44.952 +05:30 [INF] Executed DbCommand (25ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT EXISTS (
+    SELECT 1
+    FROM "Users" AS u)
+2026-06-13 13:44:44.971 +05:30 [DBG] Closing data reader to 'HotelResortDB' on server 'tcp://localhost:5432'.
+2026-06-13 13:44:44.975 +05:30 [DBG] A data reader for 'HotelResortDB' on server 'tcp://localhost:5432' is being disposed after spending 21ms reading results.
+2026-06-13 13:44:44.976 +05:30 [DBG] Closing connection to database 'HotelResortDB' on server 'tcp://localhost:5432'.
+2026-06-13 13:44:44.977 +05:30 [DBG] Closed connection to database 'HotelResortDB' on server 'tcp://localhost:5432' (1ms).
+2026-06-13 13:44:44.977 +05:30 [DBG] 'ApplicationDbContext' disposed.
+2026-06-13 13:44:44.978 +05:30 [DBG] Disposing connection to database 'HotelResortDB' on server 'tcp://localhost:5432'.
+2026-06-13 13:44:44.978 +05:30 [DBG] Disposed connection to database 'HotelResortDB' on server 'tcp://localhost:5432' (0ms).
+2026-06-13 13:44:45.007 +05:30 [DBG] Entity Framework Core 10.0.8 initialized 'ApplicationDbContext' using provider 'Npgsql.EntityFrameworkCore.PostgreSQL:10.0.2+c46789c136fa63fe5a97577f79c54e1c0ec0e9ef' with options: None
+2026-06-13 13:44:45.010 +05:30 [DBG] Compiling query expression: 
+'DbSet<User>()'
+2026-06-13 13:44:45.031 +05:30 [DBG] Generated query execution expression: 
+'queryContext => SingleQueryingEnumerable.Create<User>(
+    relationalQueryContext: (RelationalQueryContext)queryContext, 
+    relationalCommandResolver: parameters => [LIFTABLE Constant: RelationalCommandCache.QueryExpression(
+        Projection Mapping:
+            EmptyProjectionMember -> Dictionary<IPropertyBase, int> { [Property: User.Id (int) Required PK AfterSave:Throw ValueGenerated.OnAdd, 0], [Property: User.Email (string) Required, 1], [Property: User.FirstName (string) Required, 2], [Property: User.IsActive (bool) Required, 3], [Property: User.LastName (string) Required, 4], [Property: User.PasswordHash (string) Required, 5], [Property: User.Role (string) Required, 6] }
+        SELECT u.Id, u.Email, u.FirstName, u.IsActive, u.LastName, u.PasswordHash, u.Role
+        FROM Users AS u) | Resolver: c => new RelationalCommandCache(
+        c.Dependencies.MemoryCache, 
+        c.RelationalDependencies.QuerySqlGeneratorFactory, 
+        c.RelationalDependencies.RelationalParameterBasedSqlProcessorFactory, 
+        Projection Mapping:
+            EmptyProjectionMember -> Dictionary<IPropertyBase, int> { [Property: User.Id (int) Required PK AfterSave:Throw ValueGenerated.OnAdd, 0], [Property: User.Email (string) Required, 1], [Property: User.FirstName (string) Required, 2], [Property: User.IsActive (bool) Required, 3], [Property: User.LastName (string) Required, 4], [Property: User.PasswordHash (string) Required, 5], [Property: User.Role (string) Required, 6] }
+        SELECT u.Id, u.Email, u.FirstName, u.IsActive, u.LastName, u.PasswordHash, u.Role
+        FROM Users AS u, 
+        False, 
+        Parameter
+    )].GetRelationalCommandTemplate(parameters), 
+    readerColumns: null, 
+    shaper: (queryContext, dataReader, resultContext, resultCoordinator) => 
+    {
+        User entity;
+        entity = 
+        {
+            MaterializationContext materializationContext1;
+            IEntityType entityType1;
+            User instance1;
+            InternalEntityEntry entry1;
+            bool hasNullKey1;
+            materializationContext1 = new MaterializationContext(
+                [LIFTABLE Constant: ValueBuffer | Resolver: _ => (object)ValueBuffer.Empty], 
+                queryContext.Context
+            );
+            instance1 = default(User);
+            entry1 = queryContext.TryGetEntry(
+                key: [LIFTABLE Constant: Key: User.Id PK | Resolver: c => c.Dependencies.Model.FindEntityType("HotelManagement.DAL.Entities.User").FindPrimaryKey()], 
+                keyValues: new object[]{ (object)dataReader.GetInt32(0) }, 
+                throwOnNullKey: True, 
+                hasNullKey: hasNullKey1);
+            !(hasNullKey1) ? entry1 != default(InternalEntityEntry) ? 
+            {
+                entityType1 = entry1.EntityType;
+                return instance1 = (User)entry1.Entity;
+            } : 
+            {
+                ISnapshot shadowSnapshot1;
+                shadowSnapshot1 = [LIFTABLE Constant: Snapshot | Resolver: _ => Snapshot.Empty];
+                entityType1 = [LIFTABLE Constant: EntityType: User | Resolver: namelessParameter{0} => namelessParameter{0}.Dependencies.Model.FindEntityType("HotelManagement.DAL.Entities.User")];
+                instance1 = switch (entityType1)
+                {
+                    case [LIFTABLE Constant: EntityType: User | Resolver: namelessParameter{1} => namelessParameter{1}.Dependencies.Model.FindEntityType("HotelManagement.DAL.Entities.User")]: 
+                        {
+                            return 
+                            {
+                                User instance;
+                                instance = new User();
+                                instance.<Id>k__BackingField = dataReader.GetInt32(0);
+                                instance.<Email>k__BackingField = dataReader.GetString(1);
+                                instance.<FirstName>k__BackingField = dataReader.GetString(2);
+                                instance.<IsActive>k__BackingField = dataReader.GetBoolean(3);
+                                instance.<LastName>k__BackingField = dataReader.GetString(4);
+                                instance.<PasswordHash>k__BackingField = dataReader.GetString(5);
+                                instance.<Role>k__BackingField = dataReader.GetString(6);
+                                (instance is IInjectableService) ? ((IInjectableService)instance).Injected(
+                                    context: materializationContext1.Context, 
+                                    entity: instance, 
+                                    queryTrackingBehavior: TrackAll, 
+                                    structuralType: [LIFTABLE Constant: EntityType: User | Resolver: namelessParameter{2} => namelessParameter{2}.Dependencies.Model.FindEntityType("HotelManagement.DAL.Entities.User")]) : default(void);
+                                return instance;
+                            }}
+                    default: 
+                        default(User)
+                }
+                ;
+                entry1 = entityType1 == default(IEntityType) ? default(InternalEntityEntry) : queryContext.StartTracking(
+                    entityType: entityType1, 
+                    entity: instance1, 
+                    snapshot: shadowSnapshot1);
+                return instance1;
+            } : default(void);
+            return instance1;
+        };
+        return entity;
+    }, 
+    contextType: HotelManagement.DAL.Context.ApplicationDbContext, 
+    standAloneStateManager: False, 
+    detailedErrorsEnabled: False, 
+    threadSafetyChecksEnabled: True)'
+2026-06-13 13:44:45.036 +05:30 [DBG] Creating DbConnection.
+2026-06-13 13:44:45.036 +05:30 [DBG] Created DbConnection. (0ms).
+2026-06-13 13:44:45.037 +05:30 [DBG] Opening connection to database 'HotelResortDB' on server 'tcp://localhost:5432'.
+2026-06-13 13:44:45.038 +05:30 [DBG] Opened connection to database 'HotelResortDB' on server 'tcp://localhost:5432'.
+2026-06-13 13:44:45.038 +05:30 [DBG] Creating DbCommand for 'ExecuteReader'.
+2026-06-13 13:44:45.038 +05:30 [DBG] Created DbCommand for 'ExecuteReader' (0ms).
+2026-06-13 13:44:45.038 +05:30 [DBG] Initialized DbCommand for 'ExecuteReader' (0ms).
+2026-06-13 13:44:45.038 +05:30 [DBG] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."Email", u."FirstName", u."IsActive", u."LastName", u."PasswordHash", u."Role"
+FROM "Users" AS u
+2026-06-13 13:44:45.043 +05:30 [INF] Executed DbCommand (5ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."Email", u."FirstName", u."IsActive", u."LastName", u."PasswordHash", u."Role"
+FROM "Users" AS u
+2026-06-13 13:44:45.058 +05:30 [DBG] Context 'ApplicationDbContext' started tracking 'User' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+2026-06-13 13:44:45.067 +05:30 [DBG] Context 'ApplicationDbContext' started tracking 'User' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+2026-06-13 13:44:45.067 +05:30 [DBG] Context 'ApplicationDbContext' started tracking 'User' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+2026-06-13 13:44:45.068 +05:30 [DBG] Context 'ApplicationDbContext' started tracking 'User' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+2026-06-13 13:44:45.068 +05:30 [DBG] Context 'ApplicationDbContext' started tracking 'User' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+2026-06-13 13:44:45.068 +05:30 [DBG] Context 'ApplicationDbContext' started tracking 'User' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+2026-06-13 13:44:45.068 +05:30 [DBG] Context 'ApplicationDbContext' started tracking 'User' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+2026-06-13 13:44:45.068 +05:30 [DBG] Context 'ApplicationDbContext' started tracking 'User' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+2026-06-13 13:44:45.068 +05:30 [DBG] Context 'ApplicationDbContext' started tracking 'User' entity. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see key values.
+2026-06-13 13:44:45.069 +05:30 [DBG] Closing data reader to 'HotelResortDB' on server 'tcp://localhost:5432'.
+2026-06-13 13:44:45.069 +05:30 [DBG] A data reader for 'HotelResortDB' on server 'tcp://localhost:5432' is being disposed after spending 25ms reading results.
+2026-06-13 13:44:45.070 +05:30 [DBG] Closing connection to database 'HotelResortDB' on server 'tcp://localhost:5432'.
+2026-06-13 13:44:45.070 +05:30 [DBG] Closed connection to database 'HotelResortDB' on server 'tcp://localhost:5432' (0ms).
+2026-06-13 13:44:45.073 +05:30 [DBG] DetectChanges starting for 'ApplicationDbContext'.
+2026-06-13 13:44:45.080 +05:30 [DBG] DetectChanges completed for 'ApplicationDbContext'.
+2026-06-13 13:44:45.081 +05:30 [DBG] SaveChanges starting for 'ApplicationDbContext'.
+2026-06-13 13:44:45.081 +05:30 [DBG] DetectChanges starting for 'ApplicationDbContext'.
+2026-06-13 13:44:45.082 +05:30 [DBG] DetectChanges completed for 'ApplicationDbContext'.
+2026-06-13 13:44:45.084 +05:30 [DBG] SaveChanges completed for 'ApplicationDbContext' with 0 entities written to the database.
+2026-06-13 13:44:45.084 +05:30 [DBG] 'ApplicationDbContext' disposed.
+2026-06-13 13:44:45.084 +05:30 [DBG] Disposing connection to database 'HotelResortDB' on server 'tcp://localhost:5432'.
+2026-06-13 13:44:45.084 +05:30 [DBG] Disposed connection to database 'HotelResortDB' on server 'tcp://localhost:5432' (0ms).
+2026-06-13 13:44:45.109 +05:30 [DBG] Registered model binder providers, in the following order: ["CustomDateTimeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.BinderTypeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.ServicesModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.BodyModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.HeaderModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.FloatingPointTypeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.EnumTypeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.DateTimeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.SimpleTypeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.TryParseModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.CancellationTokenModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.ByteArrayModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.FormFileModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.FormCollectionModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.KeyValuePairModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.DictionaryModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.ArrayModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.CollectionModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.ComplexObjectModelBinderProvider"]
+2026-06-13 13:44:45.135 +05:30 [DBG] Registered SignalR Protocol: json, implemented by Microsoft.AspNetCore.SignalR.Protocol.JsonHubProtocol.
+2026-06-13 13:44:45.140 +05:30 [DBG] Hosting starting
+2026-06-13 13:44:45.144 +05:30 [INF] User profile is available. Using '/Users/peewee/.aspnet/DataProtection-Keys' as key repository; keys will not be encrypted at rest.
+2026-06-13 13:44:45.149 +05:30 [DBG] Reading data from file '/Users/peewee/.aspnet/DataProtection-Keys/key-95c554fe-54d2-4522-962f-6a1f44e0b0d2.xml'.
+2026-06-13 13:44:45.153 +05:30 [DBG] Found key {95c554fe-54d2-4522-962f-6a1f44e0b0d2}.
+2026-06-13 13:44:45.158 +05:30 [DBG] Considering key {95c554fe-54d2-4522-962f-6a1f44e0b0d2} with expiration date 2026-08-23 09:39:54Z as default key.
+2026-06-13 13:44:45.159 +05:30 [DBG] Forwarded activator type request from Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel.AuthenticatedEncryptorDescriptorDeserializer, Microsoft.AspNetCore.DataProtection, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60 to Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel.AuthenticatedEncryptorDescriptorDeserializer, Microsoft.AspNetCore.DataProtection, Culture=neutral, PublicKeyToken=adb9793829ddae60
+2026-06-13 13:44:45.159 +05:30 [DBG] Using managed symmetric algorithm 'System.Security.Cryptography.Aes'.
+2026-06-13 13:44:45.160 +05:30 [DBG] Using managed keyed hash algorithm 'System.Security.Cryptography.HMACSHA256'.
+2026-06-13 13:44:45.163 +05:30 [DBG] Using key {95c554fe-54d2-4522-962f-6a1f44e0b0d2} as the default key.
+2026-06-13 13:44:45.163 +05:30 [DBG] Key ring with default key {95c554fe-54d2-4522-962f-6a1f44e0b0d2} was loaded during application startup.
+2026-06-13 13:44:45.191 +05:30 [DBG] Middleware configuration started with options: {AllowedHosts = *, AllowEmptyHosts = True, IncludeFailureMessage = True}
+2026-06-13 13:44:45.192 +05:30 [DBG] Wildcard detected, all requests with hosts will be allowed.
+2026-06-13 13:44:45.196 +05:30 [INF] Now listening on: http://localhost:5264
+2026-06-13 13:44:45.196 +05:30 [DBG] Loaded hosting startup assembly HotelManagement.API
+2026-06-13 13:44:45.196 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-06-13 13:44:45.196 +05:30 [INF] Hosting environment: Development
+2026-06-13 13:44:45.196 +05:30 [INF] Content root path: /Users/peewee/personal/repos/HotelManagement/Backend/HotelManagement.API
+2026-06-13 13:44:45.197 +05:30 [DBG] Hosting started
+2026-06-13 13:46:23.219 +05:30 [DBG] Hosting stopping
+2026-06-13 13:46:23.219 +05:30 [INF] Application is shutting down...
+2026-06-13 13:46:23.229 +05:30 [DBG] Hosting stopped

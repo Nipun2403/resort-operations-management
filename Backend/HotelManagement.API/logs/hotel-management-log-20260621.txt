@@ -1,0 +1,214 @@
+2026-06-21 19:59:31.044 +05:30 [DBG] An 'IServiceProvider' was created for internal use by Entity Framework.
+2026-06-21 19:59:31.457 +05:30 [DBG] Entity Framework Core 10.0.8 initialized 'ApplicationDbContext' using provider 'Npgsql.EntityFrameworkCore.PostgreSQL:10.0.2+c46789c136fa63fe5a97577f79c54e1c0ec0e9ef' with options: None
+2026-06-21 19:59:31.465 +05:30 [DBG] 'ApplicationDbContext' disposed.
+2026-06-21 19:59:51.528 +05:30 [DBG] An 'IServiceProvider' was created for internal use by Entity Framework.
+2026-06-21 19:59:51.905 +05:30 [DBG] Entity Framework Core 10.0.8 initialized 'ApplicationDbContext' using provider 'Npgsql.EntityFrameworkCore.PostgreSQL:10.0.2+c46789c136fa63fe5a97577f79c54e1c0ec0e9ef' with options: None
+2026-06-21 19:59:52.269 +05:30 [DBG] 'ApplicationDbContext' disposed.
+2026-06-21 20:00:01.372 +05:30 [DBG] An 'IServiceProvider' was created for internal use by Entity Framework.
+2026-06-21 20:00:01.784 +05:30 [DBG] Entity Framework Core 10.0.8 initialized 'ApplicationDbContext' using provider 'Npgsql.EntityFrameworkCore.PostgreSQL:10.0.2+c46789c136fa63fe5a97577f79c54e1c0ec0e9ef' with options: None
+2026-06-21 20:00:01.797 +05:30 [DBG] Creating DbConnection.
+2026-06-21 20:00:01.821 +05:30 [DBG] Created DbConnection. (24ms).
+2026-06-21 20:00:01.824 +05:30 [DBG] Opening connection to database 'hotelTestdb' on server 'tcp://localhost:5432'.
+2026-06-21 20:00:02.185 +05:30 [DBG] Opened connection to database 'hotelTestdb' on server 'tcp://localhost:5432'.
+2026-06-21 20:00:02.188 +05:30 [DBG] Creating DbCommand for 'ExecuteReader'.
+2026-06-21 20:00:02.191 +05:30 [DBG] Created DbCommand for 'ExecuteReader' (3ms).
+2026-06-21 20:00:02.192 +05:30 [DBG] Initialized DbCommand for 'ExecuteReader' (5ms).
+2026-06-21 20:00:02.196 +05:30 [DBG] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT "MigrationId", "ProductVersion"
+FROM "__EFMigrationsHistory"
+ORDER BY "MigrationId";
+2026-06-21 20:00:02.221 +05:30 [INF] Executed DbCommand (26ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT "MigrationId", "ProductVersion"
+FROM "__EFMigrationsHistory"
+ORDER BY "MigrationId";
+2026-06-21 20:00:02.239 +05:30 [DBG] Closing data reader to 'hotelTestdb' on server 'tcp://localhost:5432'.
+2026-06-21 20:00:02.243 +05:30 [DBG] A data reader for 'hotelTestdb' on server 'tcp://localhost:5432' is being disposed after spending 20ms reading results.
+2026-06-21 20:00:02.245 +05:30 [DBG] Closing connection to database 'hotelTestdb' on server 'tcp://localhost:5432'.
+2026-06-21 20:00:02.246 +05:30 [DBG] Closed connection to database 'hotelTestdb' on server 'tcp://localhost:5432' (1ms).
+2026-06-21 20:00:02.394 +05:30 [DBG] Migrating using database 'hotelTestdb' on server 'tcp://localhost:5432'.
+2026-06-21 20:00:02.396 +05:30 [DBG] Opening connection to database 'hotelTestdb' on server 'tcp://localhost:5432'.
+2026-06-21 20:00:02.397 +05:30 [DBG] Opened connection to database 'hotelTestdb' on server 'tcp://localhost:5432'.
+2026-06-21 20:00:02.397 +05:30 [DBG] Creating DbCommand for 'ExecuteNonQuery'.
+2026-06-21 20:00:02.397 +05:30 [DBG] Created DbCommand for 'ExecuteNonQuery' (0ms).
+2026-06-21 20:00:02.397 +05:30 [DBG] Initialized DbCommand for 'ExecuteNonQuery' (0ms).
+2026-06-21 20:00:02.397 +05:30 [DBG] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2026-06-21 20:00:02.408 +05:30 [INF] Executed DbCommand (11ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2026-06-21 20:00:02.408 +05:30 [DBG] Closing connection to database 'hotelTestdb' on server 'tcp://localhost:5432'.
+2026-06-21 20:00:02.408 +05:30 [DBG] Closed connection to database 'hotelTestdb' on server 'tcp://localhost:5432' (0ms).
+2026-06-21 20:00:02.409 +05:30 [DBG] Opening connection to database 'hotelTestdb' on server 'tcp://localhost:5432'.
+2026-06-21 20:00:02.409 +05:30 [DBG] Opened connection to database 'hotelTestdb' on server 'tcp://localhost:5432'.
+2026-06-21 20:00:02.434 +05:30 [DBG] Beginning transaction with isolation level 'Unspecified'.
+2026-06-21 20:00:02.435 +05:30 [DBG] Began transaction with isolation level 'ReadCommitted'.
+2026-06-21 20:00:02.436 +05:30 [DBG] Creating DbCommand for 'ExecuteNonQuery'.
+2026-06-21 20:00:02.436 +05:30 [DBG] Created DbCommand for 'ExecuteNonQuery' (0ms).
+2026-06-21 20:00:02.436 +05:30 [DBG] Initialized DbCommand for 'ExecuteNonQuery' (0ms).
+2026-06-21 20:00:02.436 +05:30 [DBG] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE IF NOT EXISTS "__EFMigrationsHistory" (
+    "MigrationId" character varying(150) NOT NULL,
+    "ProductVersion" character varying(32) NOT NULL,
+    CONSTRAINT "PK___EFMigrationsHistory" PRIMARY KEY ("MigrationId")
+);
+2026-06-21 20:00:02.442 +05:30 [INF] Executed DbCommand (6ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE IF NOT EXISTS "__EFMigrationsHistory" (
+    "MigrationId" character varying(150) NOT NULL,
+    "ProductVersion" character varying(32) NOT NULL,
+    CONSTRAINT "PK___EFMigrationsHistory" PRIMARY KEY ("MigrationId")
+);
+2026-06-21 20:00:02.443 +05:30 [DBG] Committing transaction.
+2026-06-21 20:00:02.453 +05:30 [DBG] Committed transaction.
+2026-06-21 20:00:02.454 +05:30 [DBG] Disposing transaction.
+2026-06-21 20:00:02.455 +05:30 [DBG] Beginning transaction with isolation level 'Unspecified'.
+2026-06-21 20:00:02.455 +05:30 [DBG] Began transaction with isolation level 'ReadCommitted'.
+2026-06-21 20:00:02.455 +05:30 [INF] Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.
+2026-06-21 20:00:02.455 +05:30 [DBG] Creating DbCommand for 'ExecuteNonQuery'.
+2026-06-21 20:00:02.455 +05:30 [DBG] Created DbCommand for 'ExecuteNonQuery' (0ms).
+2026-06-21 20:00:02.455 +05:30 [DBG] Initialized DbCommand for 'ExecuteNonQuery' (0ms).
+2026-06-21 20:00:02.455 +05:30 [DBG] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+LOCK TABLE "__EFMigrationsHistory" IN ACCESS EXCLUSIVE MODE
+2026-06-21 20:00:02.473 +05:30 [INF] Executed DbCommand (18ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+LOCK TABLE "__EFMigrationsHistory" IN ACCESS EXCLUSIVE MODE
+2026-06-21 20:00:02.474 +05:30 [DBG] Creating DbCommand for 'ExecuteReader'.
+2026-06-21 20:00:02.474 +05:30 [DBG] Created DbCommand for 'ExecuteReader' (0ms).
+2026-06-21 20:00:02.474 +05:30 [DBG] Initialized DbCommand for 'ExecuteReader' (0ms).
+2026-06-21 20:00:02.474 +05:30 [DBG] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT "MigrationId", "ProductVersion"
+FROM "__EFMigrationsHistory"
+ORDER BY "MigrationId";
+2026-06-21 20:00:02.474 +05:30 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT "MigrationId", "ProductVersion"
+FROM "__EFMigrationsHistory"
+ORDER BY "MigrationId";
+2026-06-21 20:00:02.474 +05:30 [DBG] Closing data reader to 'hotelTestdb' on server 'tcp://localhost:5432'.
+2026-06-21 20:00:02.474 +05:30 [DBG] A data reader for 'hotelTestdb' on server 'tcp://localhost:5432' is being disposed after spending 0ms reading results.
+2026-06-21 20:00:02.477 +05:30 [INF] Applying migration '20260621142952_AddFrontendIntegrationFeatures'.
+2026-06-21 20:00:02.490 +05:30 [DBG] Creating DbCommand for 'ExecuteNonQuery'.
+2026-06-21 20:00:02.490 +05:30 [DBG] Created DbCommand for 'ExecuteNonQuery' (0ms).
+2026-06-21 20:00:02.490 +05:30 [DBG] Initialized DbCommand for 'ExecuteNonQuery' (0ms).
+2026-06-21 20:00:02.490 +05:30 [DBG] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+ALTER TABLE "Bookings" ADD "GuestCount" integer NOT NULL DEFAULT 0;
+2026-06-21 20:00:02.519 +05:30 [INF] Executed DbCommand (29ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+ALTER TABLE "Bookings" ADD "GuestCount" integer NOT NULL DEFAULT 0;
+2026-06-21 20:00:02.519 +05:30 [DBG] Creating DbCommand for 'ExecuteNonQuery'.
+2026-06-21 20:00:02.519 +05:30 [DBG] Created DbCommand for 'ExecuteNonQuery' (0ms).
+2026-06-21 20:00:02.519 +05:30 [DBG] Initialized DbCommand for 'ExecuteNonQuery' (0ms).
+2026-06-21 20:00:02.520 +05:30 [DBG] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE "IdempotentRequests" (
+    "IdempotencyKey" text NOT NULL,
+    "Path" text NOT NULL,
+    "CreatedAt" timestamp with time zone NOT NULL,
+    CONSTRAINT "PK_IdempotentRequests" PRIMARY KEY ("IdempotencyKey")
+);
+2026-06-21 20:00:02.537 +05:30 [INF] Executed DbCommand (18ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE "IdempotentRequests" (
+    "IdempotencyKey" text NOT NULL,
+    "Path" text NOT NULL,
+    "CreatedAt" timestamp with time zone NOT NULL,
+    CONSTRAINT "PK_IdempotentRequests" PRIMARY KEY ("IdempotencyKey")
+);
+2026-06-21 20:00:02.538 +05:30 [DBG] Creating DbCommand for 'ExecuteNonQuery'.
+2026-06-21 20:00:02.538 +05:30 [DBG] Created DbCommand for 'ExecuteNonQuery' (0ms).
+2026-06-21 20:00:02.538 +05:30 [DBG] Initialized DbCommand for 'ExecuteNonQuery' (0ms).
+2026-06-21 20:00:02.538 +05:30 [DBG] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES ('20260621142952_AddFrontendIntegrationFeatures', '10.0.8');
+2026-06-21 20:00:02.547 +05:30 [INF] Executed DbCommand (10ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES ('20260621142952_AddFrontendIntegrationFeatures', '10.0.8');
+2026-06-21 20:00:02.548 +05:30 [DBG] Committing transaction.
+2026-06-21 20:00:02.549 +05:30 [DBG] Committed transaction.
+2026-06-21 20:00:02.549 +05:30 [DBG] Disposing transaction.
+2026-06-21 20:00:02.549 +05:30 [DBG] Closing connection to database 'hotelTestdb' on server 'tcp://localhost:5432'.
+2026-06-21 20:00:02.549 +05:30 [DBG] Closed connection to database 'hotelTestdb' on server 'tcp://localhost:5432' (0ms).
+2026-06-21 20:00:02.550 +05:30 [DBG] 'ApplicationDbContext' disposed.
+2026-06-21 20:00:02.551 +05:30 [DBG] Disposing connection to database 'hotelTestdb' on server 'tcp://localhost:5432'.
+2026-06-21 20:00:02.552 +05:30 [DBG] Disposed connection to database 'hotelTestdb' on server 'tcp://localhost:5432' (0ms).
+2026-06-21 23:19:03.123 +05:30 [DBG] An 'IServiceProvider' was created for internal use by Entity Framework.
+2026-06-21 23:19:03.508 +05:30 [DBG] Entity Framework Core 10.0.8 initialized 'ApplicationDbContext' using provider 'Npgsql.EntityFrameworkCore.PostgreSQL:10.0.2+c46789c136fa63fe5a97577f79c54e1c0ec0e9ef' with options: None
+2026-06-21 23:19:03.521 +05:30 [DBG] Compiling query expression: 
+'DbSet<User>()
+    .Any()'
+2026-06-21 23:19:03.612 +05:30 [DBG] Generated query execution expression: 
+'queryContext => SingleQueryingEnumerable.Create<bool>(
+    relationalQueryContext: (RelationalQueryContext)queryContext, 
+    relationalCommandResolver: parameters => [LIFTABLE Constant: RelationalCommandCache.QueryExpression(
+        Projection Mapping:
+            EmptyProjectionMember -> 0
+        SELECT EXISTS (
+            SELECT 1
+            FROM Users AS u)) | Resolver: c => new RelationalCommandCache(
+        c.Dependencies.MemoryCache, 
+        c.RelationalDependencies.QuerySqlGeneratorFactory, 
+        c.RelationalDependencies.RelationalParameterBasedSqlProcessorFactory, 
+        Projection Mapping:
+            EmptyProjectionMember -> 0
+        SELECT EXISTS (
+            SELECT 1
+            FROM Users AS u), 
+        False, 
+        Parameter
+    )].GetRelationalCommandTemplate(parameters), 
+    readerColumns: null, 
+    shaper: (queryContext, dataReader, resultContext, resultCoordinator) => 
+    {
+        bool? value1;
+        value1 = dataReader.IsDBNull(0) ? default(bool?) : (bool?)dataReader.GetBoolean(0);
+        return (bool)value1;
+    }, 
+    contextType: HotelManagement.DAL.Context.ApplicationDbContext, 
+    standAloneStateManager: False, 
+    detailedErrorsEnabled: False, 
+    threadSafetyChecksEnabled: True)
+    .Single()'
+2026-06-21 23:19:03.622 +05:30 [DBG] Creating DbConnection.
+2026-06-21 23:19:03.654 +05:30 [DBG] Created DbConnection. (32ms).
+2026-06-21 23:19:03.656 +05:30 [DBG] Opening connection to database 'hotelTestdb' on server 'tcp://localhost:5432'.
+2026-06-21 23:19:03.957 +05:30 [DBG] Opened connection to database 'hotelTestdb' on server 'tcp://localhost:5432'.
+2026-06-21 23:19:03.959 +05:30 [DBG] Creating DbCommand for 'ExecuteReader'.
+2026-06-21 23:19:03.961 +05:30 [DBG] Created DbCommand for 'ExecuteReader' (1ms).
+2026-06-21 23:19:03.961 +05:30 [DBG] Initialized DbCommand for 'ExecuteReader' (3ms).
+2026-06-21 23:19:03.964 +05:30 [DBG] Executing DbCommand [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT EXISTS (
+    SELECT 1
+    FROM "Users" AS u)
+2026-06-21 23:19:04.045 +05:30 [INF] Executed DbCommand (82ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT EXISTS (
+    SELECT 1
+    FROM "Users" AS u)
+2026-06-21 23:19:04.069 +05:30 [DBG] Closing data reader to 'hotelTestdb' on server 'tcp://localhost:5432'.
+2026-06-21 23:19:04.073 +05:30 [DBG] A data reader for 'hotelTestdb' on server 'tcp://localhost:5432' is being disposed after spending 25ms reading results.
+2026-06-21 23:19:04.074 +05:30 [DBG] Closing connection to database 'hotelTestdb' on server 'tcp://localhost:5432'.
+2026-06-21 23:19:04.076 +05:30 [DBG] Closed connection to database 'hotelTestdb' on server 'tcp://localhost:5432' (1ms).
+2026-06-21 23:19:04.076 +05:30 [DBG] 'ApplicationDbContext' disposed.
+2026-06-21 23:19:04.077 +05:30 [DBG] Disposing connection to database 'hotelTestdb' on server 'tcp://localhost:5432'.
+2026-06-21 23:19:04.077 +05:30 [DBG] Disposed connection to database 'hotelTestdb' on server 'tcp://localhost:5432' (0ms).
+2026-06-21 23:19:04.091 +05:30 [DBG] Registered model binder providers, in the following order: ["CustomDateTimeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.BinderTypeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.ServicesModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.BodyModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.HeaderModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.FloatingPointTypeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.EnumTypeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.DateTimeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.SimpleTypeModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.TryParseModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.CancellationTokenModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.ByteArrayModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.FormFileModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.FormCollectionModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.KeyValuePairModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.DictionaryModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.ArrayModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.CollectionModelBinderProvider","Microsoft.AspNetCore.Mvc.ModelBinding.Binders.ComplexObjectModelBinderProvider"]
+2026-06-21 23:19:04.120 +05:30 [DBG] Registered SignalR Protocol: json, implemented by Microsoft.AspNetCore.SignalR.Protocol.JsonHubProtocol.
+2026-06-21 23:19:04.125 +05:30 [DBG] Hosting starting
+2026-06-21 23:19:04.132 +05:30 [INF] User profile is available. Using '/Users/peewee/.aspnet/DataProtection-Keys' as key repository; keys will not be encrypted at rest.
+2026-06-21 23:19:04.143 +05:30 [DBG] Reading data from file '/Users/peewee/.aspnet/DataProtection-Keys/key-95c554fe-54d2-4522-962f-6a1f44e0b0d2.xml'.
+2026-06-21 23:19:04.147 +05:30 [DBG] Found key {95c554fe-54d2-4522-962f-6a1f44e0b0d2}.
+2026-06-21 23:19:04.152 +05:30 [DBG] Considering key {95c554fe-54d2-4522-962f-6a1f44e0b0d2} with expiration date 2026-08-23 09:39:54Z as default key.
+2026-06-21 23:19:04.152 +05:30 [DBG] Forwarded activator type request from Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel.AuthenticatedEncryptorDescriptorDeserializer, Microsoft.AspNetCore.DataProtection, Version=10.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60 to Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel.AuthenticatedEncryptorDescriptorDeserializer, Microsoft.AspNetCore.DataProtection, Culture=neutral, PublicKeyToken=adb9793829ddae60
+2026-06-21 23:19:04.153 +05:30 [DBG] Using managed symmetric algorithm 'System.Security.Cryptography.Aes'.
+2026-06-21 23:19:04.153 +05:30 [DBG] Using managed keyed hash algorithm 'System.Security.Cryptography.HMACSHA256'.
+2026-06-21 23:19:04.156 +05:30 [DBG] Using key {95c554fe-54d2-4522-962f-6a1f44e0b0d2} as the default key.
+2026-06-21 23:19:04.157 +05:30 [DBG] Key ring with default key {95c554fe-54d2-4522-962f-6a1f44e0b0d2} was loaded during application startup.
+2026-06-21 23:19:04.186 +05:30 [DBG] Middleware configuration started with options: {AllowedHosts = *, AllowEmptyHosts = True, IncludeFailureMessage = True}
+2026-06-21 23:19:04.186 +05:30 [DBG] Wildcard detected, all requests with hosts will be allowed.
+2026-06-21 23:19:04.191 +05:30 [INF] Now listening on: http://localhost:5264
+2026-06-21 23:19:04.191 +05:30 [DBG] Loaded hosting startup assembly HotelManagement.API
+2026-06-21 23:19:04.191 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-06-21 23:19:04.192 +05:30 [INF] Hosting environment: Development
+2026-06-21 23:19:04.192 +05:30 [INF] Content root path: /Users/peewee/personal/repos/HotelManagement/Backend/HotelManagement.API
+2026-06-21 23:19:04.192 +05:30 [DBG] Hosting started
+2026-06-21 23:19:18.202 +05:30 [DBG] Connection id "0HNMFNLLDUMLB" accepted.
+2026-06-21 23:19:18.206 +05:30 [DBG] Connection id "0HNMFNLLDUMLB" started.
+2026-06-21 23:20:23.554 +05:30 [DBG] Connection id "0HNMFNLLDUMLB" received FIN.
+2026-06-21 23:20:23.556 +05:30 [DBG] Connection id "0HNMFNLLDUMLB" sending FIN because: "The Socket transport's send loop completed gracefully."
+2026-06-21 23:20:23.559 +05:30 [DBG] Connection id "0HNMFNLLDUMLB" disconnecting.
+2026-06-21 23:20:23.560 +05:30 [DBG] Connection id "0HNMFNLLDUMLB" stopped.
+2026-06-21 23:34:54.837 +05:30 [INF] Application is shutting down...
+2026-06-21 23:34:54.839 +05:30 [DBG] Hosting stopping
+2026-06-21 23:34:54.852 +05:30 [DBG] Hosting stopped
