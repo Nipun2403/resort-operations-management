@@ -23,10 +23,11 @@ public class StaffController : ControllerBase
         [FromQuery] int pageSize = 10,
         [FromQuery] bool includeFired = false,
         [FromQuery] string? sortBy = null,
-        [FromQuery] bool sortDescending = false)
+        [FromQuery] bool sortDescending = false,
+        [FromQuery] string? searchQuery = null)
     {
         pageSize = Math.Min(pageSize, 100);
-        var staff = await _staffService.GetStaffAsync(pageNumber, pageSize, includeFired, sortBy, sortDescending);
+        var staff = await _staffService.GetStaffAsync(pageNumber, pageSize, includeFired, sortBy, sortDescending, searchQuery);
         return Ok(staff);
     }
 

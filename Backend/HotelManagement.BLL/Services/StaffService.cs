@@ -20,27 +20,42 @@ public class StaffService : IStaffService
         _mapper = mapper;
     }
 
-    public async Task<PaginatedResult<StaffResponseDTO>> GetStaffAsync(int pageNumber, int pageSize, bool includeFired = false, string? sortBy = null, bool sortDescending = false)
+    public async Task<PaginatedResult<StaffResponseDTO>> GetStaffAsync(int pageNumber, int pageSize, bool includeFired = false, string? sortBy = null, bool sortDescending = false, string? searchQuery = null)
     {
-        var staffList = await _userRepository.GetActiveStaffAsync(includeFired);
-        var query = staffList.AsQueryable();
+        if (pageNumber < 1) throw new ArgumentException("Page number must be greater than 0.");
+        if (pageSize < 1) throw new ArgumentException("Page size must be greater than 0.");
 
-        if (!string.IsNullOrEmpty(sortBy))
+        // Fetch staff members from the repository
         {
-            query = query.OrderByDynamic(sortBy, sortDescending);
+            var staffList = await _userRepository.GetActiveStaffAsync(includeFired);
+            var query = staffList.AsQueryable();
+
+            if (!string.IsNullOrEmpty(sortBy))
+            {
+                query = query.OrderByDynamic(sortBy, sortDescending);
+            }
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                var lowerQuery = searchQuery.ToLower();
+                query = query.Where(st =>
+                    st.FirstName.ToLower().Contains(lowerQuery) ||
+                    st.LastName.ToLower().Contains(lowerQuery) ||
+                    (st.Email != null && st.Email.ToLower().Contains(lowerQuery))
+                );
+            }
+
+            var totalCount = query.Count();
+            var pagedStaff = query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+
+            var dtos = _mapper.Map<IEnumerable<StaffResponseDTO>>(pagedStaff);
+            return new PaginatedResult<StaffResponseDTO>
+            {
+                TotalCount = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                Data = dtos
+            };
         }
-
-        var totalCount = query.Count();
-        var pagedStaff = query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
-
-        var dtos = _mapper.Map<IEnumerable<StaffResponseDTO>>(pagedStaff);
-        return new PaginatedResult<StaffResponseDTO>
-        {
-            TotalCount = totalCount,
-            PageNumber = pageNumber,
-            PageSize = pageSize,
-            Data = dtos
-        };
     }
 
     public async Task<StaffResponseDTO> CreateStaffAsync(StaffRegisterRequestDTO request)
