@@ -72,4 +72,11 @@ export class RoomStatusGridComponent {
     }
     return 'Available';
   }
+
+  getStatusClass(status: string | null | undefined): string {
+    const normalized = (status ?? '').toLowerCase();
+    if (normalized === 'occupied') return 'occupied';
+    if (normalized === 'available') return 'available';
+    return 'neutral';
+  }
 }

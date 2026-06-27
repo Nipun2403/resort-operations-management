@@ -106,6 +106,12 @@ export class GenericCrudComponent {
     return [...this.config().columns.map((c) => c.field), 'actions'];
   }
 
+  columnWidths = computed(() => {
+    const cols = this.config().columns;
+    const defaultWidth = `${100 / (cols.length + 1)}%`; // +1 for actions column
+    return [...cols.map((col) => col.width ?? defaultWidth), defaultWidth];
+  });
+
   getFilterControl(key: string): FormControl {
     if (!this.filterControls.has(key)) {
       this.filterControls.set(key, new FormControl(null));

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed, DestroyRef } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, QueryList, ViewChildren, inject, signal, computed, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -53,7 +53,8 @@ import { CreateInternalTicketDialogComponent } from '../components/create-intern
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, AfterViewInit {
+  @ViewChildren('chartRef') charts!: QueryList<ElementRef>;
   private readonly analyticsApi = inject(AnalyticsApiService);
   private readonly housekeepingApi = inject(HousekeepingApiService);
   private readonly maintenanceApi = inject(MaintenanceApiService);
@@ -113,7 +114,12 @@ export class DashboardComponent implements OnInit {
   // Revenue chart options computed
   revenueChartOptions = computed(() => {
     const a = this.analytics();
-    if (!a) return {};
+    if (!a)
+      return {
+        xAxis: { type: 'category', data: [] },
+        yAxis: { type: 'value' },
+        series: [],
+      };
     return {
       title: { text: 'Revenue Overview' },
       tooltip: { trigger: 'axis' },
@@ -132,7 +138,12 @@ export class DashboardComponent implements OnInit {
   // Expenditure chart options computed
   expenditureChartOptions = computed(() => {
     const a = this.analytics();
-    if (!a) return {};
+    if (!a)
+      return {
+        xAxis: { type: 'category', data: [] },
+        yAxis: { type: 'value' },
+        series: [],
+      };
     return {
       title: { text: 'Non‑Room Expenditure' },
       tooltip: { trigger: 'item' },
@@ -153,6 +164,13 @@ export class DashboardComponent implements OnInit {
     this.loadAnalytics();
     this.loadPendingCounts();
     this.loadAuditLogs();
+  }
+
+  ngAfterViewInit(): void {
+    // Force ECharts to recalculate dimensions after view initialisation
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    });
   }
 
   loadAnalytics(params?: { startDate?: string; endDate?: string }): void {

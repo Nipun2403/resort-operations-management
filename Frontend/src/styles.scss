@@ -19,6 +19,13 @@ html {
   );
 }
 
+// Global containment rule (spec §2)
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
   // Default the application to a light color theme. This can be changed to
   // `dark` to enable the dark color theme, or to `light dark` to defer to the
@@ -35,5 +42,11 @@ body {
   // Reset the user agent margin.
   margin: 0;
   height: 100%;
+  overflow-x: hidden;
+}
+
+.table-section {
+  max-width: 100%;
+  overflow-x: auto;
 }
 /* You can add global styles to this file, and also import other style files */

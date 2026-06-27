@@ -62,10 +62,14 @@
   // KPI Row
   .kpi-row {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 16px;
 
-    @media (max-width: 768px) {
+    @media (max-width: 959px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (max-width: 599px) {
       grid-template-columns: 1fr;
     }
 
@@ -89,15 +93,16 @@
   // Middle row
   .middle-row {
     display: flex;
-    gap: 24px;
-    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 16px;
 
-    @media (max-width: 768px) {
+    @media (max-width: 959px) {
       flex-direction: column;
     }
 
     .charts {
-      flex: 2;
+      flex: 1 1 60%;
+      min-width: 300px;
       display: flex;
       gap: 16px;
 
@@ -109,8 +114,7 @@
         flex: 1;
         min-height: 280px;
         display: flex;
-        align-items: center;
-        justify-content: center;
+        flex-direction: column;
         background: #fff;
         border-radius: 8px;
         padding: 16px;
@@ -124,7 +128,8 @@
     }
 
     .health-cards {
-      flex: 1;
+      flex: 1 1 30%;
+      min-width: 250px;
       display: flex;
       flex-direction: column;
       gap: 16px;

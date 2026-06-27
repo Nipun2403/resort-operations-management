@@ -74,6 +74,14 @@
 
     table {
       width: 100%;
+      table-layout: fixed;
+    }
+
+    th,
+    td {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     @media (max-width: 768px) {

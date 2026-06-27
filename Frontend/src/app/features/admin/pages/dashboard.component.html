@@ -84,23 +84,24 @@
           >
             <button mat-button (click)="loadAnalytics()">Retry</button>
           </app-alert>
-        } @else {
-          <div
-            echarts
-            [options]="revenueChartOptions()"
-            class="chart"
-          ></div>
         }
+        <div
+          echarts
+          [options]="revenueChartOptions()"
+          #chartRef
+          class="chart"
+          style="height: 400px; width: 100%;"
+        ></div>
       </div>
 
       <div class="chart-container" aria-label="Expenditure chart">
-        @if (!analyticsLoading() && !analyticsError()) {
-          <div
-            echarts
-            [options]="expenditureChartOptions()"
-            class="chart"
-          ></div>
-        }
+        <div
+          echarts
+          [options]="expenditureChartOptions()"
+          #chartRef
+          class="chart"
+          style="height: 400px; width: 100%;"
+        ></div>
       </div>
     </div>
 

@@ -13,15 +13,17 @@
     @for (room of rooms(); track room.roomId) {
       <div
         class="room-card"
-        [class.occupied]="room.status === 'Occupied'"
-        [class.available]="room.status === 'Available'"
+        [ngClass]="getStatusClass(room.status)"
         (click)="roomClicked.emit(room)"
         [matTooltip]="tooltipContent(room)"
         matTooltipPosition="above"
         [attr.aria-label]="room.roomNumber + ' - ' + room.status"
       >
         <span class="room-number">{{ room.roomNumber }}</span>
-        <mat-icon aria-hidden="true">{{ room.status === 'Occupied' ? 'lock' : 'lock_open' }}</mat-icon>
+        <mat-icon
+          >{{ (room.status ?? '').toLowerCase() === 'occupied' ? 'lock' : 'lock_open'
+          }}</mat-icon
+        >
       </div>
     } @empty {
       <p>No room statuses available.</p>

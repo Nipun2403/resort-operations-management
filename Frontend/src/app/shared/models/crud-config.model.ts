@@ -17,6 +17,7 @@ export interface ColumnDef {
   sortable: boolean;
   getValue: (row: any) => string;
   cellTemplate?: TemplateRef<any>;
+  width?: string;
 }
 
 export interface FormFieldDef {
