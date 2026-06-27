@@ -85,70 +85,10 @@ public class AmenitiesController : ControllerBase
         [FromQuery] int pageSize = 10,
         [FromQuery] string? searchQuery = null,      // NEW
         [FromQuery] string? sortBy = null,           // NEW
-        [FromQuery] bool sortDescending = false)     // NEW
+        [FromQuery] bool sortDescending = false,
+        [FromQuery] bool isAvailable = true)
     {
-        pageSize = Math.Min(pageSize, 100);
-        var amenities = await _amenityService.GetAllAmenitiesAsync(
-            pageNumber,
-            pageSize,
-            searchQuery,
-            sortBy,
-            sortDescending);
-        return Ok(amenities);
-    }
 
-    [HttpGet("{id}")]
-    [Authorize(Roles = "Admin,FrontDesk,RegisteredUser")]
-    public async Task<IActionResult> GetAmenity(int id)
-    {
-        var amenity = await _amenityService.GetAmenityByIdAsync(id);
-        if (amenity == null) return NotFound("Amenity not found.");
-        return Ok(amenity);
-    }
-
-    [HttpPost]
-    [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> CreateAmenity([FromBody] CreateUpdateAmenityDTO request)
-    {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-
-        var amenity = await _amenityService.CreateAmenityAsync(request);
-        return CreatedAtAction(nameof(GetAmenity), new { id = amenity.Id }, amenity);
-    }
-
-    [HttpPut("{id}")]
-    [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> UpdateAmenity(int id, [FromBody] CreateUpdateAmenityDTO request)
-    {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-
-        try
-        {
-            await _amenityService.UpdateAmenityAsync(id, request);
-            return Ok(new { Message = "Amenity updated successfully." });
-        }
-        catch (ArgumentException ex)
-        {
-            return NotFound(ex.Message);
-        }
-    }
-
-    [HttpPatch("{id}/status")]
-    [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> UpdateAmenityStatus(int id, [FromQuery] bool isAvailable)
-    {
-        try
-        {
-            await _amenityService.UpdateAmenityStatusAsync(id, isAvailable);
-            return Ok(new { Message = $"Amenity availability updated to {isAvailable}." });
-        }
-        catch (ArgumentException ex)
-        {
-            return NotFound(ex.Message);
-        }
-    }
-}
-```
 
 #### File: [Backend/HotelManagement.API/Controllers/AnalyticsController.cs](./Backend/HotelManagement.API/Controllers/AnalyticsController.cs) : lines 1-32
 ```csharp

@@ -1,6 +1,6 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, Validators } from '@angular/forms';
+import { ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
@@ -15,6 +15,18 @@ import {
 } from '../../../../shared/models/crud-config.model';
 import { MenuItemApiService } from '../../services/menu-item-api.service';
 import { MenuItem, CreateMenuItemDTO, UpdateMenuItemDTO } from '../../models/menu-item.model';
+
+/** Validator that requires at least one letter if a value is present */
+function optionalLetterPattern(
+  control: AbstractControl,
+): ValidationErrors | null {
+  const value = control.value as string;
+  if (!value || value.trim().length === 0) {
+    return null; // empty is valid
+  }
+  const regex = /^(?=.*[a-zA-Z])[a-zA-Z0-9\s\-']+$/;
+  return regex.test(value) ? null : { pattern: true };
+}
 
 @Component({
   selector: 'app-menu-management',
@@ -96,7 +108,7 @@ export class MenuManagementComponent implements OnInit {
         key: 'category',
         label: 'Category',
         type: 'text',
-        validators: [Validators.maxLength(100)], // optional, but max length enforced
+        validators: [Validators.maxLength(100), optionalLetterPattern],
         showInAdd: true,
         showInEdit: true,
       },
