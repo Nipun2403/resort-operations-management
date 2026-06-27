@@ -18,7 +18,7 @@
               }
             </mat-select>
             @if (getControl(field.key).invalid && getControl(field.key).touched) {
-              <mat-error>{{ field.label }} is required.</mat-error>
+              <mat-error>{{ getErrorMessage(field, getControl(field.key)) }}</mat-error>
             }
           </mat-form-field>
         } @else if (field.type === 'textarea') {
@@ -26,7 +26,7 @@
             <mat-label>{{ field.label }}</mat-label>
             <textarea matInput rows="3" [formControl]="getControl(field.key)"></textarea>
             @if (getControl(field.key).invalid && getControl(field.key).touched) {
-              <mat-error>{{ field.label }} is required.</mat-error>
+              <mat-error>{{ getErrorMessage(field, getControl(field.key)) }}</mat-error>
             }
           </mat-form-field>
         } @else {
@@ -34,7 +34,7 @@
             <mat-label>{{ field.label }}</mat-label>
             <input matInput [type]="field.type" [formControl]="getControl(field.key)" />
             @if (getControl(field.key).invalid && getControl(field.key).touched) {
-              <mat-error>{{ field.label }} is required.</mat-error>
+              <mat-error>{{ getErrorMessage(field, getControl(field.key)) }}</mat-error>
             }
           </mat-form-field>
         }

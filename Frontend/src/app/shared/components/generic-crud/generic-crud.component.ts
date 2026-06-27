@@ -30,7 +30,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CrudConfig, CrudModalData, CrudModalResult } from '../../models/crud-config.model';
 import { CardsViewComponent } from './cards-view/cards-view.component';
 import { CrudModalComponent } from './crud-modal/crud-modal.component';
-import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { AlertComponent } from '../../../features/auth/components/alert.component';
 
 @Component({
@@ -186,32 +185,11 @@ export class GenericCrudComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((result: CrudModalResult | null) => {
         if (result) {
-          if (result.isActive === false && result.previousIsActive === true) {
-            this.showDisableConfirmation(result);
-          } else {
-            this.save.emit({ formValue: result.formValue, isActive: result.isActive, entityId: result.entityId });
-          }
+          this.save.emit({ formValue: result.formValue, isActive: result.isActive, entityId: result.entityId });
         }
         // Reset modal state
         this.modalError.set(null);
         this.selectedEntity.set(null);
-      });
-  }
-
-  private showDisableConfirmation(result: CrudModalResult): void {
-    const confirmRef = this.dialog.open(ConfirmDialogComponent, {
-      data: {
-        title: `Disable ${this.config().entityName}?`,
-        message: `This will make it unavailable to guests.`,
-      },
-    });
-    confirmRef
-      .afterClosed()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((confirmed) => {
-        if (confirmed) {
-          this.save.emit({ formValue: result.formValue, isActive: false, entityId: result.entityId });
-        }
       });
   }
 }

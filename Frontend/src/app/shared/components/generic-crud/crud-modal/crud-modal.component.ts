@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, AbstractControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -84,5 +84,32 @@ export class CrudModalComponent implements OnInit {
 
   cancel(): void {
     this.dialogRef.close(null);
+  }
+
+  getErrorMessage(field: FormFieldDef, control: AbstractControl): string | null {
+    if (!control.errors || !control.touched) return null;
+    const errors = control.errors;
+    if (errors['required']) {
+      return `${field.label} is required.`;
+    }
+    if (errors['email'] || (field.type === 'email' && errors['pattern'])) {
+      return 'Please enter a valid email address.';
+    }
+    if (errors['pattern']) {
+      return `${field.label} contains invalid characters or format.`;
+    }
+    if (errors['min']) {
+      return `${field.label} must be at least ${errors['min'].min}.`;
+    }
+    if (errors['max']) {
+      return `${field.label} must be at most ${errors['max'].max}.`;
+    }
+    if (errors['minlength']) {
+      return `${field.label} must be at least ${errors['minlength'].requiredLength} characters.`;
+    }
+    if (errors['maxlength']) {
+      return `${field.label} must be at most ${errors['maxlength'].requiredLength} characters.`;
+    }
+    return `${field.label} is invalid.`;
   }
 }

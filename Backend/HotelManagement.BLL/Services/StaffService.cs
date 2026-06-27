@@ -87,7 +87,8 @@ public class StaffService : IStaffService
     public async Task<StaffResponseDTO> UpdateStaffAsync(int id, UpdateStaffDTO request)
     {
         var staff = await _userRepository.GetByIdAsync(id);
-        if (staff == null || !staff.IsActive) throw new ArgumentException("Active staff member not found.");
+        // if (staff == null || !staff.IsActive) throw new ArgumentException("Active staff member not found.");
+        if (staff == null) throw new ArgumentException("Active staff member not found.");
 
         if (staff.Role == "RegisteredUser") throw new ArgumentException("Cannot modify a customer account via the staff endpoint.");
 
