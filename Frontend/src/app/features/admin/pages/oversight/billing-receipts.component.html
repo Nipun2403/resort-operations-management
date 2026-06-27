@@ -1,0 +1,400 @@
+<div class="billing-receipts">
+  <!-- Toggle -->
+  <div class="toggle-row">
+    <mat-button-toggle-group
+      [formControl]="activeView"
+      (change)="onViewToggle()"
+      aria-label="View"
+    >
+      <mat-button-toggle value="bookings">Bookings</mat-button-toggle>
+      <mat-button-toggle value="receipts">Receipts</mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+
+  <!-- Bookings View -->
+  @if (activeView.value === 'bookings') {
+  <div class="bookings-view">
+    <!-- Search & Filters -->
+    <div class="controls">
+      <mat-form-field
+        appearance="outline"
+        class="search"
+      >
+        <mat-label>Search guest name or email</mat-label>
+        <input
+          matInput
+          [formControl]="bookingSearch"
+          (keyup)="onBookingSearchDebounced()"
+        />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Status</mat-label>
+        <mat-select [formControl]="bookingStatus">
+          <mat-option value="">All</mat-option>
+          <mat-option value="Booked">Booked</mat-option>
+          <mat-option value="CheckedIn">Checked In</mat-option>
+          <mat-option value="CheckedOut">Checked Out</mat-option>
+          <mat-option value="Cancelled">Cancelled</mat-option>
+        </mat-select>
+      </mat-form-field>
+      @if (bookingStatus.value || bookingSearch.value) {
+      <button
+        mat-button
+        (click)="clearBookingFilters()"
+      >
+        Clear Filters
+      </button>
+      }
+    </div>
+
+    <!-- Loading / Error / Content -->
+    @if (bookingsLoading() && bookings().length === 0) {
+    <div class="loading"><mat-spinner diameter="40"></mat-spinner></div>
+    } @else if (bookingsError()) {
+    <app-alert
+      type="error"
+      [message]="bookingsError()!"
+      (closed)="bookingsError.set(null)"
+    >
+      <button
+        mat-button
+        (click)="fetchBookings()"
+      >
+        Retry
+      </button>
+    </app-alert>
+    } @if (bookings().length > 0 || bookingsLoading()) { @if (bookingsLoading())
+    {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+    <table
+      mat-table
+      [dataSource]="bookings()"
+      matSort
+      (matSortChange)="onBookingSort($event)"
+      aria-label="Bookings"
+    >
+      <ng-container matColumnDef="id"
+        ><th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header="id"
+        >
+          ID
+        </th>
+        <td
+          mat-cell
+          *matCellDef="let b"
+        >
+          {{ b.id }}
+        </td></ng-container
+      >
+      <ng-container matColumnDef="guestName"
+        ><th
+          mat-header-cell
+          *matHeaderCellDef
+        >
+          Guest
+        </th>
+        <td
+          mat-cell
+          *matCellDef="let b"
+        >
+          {{ b.guestName }}
+        </td></ng-container
+      >
+      <ng-container matColumnDef="checkIn"
+        ><th
+          mat-header-cell
+          *matHeaderCellDef
+        >
+          Check-In
+        </th>
+        <td
+          mat-cell
+          *matCellDef="let b"
+        >
+          {{ b.checkInDate }}
+        </td></ng-container
+      >
+      <ng-container matColumnDef="checkOut"
+        ><th
+          mat-header-cell
+          *matHeaderCellDef
+        >
+          Check-Out
+        </th>
+        <td
+          mat-cell
+          *matCellDef="let b"
+        >
+          {{ b.checkOutDate }}
+        </td></ng-container
+      >
+      <ng-container matColumnDef="status"
+        ><th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header="bookingStatus"
+        >
+          Status
+        </th>
+        <td
+          mat-cell
+          *matCellDef="let b"
+        >
+          <span
+            class="status-chip"
+            [class]="b.bookingStatus"
+            >{{ b.bookingStatus }}</span
+          >
+        </td></ng-container
+      >
+      <ng-container matColumnDef="rooms"
+        ><th
+          mat-header-cell
+          *matHeaderCellDef
+        >
+          Rooms
+        </th>
+        <td
+          mat-cell
+          *matCellDef="let b"
+        >
+          {{ getRoomsSummary(b) }}
+        </td></ng-container
+      >
+      <ng-container matColumnDef="actions"
+        ><th
+          mat-header-cell
+          *matHeaderCellDef
+        >
+          Actions
+        </th>
+        <td
+          mat-cell
+          *matCellDef="let b"
+        >
+          <button
+            mat-icon-button
+            (click)="openBookingDetail(b); $event.stopPropagation()"
+            aria-label="View booking"
+          >
+            <mat-icon>visibility</mat-icon>
+          </button>
+        </td></ng-container
+      >
+      <tr
+        mat-header-row
+        *matHeaderRowDef="['id','guestName','checkIn','checkOut','status','rooms','actions']"
+      ></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: ['id','guestName','checkIn','checkOut','status','rooms','actions']"
+        (click)="openBookingDetail(row)"
+        class="clickable-row"
+      ></tr>
+    </table>
+    <mat-paginator
+      [length]="bookingsTotal()"
+      [pageIndex]="bookingPage()"
+      [pageSize]="bookingPageSize()"
+      [pageSizeOptions]="[10,25,50]"
+      (page)="onBookingPage($event)"
+    ></mat-paginator>
+    } @else {
+    <div class="empty-state"><p>No bookings found.</p></div>
+    }
+  </div>
+  }
+
+  <!-- Receipts View -->
+  @if (activeView.value === 'receipts') {
+  <div class="receipts-view">
+    <!-- Date Filters -->
+    <div class="controls">
+      <mat-form-field appearance="outline">
+        <mat-label>Start date</mat-label>
+        <input
+          matInput
+          [matDatepicker]="recStartPicker"
+          [formControl]="receiptStartDate"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="recStartPicker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #recStartPicker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>End date</mat-label>
+        <input
+          matInput
+          [matDatepicker]="recEndPicker"
+          [formControl]="receiptEndDate"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="recEndPicker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #recEndPicker></mat-datepicker>
+      </mat-form-field>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="applyReceiptDateFilter()"
+      >
+        Apply
+      </button>
+      <button
+        mat-button
+        (click)="clearReceiptDateFilter()"
+      >
+        Clear
+      </button>
+    </div>
+
+    @if (receiptsLoading() && receipts().length === 0) {
+    <div class="loading"><mat-spinner diameter="40"></mat-spinner></div>
+    } @else if (receiptsError()) {
+    <app-alert
+      type="error"
+      [message]="receiptsError()!"
+      (closed)="receiptsError.set(null)"
+    >
+      <button
+        mat-button
+        (click)="fetchReceipts()"
+      >
+        Retry
+      </button>
+    </app-alert>
+    } @if (receipts().length > 0 || receiptsLoading()) { @if (receiptsLoading())
+    {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+    <table
+      mat-table
+      [dataSource]="receipts()"
+      matSort
+      (matSortChange)="onReceiptSort($event)"
+      aria-label="Receipts"
+    >
+      <ng-container matColumnDef="id"
+        ><th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header="id"
+        >
+          ID
+        </th>
+        <td
+          mat-cell
+          *matCellDef="let r"
+        >
+          {{ r.id }}
+        </td></ng-container
+      >
+      <ng-container matColumnDef="bookingId"
+        ><th
+          mat-header-cell
+          *matHeaderCellDef
+        >
+          Booking ID
+        </th>
+        <td
+          mat-cell
+          *matCellDef="let r"
+        >
+          {{ r.bookingId }}
+        </td></ng-container
+      >
+      <ng-container matColumnDef="amountPaid"
+        ><th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header="amountPaid"
+        >
+          Amount
+        </th>
+        <td
+          mat-cell
+          *matCellDef="let r"
+        >
+          {{ r.amountPaid | currency }}
+        </td></ng-container
+      >
+      <ng-container matColumnDef="paymentMethod"
+        ><th
+          mat-header-cell
+          *matHeaderCellDef
+        >
+          Payment Method
+        </th>
+        <td
+          mat-cell
+          *matCellDef="let r"
+        >
+          {{ r.paymentMethod }}
+        </td></ng-container
+      >
+      <ng-container matColumnDef="paidAt"
+        ><th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header="paidAt"
+        >
+          Paid At
+        </th>
+        <td
+          mat-cell
+          *matCellDef="let r"
+        >
+          {{ r.paidAt | date:'medium' }}
+        </td></ng-container
+      >
+      <ng-container matColumnDef="actions"
+        ><th
+          mat-header-cell
+          *matHeaderCellDef
+        >
+          Actions
+        </th>
+        <td
+          mat-cell
+          *matCellDef="let r"
+        >
+          <button
+            mat-icon-button
+            (click)="openReceiptDetail(r); $event.stopPropagation()"
+            aria-label="View receipt"
+          >
+            <mat-icon>visibility</mat-icon>
+          </button>
+        </td></ng-container
+      >
+      <tr
+        mat-header-row
+        *matHeaderRowDef="['id','bookingId','amountPaid','paymentMethod','paidAt','actions']"
+      ></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: ['id','bookingId','amountPaid','paymentMethod','paidAt','actions']"
+        (click)="openReceiptDetail(row)"
+        class="clickable-row"
+      ></tr>
+    </table>
+    <mat-paginator
+      [length]="receiptsTotal()"
+      [pageIndex]="receiptPage()"
+      [pageSize]="receiptPageSize()"
+      [pageSizeOptions]="[10,25,50]"
+      (page)="onReceiptPage($event)"
+    ></mat-paginator>
+    } @else {
+    <div class="empty-state"><p>No receipts found.</p></div>
+    }
+  </div>
+  }
+</div>

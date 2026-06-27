@@ -1,0 +1,42 @@
+<h2 mat-dialog-title>Booking Details (#{{ data.id }})</h2>
+<mat-dialog-content>
+  <div class="booking-dialog-container">
+    <div class="info-section">
+      <h3>Guest Info</h3>
+      <p><strong>Name:</strong> {{ data.guestName }}</p>
+      <p><strong>Email:</strong> {{ data.guestEmail }}</p>
+      <p><strong>Guest Count:</strong> {{ data.guestCount }}</p>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="info-section">
+      <h3>Stay Dates</h3>
+      <p><strong>Check-In:</strong> {{ data.checkInDate }}</p>
+      <p><strong>Check-Out:</strong> {{ data.checkOutDate }}</p>
+      <p><strong>Booked At:</strong> {{ data.bookedAt | date:'medium' }}</p>
+      <p>
+        <strong>Status:</strong>
+        <span class="status-chip" [class]="data.bookingStatus">{{ data.bookingStatus }}</span>
+      </p>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="info-section">
+      <h3>Rooms</h3>
+      <mat-list>
+        @for (room of data.rooms; track room.id) {
+          <mat-list-item>
+            <mat-icon matListItemIcon>meeting_room</mat-icon>
+            <span matListItemTitle>Room {{ room.roomNumber || 'Not Assigned' }}</span>
+            <span matListItemLine>Price: {{ room.lockedInPrice | currency }}</span>
+          </mat-list-item>
+        }
+      </mat-list>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Close</button>
+</mat-dialog-actions>

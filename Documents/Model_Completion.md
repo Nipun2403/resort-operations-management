@@ -1171,6 +1171,97 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: billings-receipts.md
+Date: 2026-06-27
+================================================================================
+
+FILES CREATED
+-------------
+✓ src/app/features/admin/models/booking.model.ts
+✓ src/app/features/admin/models/receipt.model.ts
+✓ src/app/features/admin/services/booking-api.service.ts
+✓ src/app/features/admin/services/billing-api.service.ts
+✓ src/app/features/admin/pages/oversight/booking-detail-dialog.component.ts
+✓ src/app/features/admin/pages/oversight/booking-detail-dialog.component.html
+✓ src/app/features/admin/pages/oversight/receipt-detail-dialog.component.ts
+✓ src/app/features/admin/pages/oversight/receipt-detail-dialog.component.html
+✓ src/app/features/admin/pages/oversight/billing-receipts.component.html
+✓ src/app/features/admin/pages/oversight/billing-receipts.component.scss
+
+FILES MODIFIED
+--------------
+✓ src/app/features/admin/pages/oversight/billing-receipts.component.ts (overwritten placeholder)
+✓ src/app/app.routes.ts — updated lazy routing from PlaceholderBillingReceiptsComponent to BillingReceiptsComponent
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Bookings View (§4, §5, §6)
+  ✓ Search guest by name or email with debounced search query (300ms).
+  ✓ Status filter dropdown mapping status strings.
+  ✓ Server-side sorting on table headers (ID, status).
+  ✓ Server-side pagination via Paginator.
+  ✓ Custom helper getRoomsSummary() returns formatted list of room numbers/types.
+  ✓ Clicking row or visibility button opens app-booking-detail-dialog dialog.
+✓ Receipts View (§4, §5, §6)
+  ✓ Custom start/end date range filters.
+  ✓ applyReceiptDateFilter formats start and end dates to "dd-MM-yyyy" query parameters.
+  ✓ Server-side sorting on table headers (ID, amountPaid, paidAt).
+  ✓ Server-side pagination via Paginator.
+  ✓ Clicking row or visibility button opens app-receipt-detail-dialog dialog.
+✓ API Error Handling (§6)
+  ✓ extractErrorMessage() helper extracts messages correctly from Backend shapes.
+✓ Detail Modals (§7)
+  ✓ app-booking-detail-dialog renders full Booking DTO properties.
+  ✓ app-receipt-detail-dialog renders full Receipt DTO properties.
+✓ Session Storage Sync (§8)
+  ✓ restoreState and saveState implemented verbatim matching STORAGE_KEY 'billingReceiptsState'.
+✓ Layout & Styling (§10)
+  ✓ Material tables scroll horizontally on mobile.
+  ✓ Filter controls stack vertically on small screens.
+  ✓ Detail modals use 90% viewport width.
+
+API INTEGRATION
+---------------
+✓ GET  /api/v1/bookings — status, guestQuery, pageNumber, pageSize, sortBy, sortDescending
+✓ GET  /api/v1/billing/receipts — startDate, endDate, pageNumber, pageSize, sortBy, sortDescending
+
+LOGIC TRACES
+------------
+Flow: Search Booking Name
+  Entry: User types 'John' into search box
+  Path: bookingSearch input -> valueChanges -> debounceTime(300) -> bookingPage(0) -> saveState() -> fetchBookings() [API call with guestQuery='John']
+  Result: ✓ Matches spec
+
+Flow: Filter Receipts by Date Range
+  Entry: User enters dates and clicks Apply
+  Path: Apply button -> applyReceiptDateFilter() -> receiptPage(0) -> saveState() -> fetchReceipts() [API call with startDate and endDate formatted as dd-MM-yyyy]
+  Result: ✓ Matches spec
+
+KNOWN DEVIATIONS
+----------------
+* The import path for AlertComponent was updated from the spec's `../../../../shared/components/alert/alert.component` to `../../../../features/auth/components/alert.component` because the alert component is in auth features and does not exist in shared. This prevents compilation errors.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+☑ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+☑ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+☑ I confirm that all API calls match the spec contracts exactly.
+☑ I confirm that all regex validators are character-for-character matches
+  to the spec.
+☑ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+
 
 
 

@@ -1,0 +1,15 @@
+<h2 mat-dialog-title>Receipt Details (#{{ data.id }})</h2>
+<mat-dialog-content>
+  <div class="receipt-dialog-container">
+    <div class="info-section">
+      <p><strong>Booking ID:</strong> {{ data.bookingId }}</p>
+      <p><strong>Amount Paid:</strong> {{ data.amountPaid | currency }}</p>
+      <p><strong>Payment Method:</strong> {{ data.paymentMethod }}</p>
+      <p><strong>Transaction ID:</strong> {{ data.transactionId || '—' }}</p>
+      <p><strong>Paid At:</strong> {{ data.paidAt | date:'medium' }}</p>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Close</button>
+</mat-dialog-actions>
