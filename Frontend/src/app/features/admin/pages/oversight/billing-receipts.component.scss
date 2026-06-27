@@ -60,6 +60,49 @@
     }
   }
 
+  .bookings-view {
+    table {
+      table-layout: fixed;
+
+      th,
+      td {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      // 7 columns: id, guestName, checkIn, checkOut, status, rooms, actions
+      th:nth-child(1) { width: 8%; }   // id
+      th:nth-child(2) { width: 18%; }  // guestName
+      th:nth-child(3) { width: 14%; }  // checkIn
+      th:nth-child(4) { width: 14%; }  // checkOut
+      th:nth-child(5) { width: 12%; }  // status
+      th:nth-child(6) { width: 19%; }  // rooms
+      th:nth-child(7) { width: 15%; }  // actions
+    }
+  }
+
+  .receipts-view {
+    table {
+      table-layout: fixed;
+
+      th,
+      td {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      // 6 columns: id, bookingId, amountPaid, paymentMethod, paidAt, actions
+      th:nth-child(1) { width: 10%; }   // id
+      th:nth-child(2) { width: 15%; }   // bookingId
+      th:nth-child(3) { width: 15%; }   // amountPaid
+      th:nth-child(4) { width: 20%; }   // paymentMethod
+      th:nth-child(5) { width: 25%; }   // paidAt
+      th:nth-child(6) { width: 15%; }   // actions
+    }
+  }
+
   .status-chip {
     display: inline-block;
     padding: 4px 12px;

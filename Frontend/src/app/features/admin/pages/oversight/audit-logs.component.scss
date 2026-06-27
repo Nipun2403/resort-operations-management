@@ -34,11 +34,27 @@
     border-radius: 8px;
     overflow: hidden;
     border: 1px solid rgba(0, 0, 0, 0.05);
+    table-layout: fixed;
+
+    th,
+    td {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
 
     th {
       font-weight: 600;
       color: #424242;
     }
+
+    // 6 columns: id, entityName, action, changedBy, timestamp, actions
+    th:nth-child(1) { width: 10%; }  // id
+    th:nth-child(2) { width: 15%; }  // entity
+    th:nth-child(3) { width: 15%; }  // action
+    th:nth-child(4) { width: 20%; }  // changedBy
+    th:nth-child(5) { width: 25%; }  // timestamp
+    th:nth-child(6) { width: 15%; }  // actions
 
     tr.clickable-row {
       cursor: pointer;

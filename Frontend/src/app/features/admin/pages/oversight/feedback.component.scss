@@ -30,11 +30,28 @@
     border-radius: 8px;
     overflow: hidden;
     border: 1px solid rgba(0, 0, 0, 0.05);
+    table-layout: fixed;
+
+    th,
+    td {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
 
     th {
       font-weight: 600;
       color: #424242;
     }
+
+    // 7 columns: id, bookingId, rating, comments, createdAt, isHidden, actions
+    th:nth-child(1) { width: 8%; }   // id
+    th:nth-child(2) { width: 10%; }  // bookingId
+    th:nth-child(3) { width: 10%; }  // rating
+    th:nth-child(4) { width: 30%; }  // comments (longer)
+    th:nth-child(5) { width: 17%; }  // createdAt
+    th:nth-child(6) { width: 10%; }  // isHidden
+    th:nth-child(7) { width: 15%; }  // actions
 
     tr.mat-row {
       transition: background-color 0.2s ease;
