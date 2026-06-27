@@ -18,15 +18,16 @@ public class RoomsController : ControllerBase
     [HttpGet]
     [Authorize(Roles = "Admin,FrontDesk")]
     public async Task<IActionResult> GetRooms(
-        [FromQuery] int pageNumber = 1, 
-        [FromQuery] int pageSize = 10, 
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
         [FromQuery] int? roomTypeId = null,
         [FromQuery] bool includeRetired = false,
+        [FromQuery] string? searchQuery = null,
         [FromQuery] string? sortBy = null,
         [FromQuery] bool sortDescending = false)
     {
         pageSize = Math.Min(pageSize, 100);
-        var rooms = await _roomService.GetRoomsAsync(pageNumber, pageSize, roomTypeId, includeRetired, sortBy, sortDescending);
+        var rooms = await _roomService.GetRoomsAsync(pageNumber, pageSize, roomTypeId, includeRetired, sortBy, sortDescending, searchQuery);
         return Ok(rooms);
     }
 
@@ -78,8 +79,8 @@ public class RoomsController : ControllerBase
     [HttpGet("status")]
     [Authorize(Roles = "Admin,FrontDesk")]
     public async Task<IActionResult> GetRoomStatusDashboard(
-        [FromQuery] int pageNumber = 1, 
-        [FromQuery] int pageSize = 10, 
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
         [FromQuery] int? roomTypeId = null,
         [FromQuery] string? sortBy = null,
         [FromQuery] bool sortDescending = false)
