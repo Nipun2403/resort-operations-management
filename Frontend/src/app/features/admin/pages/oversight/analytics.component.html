@@ -1,0 +1,388 @@
+<div class="analytics-page">
+  <!-- Date range controls -->
+  <div class="controls">
+    <mat-button-toggle-group
+      [formControl]="presetControl"
+      (change)="onPresetChange()"
+    >
+      <mat-button-toggle value="last7">Last 7 days</mat-button-toggle>
+      <mat-button-toggle value="last30">Last 30 days</mat-button-toggle>
+      <mat-button-toggle value="thisMonth">This month</mat-button-toggle>
+      <mat-button-toggle value="custom">Custom</mat-button-toggle>
+    </mat-button-toggle-group>
+    @if (presetControl.value === 'custom') {
+      <mat-form-field appearance="outline">
+        <mat-label>Start date</mat-label>
+        <input
+          matInput
+          [matDatepicker]="startPicker"
+          [formControl]="startDateCtrl"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="startPicker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>End date</mat-label>
+        <input
+          matInput
+          [matDatepicker]="endPicker"
+          [formControl]="endDateCtrl"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="endPicker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+      </mat-form-field>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="applyCustomRange()"
+      >
+        Apply
+      </button>
+    }
+  </div>
+
+  <!-- Loading / Error -->
+  @if (loading() && !analytics()) {
+    <div class="loading"><mat-spinner diameter="40"></mat-spinner></div>
+  } @else if (error()) {
+    <app-alert
+      type="error"
+      [message]="error()!"
+      (closed)="error.set(null)"
+    >
+      <button
+        mat-button
+        (click)="fetchData()"
+      >
+        Retry
+      </button>
+    </app-alert>
+  } @else {
+    <!-- Tab group -->
+    <mat-tab-group (selectedTabChange)="onTabChange($event)">
+      <!-- Revenue Tab -->
+      <mat-tab label="Revenue">
+        <div class="tab-content" *ngIf="analytics() as d">
+          <div class="kpi-grid">
+            <mat-card class="kpi-card">
+              <mat-card-header>
+                <mat-card-title>Total Revenue</mat-card-title>
+                <mat-card-subtitle>Overall earnings</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content class="kpi-value">
+                ${{ d.totalRevenue | number: '1.2-2' }}
+              </mat-card-content>
+            </mat-card>
+
+            <mat-card class="kpi-card">
+              <mat-card-header>
+                <mat-card-title>Gross Turnover</mat-card-title>
+                <mat-card-subtitle>Gross transaction value</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content class="kpi-value">
+                ${{ d.grossTurnover | number: '1.2-2' }}
+              </mat-card-content>
+            </mat-card>
+
+            <mat-card class="kpi-card">
+              <mat-card-header>
+                <mat-card-title>RevPAR</mat-card-title>
+                <mat-card-subtitle>Revenue per available room</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content class="kpi-value">
+                ${{ d.revPAR | number: '1.2-2' }}
+              </mat-card-content>
+            </mat-card>
+
+            <mat-card class="kpi-card">
+              <mat-card-header>
+                <mat-card-title>Average Daily Rate</mat-card-title>
+                <mat-card-subtitle>Average price per occupied room</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content class="kpi-value">
+                ${{ d.averageDailyRate | number: '1.2-2' }}
+              </mat-card-content>
+            </mat-card>
+          </div>
+
+          <div class="charts-grid">
+            <mat-card class="chart-card">
+              <mat-card-content>
+                <div echarts [options]="revenueBarOptions()" class="chart-container"></div>
+              </mat-card-content>
+            </mat-card>
+            <mat-card class="chart-card">
+              <mat-card-content>
+                <div echarts [options]="revParGaugeOptions()" class="chart-container"></div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Operations Tab -->
+      <mat-tab label="Operations">
+        <div class="tab-content" *ngIf="analytics() as d">
+          <div class="kpi-grid">
+            <mat-card class="kpi-card">
+              <mat-card-header>
+                <mat-card-title>Occupancy Rate</mat-card-title>
+                <mat-card-subtitle>Percentage of rooms filled</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content class="kpi-value">
+                {{ d.occupancyRate | number: '1.1-1' }}%
+              </mat-card-content>
+            </mat-card>
+
+            <mat-card class="kpi-card">
+              <mat-card-header>
+                <mat-card-title>Housekeeping Turnaround</mat-card-title>
+                <mat-card-subtitle>Average minutes per clean</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content class="kpi-value">
+                {{ d.averageHousekeepingTurnaroundMinutes | number: '1.0-0' }}m
+              </mat-card-content>
+            </mat-card>
+
+            <mat-card class="kpi-card">
+              <mat-card-header>
+                <mat-card-title>Cancellation Rate</mat-card-title>
+                <mat-card-subtitle>Percentage of bookings cancelled</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content class="kpi-value">
+                {{ d.cancellationRate | number: '1.1-1' }}%
+              </mat-card-content>
+            </mat-card>
+
+            <mat-card class="kpi-card">
+              <mat-card-header>
+                <mat-card-title>Avg Length of Stay</mat-card-title>
+                <mat-card-subtitle>Average nights per booking</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content class="kpi-value">
+                {{ d.averageLengthOfStay | number: '1.1-1' }} nights
+              </mat-card-content>
+            </mat-card>
+          </div>
+
+          <div class="charts-grid">
+            <mat-card class="chart-card">
+              <mat-card-content>
+                <div echarts [options]="occupancyGaugeOptions()" class="chart-container"></div>
+              </mat-card-content>
+            </mat-card>
+            <mat-card class="chart-card">
+              <mat-card-content>
+                <div echarts [options]="radarOptions()" class="chart-container"></div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Guests Tab -->
+      <mat-tab label="Guests">
+        <div class="tab-content" *ngIf="analytics() as d">
+          <div class="kpi-grid">
+            <mat-card class="kpi-card">
+              <mat-card-header>
+                <mat-card-title>Satisfaction Score</mat-card-title>
+                <mat-card-subtitle>Average feedback rating</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content class="kpi-value">
+                {{ d.guestSatisfactionScore | number: '1.1-1' }}%
+              </mat-card-content>
+            </mat-card>
+
+            <mat-card class="kpi-card">
+              <mat-card-header>
+                <mat-card-title>Food Expenditure</mat-card-title>
+                <mat-card-subtitle>Total spent on room service / restaurant</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content class="kpi-value">
+                ${{ d.nonRoomExpenditure.totalFoodSpend | number: '1.2-2' }}
+              </mat-card-content>
+            </mat-card>
+
+            <mat-card class="kpi-card">
+              <mat-card-header>
+                <mat-card-title>Amenities Expenditure</mat-card-title>
+                <mat-card-subtitle>Total spent on spa / pool / other facilities</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content class="kpi-value">
+                ${{ d.nonRoomExpenditure.totalAmenitySpend | number: '1.2-2' }}
+              </mat-card-content>
+            </mat-card>
+
+            <mat-card class="kpi-card">
+              <mat-card-header>
+                <mat-card-title>Highest Spend Category</mat-card-title>
+                <mat-card-subtitle>Most popular non-room service</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content class="kpi-value category-value">
+                {{ d.nonRoomExpenditure.highestSpendCategory || 'N/A' }}
+              </mat-card-content>
+            </mat-card>
+          </div>
+
+          <div class="charts-grid">
+            <mat-card class="chart-card">
+              <mat-card-content>
+                <div echarts [options]="satisfactionGaugeOptions()" class="chart-container"></div>
+              </mat-card-content>
+            </mat-card>
+            <mat-card class="chart-card">
+              <mat-card-content>
+                <div echarts [options]="expenditurePieOptions()" class="chart-container"></div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Comparison Tab -->
+      <mat-tab label="Comparison">
+        <div class="tab-content">
+          @if (!comparisonMode()) {
+            <div class="enable-comparison-container">
+              <p>Compare operational and financial performance between two distinct periods.</p>
+              <button
+                mat-raised-button
+                color="primary"
+                (click)="comparisonMode.set(true)"
+              >
+                Enable Comparison
+              </button>
+            </div>
+          } @else {
+            <div class="comparison-selectors">
+              <div class="comparison-column-selector">
+                <h3>Period 1 (Base Period)</h3>
+                <!-- Preset and custom selectors already bound at the page level represent Period 1 -->
+                <p>Configured using the main date controls above.</p>
+              </div>
+
+              <div class="comparison-column-selector">
+                <h3>Period 2 (Comparison Period)</h3>
+                <mat-button-toggle-group
+                  [formControl]="comparisonPresetControl"
+                  (change)="onComparisonPresetChange()"
+                >
+                  <mat-button-toggle value="last7">Last 7 days</mat-button-toggle>
+                  <mat-button-toggle value="last30">Last 30 days</mat-button-toggle>
+                  <mat-button-toggle value="thisMonth">This month</mat-button-toggle>
+                  <mat-button-toggle value="custom">Custom</mat-button-toggle>
+                </mat-button-toggle-group>
+                @if (comparisonPresetControl.value === 'custom') {
+                  <div class="custom-pickers-row">
+                    <mat-form-field appearance="outline">
+                      <mat-label>Start date</mat-label>
+                      <input
+                        matInput
+                        [matDatepicker]="compStartPicker"
+                        [formControl]="comparisonStartDateCtrl"
+                      />
+                      <mat-datepicker-toggle
+                        matSuffix
+                        [for]="compStartPicker"
+                      ></mat-datepicker-toggle>
+                      <mat-datepicker #compStartPicker></mat-datepicker>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                      <mat-label>End date</mat-label>
+                      <input
+                        matInput
+                        [matDatepicker]="compEndPicker"
+                        [formControl]="comparisonEndDateCtrl"
+                      />
+                      <mat-datepicker-toggle
+                        matSuffix
+                        [for]="compEndPicker"
+                      ></mat-datepicker-toggle>
+                      <mat-datepicker #compEndPicker></mat-datepicker>
+                    </mat-form-field>
+                    <button
+                      mat-raised-button
+                      color="primary"
+                      (click)="applyComparisonCustomRange()"
+                    >
+                      Apply
+                    </button>
+                  </div>
+                }
+              </div>
+            </div>
+
+            @if (analytics() && comparisonAnalytics()) {
+              <div class="comparison-grid">
+                <div class="comparison-column">
+                  <h3>Period 1 Results</h3>
+                  <div class="comparison-cards" *ngIf="analytics() as p1">
+                    <mat-card class="kpi-card">
+                      <mat-card-header>
+                        <mat-card-title>Revenue</mat-card-title>
+                      </mat-card-header>
+                      <mat-card-content class="kpi-value">${{ p1.totalRevenue | number: '1.2-2' }}</mat-card-content>
+                    </mat-card>
+                    <mat-card class="kpi-card">
+                      <mat-card-header>
+                        <mat-card-title>Occupancy</mat-card-title>
+                      </mat-card-header>
+                      <mat-card-content class="kpi-value">{{ p1.occupancyRate | number: '1.1-1' }}%</mat-card-content>
+                    </mat-card>
+                    <mat-card class="kpi-card">
+                      <mat-card-header>
+                        <mat-card-title>Satisfaction</mat-card-title>
+                      </mat-card-header>
+                      <mat-card-content class="kpi-value">{{ p1.guestSatisfactionScore | number: '1.1-1' }}%</mat-card-content>
+                    </mat-card>
+                  </div>
+                </div>
+
+                <div class="comparison-column">
+                  <h3>Period 2 Results</h3>
+                  <div class="comparison-cards" *ngIf="comparisonAnalytics() as p2">
+                    <mat-card class="kpi-card">
+                      <mat-card-header>
+                        <mat-card-title>Revenue</mat-card-title>
+                      </mat-card-header>
+                      <mat-card-content class="kpi-value">${{ p2.totalRevenue | number: '1.2-2' }}</mat-card-content>
+                    </mat-card>
+                    <mat-card class="kpi-card">
+                      <mat-card-header>
+                        <mat-card-title>Occupancy</mat-card-title>
+                      </mat-card-header>
+                      <mat-card-content class="kpi-value">{{ p2.occupancyRate | number: '1.1-1' }}%</mat-card-content>
+                    </mat-card>
+                    <mat-card class="kpi-card">
+                      <mat-card-header>
+                        <mat-card-title>Satisfaction</mat-card-title>
+                      </mat-card-header>
+                      <mat-card-content class="kpi-value">{{ p2.guestSatisfactionScore | number: '1.1-1' }}%</mat-card-content>
+                    </mat-card>
+                  </div>
+                </div>
+              </div>
+
+              <mat-card class="comparison-chart-card">
+                <mat-card-content>
+                  <div echarts [options]="comparisonBarOptions()" class="chart-container"></div>
+                </mat-card-content>
+              </mat-card>
+            } @else {
+              <div class="comparison-prompt">
+                <p>Configure Period 2 dates above to load the comparison dashboard.</p>
+              </div>
+            }
+          }
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  }
+</div>

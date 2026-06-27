@@ -36,7 +36,7 @@ export const routes: Routes = [
       {
         path: 'oversight',
         children: [
-          { path: 'analytics', loadComponent: () => import('./features/admin/pages/oversight/analytics.component').then(m => m.PlaceholderAnalyticsComponent) },
+          { path: 'analytics', loadComponent: () => import('./features/admin/pages/oversight/analytics.component').then(m => m.AnalyticsComponent) },
           { path: 'auditlogs', loadComponent: () => import('./features/admin/pages/oversight/audit-logs.component').then(m => m.PlaceholderAuditLogsComponent) },
           { path: 'billings-receipts', loadComponent: () => import('./features/admin/pages/oversight/billing-receipts.component').then(m => m.PlaceholderBillingReceiptsComponent) },
           { path: 'feedback', loadComponent: () => import('./features/admin/pages/oversight/feedback.component').then(m => m.PlaceholderFeedbackComponent) },
