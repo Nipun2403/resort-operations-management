@@ -67,6 +67,7 @@ export class CrudModalComponent implements OnInit {
       previousIsActive: this.data.supportsToggle && this.data.entity
         ? (this.data.entity.isActive ?? true)
         : true,
+      entityId: this.data.entity?.id,
     };
 
     this.dialogRef.close(result);

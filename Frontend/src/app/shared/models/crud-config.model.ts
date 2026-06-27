@@ -53,4 +53,6 @@ export interface CrudModalResult {
   formValue: any;
   isActive: boolean;
   previousIsActive: boolean;
+  entityId?: number;
 }
+

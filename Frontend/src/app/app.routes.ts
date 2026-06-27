@@ -27,7 +27,7 @@ export const routes: Routes = [
         path: 'management',
         children: [
           { path: 'room', loadComponent: () => import('./features/admin/pages/management/room-management.component').then(m => m.PlaceholderRoomManagementComponent) },
-          { path: 'room-type', loadComponent: () => import('./features/admin/pages/management/room-type-management.component').then(m => m.PlaceholderRoomTypeManagementComponent) },
+          { path: 'room-type', loadComponent: () => import('./features/admin/pages/management/room-type-management.component').then(m => m.RoomTypeManagementComponent) },
           { path: 'staff', loadComponent: () => import('./features/admin/pages/management/staff-management.component').then(m => m.PlaceholderStaffManagementComponent) },
           { path: 'amenities', loadComponent: () => import('./features/admin/pages/management/amenities-management.component').then(m => m.PlaceholderAmenitiesManagementComponent) },
           { path: 'menu', loadComponent: () => import('./features/admin/pages/management/menu-management.component').then(m => m.PlaceholderMenuManagementComponent) },

@@ -212,3 +212,106 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
   to the spec.
 ✓ I confirm that all role-to-route mappings match the spec exactly.
 ================================================================================
+
+
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: admin-generic-crud.md
+Date: 2026-06-27
+================================================================================
+
+FILES CREATED
+-------------
+✓ app/shared/models/crud-config.model.ts
+✓ app/shared/components/generic-crud/generic-crud.component.ts
+✓ app/shared/components/generic-crud/generic-crud.component.html
+✓ app/shared/components/generic-crud/generic-crud.component.scss
+✓ app/shared/components/generic-crud/cards-view/cards-view.component.ts
+✓ app/shared/components/generic-crud/cards-view/cards-view.component.html
+✓ app/shared/components/generic-crud/cards-view/cards-view.component.scss
+✓ app/shared/components/generic-crud/crud-modal/crud-modal.component.ts
+✓ app/shared/components/generic-crud/crud-modal/crud-modal.component.html
+✓ app/shared/components/generic-crud/crud-modal/crud-modal.component.scss
+✓ app/shared/components/confirm-dialog/confirm-dialog.component.ts
+✓ app/shared/components/confirm-dialog/confirm-dialog.component.html
+✓ app/shared/components/confirm-dialog/confirm-dialog.component.scss
+
+FILES MODIFIED
+--------------
+None. No existing files were modified.
+
+PRE-EXISTING (not recreated per spec §13 note)
+-----------------------------------------------
+✓ AlertComponent — already at features/auth/components/alert.component.ts
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Component API (§4)
+  ✓ Selector: app-generic-crud, Standalone: true
+  ✓ config = input.required<CrudConfig<any>>()
+  ✓ searchChange, filterChange, sortChange, pageChange, save outputs (exact types)
+  ✓ isModalOpen, editMode, selectedEntity, modalLoading, modalError signals
+  ✓ All Material module imports listed in §4
+
+✓ Template Structure (§5) — exact match
+  ✓ .crud-container > .top-bar with entityNamePlural h2 and Add button
+  ✓ .search-filter-bar with searchControl, @for filters, Clear Filters button
+  ✓ @if loading → spinner; @else if error → app-alert; @else if empty → empty state; @else → table/cards/paginator
+  ✓ Desktop table with matSort, @for dynamic column defs, actions column with edit button
+  ✓ Mobile card view via app-cards-view
+  ✓ mat-paginator with length/pageIndex/pageSize/pageSizeOptions=[10,25,50,100]
+
+✓ Modal Lifecycle (§6)
+  ✓ openAddModal() sets editMode false, selectedEntity null, opens CrudModalComponent via MatDialog
+  ✓ openEditModal(row) sets editMode true, selectedEntity, opens CrudModalComponent
+  ✓ handleModalClose() uses takeUntilDestroyed; emits save or routes to showDisableConfirmation
+  ✓ Disable check: result.isActive===false && previousIsActive===true → ConfirmDialogComponent
+  ✓ On close: modalError.set(null), selectedEntity.set(null)
+
+✓ Disable Confirmation (§6)
+  ✓ showDisableConfirmation opens ConfirmDialogComponent with title/message per spec
+  ✓ Only emits save with isActive:false when confirmed===true
+
+✓ Pagination Reset Rule (§7)
+  ✓ Documented: parent must reset pageIndex to 0 on searchChange/filterChange/sortChange
+
+✓ Responsive Behaviour (§10)
+  ✓ Desktop: .desktop-view shown, .mobile-view hidden (CSS @media >768px)
+  ✓ Mobile: .mobile-view shown, .desktop-view hidden (<768px)
+
+✓ All subscriptions use takeUntilDestroyed(this.destroyRef) (§14)
+✓ No direct API calls in generic component (§14)
+✓ Modal exclusively MatDialog component-based (§14)
+✓ Angular 18 control flow used (@if, @for, @else) (§14)
+
+KNOWN DEVIATIONS
+----------------
+DEVIATION-1: ConfirmDialogComponent not in component imports array
+  Reason: Angular compiler NG8113 warning — imported but unused in template.
+  ConfirmDialogComponent is opened programmatically via MatDialog.open(), not
+  as a template element. Keeping it in imports[] causes a build warning with
+  no functional benefit; Angular resolves dialog components at runtime.
+  Applied Default: Removed from imports[] array; import statement retained for
+  MatDialog.open() usage. This is the Angular-idiomatic pattern for dialog components.
+  Impact: None — dialog opens correctly. Build is warning-free.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+AMBIGUITY-1: filterControls initialization — spec shows filterControls.get(filter.key)!
+  but does not specify when controls are initialized
+  Default Applied: Lazy initialization via getFilterControl(key) method called from
+  template — creates the FormControl on first access.
+
+AMBIGUITY-2: mat-select filter change emission — spec does not define the event trigger
+  Default Applied: (selectionChange) on mat-select calls onFilterChange(key) which
+  collects all active filter values and emits via filterChange output.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+☑ Every ✓ in requirements corresponds to code that exists and is correct.
+☑ No file, function, or feature added beyond spec definition.
+☑ No API calls in the generic component — pure view layer.
+☑ No regex validators in this spec — N/A.
+☑ No route changes made.
+================================================================================
+

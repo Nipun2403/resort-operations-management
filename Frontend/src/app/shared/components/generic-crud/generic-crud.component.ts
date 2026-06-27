@@ -69,7 +69,7 @@ export class GenericCrudComponent {
   filterChange = output<Record<string, any>>();
   sortChange = output<{ active: string; direction: 'asc' | 'desc' }>();
   pageChange = output<{ pageIndex: number; pageSize: number }>();
-  save = output<{ formValue: any; isActive: boolean }>();
+  save = output<{ formValue: any; isActive: boolean; entityId?: number }>();
 
   // Internal signals per spec §4
   isModalOpen = signal(false);
@@ -173,7 +173,7 @@ export class GenericCrudComponent {
           if (result.isActive === false && result.previousIsActive === true) {
             this.showDisableConfirmation(result);
           } else {
-            this.save.emit({ formValue: result.formValue, isActive: result.isActive });
+            this.save.emit({ formValue: result.formValue, isActive: result.isActive, entityId: result.entityId });
           }
         }
         // Reset modal state
@@ -194,7 +194,7 @@ export class GenericCrudComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((confirmed) => {
         if (confirmed) {
-          this.save.emit({ formValue: result.formValue, isActive: false });
+          this.save.emit({ formValue: result.formValue, isActive: false, entityId: result.entityId });
         }
       });
   }
