@@ -16,7 +16,7 @@
   [class.grid-only]="isMobile() && viewMode.value === 'grid'">
   <!-- Desktop or Mobile Table view -->
   <div class="table-section" [class.hidden]="isMobile() && viewMode.value === 'grid'">
-    <app-generic-crud [config]="crudConfig" [highlightId]="highlightRoomId()" (edit)="onEdit($event)"
+    <app-generic-crud [config]="crudConfig" [searchQuery]="searchQuery()" (edit)="onEdit($event)"
       (searchChange)="onSearchChange($event)" (filterChange)="onFilterChange($event)"
       (sortChange)="onSortChange($event)" (pageChange)="onPageChange($event)"
       (save)="onSave($event)"></app-generic-crud>
