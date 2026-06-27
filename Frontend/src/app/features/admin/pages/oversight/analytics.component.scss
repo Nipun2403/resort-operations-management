@@ -6,16 +6,31 @@
 
   .controls {
     display: flex;
-    flex-wrap: wrap;
+    justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
     gap: 16px;
 
-    mat-form-field {
-      width: 180px;
+    .date-controls {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
 
-      ::ng-deep .mat-mdc-form-field-subscript-wrapper {
-        display: none;
+      mat-form-field {
+        width: 160px;
+        margin-bottom: -1.25em; /* alignment fix for inline display */
       }
+
+      button {
+        height: 48px;
+        align-self: center;
+      }
+    }
+
+    .category-select {
+      width: 200px;
+      margin-bottom: -1.25em;
     }
   }
 
@@ -23,188 +38,65 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 250px;
+    padding: 100px 0;
   }
 
-  .tab-content {
-    padding: 24px 0;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-
-  .kpi-grid {
+  .kpi-row {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 20px;
-  }
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
 
-  .kpi-card {
-    transition: transform 0.2s, box-shadow 0.2s;
-    border-left: 4px solid #1976d2;
+    mat-card {
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(0, 0, 0, 0.05);
 
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    }
-
-    mat-card-title {
-      font-size: 15px;
-      font-weight: 500;
-      color: rgba(0, 0, 0, 0.6);
-    }
-
-    mat-card-subtitle {
-      font-size: 12px;
-      color: rgba(0, 0, 0, 0.4);
-    }
-
-    .kpi-value {
-      font-size: 28px;
-      font-weight: 600;
-      color: rgba(0, 0, 0, 0.87);
-      margin-top: 12px;
-      line-height: 1.2;
-
-      &.category-value {
-        font-size: 20px;
+      mat-card-title {
+        font-size: 14px;
         font-weight: 500;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
+        color: #757575;
+        margin-bottom: 8px;
+      }
+
+      mat-card-content {
+        font-size: 28px;
+        font-weight: 700;
+        color: #212121;
       }
     }
   }
 
   .charts-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 24px;
-  }
 
-  .chart-card {
-    min-height: 380px;
-    display: flex;
-    flex-direction: column;
+    .chart-container {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      min-height: 440px;
 
-    mat-card-content {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
-  }
-
-  .chart-container {
-    flex: 1;
-    width: 100%;
-    min-height: 320px;
-  }
-
-  // Comparison Styles
-  .enable-comparison-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 200px;
-    gap: 16px;
-    background: rgba(0, 0, 0, 0.02);
-    border: 1px dashed rgba(0, 0, 0, 0.12);
-    border-radius: 8px;
-    padding: 32px;
-
-    p {
-      color: rgba(0, 0, 0, 0.6);
-      font-size: 16px;
-      margin: 0;
-    }
-  }
-
-  .comparison-selectors {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 32px;
-    padding: 20px;
-    background: rgba(0, 0, 0, 0.02);
-    border-radius: 8px;
-
-    .comparison-column-selector {
-      flex: 1;
-      min-width: 300px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-
-      h3 {
-        margin: 0;
-        font-size: 16px;
-        font-weight: 500;
-        color: rgba(0, 0, 0, 0.87);
-      }
-
-      p {
-        margin: 0;
-        color: rgba(0, 0, 0, 0.54);
-        font-size: 14px;
-      }
-
-      .custom-pickers-row {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 12px;
-
-        mat-form-field {
-          width: 150px;
-        }
+      .chart {
+        width: 100%;
+        height: 400px;
       }
     }
-  }
-
-  .comparison-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 32px;
-
-    .comparison-column {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-
-      h3 {
-        margin: 0;
-        font-size: 18px;
-        font-weight: 500;
-        color: rgba(0, 0, 0, 0.87);
-        border-bottom: 2px solid rgba(0, 0, 0, 0.08);
-        padding-bottom: 8px;
-      }
-
-      .comparison-cards {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-      }
-    }
-  }
-
-  .comparison-chart-card {
-    margin-top: 16px;
-  }
-
-  .comparison-prompt {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 150px;
-    background: rgba(0, 0, 0, 0.01);
-    border-radius: 8px;
-    border: 1px dashed rgba(0, 0, 0, 0.08);
-    color: rgba(0, 0, 0, 0.54);
   }
 }
 
-// Mobile responsive override
+/* Responsive Overrides */
+@media (max-width: 1024px) {
+  .analytics-page {
+    .charts-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
 @media (max-width: 768px) {
   .analytics-page {
     padding: 16px;
@@ -213,21 +105,33 @@
       flex-direction: column;
       align-items: stretch;
 
-      mat-button-toggle-group {
-        align-self: flex-start;
+      .date-controls {
+        flex-direction: column;
+        align-items: stretch;
+
+        mat-button-toggle-group {
+          align-self: center;
+        }
+
+        mat-form-field {
+          width: 100%;
+        }
       }
 
-      mat-form-field {
+      .category-select {
         width: 100%;
       }
     }
 
     .charts-grid {
-      grid-template-columns: 1fr;
-    }
+      .chart-container {
+        min-height: 340px;
+        padding: 12px;
 
-    .comparison-grid {
-      grid-template-columns: 1fr;
+        .chart {
+          height: 300px;
+        }
+      }
     }
   }
 }

@@ -2,16 +2,15 @@
 
 ## 1. Purpose
 
-- Replace the `PlaceholderAnalyticsComponent` with a full‑featured Analytics page.
-- Displays KPIs from the `/analytics` endpoint, organised into tabbed sections: **Revenue**, **Operations**, **Guests**, **Comparison**.
-- Date range selection with presets (“Last 7 days”, “Last 30 days”, “This month”, “Custom”) and a custom date picker.
-- Initial load fetches data without date parameters (unrestricted).
-- Comparison mode allows selecting two date ranges and viewing side‑by‑side KPI cards and a bar chart.
-- All charts use `ngx-echarts` and are described with exact ECharts options.
+- Replace the `PlaceholderAnalyticsComponent` with the redesigned Analytics page.
+- Single view with a category dropdown (All, Revenue, Operations, Guests) that changes the data displayed in four fixed chart panels: Bar, Line, Radar, Pie.
+- Date range selection via presets and custom picker; initial load without date params.
+- No gauge charts, no comparison mode.
+- Uses `ngx-echarts` with global `provideEchartsCore` already configured; only `NgxEchartsDirective` is imported standalone.
 
 ## 2. Route & Navigation
 
-- Path: `/operations/admin/oversight/analytics` (lazy‑loaded under Admin Shell).
+- Path: `/operations/admin/oversight/analytics` (lazy‑loaded in Admin Shell).
 - **Overwrite** the placeholder file: `src/app/features/admin/pages/oversight/analytics.component.ts`.
 
 ## 3. Authorization
@@ -22,13 +21,12 @@
 
 - **Selector**: `app-analytics` (exact placeholder match)
 - **Standalone**: `true`
-- **Imports**: `CommonModule`, `ReactiveFormsModule`, `MatTabsModule`, `MatCardModule`, `MatButtonModule`, `MatIconModule`, `MatDatepickerModule`, `MatNativeDateModule`, `MatFormFieldModule`, `MatInputModule`, `MatProgressSpinnerModule`, `MatButtonToggleModule`, `NgxEchartsModule`, `AlertComponent`, `AnalyticsApiService`, `DestroyRef`.
-- **Exact import paths**:
+- **Imports**: `CommonModule`, `ReactiveFormsModule`, `MatCardModule`, `MatButtonModule`, `MatIconModule`, `MatDatepickerModule`, `MatNativeDateModule`, `MatFormFieldModule`, `MatInputModule`, `MatProgressSpinnerModule`, `MatButtonToggleModule`, `MatSelectModule`, `NgxEchartsDirective`, `AlertComponent`.
+- **Exact import paths** (use these verbatim):
   ```ts
-  import { Component, inject, signal, computed } from "@angular/core";
   import { CommonModule } from "@angular/common";
+  import { Component, inject, signal, computed } from "@angular/core";
   import { ReactiveFormsModule, FormControl } from "@angular/forms";
-  import { MatTabsModule } from "@angular/material/tabs";
   import { MatCardModule } from "@angular/material/card";
   import { MatButtonModule } from "@angular/material/button";
   import { MatIconModule } from "@angular/material/icon";
@@ -38,19 +36,23 @@
   import { MatInputModule } from "@angular/material/input";
   import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
   import { MatButtonToggleModule } from "@angular/material/button-toggle";
-  import { NgxEchartsModule } from "ngx-echarts";
+  import { MatSelectModule } from "@angular/material/select";
+  import { NgxEchartsDirective } from "ngx-echarts";
   import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
   import { DestroyRef } from "@angular/core";
   import { AnalyticsApiService } from "../../services/analytics-api.service";
   import { AnalyticsDashboardDTO } from "../../models/analytics-dashboard.dto";
   import { AlertComponent } from "../../../../shared/components/alert/alert.component";
   ```
-- **Template** (high‑level):
+- **No `providers` array** – `provideEchartsCore({ echarts })` is already in `app.config.ts` globally.
 
-  ```html
-  <div class="analytics-page">
-    <!-- Date range controls -->
-    <div class="controls">
+## 5. Template Structure
+
+```html
+<div class="analytics-page">
+  <!-- Controls: Presets + Custom Date + Category Dropdown -->
+  <div class="controls">
+    <div class="date-controls">
       <mat-button-toggle-group
         [formControl]="presetControl"
         (change)="onPresetChange()"
@@ -96,47 +98,104 @@
       </button>
       }
     </div>
-
-    <!-- Loading / Error -->
-    @if (loading() && !analytics()) {
-    <div class="loading"><mat-spinner diameter="40"></mat-spinner></div>
-    } @else if (error()) {
-    <app-alert
-      type="error"
-      [message]="error()!"
-      (closed)="error.set(null)"
+    <mat-form-field
+      appearance="outline"
+      class="category-select"
     >
-      <button
-        mat-button
-        (click)="fetchData()"
+      <mat-label>Category</mat-label>
+      <mat-select
+        [formControl]="categoryControl"
+        (selectionChange)="onCategoryChange()"
       >
-        Retry
-      </button>
-    </app-alert>
-    } @else {
-    <!-- Tab group -->
-    <mat-tab-group (selectedTabChange)="onTabChange($event)">
-      <mat-tab label="Revenue"> ... revenue KPI cards & charts ... </mat-tab>
-      <mat-tab label="Operations"> ... operations cards & charts ... </mat-tab>
-      <mat-tab label="Guests"> ... guest cards & charts ... </mat-tab>
-      <mat-tab label="Comparison">
-        @if (!comparisonMode()) {
-        <button
-          mat-raised-button
-          (click)="comparisonMode.set(true)"
-        >
-          Enable Comparison
-        </button>
-        } @else {
-        <!-- comparison date pickers, fetch second set, side‑by‑side KPI cards and bar chart -->
-        }
-      </mat-tab>
-    </mat-tab-group>
-    }
+        <mat-option value="all">All</mat-option>
+        <mat-option value="revenue">Revenue</mat-option>
+        <mat-option value="operations">Operations</mat-option>
+        <mat-option value="guests">Guests</mat-option>
+      </mat-select>
+    </mat-form-field>
   </div>
-  ```
 
-## 5. State Management (All Signals)
+  <!-- Loading / Error -->
+  @if (loading() && !analytics()) {
+  <div class="loading"><mat-spinner diameter="40"></mat-spinner></div>
+  } @else if (error()) {
+  <app-alert
+    type="error"
+    [message]="error()!"
+    (closed)="error.set(null)"
+  >
+    <button
+      mat-button
+      (click)="fetchData()"
+    >
+      Retry
+    </button>
+  </app-alert>
+  } @else {
+  <!-- KPI Summary Cards (top row) -->
+  <div class="kpi-row">
+    <mat-card
+      ><mat-card-title>Total Revenue</mat-card-title
+      ><mat-card-content
+        >{{ analytics()?.totalRevenue | currency }}</mat-card-content
+      ></mat-card
+    >
+    <mat-card
+      ><mat-card-title>Occupancy Rate</mat-card-title
+      ><mat-card-content
+        >{{ analytics()?.occupancyRate }}%</mat-card-content
+      ></mat-card
+    >
+    <mat-card
+      ><mat-card-title>Guest Satisfaction</mat-card-title
+      ><mat-card-content
+        >{{ analytics()?.guestSatisfactionScore }}%</mat-card-content
+      ></mat-card
+    >
+    <mat-card
+      ><mat-card-title>Avg Daily Rate</mat-card-title
+      ><mat-card-content
+        >{{ analytics()?.averageDailyRate | currency }}</mat-card-content
+      ></mat-card
+    >
+  </div>
+
+  <!-- Fixed Chart Grid -->
+  <div class="charts-grid">
+    <div class="chart-container">
+      <div
+        echarts
+        [options]="barChartOptions()"
+        class="chart"
+      ></div>
+    </div>
+    <div class="chart-container">
+      <div
+        echarts
+        [options]="lineChartOptions()"
+        class="chart"
+      ></div>
+    </div>
+    <div class="chart-container">
+      <div
+        echarts
+        [options]="radarChartOptions()"
+        class="chart"
+      ></div>
+    </div>
+    <div class="chart-container">
+      <div
+        echarts
+        [options]="pieChartOptions()"
+        class="chart"
+      ></div>
+    </div>
+  </div>
+  }
+</div>
+```
+
+## 6. State Management (All Signals)
 
 ```ts
 // Data
@@ -144,7 +203,7 @@ analytics = signal<AnalyticsDashboardDTO | null>(null);
 loading = signal(false);
 error = signal<string | null>(null);
 
-// Date range
+// Date controls
 presetControl = new FormControl<"last7" | "last30" | "thisMonth" | "custom">(
   "last7",
   { nonNullable: true },
@@ -152,20 +211,20 @@ presetControl = new FormControl<"last7" | "last30" | "thisMonth" | "custom">(
 startDateCtrl = new FormControl<Date | null>(null);
 endDateCtrl = new FormControl<Date | null>(null);
 
-// Comparison
-comparisonMode = signal(false);
-comparisonAnalytics = signal<AnalyticsDashboardDTO | null>(null);
-comparisonStartDateCtrl = new FormControl<Date | null>(null);
-comparisonEndDateCtrl = new FormControl<Date | null>(null);
-comparisonPresetControl = new FormControl<
-  "last7" | "last30" | "thisMonth" | "custom"
->("last7", { nonNullable: true });
+// Category dropdown
+categoryControl = new FormControl<"all" | "revenue" | "operations" | "guests">(
+  "all",
+  { nonNullable: true },
+);
 ```
 
-## 6. Data Flow & API Calls
+## 7. Data Flow & API Calls
 
-- `AnalyticsApiService.getAnalytics(params?: { startDate?: string; endDate?: string }): Observable<AnalyticsDashboardDTO>`
-- Initial load: `ngOnInit` calls `fetchData()` without dates.
+- `AnalyticsApiService` (already built, root‑provided). Method:
+  ```ts
+  getAnalytics(params?: { startDate?: string; endDate?: string }): Observable<AnalyticsDashboardDTO>
+  ```
+- Initial load: `ngOnInit` calls `fetchData()` with no dates.
 - `fetchData(startDate?: string, endDate?: string)`:
   ```ts
   this.loading.set(true);
@@ -182,199 +241,198 @@ comparisonPresetControl = new FormControl<
         this.error.set(err instanceof Error ? err.message : "Unexpected error"),
     });
   ```
-- Preset changes: `onPresetChange()` calculates start/end based on preset and current date, calls `fetchData(start, end)`.
-- Custom range: `applyCustomRange()` converts picker values to ISO strings (start at 00:00:00, end at 23:59:59) and calls `fetchData`.
-- Comparison: similar logic but for the second set, stored in `comparisonAnalytics`. Two fetch calls managed.
+- Preset changes: `onPresetChange()` calculates dates, calls `fetchData`.
+- Custom range: `applyCustomRange()` converts Date objects to ISO strings (start `T00:00:00.000Z`, end `T23:59:59.999Z`), calls `fetchData`.
+- Category change: no API call; only recomputes chart options.
 
-## 7. Tabs & Exact Chart Configurations (ngx-echarts)
+## 8. Category‑Dependent Chart Options (All Computed Signals)
 
-### 7.1 Revenue Tab
+**Exact mapping of data fields to categories:**
 
-**KPI Cards**: Total Revenue, Gross Turnover, RevPAR, Average Daily Rate.  
-**Charts**:
+| Category   | Bar & Line charts show                                        | Radar chart shows                                   | Pie chart shows          |
+| ---------- | ------------------------------------------------------------- | --------------------------------------------------- | ------------------------ |
+| All        | Revenue, Turnover, RevPAR, AvgDailyRate                       | Occupancy, Cancellation, LengthOfStay, Satisfaction | Food vs Amenity spend    |
+| Revenue    | Revenue, Turnover, RevPAR, AvgDailyRate                       | Occupancy, RevPAR, AvgDailyRate, Turnover           | _hidden_ (empty options) |
+| Operations | Occupancy, Cancellation, LengthOfStay, HousekeepingTurnaround | Occupancy, Cancellation, LengthOfStay, Satisfaction | _hidden_                 |
+| Guests     | Satisfaction, FoodSpend, AmenitySpend                         | Satisfaction, Occupancy, LengthOfStay               | Food vs Amenity spend    |
 
-- **Bar chart** (Revenue vs Turnover):
-  ```ts
-  revenueBarOptions = computed(() => {
-    const d = this.analytics();
-    if (!d) return {};
-    return {
-      title: { text: "Revenue & Turnover" },
-      tooltip: { trigger: "axis" },
-      xAxis: { type: "category", data: ["Total Revenue", "Gross Turnover"] },
-      yAxis: { type: "value" },
-      series: [
-        {
-          type: "bar",
-          data: [d.totalRevenue, d.grossTurnover],
-          color: "#1976d2",
-        },
-      ],
-    };
-  });
-  ```
-- **Gauge chart** (RevPAR):
-  ```ts
-  revParGaugeOptions = computed(() => {
-    const d = this.analytics();
-    if (!d) return {};
-    return {
-      series: [
-        {
-          type: "gauge",
-          min: 0,
-          max: Math.max(d.revPAR * 1.5, 1000),
-          detail: { formatter: "${value}" },
-          data: [{ value: d.revPAR, name: "RevPAR" }],
-        },
-      ],
-    };
-  });
-  ```
+**Bar Chart Options:**
 
-### 7.2 Operations Tab
+```ts
+barChartOptions = computed(() => {
+  const d = this.analytics();
+  if (!d) return {};
+  const cat = this.categoryControl.value;
+  let xData: string[] = [];
+  let yData: number[] = [];
+  switch (cat) {
+    case "all":
+    case "revenue":
+      xData = ["Total Revenue", "Gross Turnover", "RevPAR", "Avg Daily Rate"];
+      yData = [d.totalRevenue, d.grossTurnover, d.revPAR, d.averageDailyRate];
+      break;
+    case "operations":
+      xData = ["Occupancy", "Cancellation", "Length of Stay", "HK Turnaround"];
+      yData = [
+        d.occupancyRate,
+        d.cancellationRate,
+        d.averageLengthOfStay,
+        d.averageHousekeepingTurnaroundMinutes,
+      ];
+      break;
+    case "guests":
+      xData = ["Satisfaction", "Food Spend", "Amenity Spend"];
+      yData = [
+        d.guestSatisfactionScore,
+        d.nonRoomExpenditure.totalFoodSpend,
+        d.nonRoomExpenditure.totalAmenitySpend,
+      ];
+      break;
+  }
+  return {
+    title: { text: "Overview" },
+    tooltip: { trigger: "axis" },
+    xAxis: { type: "category", data: xData },
+    yAxis: { type: "value" },
+    series: [{ type: "bar", data: yData, color: "#1976d2" }],
+  };
+});
+```
 
-**KPI Cards**: Occupancy Rate, Average Housekeeping Turnaround, Cancellation Rate, Average Length of Stay.  
-**Charts**:
+**Line Chart Options (same data as bar, but line):**
 
-- **Gauge** (Occupancy Rate):
-  ```ts
-  occupancyGaugeOptions = computed(() => {
-    const d = this.analytics();
-    if (!d) return {};
-    return {
-      series: [
-        {
-          type: "gauge",
-          min: 0,
-          max: 100,
-          detail: { formatter: "{value}%" },
-          data: [{ value: d.occupancyRate, name: "Occupancy" }],
-        },
-      ],
-    };
-  });
-  ```
-- **Radar chart** (Operational KPIs):
-  ```ts
-  radarOptions = computed(() => {
-    const d = this.analytics();
-    if (!d) return {};
-    return {
-      title: { text: "Operational Overview" },
-      radar: {
-        indicator: [
-          { name: "Occupancy", max: 100 },
-          { name: "Cancellation", max: 50 },
-          { name: "Length of Stay", max: 30 },
-          { name: "Satisfaction", max: 100 },
+```ts
+lineChartOptions = computed(() => {
+  // identical data extraction as bar, but series type: 'line'
+  const d = this.analytics();
+  if (!d) return {};
+  const cat = this.categoryControl.value;
+  let xData: string[] = [];
+  let yData: number[] = [];
+  // ... same switch logic as above ...
+  return {
+    title: { text: "Trend" },
+    tooltip: { trigger: "axis" },
+    xAxis: { type: "category", data: xData },
+    yAxis: { type: "value" },
+    series: [{ type: "line", data: yData, color: "#388e3c" }],
+  };
+});
+```
+
+**Radar Chart Options:**
+
+```ts
+radarChartOptions = computed(() => {
+  const d = this.analytics();
+  if (!d) return {};
+  const cat = this.categoryControl.value;
+  let indicator: any[] = [];
+  let value: number[] = [];
+  switch (cat) {
+    case "all":
+      indicator = [
+        { name: "Occupancy", max: 100 },
+        { name: "Cancellation", max: 50 },
+        { name: "Length of Stay", max: 30 },
+        { name: "Satisfaction", max: 100 },
+      ];
+      value = [
+        d.occupancyRate,
+        d.cancellationRate,
+        d.averageLengthOfStay,
+        d.guestSatisfactionScore,
+      ];
+      break;
+    case "revenue":
+      indicator = [
+        { name: "Occupancy", max: 100 },
+        { name: "RevPAR", max: 2000 },
+        { name: "Avg Daily Rate", max: 500 },
+        { name: "Turnover", max: 20000 },
+      ];
+      value = [d.occupancyRate, d.revPAR, d.averageDailyRate, d.grossTurnover];
+      break;
+    case "operations":
+      indicator = [
+        { name: "Occupancy", max: 100 },
+        { name: "Cancellation", max: 50 },
+        { name: "Length of Stay", max: 30 },
+        { name: "Satisfaction", max: 100 },
+      ];
+      value = [
+        d.occupancyRate,
+        d.cancellationRate,
+        d.averageLengthOfStay,
+        d.guestSatisfactionScore,
+      ];
+      break;
+    case "guests":
+      indicator = [
+        { name: "Satisfaction", max: 100 },
+        { name: "Occupancy", max: 100 },
+        { name: "Length of Stay", max: 30 },
+      ];
+      value = [
+        d.guestSatisfactionScore,
+        d.occupancyRate,
+        d.averageLengthOfStay,
+      ];
+      break;
+  }
+  return {
+    title: { text: "Radar Overview" },
+    radar: { indicator },
+    series: [{ type: "radar", data: [{ value, name: "Current" }] }],
+  };
+});
+```
+
+**Pie Chart Options:**
+
+```ts
+pieChartOptions = computed(() => {
+  const d = this.analytics();
+  if (!d) return {};
+  const cat = this.categoryControl.value;
+  if (cat === "revenue" || cat === "operations") {
+    return {}; // hidden (no data)
+  }
+  return {
+    title: { text: "Expenditure Breakdown" },
+    tooltip: { trigger: "item" },
+    series: [
+      {
+        type: "pie",
+        data: [
+          { name: "Food", value: d.nonRoomExpenditure.totalFoodSpend },
+          { name: "Amenities", value: d.nonRoomExpenditure.totalAmenitySpend },
         ],
+        label: { formatter: "{b}: {c} ({d}%)" },
       },
-      series: [
-        {
-          type: "radar",
-          data: [
-            {
-              value: [
-                d.occupancyRate,
-                d.cancellationRate,
-                d.averageLengthOfStay,
-                d.guestSatisfactionScore,
-              ],
-              name: "Current",
-            },
-          ],
-        },
-      ],
-    };
-  });
-  ```
+    ],
+  };
+});
+```
 
-### 7.3 Guests Tab
+**Note:** When a chart is meant to be hidden (e.g., pie for revenue/operations), returning an empty object `{}` will render an empty div; it’s acceptable. The container will not show a chart. To be extra safe, we can use `*ngIf` on the container, but using signals and empty options works. In the template, we can wrap the pie chart with `@if (pieChartOptions() && pieChartOptions().series) { ... }` or simply let echarts handle empty. We'll use a conditional wrapper to avoid any rendering issues:
 
-**KPI Cards**: Guest Satisfaction Score, Total Food Spend, Total Amenity Spend, Highest Spend Category.  
-**Charts**:
+```html
+@if (categoryControl.value !== 'revenue' && categoryControl.value !==
+'operations') {
+<div class="chart-container">
+  <div
+    echarts
+    [options]="pieChartOptions()"
+    class="chart"
+  ></div>
+</div>
+}
+```
 
-- **Gauge** (Satisfaction):
-  ```ts
-  satisfactionGaugeOptions = computed(() => {
-    const d = this.analytics();
-    if (!d) return {};
-    return {
-      series: [
-        {
-          type: "gauge",
-          min: 0,
-          max: 100,
-          detail: { formatter: "{value}%" },
-          data: [{ value: d.guestSatisfactionScore, name: "Satisfaction" }],
-        },
-      ],
-    };
-  });
-  ```
-- **Pie chart** (Non‑Room Expenditure):
-  ```ts
-  expenditurePieOptions = computed(() => {
-    const d = this.analytics();
-    if (!d) return {};
-    return {
-      title: { text: "Non‑Room Expenditure" },
-      tooltip: { trigger: "item" },
-      series: [
-        {
-          type: "pie",
-          data: [
-            { name: "Food", value: d.nonRoomExpenditure.totalFoodSpend },
-            {
-              name: "Amenities",
-              value: d.nonRoomExpenditure.totalAmenitySpend,
-            },
-          ],
-          label: { formatter: "{b}: {c} ({d}%)" },
-        },
-      ],
-    };
-  });
-  ```
+This is simpler and deterministic.
 
-### 7.4 Comparison Tab
-
-- User can enable comparison mode. Two preset/date selectors appear for “Period 1” and “Period 2”.
-- When both periods are selected, fetch two separate analytics results (stored in `analytics` and `comparisonAnalytics`).
-- Display two sets of KPI cards side‑by‑side (total revenue, occupancy, etc.).
-- **Bar chart** comparing key metrics between periods:
-  ```ts
-  comparisonBarOptions = computed(() => {
-    const a = this.analytics();
-    const b = this.comparisonAnalytics();
-    if (!a || !b) return {};
-    return {
-      title: { text: "Comparison" },
-      tooltip: { trigger: "axis" },
-      legend: { data: ["Period 1", "Period 2"] },
-      xAxis: {
-        type: "category",
-        data: ["Revenue", "Occupancy", "Satisfaction"],
-      },
-      yAxis: { type: "value" },
-      series: [
-        {
-          name: "Period 1",
-          type: "bar",
-          data: [a.totalRevenue, a.occupancyRate, a.guestSatisfactionScore],
-        },
-        {
-          name: "Period 2",
-          type: "bar",
-          data: [b.totalRevenue, b.occupancyRate, b.guestSatisfactionScore],
-        },
-      ],
-    };
-  });
-  ```
-
-## 8. Date Presets Logic
+## 9. Date Presets Logic
 
 ```ts
 private getPresetDates(preset: string): { start: string; end: string } | null {
@@ -399,32 +457,35 @@ private getPresetDates(preset: string): { start: string; end: string } | null {
 }
 ```
 
-## 9. UI States
+Called in `onPresetChange()` and, if custom, in `applyCustomRange()` via date pickers.
 
-- Loading: full‑page spinner only if no data loaded yet; else a linear progress bar over the tabs.
-- Error: `app-alert` with retry.
-- Empty: not applicable, as the endpoint always returns an object.
+## 10. UI States
 
-## 10. Responsive Behaviour
+- Loading: full‑page spinner only when no data loaded yet; else, the charts simply re‑render with new data (no extra spinner needed, but the KPI cards will update immediately).
+- Error: `app-alert` with retry button.
+- If analytics is null, show a message “No data available”.
 
-- Tabs work normally on all screens; charts resize via echarts responsive options (set width/height 100%).
-- KPI cards stack vertically on mobile.
-- Date controls stack vertically on narrow screens.
+## 11. Responsive Behaviour
 
-## 11. Accessibility
+- Charts use `width: 100%; height: 400px;` by default; on mobile, height can be 300px.
+- The grid of four charts collapses to two columns on tablet, one column on mobile.
+- KPI cards stack in a single column on small screens.
+- Date controls and category dropdown stack vertically.
 
-- Charts have `aria-label`.
-- Tabs have keyboard navigation.
-- Date pickers labelled.
+## 12. Accessibility
 
-## 12. Integration Notes
+- Each chart div has `aria-label` describing the chart (e.g., “Bar chart of revenue metrics”).
+- Category dropdown and date pickers are labelled.
+- KPI cards have appropriate heading levels.
 
-- **Overwrite** existing placeholder: `src/app/features/admin/pages/oversight/analytics.component.ts`.
-- `AnalyticsApiService` must be created (already used in dashboard, so we can reuse that service if it exists, or create a new one). We'll assume it exists under `features/admin/services/analytics-api.service.ts` (same as dashboard). If not, create it.
-- Reuse `AlertComponent` from shared.
-- No session storage; date range is transient.
+## 13. Integration Notes
 
-## 13. File Structure
+- **Overwrite** placeholder: `src/app/features/admin/pages/oversight/analytics.component.ts`.
+- The global echarts setup (`provideEchartsCore({ echarts })`) must exist in `app.config.ts`; the dashboard already relies on it. If not present, add it: `import { provideEchartsCore } from 'ngx-echarts';` and include it in `providers`.
+- No additional `providers` or `provideEcharts` inside the component.
+- Only `NgxEchartsDirective` is imported; the component template uses `[echarts]` binding.
+
+## 14. File Structure
 
 ```
 src/app/features/admin/
@@ -433,30 +494,33 @@ src/app/features/admin/
     analytics.component.html
     analytics.component.scss
   services/
-    analytics-api.service.ts (if not already from dashboard)
+    analytics-api.service.ts (already exists)
   models/
     analytics-dashboard.dto.ts (already exists)
 ```
 
-## 14. Self‑Review Checklist
+## 15. Self‑Review Checklist
 
-- [ ] Page loads with unrestricted analytics data (no dates).
-- [ ] Changing preset fetches data with correct date range.
-- [ ] Custom date picker works; start/end times correctly formatted.
-- [ ] Revenue tab shows KPI cards and bar + gauge charts.
-- [ ] Operations tab shows gauge (occupancy) and radar chart.
-- [ ] Guests tab shows gauge (satisfaction) and pie chart (expenditure).
-- [ ] Comparison tab: enabling shows two date pickers; selecting dates fetches second dataset; side‑by‑side KPI cards and comparison bar chart appear.
+- [ ] Page loads with unrestricted analytics (no date params).
+- [ ] Changing presets fetches data with calculated dates.
+- [ ] Custom date picker works, ISO strings correctly formatted.
+- [ ] Category dropdown changes chart data, but not chart arrangement.
+- [ ] “All” shows revenue bar/line, radar with occupancy/satisfaction/etc., pie with food/amenities.
+- [ ] “Revenue” hides pie, shows revenue KPIs in bar/line/radar.
+- [ ] “Operations” hides pie, shows operational KPIs.
+- [ ] “Guests” shows guest satisfaction, spend, and pie.
+- [ ] KPI cards update with new data on fetch.
 - [ ] Loading/error states handled.
-- [ ] Responsive layout works.
-- [ ] No console errors, all subscriptions cleaned.
+- [ ] Responsive layout adapts.
+- [ ] No console errors; all subscriptions use `takeUntilDestroyed`.
+- [ ] No `providers` array in the component; echarts works globally.
 
-## 15. Implementation Constraints
+## 16. Implementation Constraints
 
 - Angular 18 control flow, standalone components, signals, `takeUntilDestroyed`.
 - Overwrite placeholder; do not rename.
-- Use `ngx-echarts` (already installed).
-- Exact chart options must match the code provided.
+- Use `NgxEchartsDirective` directly; no `NgxEchartsModule` or `provideEcharts` in component.
+- All chart options must match the provided code exactly.
 - No external state management; all signals local.
-- No modifications to shared components required.
+- The `AnalyticsDashboardDTO` and `AnalyticsApiService` must already exist (from dashboard) or be created in this spec using the same definitions.
 

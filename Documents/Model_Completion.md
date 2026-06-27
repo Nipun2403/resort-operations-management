@@ -1101,56 +1101,57 @@ Date: 2026-06-27
 
 FILES CREATED
 -------------
-✓ src/app/features/admin/pages/oversight/analytics.component.html
-✓ src/app/features/admin/pages/oversight/analytics.component.scss
+None.
 
 FILES MODIFIED
 --------------
 ✓ src/app/features/admin/pages/oversight/analytics.component.ts (overwritten placeholder)
+✓ src/app/features/admin/pages/oversight/analytics.component.html
+✓ src/app/features/admin/pages/oversight/analytics.component.scss
 ✓ src/app/app.routes.ts — updated lazy routing from PlaceholderAnalyticsComponent to AnalyticsComponent
 
 REQUIREMENTS IMPLEMENTED
-------------------------
-✓ Component imports & setup (§4)
-  ✓ Imported necessary Material modules, NgxEcharts, and AlertComponent.
-  ✓ Selector is app-analytics, standalone is true.
-✓ State & signals (§5)
-  ✓ analytics and comparisonAnalytics signals defined.
-  ✓ Date controls: presetControl, startDateCtrl, endDateCtrl.
-  ✓ Comparison controls: comparisonMode, comparisonPresetControl, comparisonStartDateCtrl, comparisonEndDateCtrl.
-✓ Data Flow & API Calls (§6)
-  ✓ getAnalytics query params forwarded.
-  ✓ Initial load without dates (unrestricted fetch).
-  ✓ getPresetDates() logic calculates correct ranges for presets.
-  ✓ Custom range handlers convert start to 00:00:00 and end to 23:59:59.
-✓ Tab layout & ECharts options (§7)
-  ✓ Revenue: Total Revenue, Gross Turnover, RevPAR, ADR cards; revenueBarOptions and revParGaugeOptions computed signals.
-  ✓ Operations: Occupancy Rate, Average Housekeeping Turnaround, Cancellation Rate, ALOS cards; occupancyGaugeOptions and radarOptions computed signals.
-  ✓ Guests: Guest Satisfaction, Food Spend, Amenity Spend, Highest Spend Category cards; satisfactionGaugeOptions and expenditurePieOptions computed signals.
-  ✓ Comparison: Enable Comparison toggles view; side-by-side Period 1 and Period 2 KPI cards and comparisonBarOptions computed signal.
-✓ Responsive & accessibility (§10, §11)
-  ✓ KPI cards wrap to column layout on mobile.
-  ✓ Charts resize reactively.
+-------------
+✓ Controls & Filters (§5, §6, §7)
+  ✓ presetControl, startDateCtrl, endDateCtrl for custom range.
+  ✓ categoryControl for category dropdown.
+  ✓ categorySignal introduced to ensure computed charts option reactivity.
+  ✓ onPresetChange calculates start/end Date ISO strings, calls fetchData.
+  ✓ applyCustomRange converts values to T00:00:00.000Z and T23:59:59.999Z, calls fetchData.
+✓ AnalyticsApiService Integration (§7)
+  ✓ Initial load calls fetchData() with no parameters.
+  ✓ getAnalytics() called with optionally defined startDate and endDate.
+✓ ECharts Options (§8)
+  ✓ barChartOptions: computed signal matching All/Revenue/Operations/Guests category rules.
+  ✓ lineChartOptions: computed signal matching same category rules with type 'line' and green color.
+  ✓ radarChartOptions: computed signal matching occupancy, cancellation, length of stay, satisfaction indicator max values and current values.
+  ✓ pieChartOptions: computed signal showing food vs amenity spend (hidden for revenue/operations).
+  ✓ Conditional wrapper in template hides the pie container if category is revenue or operations.
+✓ Layout & Styling (§11)
+  ✓ Grid collapses to 2 columns on tablet, 1 column on mobile.
+  ✓ KPI cards stack vertically on small screens.
+  ✓ Controls stack vertically.
+  ✓ Charts use width 100%, height 400px (300px on mobile).
 
 API INTEGRATION
 ---------------
-✓ GET  /api/v1/analytics — startDate, endDate parameters.
+✓ GET  /api/v1/analytics — startDate, endDate query parameters (optional).
 
 LOGIC TRACES
 ------------
-Flow: Initial load
-  Entry: Navigates to Oversight -> Analytics
-  Path: ngOnInit() -> fetchData() [no params] -> updates analytics signal -> rendering of Revenue, Operations, Guests tabs populated
+Flow: Change Preset to Last 7 days
+  Entry: User clicks Last 7 days toggle
+  Path: presetControl changes -> onPresetChange() -> getPresetDates('last7') calculates dates -> fetchData(start, end) -> analytics signal updated -> charts options computed signals recalculate
   Result: ✓ Matches spec
 
-Flow: Enable comparison mode
-  Entry: Clicks Comparison tab -> click "Enable Comparison" -> selects preset or custom dates for Period 2
-  Path: comparisonMode signal set to true -> rendering of Period 2 selectors -> user selects "Last 7 days" -> onComparisonPresetChange() -> fetchComparisonData(start, end) -> updates comparisonAnalytics -> side-by-side KPI cards and comparison bar chart render
+Flow: Filter by Category Guests
+  Entry: User selects "Guests" in category dropdown
+  Path: categoryControl changes -> onCategoryChange() -> sets categorySignal('guests') -> bar, line, radar, pie computed signals update option structures -> charts refresh immediately
   Result: ✓ Matches spec
 
 KNOWN DEVIATIONS
 ----------------
-None. All requirements implemented exactly as specified.
+* The import path for AlertComponent was updated from the spec's `../../../../shared/components/alert/alert.component` to `../../../../features/auth/components/alert.component` because the alert component is in auth features and does not exist in shared. This prevents compilation errors.
 
 DEFAULTS APPLIED FOR AMBIGUITIES
 ---------------------------------
@@ -1168,3 +1169,12 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
   to the spec.
 ☑ I confirm that all role-to-route mappings match the spec exactly.
 ================================================================================
+
+
+
+
+
+
+
+
+

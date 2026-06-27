@@ -1,7 +1,6 @@
-import { Component, inject, signal, computed, DestroyRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
-import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,13 +10,19 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatSelectModule } from '@angular/material/select';
 import { NgxEchartsDirective } from 'ngx-echarts';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DestroyRef } from '@angular/core';
 import { finalize } from 'rxjs/operators';
 
 import { AnalyticsApiService } from '../../services/analytics-api.service';
 import { AnalyticsDashboardDTO } from '../../models/analytics-dashboard.dto';
-import { AlertComponent } from '../../../auth/components/alert.component';
+import { AlertComponent } from '../../../../features/auth/components/alert.component';
+
+function optionalLetterPattern() {
+  return null;
+}
 
 @Component({
   selector: 'app-analytics',
@@ -25,7 +30,6 @@ import { AlertComponent } from '../../../auth/components/alert.component';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatTabsModule,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
@@ -35,6 +39,7 @@ import { AlertComponent } from '../../../auth/components/alert.component';
     MatInputModule,
     MatProgressSpinnerModule,
     MatButtonToggleModule,
+    MatSelectModule,
     NgxEchartsDirective,
     AlertComponent,
   ],
@@ -45,14 +50,12 @@ export class AnalyticsComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly analyticsApi = inject(AnalyticsApiService);
 
-  private readonly STORAGE_KEY = 'analyticsState';
-
-  // Data
+  // Data Signals
   analytics = signal<AnalyticsDashboardDTO | null>(null);
   loading = signal(false);
   error = signal<string | null>(null);
 
-  // Date range
+  // Date controls
   presetControl = new FormControl<'last7' | 'last30' | 'thisMonth' | 'custom'>(
     'last7',
     { nonNullable: true },
@@ -60,14 +63,177 @@ export class AnalyticsComponent implements OnInit {
   startDateCtrl = new FormControl<Date | null>(null);
   endDateCtrl = new FormControl<Date | null>(null);
 
-  // Comparison
-  comparisonMode = signal(false);
-  comparisonAnalytics = signal<AnalyticsDashboardDTO | null>(null);
-  comparisonStartDateCtrl = new FormControl<Date | null>(null);
-  comparisonEndDateCtrl = new FormControl<Date | null>(null);
-  comparisonPresetControl = new FormControl<
-    'last7' | 'last30' | 'thisMonth' | 'custom'
-  >('last7', { nonNullable: true });
+  // Category dropdown and reactive signal
+  categoryControl = new FormControl<'all' | 'revenue' | 'operations' | 'guests'>(
+    'all',
+    { nonNullable: true },
+  );
+  categorySignal = signal<'all' | 'revenue' | 'operations' | 'guests'>('all');
+
+  barChartOptions = computed(() => {
+    const d = this.analytics();
+    if (!d) return {};
+    const cat = this.categorySignal();
+    let xData: string[] = [];
+    let yData: number[] = [];
+    switch (cat) {
+      case 'all':
+      case 'revenue':
+        xData = ['Total Revenue', 'Gross Turnover', 'RevPAR', 'Avg Daily Rate'];
+        yData = [d.totalRevenue, d.grossTurnover, d.revPAR, d.averageDailyRate];
+        break;
+      case 'operations':
+        xData = ['Occupancy', 'Cancellation', 'Length of Stay', 'HK Turnaround'];
+        yData = [
+          d.occupancyRate,
+          d.cancellationRate,
+          d.averageLengthOfStay,
+          d.averageHousekeepingTurnaroundMinutes,
+        ];
+        break;
+      case 'guests':
+        xData = ['Satisfaction', 'Food Spend', 'Amenity Spend'];
+        yData = [
+          d.guestSatisfactionScore,
+          d.nonRoomExpenditure.totalFoodSpend,
+          d.nonRoomExpenditure.totalAmenitySpend,
+        ];
+        break;
+    }
+    return {
+      title: { text: 'Overview' },
+      tooltip: { trigger: 'axis' },
+      xAxis: { type: 'category', data: xData },
+      yAxis: { type: 'value' },
+      series: [{ type: 'bar', data: yData, color: '#1976d2' }],
+    };
+  });
+
+  lineChartOptions = computed(() => {
+    const d = this.analytics();
+    if (!d) return {};
+    const cat = this.categorySignal();
+    let xData: string[] = [];
+    let yData: number[] = [];
+    switch (cat) {
+      case 'all':
+      case 'revenue':
+        xData = ['Total Revenue', 'Gross Turnover', 'RevPAR', 'Avg Daily Rate'];
+        yData = [d.totalRevenue, d.grossTurnover, d.revPAR, d.averageDailyRate];
+        break;
+      case 'operations':
+        xData = ['Occupancy', 'Cancellation', 'Length of Stay', 'HK Turnaround'];
+        yData = [
+          d.occupancyRate,
+          d.cancellationRate,
+          d.averageLengthOfStay,
+          d.averageHousekeepingTurnaroundMinutes,
+        ];
+        break;
+      case 'guests':
+        xData = ['Satisfaction', 'Food Spend', 'Amenity Spend'];
+        yData = [
+          d.guestSatisfactionScore,
+          d.nonRoomExpenditure.totalFoodSpend,
+          d.nonRoomExpenditure.totalAmenitySpend,
+        ];
+        break;
+    }
+    return {
+      title: { text: 'Trend' },
+      tooltip: { trigger: 'axis' },
+      xAxis: { type: 'category', data: xData },
+      yAxis: { type: 'value' },
+      series: [{ type: 'line', data: yData, color: '#388e3c' }],
+    };
+  });
+
+  radarChartOptions = computed(() => {
+    const d = this.analytics();
+    if (!d) return {};
+    const cat = this.categorySignal();
+    let indicator: any[] = [];
+    let value: number[] = [];
+    switch (cat) {
+      case 'all':
+        indicator = [
+          { name: 'Occupancy', max: 100 },
+          { name: 'Cancellation', max: 50 },
+          { name: 'Length of Stay', max: 30 },
+          { name: 'Satisfaction', max: 100 },
+        ];
+        value = [
+          d.occupancyRate,
+          d.cancellationRate,
+          d.averageLengthOfStay,
+          d.guestSatisfactionScore,
+        ];
+        break;
+      case 'revenue':
+        indicator = [
+          { name: 'Occupancy', max: 100 },
+          { name: 'RevPAR', max: 2000 },
+          { name: 'Avg Daily Rate', max: 500 },
+          { name: 'Turnover', max: 20000 },
+        ];
+        value = [d.occupancyRate, d.revPAR, d.averageDailyRate, d.grossTurnover];
+        break;
+      case 'operations':
+        indicator = [
+          { name: 'Occupancy', max: 100 },
+          { name: 'Cancellation', max: 50 },
+          { name: 'Length of Stay', max: 30 },
+          { name: 'Satisfaction', max: 100 },
+        ];
+        value = [
+          d.occupancyRate,
+          d.cancellationRate,
+          d.averageLengthOfStay,
+          d.guestSatisfactionScore,
+        ];
+        break;
+      case 'guests':
+        indicator = [
+          { name: 'Satisfaction', max: 100 },
+          { name: 'Occupancy', max: 100 },
+          { name: 'Length of Stay', max: 30 },
+        ];
+        value = [
+          d.guestSatisfactionScore,
+          d.occupancyRate,
+          d.averageLengthOfStay,
+        ];
+        break;
+    }
+    return {
+      title: { text: 'Radar Overview' },
+      radar: { indicator },
+      series: [{ type: 'radar', data: [{ value, name: 'Current' }] }],
+    };
+  });
+
+  pieChartOptions = computed(() => {
+    const d = this.analytics();
+    if (!d) return {};
+    const cat = this.categorySignal();
+    if (cat === 'revenue' || cat === 'operations') {
+      return {}; // hidden (no data)
+    }
+    return {
+      title: { text: 'Expenditure Breakdown' },
+      tooltip: { trigger: 'item' },
+      series: [
+        {
+          type: 'pie',
+          data: [
+            { name: 'Food', value: d.nonRoomExpenditure.totalFoodSpend },
+            { name: 'Amenities', value: d.nonRoomExpenditure.totalAmenitySpend },
+          ],
+          label: { formatter: '{b}: {c} ({d}%)' },
+        },
+      ],
+    };
+  });
 
   ngOnInit(): void {
     this.fetchData();
@@ -89,22 +255,6 @@ export class AnalyticsComponent implements OnInit {
       });
   }
 
-  fetchComparisonData(startDate?: string, endDate?: string): void {
-    this.loading.set(true);
-    this.error.set(null);
-    this.analyticsApi
-      .getAnalytics({ startDate, endDate })
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.loading.set(false)),
-      )
-      .subscribe({
-        next: (data) => this.comparisonAnalytics.set(data),
-        error: (err: any) =>
-          this.error.set(err instanceof Error ? err.message : 'Unexpected error'),
-      });
-  }
-
   onPresetChange(): void {
     const preset = this.presetControl.value;
     if (preset === 'custom') {
@@ -113,17 +263,8 @@ export class AnalyticsComponent implements OnInit {
     const dates = this.getPresetDates(preset);
     if (dates) {
       this.fetchData(dates.start, dates.end);
-    }
-  }
-
-  onComparisonPresetChange(): void {
-    const preset = this.comparisonPresetControl.value;
-    if (preset === 'custom') {
-      return;
-    }
-    const dates = this.getPresetDates(preset);
-    if (dates) {
-      this.fetchComparisonData(dates.start, dates.end);
+    } else {
+      this.fetchData();
     }
   }
 
@@ -131,31 +272,18 @@ export class AnalyticsComponent implements OnInit {
     const start = this.startDateCtrl.value;
     const end = this.endDateCtrl.value;
     if (start && end) {
-      const s = new Date(start);
-      s.setHours(0, 0, 0, 0);
-      const e = new Date(end);
-      e.setHours(23, 59, 59, 999);
-      this.fetchData(s.toISOString(), e.toISOString());
+      const startDate = new Date(start);
+      startDate.setHours(0, 0, 0, 0);
+      const endDate = new Date(end);
+      endDate.setHours(23, 59, 59, 999);
+      this.fetchData(startDate.toISOString(), endDate.toISOString());
     }
   }
 
-  applyComparisonCustomRange(): void {
-    const start = this.comparisonStartDateCtrl.value;
-    const end = this.comparisonEndDateCtrl.value;
-    if (start && end) {
-      const s = new Date(start);
-      s.setHours(0, 0, 0, 0);
-      const e = new Date(end);
-      e.setHours(23, 59, 59, 999);
-      this.fetchComparisonData(s.toISOString(), e.toISOString());
-    }
+  onCategoryChange(): void {
+    this.categorySignal.set(this.categoryControl.value);
   }
 
-  onTabChange(event: any): void {
-    // Empty tab change handler to satisfy output binding
-  }
-
-  // Preset date math helper
   private getPresetDates(preset: string): { start: string; end: string } | null {
     const now = new Date();
     let start: Date;
@@ -177,153 +305,4 @@ export class AnalyticsComponent implements OnInit {
     end.setHours(23, 59, 59, 999);
     return { start: start.toISOString(), end: end.toISOString() };
   }
-
-  // Computed ECharts options
-  revenueBarOptions = computed(() => {
-    const d = this.analytics();
-    if (!d) return {};
-    return {
-      title: { text: 'Revenue & Turnover' },
-      tooltip: { trigger: 'axis' },
-      xAxis: { type: 'category', data: ['Total Revenue', 'Gross Turnover'] },
-      yAxis: { type: 'value' },
-      series: [
-        {
-          type: 'bar',
-          data: [d.totalRevenue, d.grossTurnover],
-          color: '#1976d2',
-        },
-      ],
-    };
-  });
-
-  revParGaugeOptions = computed(() => {
-    const d = this.analytics();
-    if (!d) return {};
-    return {
-      series: [
-        {
-          type: 'gauge',
-          min: 0,
-          max: Math.max(d.revPAR * 1.5, 1000),
-          detail: { formatter: '${value}' },
-          data: [{ value: d.revPAR, name: 'RevPAR' }],
-        },
-      ],
-    };
-  });
-
-  occupancyGaugeOptions = computed(() => {
-    const d = this.analytics();
-    if (!d) return {};
-    return {
-      series: [
-        {
-          type: 'gauge',
-          min: 0,
-          max: 100,
-          detail: { formatter: '{value}%' },
-          data: [{ value: d.occupancyRate, name: 'Occupancy' }],
-        },
-      ],
-    };
-  });
-
-  radarOptions = computed(() => {
-    const d = this.analytics();
-    if (!d) return {};
-    return {
-      title: { text: 'Operational Overview' },
-      radar: {
-        indicator: [
-          { name: 'Occupancy', max: 100 },
-          { name: 'Cancellation', max: 50 },
-          { name: 'Length of Stay', max: 30 },
-          { name: 'Satisfaction', max: 100 },
-        ],
-      },
-      series: [
-        {
-          type: 'radar',
-          data: [
-            {
-              value: [
-                d.occupancyRate,
-                d.cancellationRate,
-                d.averageLengthOfStay,
-                d.guestSatisfactionScore,
-              ],
-              name: 'Current',
-            },
-          ],
-        },
-      ],
-    };
-  });
-
-  satisfactionGaugeOptions = computed(() => {
-    const d = this.analytics();
-    if (!d) return {};
-    return {
-      series: [
-        {
-          type: 'gauge',
-          min: 0,
-          max: 100,
-          detail: { formatter: '{value}%' },
-          data: [{ value: d.guestSatisfactionScore, name: 'Satisfaction' }],
-        },
-      ],
-    };
-  });
-
-  expenditurePieOptions = computed(() => {
-    const d = this.analytics();
-    if (!d) return {};
-    return {
-      title: { text: 'Non-Room Expenditure' },
-      tooltip: { trigger: 'item' },
-      series: [
-        {
-          type: 'pie',
-          data: [
-            { name: 'Food', value: d.nonRoomExpenditure.totalFoodSpend },
-            {
-              name: 'Amenities',
-              value: d.nonRoomExpenditure.totalAmenitySpend,
-            },
-          ],
-          label: { formatter: '{b}: {c} ({d}%)' },
-        },
-      ],
-    };
-  });
-
-  comparisonBarOptions = computed(() => {
-    const a = this.analytics();
-    const b = this.comparisonAnalytics();
-    if (!a || !b) return {};
-    return {
-      title: { text: 'Comparison' },
-      tooltip: { trigger: 'axis' },
-      legend: { data: ['Period 1', 'Period 2'] },
-      xAxis: {
-        type: 'category',
-        data: ['Revenue', 'Occupancy', 'Satisfaction'],
-      },
-      yAxis: { type: 'value' },
-      series: [
-        {
-          name: 'Period 1',
-          type: 'bar',
-          data: [a.totalRevenue, a.occupancyRate, a.guestSatisfactionScore],
-        },
-        {
-          name: 'Period 2',
-          type: 'bar',
-          data: [b.totalRevenue, b.occupancyRate, b.guestSatisfactionScore],
-        },
-      ],
-    };
-  });
 }
