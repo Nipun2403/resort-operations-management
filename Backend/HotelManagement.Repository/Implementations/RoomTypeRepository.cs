@@ -13,7 +13,7 @@ public class RoomTypeRepository : GenericRepository<RoomType>, IRoomTypeReposito
     {
         var query = _context.RoomTypes.AsQueryable();
         if (!includeRetired) query = query.Where(r => r.IsActive);
-        
+
         return await query.ToListAsync();
     }
 }

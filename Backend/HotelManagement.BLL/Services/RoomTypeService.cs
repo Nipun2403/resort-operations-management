@@ -27,7 +27,7 @@ public class RoomTypeService : IRoomTypeService
         _roomRepository = roomRepository;
     }
 
-    public async Task<PaginatedResult<RoomTypeDTO>> GetRoomTypesAsync(int pageNumber, int pageSize, bool includeRetired = false, string? sortBy = null, bool sortDescending = false)
+    public async Task<PaginatedResult<RoomTypeDTO>> GetRoomTypesAsync(int pageNumber, int pageSize, bool includeRetired = false, string? searchQuery = null, string? sortBy = null, bool sortDescending = false)
     {
 
         if (includeRetired && !_currentUserService.IsInRole("Admin"))
@@ -37,6 +37,15 @@ public class RoomTypeService : IRoomTypeService
 
         var types = await _roomTypeRepository.GetRoomTypesAsync(includeRetired);
         var query = types.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(searchQuery))
+        {
+            var lowerQuery = searchQuery.ToLower();
+            query = query.Where(rt =>
+                rt.Name.ToLower().Contains(lowerQuery) ||
+                (rt.Description != null && rt.Description.ToLower().Contains(lowerQuery))
+            );
+        }
 
         // Apply Dynamic Sorting
         if (!string.IsNullOrEmpty(sortBy))

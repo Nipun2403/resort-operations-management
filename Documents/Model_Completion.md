@@ -315,3 +315,109 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ☑ No route changes made.
 ================================================================================
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: room-type-crud.md
+Date: 2026-06-27
+================================================================================
+
+FILES CREATED
+-------------
+✓ app/features/admin/models/room-type.model.ts
+✓ app/features/admin/services/room-type-api.service.ts
+✓ app/features/admin/pages/management/room-type-management.component.ts  (placeholder overwritten)
+✓ app/features/admin/pages/management/room-type-management.component.html
+✓ app/features/admin/pages/management/room-type-management.component.scss
+
+FILES MODIFIED
+--------------
+✓ app/shared/models/crud-config.model.ts — added entityId?: number to CrudModalResult (§12 patch)
+✓ app/shared/components/generic-crud/crud-modal/crud-modal.component.ts — pass entityId in submit()
+✓ app/shared/components/generic-crud/generic-crud.component.ts — save output includes entityId?
+✓ app/app.routes.ts — room-type route now loads RoomTypeManagementComponent
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Models (§6)
+  ✓ RoomType: id, name, description|null, basePrice, maxOccupancy,
+    imageUrls[], squareFootage|null, bedConfiguration|null, isActive
+  ✓ CreateRoomTypeDTO with all optional fields per spec
+  ✓ UpdateRoomTypeDTO with all optional fields per spec
+
+✓ RoomTypeApiService (§6)
+  ✓ getAll(): GET /api/v1/room-types with includeRetired, pageNumber, pageSize, sortBy, sortDescending
+  ✓ Returns Observable<PaginatedResponse<RoomType>>
+  ✓ create(): POST /api/v1/room-types → Observable<RoomType>
+  ✓ update(): PATCH /api/v1/room-types/{id} → Observable<RoomType>
+  ✓ providedIn: 'root', baseUrl from environment
+
+✓ Component API (§4)
+  ✓ Selector: app-room-type-management
+  ✓ Standalone: true
+  ✓ Template exactly: <app-generic-crud [config] (searchChange) (filterChange)
+    (sortChange) (pageChange) (save)>
+
+✓ State Management (§5)
+  ✓ data = signal<RoomType[]>([])
+  ✓ totalCount = signal(0)
+  ✓ loading = signal(false)
+  ✓ error = signal<string | null>(null)
+  ✓ pageIndex = signal(0), pageSize = signal(10)
+  ✓ sortField = signal('name'), sortDescending = signal(false)
+  ✓ includeRetired = signal(false), searchQuery = signal('')
+
+✓ CrudConfig (§7)
+  ✓ 4 columns: name (sortable), basePrice (sortable), maxOccupancy (sortable), isActive (not sortable)
+  ✓ 1 filter: includeRetired/Status with Active Only / All options
+  ✓ 8 formFields: name, description(textarea), basePrice, maxOccupancy,
+    imageUrl, squareFootage, bedType, bedCount — validators per spec
+  ✓ supportsToggle: true
+
+✓ Data Flow (§6)
+  ✓ fetchData() uses takeUntilDestroyed + finalize; passes all query params
+  ✓ ngOnInit: restoreState() then fetchData()
+  ✓ onSearchChange(_): no-op (search not supported by backend)
+  ✓ onFilterChange: sets includeRetired, resets pageIndex to 0, saves, fetches
+  ✓ onSortChange: sets sortField/sortDescending, resets pageIndex to 0, saves, fetches
+  ✓ onPageChange: sets pageIndex/pageSize, saves, fetches
+  ✓ onSave: builds imageUrls/bedConfig from formValue; calls update(entityId,dto)
+    if entityId present, create(dto) otherwise; snackBar on success/error
+
+✓ Session State Persistence (§8)
+  ✓ saveState() writes includeRetired, sortField, sortDescending, pageIndex,
+    pageSize to sessionStorage key 'roomTypesState'
+  ✓ restoreState() reads and applies on init; graceful on parse error
+
+✓ §12 Patch to GenericCrudComponent
+  ✓ CrudModalResult.entityId?: number added
+  ✓ CrudModalComponent.submit() passes entityId = entity?.id
+  ✓ GenericCrudComponent save output includes entityId?
+  ✓ Both save emission paths (direct and after confirm) pass entityId
+
+API INTEGRATION
+---------------
+✓ GET /api/v1/room-types — params: includeRetired, pageNumber, pageSize, sortBy, sortDescending
+    → PaginatedResponse<RoomType>
+✓ POST /api/v1/room-types — body: CreateRoomTypeDTO → RoomType
+✓ PATCH /api/v1/room-types/{id} — body: UpdateRoomTypeDTO → RoomType
+
+KNOWN DEVIATIONS
+----------------
+None. All requirements implemented as specified.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+AMBIGUITY-1: Spec formFields use key name "name" (spec writes `name:` not `key:`)
+  Default Applied: Used `key:` throughout (matching the existing FormFieldDef interface)
+  — the spec's `name:` fields are the FormFieldDef.key values. This is consistent
+  with how CrudModalComponent reads formFields (by field.key).
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+☑ Every ✓ corresponds to code that exists and is correct.
+☑ No file, function, or feature added beyond spec definition.
+☑ All API calls match spec contracts exactly (method, path, params, response type).
+☑ No regex validators in this spec — N/A.
+☑ Route updated only to swap placeholder → real component; path unchanged.
+================================================================================
+

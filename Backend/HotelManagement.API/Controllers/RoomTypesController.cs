@@ -18,10 +18,10 @@ public class RoomTypesController : ControllerBase
 
     [HttpGet]
     [AllowAnonymous]
-    public async Task<IActionResult> GetRoomTypes([FromQuery] bool includeRetired = false, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10, [FromQuery] string? sortBy = null, [FromQuery] bool sortDescending = false)
+    public async Task<IActionResult> GetRoomTypes([FromQuery] bool includeRetired = false, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10, [FromQuery] string? sortBy = null, [FromQuery] bool sortDescending = false, [FromQuery] string? searchQuery = null)
     {
         pageSize = Math.Min(pageSize, 100);
-        var result = await _roomTypeService.GetRoomTypesAsync(pageNumber, pageSize, includeRetired, sortBy, sortDescending);
+        var result = await _roomTypeService.GetRoomTypesAsync(pageNumber, pageSize, includeRetired, searchQuery, sortBy, sortDescending);
         return Ok(result);
     }
 

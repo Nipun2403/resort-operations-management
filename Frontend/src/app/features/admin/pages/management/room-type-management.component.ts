@@ -19,6 +19,7 @@ interface RoomTypesState {
   sortDescending: boolean;
   pageIndex: number;
   pageSize: number;
+  searchQuery: string;
 }
 
 @Component({
@@ -146,6 +147,7 @@ export class RoomTypeManagementComponent implements OnInit {
         pageSize: this.pageSize(),
         sortBy: this.sortField(),
         sortDescending: this.sortDescending(),
+        searchQuery: this.searchQuery() || undefined,
       })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
@@ -167,6 +169,7 @@ export class RoomTypeManagementComponent implements OnInit {
       sortDescending: this.sortDescending(),
       pageIndex: this.pageIndex(),
       pageSize: this.pageSize(),
+      searchQuery: this.searchQuery(),
     };
     sessionStorage.setItem(STATE_KEY, JSON.stringify(state));
   }
@@ -181,12 +184,18 @@ export class RoomTypeManagementComponent implements OnInit {
       this.sortDescending.set(state.sortDescending ?? false);
       this.pageIndex.set(state.pageIndex ?? 0);
       this.pageSize.set(state.pageSize ?? 10);
+      this.searchQuery.set(state.searchQuery ?? '');
     } catch {
       // Ignore corrupt state
     }
   }
 
-  onSearchChange(_: string): void {}
+  onSearchChange(query: string): void {
+    this.searchQuery.set(query.trim() || '');
+    this.pageIndex.set(0);
+    this.saveState();
+    this.fetchData();
+  }
 
   onFilterChange(filters: Record<string, any>): void {
     if ('includeRetired' in filters) {

@@ -16,13 +16,17 @@ export class RoomTypeApiService {
     pageSize: number;
     sortBy: string;
     sortDescending: boolean;
+    searchQuery?: string;
   }): Observable<PaginatedResponse<RoomType>> {
-    const httpParams = new HttpParams()
+    let httpParams = new HttpParams()
       .set('includeRetired', params.includeRetired.toString())
       .set('pageNumber', params.pageNumber.toString())
       .set('pageSize', params.pageSize.toString())
       .set('sortBy', params.sortBy)
       .set('sortDescending', params.sortDescending.toString());
+    if (params.searchQuery) {
+      httpParams = httpParams.set('searchQuery', params.searchQuery);
+    }
     return this.http.get<PaginatedResponse<RoomType>>(this.baseUrl, { params: httpParams });
   }
 
