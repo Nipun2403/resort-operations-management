@@ -22,19 +22,31 @@ public class AmenityService : IAmenityService
         _currentUserService = currentUserService;
     }
 
-    public async Task<PaginatedResult<AmenityDTO>> GetAllAmenitiesAsync(int pageNumber, int pageSize)
+    public async Task<PaginatedResult<AmenityDTO>> GetAllAmenitiesAsync(
+            int pageNumber,
+            int pageSize,
+            string? searchQuery = null,
+            string? sortBy = null,
+            bool sortDescending = false)
     {
-        var result = await _amenityRepository.GetPaginatedResultAsync(pageNumber, pageSize);
-        var dtos = _mapper.Map<IEnumerable<AmenityDTO>>(result.Data);
+        var pagedResult = await _amenityRepository.GetPaginatedAmenitiesAsync(
+            pageNumber,
+            pageSize,
+            searchQuery,
+            sortBy,
+            sortDescending);
+
+        var dtos = _mapper.Map<IEnumerable<AmenityDTO>>(pagedResult.Data);
 
         return new PaginatedResult<AmenityDTO>
         {
-            TotalCount = result.TotalCount,
-            PageNumber = result.PageNumber,
-            PageSize = result.PageSize,
+            TotalCount = pagedResult.TotalCount,
+            PageNumber = pagedResult.PageNumber,
+            PageSize = pagedResult.PageSize,
             Data = dtos
         };
     }
+
 
     public async Task<AmenityDTO?> GetAmenityByIdAsync(int id)
     {

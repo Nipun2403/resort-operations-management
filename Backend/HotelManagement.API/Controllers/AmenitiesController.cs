@@ -18,10 +18,20 @@ public class AmenitiesController : ControllerBase
 
     [HttpGet]
     [AllowAnonymous]
-    public async Task<IActionResult> GetAmenities([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+    public async Task<IActionResult> GetAmenities(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        [FromQuery] string? searchQuery = null,      // NEW
+        [FromQuery] string? sortBy = null,           // NEW
+        [FromQuery] bool sortDescending = false)     // NEW
     {
         pageSize = Math.Min(pageSize, 100);
-        var amenities = await _amenityService.GetAllAmenitiesAsync(pageNumber, pageSize);
+        var amenities = await _amenityService.GetAllAmenitiesAsync(
+            pageNumber,
+            pageSize,
+            searchQuery,
+            sortBy,
+            sortDescending);
         return Ok(amenities);
     }
 
