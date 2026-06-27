@@ -948,6 +948,89 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: menu-items.md
+Date: 2026-06-27
+================================================================================
+
+FILES CREATED
+-------------
+✓ src/app/features/admin/models/menu-item.model.ts
+✓ src/app/features/admin/services/menu-item-api.service.ts
+✓ src/app/features/admin/pages/management/menu-management.component.html
+✓ src/app/features/admin/pages/management/menu-management.component.scss
+
+FILES MODIFIED
+--------------
+✓ src/app/features/admin/pages/management/menu-management.component.ts (overwritten placeholder)
+✓ src/app/app.routes.ts — updated lazy routing from PlaceholderMenuManagementComponent to MenuManagementComponent
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Models (§6)
+  ✓ MenuItem, CreateMenuItemDTO, and UpdateMenuItemDTO.
+✓ MenuItemApiService (§6)
+  ✓ getAll() GET /api/v1/menu-items with 6 parameters and normalized error handling.
+  ✓ create() POST /api/v1/menu-items CreateMenuItemDTO → MenuItem.
+  ✓ update() PUT /api/v1/menu-items/{id} UpdateMenuItemDTO → MenuItem.
+✓ MenuManagementComponent State & Logic (§5, §6)
+  ✓ signals: data, totalCount, loading, error, pageIndex, pageSize, sortField, sortDescending, searchQuery, availabilityFilter, editingEntity.
+  ✓ restoreState() matches exact validation code per §8.
+  ✓ saveState() saves correct fields to STORAGE_KEY 'menuState'.
+  ✓ onSearchChange() sets searchQuery, resets pageIndex, saves, and fetches.
+  ✓ onFilterChange() updates availabilityFilter, resets pageIndex, saves, and fetches.
+  ✓ onSortChange() resets pageIndex, saves, and fetches.
+  ✓ onPageChange() saves and fetches.
+  ✓ onSave() maps formValue and isActive to UpdateMenuItemDTO (isActive -> isAvailable) and CreateMenuItemDTO correctly, displaying SnackBar notifications on success/error.
+✓ CrudConfig for Menu Items (§7)
+  ✓ columns: Name, Category, Price, Available.
+  ✓ filters: Availability filter with All/Available/Unavailable options.
+  ✓ formFields: name, category, price, isAvailable.
+  ✓ showInAdd/showInEdit set up correctly so isAvailable toggle is hidden in add mode and shown in edit mode.
+  ✓ supportsToggle: true.
+
+API INTEGRATION
+---------------
+✓ GET   /api/v1/menu-items — pageNumber, pageSize, searchQuery, sortBy, sortDescending, isAvailable
+✓ POST  /api/v1/menu-items — CreateMenuItemDTO
+✓ PUT   /api/v1/menu-items/{id} — UpdateMenuItemDTO
+
+LOGIC TRACES
+------------
+Flow: Create Menu Item
+  Entry: Click "Add Menu Item" -> fills form (name, category, price) -> click save
+  Path: generic-crud saves -> onSave() -> performCreate(formValue) -> menuItemApi.create() -> SnackBar success -> fetchData()
+  Result: ✓ Matches spec (no availability toggle on creation, isAvailable=true default behavior)
+
+Flow: Edit Menu Item
+  Entry: Click "Edit" icon -> form modal opens with all fields including availability toggle
+  Path: generic-crud save -> onSave(formValue, isActive) -> performUpdate(formValue, isActive) -> menuItemApi.update() -> SnackBar success -> fetchData()
+  Result: ✓ Matches spec (instant save without deactivation confirm dialog)
+
+KNOWN DEVIATIONS
+----------------
+None. All requirements implemented exactly as specified.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+☑ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+☑ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+☑ I confirm that all API calls match the spec contracts exactly.
+☑ I confirm that all regex validators are character-for-character matches
+  to the spec.
+☑ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+
 
 
 

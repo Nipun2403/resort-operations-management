@@ -30,7 +30,7 @@ export const routes: Routes = [
           { path: 'room-type', loadComponent: () => import('./features/admin/pages/management/room-type-management.component').then(m => m.RoomTypeManagementComponent) },
           { path: 'staff', loadComponent: () => import('./features/admin/pages/management/staff-management.component').then(m => m.StaffManagementComponent) },
           { path: 'amenities', loadComponent: () => import('./features/admin/pages/management/amenities-management.component').then(m => m.AmenitiesManagementComponent) },
-          { path: 'menu', loadComponent: () => import('./features/admin/pages/management/menu-management.component').then(m => m.PlaceholderMenuManagementComponent) },
+          { path: 'menu', loadComponent: () => import('./features/admin/pages/management/menu-management.component').then(m => m.MenuManagementComponent) },
         ]
       },
       {

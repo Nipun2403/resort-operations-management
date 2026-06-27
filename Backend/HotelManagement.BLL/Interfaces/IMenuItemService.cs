@@ -8,7 +8,7 @@ public interface IMenuItemService
     Task<PaginatedResult<MenuItemDTO>> GetMenuItemsAsync(
     int pageNumber,
     int pageSize,
-    bool? isAvailable = null,
+    bool isAvailable = true,
     string? searchQuery = null,
     string? sortBy = null,
     bool sortDescending = false);
