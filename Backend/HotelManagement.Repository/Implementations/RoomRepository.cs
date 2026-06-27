@@ -125,6 +125,12 @@ public class RoomRepository : GenericRepository<Room>, IRoomRepository
                     ? query.OrderByDescending(r => r.RoomType.MaxOccupancy)
                     : query.OrderBy(r => r.RoomType.MaxOccupancy);
             }
+            else if (sortBy.Equals("roomTypeName", StringComparison.OrdinalIgnoreCase))
+            {
+                query = sortDescending
+                    ? query.OrderByDescending(r => r.RoomType.Name)
+                    : query.OrderBy(r => r.RoomType.Name);
+            }
             else
             {
                 query = query.OrderByDynamic(sortBy, sortDescending);

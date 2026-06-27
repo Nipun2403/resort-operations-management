@@ -271,6 +271,10 @@ export class RoomManagementComponent implements OnInit {
     this.fetchData();
   }
 
+  onEdit(entity: Room): void {
+    this.editingEntity.set(entity);
+  }
+
   onSave(event: { formValue: any; isActive: boolean; entityId?: number }): void {
     const { formValue, isActive } = event;
     if (this.editingEntity()) {

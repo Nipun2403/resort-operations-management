@@ -28,6 +28,7 @@
     <app-generic-crud
       [config]="crudConfig"
       [highlightId]="highlightRoomId()"
+      (edit)="onEdit($event)"
       (searchChange)="onSearchChange($event)"
       (filterChange)="onFilterChange($event)"
       (sortChange)="onSortChange($event)"

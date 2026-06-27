@@ -94,6 +94,7 @@ export class GenericCrudComponent {
   sortChange = output<{ active: string; direction: 'asc' | 'desc' }>();
   pageChange = output<{ pageIndex: number; pageSize: number }>();
   save = output<{ formValue: any; isActive: boolean; entityId?: number }>();
+  edit = output<any>();
   highlightId = input<number | null>(null);
 
   // Internal signals per spec §4
@@ -178,6 +179,7 @@ export class GenericCrudComponent {
   }
 
   openEditModal(row: any): void {
+    this.edit.emit(row);
     this.editMode.set(true);
     this.selectedEntity.set(row);
     const data: CrudModalData = {
