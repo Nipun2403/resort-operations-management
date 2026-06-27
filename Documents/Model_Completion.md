@@ -1927,10 +1927,80 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ☑ I confirm that no file, function, or feature was added beyond what
   the spec defines.
 ☑ I confirm that all API calls match the spec contracts exactly.
+  to the spec.
+☑ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: oversight-table-ui-patch.md
+Date: 2026-06-28
+================================================================================
+
+FILES CREATED
+-------------
+None. All changes are modifications to existing files.
+
+FILES MODIFIED
+--------------
+✓ src/app/features/admin/pages/oversight/audit-logs.component.scss
+  — Scoped `table-layout: fixed; width: 100%` and `th, td { overflow: hidden; text-overflow: ellipsis; white-space: nowrap }` under `.audit-logs-page` (§3.1)
+  — Appended explicit widths to columns 1–6 (10%, 15%, 15%, 20%, 25%, 15%) (§3.1)
+✓ src/app/features/admin/pages/oversight/feedback.component.scss
+  — Scoped `table-layout: fixed; width: 100%` and `th, td { overflow: hidden; text-overflow: ellipsis; white-space: nowrap }` under `.feedback-page` (§3.1)
+  — Appended explicit widths to columns 1–7 (8%, 10%, 10%, 30%, 17%, 10%, 15%) (§3.1)
+✓ src/app/features/admin/pages/oversight/billing-receipts.component.scss
+  — Scoped `table-layout: fixed; width: 100%` and `th, td { overflow: hidden; text-overflow: ellipsis; white-space: nowrap }` under `.bookings-view` (§3.1)
+  — Appended explicit widths to bookings columns 1–7 (8%, 18%, 14%, 14%, 12%, 19%, 15%) (§3.1)
+  — Scoped `table-layout: fixed; width: 100%` and `th, td { overflow: hidden; text-overflow: ellipsis; white-space: nowrap }` under `.receipts-view` (§3.1)
+  — Appended explicit widths to receipts columns 1–6 (10%, 15%, 15%, 20%, 25%, 15%) (§3.1)
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Audit Logs table column width stability (§3.1)
+  ✓ Columns do not shift during sorting or data updates.
+  ✓ Long contents truncated using ellipsis.
+✓ Feedback table column width stability (§3.1)
+  ✓ Table columns remain fixed in width and text is truncated using ellipsis.
+✓ Billing & Receipts tables column width stability (§3.1)
+  ✓ Both Bookings and Receipts tables configured with layout fixed and exact widths.
+✓ Desktop view formatting (§3.2)
+  ✓ No horizontal scroll on large desktop screens; columns fit screen cleanly.
+  ✓ Responsive overflow scroll remains operational on smaller/mobile layout.
+
+API INTEGRATION
+---------------
+None.
+
+LOGIC TRACES
+------------
+Flow: CSS scoping and styling
+  Entry: Navigating to Feedback Page or Audit Logs Page
+  Path: Elements match `.feedback-page table` / `.audit-logs-page table` -> table layout set to fixed. Columns styled according to child index widths. Text overflow handled by ellipsis.
+  Result: ✓ Stable sorting columns
+
+KNOWN DEVIATIONS
+----------------
+None.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None — spec is fully explicit.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+☑ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+☑ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+☑ I confirm that all API calls match the spec contracts exactly.
 ☑ I confirm that all regex validators are character-for-character matches
   to the spec.
 ☑ I confirm that all role-to-route mappings match the spec exactly.
 ================================================================================
+
 
 
 
