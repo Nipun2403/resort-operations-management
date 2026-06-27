@@ -24,33 +24,33 @@ public class RoomService : IRoomService
     }
 
 
-    public async Task<PaginatedResult<RoomDTO>> GetRoomsAsync(int pageNumber, int pageSize, int? roomTypeId = null, bool includeRetired = false, string? sortBy = null, bool sortDescending = false)
+    public async Task<PaginatedResult<RoomDTO>> GetRoomsAsync(
+        int pageNumber,
+        int pageSize,
+        int? roomTypeId = null,
+        bool includeRetired = false,
+        string? sortBy = null,
+        bool sortDescending = false,
+        string? searchQuery = null)
     {
-        var rooms = await _roomRepository.GetRoomsWithTypesAsync(includeRetired);
-        var query = rooms.AsQueryable();
+        var pagedRooms = await _roomRepository.GetPaginatedRoomsAsync(
+            pageNumber,
+            pageSize,
+            includeRetired,
+            roomTypeId,
+            searchQuery,
+            sortBy,
+            sortDescending);
 
-        if (roomTypeId.HasValue)
-        {
-            query = query.Where(r => r.RoomTypeId == roomTypeId.Value);
-        }
+        var dtos = _mapper.Map<IEnumerable<RoomDTO>>(pagedRooms.Data);
 
-        if (!string.IsNullOrEmpty(sortBy))
-        {
-            query = query.OrderByDynamic(sortBy, sortDescending);
-        }
-
-        var totalCount = query.Count();
-        var pagedRooms = query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
-
-        var dtos = _mapper.Map<IEnumerable<RoomDTO>>(pagedRooms);
         return new PaginatedResult<RoomDTO>
         {
-            TotalCount = totalCount,
-            PageNumber = pageNumber,
-            PageSize = pageSize,
+            TotalCount = pagedRooms.TotalCount,
+            PageNumber = pagedRooms.PageNumber,
+            PageSize = pagedRooms.PageSize,
             Data = dtos
         };
-
     }
 
     public async Task<RoomDTO> CreateRoomAsync(CreateUpdateRoomDTO dto)
