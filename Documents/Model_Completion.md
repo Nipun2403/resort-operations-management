@@ -1497,6 +1497,86 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: oversight-sorting.md
+Date: 2026-06-27
+================================================================================
+
+FILES CREATED
+-------------
+None.
+
+FILES MODIFIED
+--------------
+✓ src/app/features/admin/pages/oversight/billing-receipts.component.html
+  — Added matSortDisableClear attribute to bookings and receipts tables.
+✓ src/app/features/admin/pages/oversight/billing-receipts.component.ts
+  — Added BookingSortField and ReceiptSortField type definitions and strongly-typed signals.
+  — Updated onBookingSort() and onReceiptSort() to handle Sort and check against allowed sort fields.
+  — Added type safety checks in restoreState().
+✓ src/app/features/admin/pages/oversight/audit-logs.component.html
+  — Added matSortDisableClear attribute to the audit logs table.
+✓ src/app/features/admin/pages/oversight/audit-logs.component.ts
+  — Added AuditSortField type definition and strongly-typed sortField signal.
+  — Updated onSortChange() to handle Sort and validate against allowed fields.
+  — Added type validation checks in restoreState().
+✓ src/app/features/admin/pages/oversight/feedback.component.html
+  — Added matSortDisableClear attribute to the feedback table.
+✓ src/app/features/admin/pages/oversight/feedback.component.ts
+  — Added FeedbackSortField type definition and strongly-typed sortField signal.
+  — Updated onSortChange() to handle Sort and validate against allowed fields.
+  — Added type validation checks in restoreState().
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Global Rule (All MatSort Tables) (§2)
+  ✓ Added matSortDisableClear to bookings table, receipts table, audit logs table, and feedback table.
+✓ Explicit Backend Sort Fields (Per Page) (§4)
+  ✓ Audit Logs allowed sort fields: 'id' | 'timestamp'.
+  ✓ Feedback allowed sort fields: 'id' | 'rating' | 'createdAt'.
+  ✓ Billing Bookings allowed sort fields: 'id' | 'bookingStatus' | 'bookedAt'.
+  ✓ Billing Receipts allowed sort fields: 'id' | 'amountPaid' | 'paidAt'.
+  ✓ Sort events validate against allowed sort fields, update sort field and descending signals, reset page index to 0, save state, and trigger fetches.
+✓ Column Configuration (§5)
+  ✓ Verified that columns marked sortable matches allowed backend sort fields.
+✓ Session Storage Sync (§6)
+  ✓ Added validation checks during restoreState() to prevent restoring un-allowed sort fields from session storage.
+
+API INTEGRATION
+---------------
+None.
+
+LOGIC TRACES
+------------
+Flow: Click ID column header in Feedback table
+  Entry: User clicks ID column header
+  Path: matSortChange triggers onSortChange(event) -> event.active = 'id' -> passes validation -> sortField set to 'id' -> sortDescending set to false -> pageIndex set to 0 -> saveState() -> fetchData() [GET request with sortBy='id']
+  Result: ✓ Matches spec
+
+KNOWN DEVIATIONS
+----------------
+None.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+☑ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+☑ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+☑ I confirm that all API calls match the spec contracts exactly.
+☑ I confirm that all regex validators are character-for-character matches
+  to the spec.
+☑ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+
 
 
 

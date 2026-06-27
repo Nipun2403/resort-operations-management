@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
-import { MatSortModule } from '@angular/material/sort';
+import { MatSortModule, Sort } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatButtonModule } from '@angular/material/button';
@@ -29,6 +29,9 @@ import { Receipt } from '../../models/receipt.model';
 import { AlertComponent } from '../../../../features/auth/components/alert.component';
 import { BookingDetailDialogComponent } from './booking-detail-dialog.component';
 import { ReceiptDetailDialogComponent } from './receipt-detail-dialog.component';
+
+type BookingSortField = 'id' | 'bookingStatus' | 'bookedAt';
+type ReceiptSortField = 'id' | 'amountPaid' | 'paidAt';
 
 @Component({
   selector: 'app-billing-receipts',
@@ -76,7 +79,7 @@ export class BillingReceiptsComponent implements OnInit {
   bookingsError = signal<string | null>(null);
   bookingPage = signal(0);
   bookingPageSize = signal(10);
-  bookingSortField = signal('bookedAt');
+  bookingSortField = signal<BookingSortField>('bookedAt');
   bookingSortDescending = signal(true);
 
   // Bookings filter controls
@@ -90,7 +93,7 @@ export class BillingReceiptsComponent implements OnInit {
   receiptsError = signal<string | null>(null);
   receiptPage = signal(0);
   receiptPageSize = signal(10);
-  receiptSortField = signal('id');
+  receiptSortField = signal<ReceiptSortField>('id');
   receiptSortDescending = signal(true);
 
   // Receipts filter controls
@@ -230,18 +233,22 @@ export class BillingReceiptsComponent implements OnInit {
     this.fetchReceipts();
   }
 
-  onBookingSort(event: any): void {
+  onBookingSort(event: Sort): void {
     if (!event.active || !event.direction) return;
-    this.bookingSortField.set(event.active);
+    const field = event.active as BookingSortField;
+    if (!['id', 'bookingStatus', 'bookedAt'].includes(field)) return;
+    this.bookingSortField.set(field);
     this.bookingSortDescending.set(event.direction === 'desc');
     this.bookingPage.set(0);
     this.saveState();
     this.fetchBookings();
   }
 
-  onReceiptSort(event: any): void {
+  onReceiptSort(event: Sort): void {
     if (!event.active || !event.direction) return;
-    this.receiptSortField.set(event.active);
+    const field = event.active as ReceiptSortField;
+    if (!['id', 'amountPaid', 'paidAt'].includes(field)) return;
+    this.receiptSortField.set(field);
     this.receiptSortDescending.set(event.direction === 'desc');
     this.receiptPage.set(0);
     this.saveState();
@@ -313,7 +320,7 @@ export class BillingReceiptsComponent implements OnInit {
         this.bookingPage.set(parsed.bookingPage);
       if (Number.isInteger(parsed.bookingPageSize) && parsed.bookingPageSize > 0)
         this.bookingPageSize.set(parsed.bookingPageSize);
-      if (typeof parsed.bookingSortField === 'string')
+      if (parsed.bookingSortField === 'id' || parsed.bookingSortField === 'bookingStatus' || parsed.bookingSortField === 'bookedAt')
         this.bookingSortField.set(parsed.bookingSortField);
       if (typeof parsed.bookingSortDescending === 'boolean')
         this.bookingSortDescending.set(parsed.bookingSortDescending);
@@ -326,7 +333,7 @@ export class BillingReceiptsComponent implements OnInit {
         this.receiptPage.set(parsed.receiptPage);
       if (Number.isInteger(parsed.receiptPageSize) && parsed.receiptPageSize > 0)
         this.receiptPageSize.set(parsed.receiptPageSize);
-      if (typeof parsed.receiptSortField === 'string')
+      if (parsed.receiptSortField === 'id' || parsed.receiptSortField === 'amountPaid' || parsed.receiptSortField === 'paidAt')
         this.receiptSortField.set(parsed.receiptSortField);
       if (typeof parsed.receiptSortDescending === 'boolean')
         this.receiptSortDescending.set(parsed.receiptSortDescending);

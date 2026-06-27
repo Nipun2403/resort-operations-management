@@ -72,6 +72,7 @@
       mat-table
       [dataSource]="bookings()"
       matSort
+      matSortDisableClear
       (matSortChange)="onBookingSort($event)"
       aria-label="Bookings"
     >
@@ -278,6 +279,7 @@
       mat-table
       [dataSource]="receipts()"
       matSort
+      matSortDisableClear
       (matSortChange)="onReceiptSort($event)"
       aria-label="Receipts"
     >

@@ -20,6 +20,8 @@ import { AuditLogEntry } from '../../models/audit-log-entry.model';
 import { AlertComponent } from '../../../../features/auth/components/alert.component';
 import { AuditLogDetailDialogComponent } from './audit-log-detail-dialog.component';
 
+type AuditSortField = 'id' | 'timestamp';
+
 @Component({
   selector: 'app-audit-logs',
   standalone: true,
@@ -60,7 +62,7 @@ export class AuditLogsComponent implements OnInit {
   // Query state (canonical signals)
   pageIndex = signal(0);
   pageSize = signal(10);
-  sortField = signal('timestamp');
+  sortField = signal<AuditSortField>('timestamp');
   sortDescending = signal(false);
 
   // UI input (form control)
@@ -124,7 +126,9 @@ export class AuditLogsComponent implements OnInit {
 
   onSortChange(event: Sort): void {
     if (!event.active || !event.direction) return;
-    this.sortField.set(event.active);
+    const field = event.active as AuditSortField;
+    if (!['id', 'timestamp'].includes(field)) return;
+    this.sortField.set(field);
     this.sortDescending.set(event.direction === 'desc');
     this.pageIndex.set(0);
     this.saveState();
@@ -161,7 +165,7 @@ export class AuditLogsComponent implements OnInit {
       if (typeof parsed !== 'object' || parsed === null) return;
 
       if (typeof parsed.searchQuery === 'string') this.searchControl.setValue(parsed.searchQuery);
-      if (typeof parsed.sortField === 'string') this.sortField.set(parsed.sortField);
+      if (parsed.sortField === 'id' || parsed.sortField === 'timestamp') this.sortField.set(parsed.sortField);
       if (typeof parsed.sortDescending === 'boolean')
         this.sortDescending.set(parsed.sortDescending);
       if (Number.isInteger(parsed.pageIndex) && parsed.pageIndex >= 0)

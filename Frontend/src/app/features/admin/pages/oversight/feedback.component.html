@@ -19,7 +19,7 @@
     @if (loading()) {
       <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     }
-    <table mat-table [dataSource]="entries()" matSort (matSortChange)="onSortChange($event)" aria-label="Feedback">
+    <table mat-table [dataSource]="entries()" matSort matSortDisableClear (matSortChange)="onSortChange($event)" aria-label="Feedback">
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef mat-sort-header="id">ID</th>
         <td mat-cell *matCellDef="let f">{{ f.id }}</td>

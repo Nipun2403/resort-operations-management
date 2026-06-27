@@ -19,6 +19,8 @@ import { FeedbackApiService } from '../../services/feedback-api.service';
 import { Feedback } from '../../models/feedback.model';
 import { AlertComponent } from '../../../../features/auth/components/alert.component';
 
+type FeedbackSortField = 'id' | 'rating' | 'createdAt';
+
 @Component({
   selector: 'app-feedback',
   standalone: true,
@@ -59,7 +61,7 @@ export class FeedbackComponent implements OnInit {
   // Query state (canonical signals)
   pageIndex = signal(0);
   pageSize = signal(10);
-  sortField = signal('createdAt');
+  sortField = signal<FeedbackSortField>('createdAt');
   sortDescending = signal(true);
 
   // UI input (form control)
@@ -107,7 +109,9 @@ export class FeedbackComponent implements OnInit {
 
   onSortChange(event: Sort): void {
     if (!event.active || !event.direction) return;
-    this.sortField.set(event.active);
+    const field = event.active as FeedbackSortField;
+    if (!['id', 'rating', 'createdAt'].includes(field)) return;
+    this.sortField.set(field);
     this.sortDescending.set(event.direction === 'desc');
     this.pageIndex.set(0);
     this.saveState();
@@ -162,7 +166,7 @@ export class FeedbackComponent implements OnInit {
 
       if (typeof parsed.includeHidden === 'boolean')
         this.includeHiddenControl.setValue(parsed.includeHidden);
-      if (typeof parsed.sortField === 'string') this.sortField.set(parsed.sortField);
+      if (parsed.sortField === 'id' || parsed.sortField === 'rating' || parsed.sortField === 'createdAt') this.sortField.set(parsed.sortField);
       if (typeof parsed.sortDescending === 'boolean')
         this.sortDescending.set(parsed.sortDescending);
       if (Number.isInteger(parsed.pageIndex) && parsed.pageIndex >= 0)
