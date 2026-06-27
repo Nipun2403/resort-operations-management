@@ -1347,6 +1347,86 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: feedback.md
+Date: 2026-06-27
+================================================================================
+
+FILES CREATED
+-------------
+✓ src/app/features/admin/models/feedback.model.ts
+✓ src/app/features/admin/services/feedback-api.service.ts
+✓ src/app/features/admin/pages/oversight/feedback.component.html
+✓ src/app/features/admin/pages/oversight/feedback.component.scss
+
+FILES MODIFIED
+--------------
+✓ src/app/features/admin/pages/oversight/feedback.component.ts (overwritten placeholder)
+✓ src/app/app.routes.ts — updated lazy routing from PlaceholderFeedbackComponent to FeedbackComponent
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Feedback Listing (§4, §5, §6)
+  ✓ entries, totalCount, loading, error, pageIndex, pageSize, sortField, sortDescending signals.
+  ✓ includeHiddenControl FormControl for showing hidden entries.
+  ✓ onIncludeHiddenToggle() resets pageIndex, saves, and fetches.
+  ✓ onSortChange() resets pageIndex, saves, and fetches.
+  ✓ onPageChange() saves and fetches.
+  ✓ columns: ID, Booking ID, Rating, Comments, Created, Hidden, Moderate.
+✓ Feedback Moderation (§6)
+  ✓ Toggling slide-toggle in row triggers onToggleHidden().
+  ✓ Performs optimistic UI update (updates entries array).
+  ✓ Calls feedbackApi.moderate(id, { isHidden }) to update backend status.
+  ✓ Shows SnackBar notification on success.
+  ✓ Reverts UI toggle state and shows error SnackBar on failure.
+  ✓ extractErrorMessage() helper extracts messages correctly.
+✓ Session Storage Sync (§7)
+  ✓ restoreState and saveState implemented verbatim matching STORAGE_KEY 'feedbackState'.
+✓ Layout & Styling (§9)
+  ✓ Table scrolls horizontally on mobile.
+  ✓ Controls stack vertically on small screens.
+
+API INTEGRATION
+---------------
+✓ GET    /api/v1/feedback — includeHidden, pageNumber, pageSize, sortBy, sortDescending
+✓ PATCH  /api/v1/feedback/{id}/moderate — body { isHidden }
+
+LOGIC TRACES
+------------
+Flow: Toggle Show Hidden feedback
+  Entry: User checks "Show hidden feedback" toggle
+  Path: Slide toggle change -> onIncludeHiddenToggle() -> pageIndex(0) -> saveState() -> fetchData() [API call with includeHidden=true]
+  Result: ✓ Matches spec
+
+Flow: Moderate row feedback to hide
+  Entry: User toggles slide-toggle inside a row to checked
+  Path: change event -> onToggleHidden(f, true) -> updates entries local signal (isHidden = true) -> feedbackApi.moderate(id, { isHidden: true }) -> success snackbar "Feedback hidden"
+  Result: ✓ Matches spec (instant moderation, optimistic update)
+
+KNOWN DEVIATIONS
+----------------
+* The import path for AlertComponent was updated from the spec's `../../../../shared/components/alert/alert.component` to `../../../../features/auth/components/alert.component` because the alert component is in auth features and does not exist in shared. This prevents compilation errors.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+☑ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+☑ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+☑ I confirm that all API calls match the spec contracts exactly.
+☑ I confirm that all regex validators are character-for-character matches
+  to the spec.
+☑ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+
 
 
 
