@@ -16,11 +16,11 @@ public class RoomTypeDTO
 
     public int MaxOccupancy { get; set; }
 
-    public string? ImageUrl { get; set; }
+    public List<string>? ImageUrls { get; set; }
 
     public int? SquareFootage { get; set; }
 
-    public string? BedConfiguration { get; set; }
+    public Dictionary<string, int>? BedConfiguration { get; set; }
     public bool IsActive { get; set; }
 }
 
@@ -31,9 +31,9 @@ public class RoomTypeAvailabilityDTO
     public decimal BasePrice { get; set; }
     public int MaxOccupancy { get; set; }
     public string? Description { get; set; }
-    public string? ImageUrl { get; set; }
+    public List<string>? ImageUrls { get; set; }
     public int? SquareFootage { get; set; }
-    public string? BedConfiguration { get; set; }
+    public Dictionary<string, int>? BedConfiguration { get; set; }
 
     public int AvailableCount { get; set; }
 }
@@ -50,12 +50,10 @@ public class UpdateRoomTypeDTO
     public decimal? BasePrice { get; set; }
 
     public int? MaxOccupancy { get; set; }
-    [StringLength(500)]
-    public string? ImageUrl { get; set; }
+    public List<string>? ImageUrls { get; set; }
     public int? SquareFootage { get; set; }
 
-    [StringLength(100)]
-    public string? BedConfiguration { get; set; }
+    public Dictionary<string, int>? BedConfiguration { get; set; }
     public bool? IsActive { get; set; }
 }
 
@@ -76,11 +74,9 @@ public class CreateRoomTypeDTO
     [Range(1, int.MaxValue)]
     public int MaxOccupancy { get; set; }
 
-    [StringLength(500)]
-    public string? ImageUrl { get; set; }
+    public List<string>? ImageUrls { get; set; }
 
     public int? SquareFootage { get; set; }
 
-    [StringLength(100)]
-    public string? BedConfiguration { get; set; }
+    public Dictionary<string, int>? BedConfiguration { get; set; }
 }

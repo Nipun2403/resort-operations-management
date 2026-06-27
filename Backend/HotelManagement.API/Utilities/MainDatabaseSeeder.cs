@@ -3,6 +3,7 @@ using HotelManagement.DAL.Entities;
 using HotelManagement.DAL.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System.Text.Json;
 
 namespace HotelManagement.API.Utilities;
 
@@ -44,23 +45,23 @@ public static class MainDatabaseSeeder
         context.SaveChanges();
 
         // 2. Room Types
-        var standard = new RoomType { Name = "Standard", BasePrice = 100m, MaxOccupancy = 2, Description = "Cozy room.", ImageUrl = "standard.jpg", SquareFootage = 300, BedConfiguration = "1 Queen", IsActive = true };
-        var deluxe = new RoomType { Name = "Deluxe Suite", BasePrice = 150m, MaxOccupancy = 2, Description = "Spacious suite.", ImageUrl = "deluxe.jpg", SquareFootage = 500, BedConfiguration = "1 King", IsActive = true };
-        var family = new RoomType { Name = "Family Suite", BasePrice = 250m, MaxOccupancy = 4, Description = "Great for kids.", ImageUrl = "family.jpg", SquareFootage = 700, BedConfiguration = "2 Queens", IsActive = true };
-        var presidential = new RoomType { Name = "Presidential", BasePrice = 500m, MaxOccupancy = 4, Description = "Top tier.", ImageUrl = "presidential.jpg", SquareFootage = 1200, BedConfiguration = "1 King, 2 Twins", IsActive = true };
+        var standard = new RoomType { Name = "Standard", BasePrice = 100m, MaxOccupancy = 2, Description = "Cozy room.", ImageUrls = new List<string> { "standard.jpg" }, SquareFootage = 300, BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "Queen", 1 } }), IsActive = true };
+        var deluxe = new RoomType { Name = "Deluxe Suite", BasePrice = 150m, MaxOccupancy = 2, Description = "Spacious suite.", ImageUrls = new List<string> { "deluxe.jpg" }, SquareFootage = 500, BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "King", 1 } }), IsActive = true };
+        var family = new RoomType { Name = "Family Suite", BasePrice = 250m, MaxOccupancy = 4, Description = "Great for kids.", ImageUrls = new List<string> { "family.jpg" }, SquareFootage = 700, BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "Queen", 2 } }), IsActive = true };
+        var presidential = new RoomType { Name = "Presidential", BasePrice = 500m, MaxOccupancy = 4, Description = "Top tier.", ImageUrls = new List<string> { "presidential.jpg" }, SquareFootage = 1200, BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "King", 1 }, { "Twin", 2 } }), IsActive = true };
 
         // Edge case room types
-        var retiredType = new RoomType { Name = "Legacy Economy", BasePrice = 50m, MaxOccupancy = 1, Description = "Old room.", ImageUrl = "legacy.jpg", SquareFootage = 200, BedConfiguration = "1 Twin", IsActive = false };
-        var noRoomsType = new RoomType { Name = "Boutique Suite", BasePrice = 300m, MaxOccupancy = 2, Description = "Concept suite, no rooms yet.", ImageUrl = "boutique.jpg", SquareFootage = 450, BedConfiguration = "1 King", IsActive = true };
+        var retiredType = new RoomType { Name = "Legacy Economy", BasePrice = 50m, MaxOccupancy = 1, Description = "Old room.", ImageUrls = new List<string> { "legacy.jpg" }, SquareFootage = 200, BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "Twin", 1 } }), IsActive = false };
+        var noRoomsType = new RoomType { Name = "Boutique Suite", BasePrice = 300m, MaxOccupancy = 2, Description = "Concept suite, no rooms yet.", ImageUrls = new List<string> { "boutique.jpg" }, SquareFootage = 450, BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "King", 1 } }), IsActive = true };
 
-        var executive = new RoomType { Name = "Executive Suite", BasePrice = 350m, MaxOccupancy = 3, Description = "For business.", ImageUrl = "executive.jpg", SquareFootage = 600, BedConfiguration = "1 King", IsActive = true };
-        var connecting = new RoomType { Name = "Connecting Rooms", BasePrice = 280m, MaxOccupancy = 4, Description = "Two rooms connected.", ImageUrl = "connecting.jpg", SquareFootage = 600, BedConfiguration = "2 Queens", IsActive = true };
-        var accessible = new RoomType { Name = "Accessible Room", BasePrice = 120m, MaxOccupancy = 2, Description = "ADA compliant.", ImageUrl = "ada.jpg", SquareFootage = 350, BedConfiguration = "1 Queen", IsActive = true };
-        var penthouse = new RoomType { Name = "Penthouse", BasePrice = 1000m, MaxOccupancy = 6, Description = "Top floor luxury.", ImageUrl = "penthouse.jpg", SquareFootage = 2000, BedConfiguration = "2 Kings, 2 Queens", IsActive = true };
-        
+        var executive = new RoomType { Name = "Executive Suite", BasePrice = 350m, MaxOccupancy = 3, Description = "For business.", ImageUrls = new List<string> { "executive.jpg" }, SquareFootage = 600, BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "King", 1 } }), IsActive = true };
+        var connecting = new RoomType { Name = "Connecting Rooms", BasePrice = 280m, MaxOccupancy = 4, Description = "Two rooms connected.", ImageUrls = new List<string> { "connecting.jpg" }, SquareFootage = 600, BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "Queen", 2 } }), IsActive = true };
+        var accessible = new RoomType { Name = "Accessible Room", BasePrice = 120m, MaxOccupancy = 2, Description = "ADA compliant.", ImageUrls = new List<string> { "ada.jpg" }, SquareFootage = 350, BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "Queen", 1 } }), IsActive = true };
+        var penthouse = new RoomType { Name = "Penthouse", BasePrice = 1000m, MaxOccupancy = 6, Description = "Top floor luxury.", ImageUrls = new List<string> { "penthouse.jpg" }, SquareFootage = 2000, BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "King", 2 }, { "Queen", 2 } }), IsActive = true };
+
         // Extended options
-        var studio = new RoomType { Name = "Studio Apartment", BasePrice = 180m, MaxOccupancy = 2, Description = "Extended stay optimized.", ImageUrl = "studio.jpg", SquareFootage = 400, BedConfiguration = "1 Murphy King", IsActive = true };
-        var villa = new RoomType { Name = "Oceanfront Villa", BasePrice = 1500m, MaxOccupancy = 8, Description = "Detached high-end luxury property.", ImageUrl = "villa.jpg", SquareFootage = 3500, BedConfiguration = "4 Kings", IsActive = true };
+        var studio = new RoomType { Name = "Studio Apartment", BasePrice = 180m, MaxOccupancy = 2, Description = "Extended stay optimized.", ImageUrls = new List<string> { "studio.jpg" }, SquareFootage = 400, BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "Murphy King", 1 } }), IsActive = true };
+        var villa = new RoomType { Name = "Oceanfront Villa", BasePrice = 1500m, MaxOccupancy = 8, Description = "Detached high-end luxury property.", ImageUrls = new List<string> { "villa.jpg" }, SquareFootage = 3500, BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "King", 4 } }), IsActive = true };
 
         context.RoomTypes.AddRange(standard, deluxe, family, presidential, retiredType, noRoomsType, executive, connecting, accessible, penthouse, studio, villa);
         context.SaveChanges();
@@ -160,14 +161,20 @@ public static class MainDatabaseSeeder
             new FoodOrder { BookingId = bookings[0].Id, OrderStatus = FoodOrderStatus.Delivered, GeneratedAt = now.AddDays(-1), OrderItems = new List<FoodOrderItem> { new FoodOrderItem { MenuItemId = menu[0].Id, Quantity = 2, PriceAtPurchase = 15.0m }, new FoodOrderItem { MenuItemId = menu[2].Id, Quantity = 2, PriceAtPurchase = 3.0m } } },
             new FoodOrder { BookingId = bookings[1].Id, OrderStatus = FoodOrderStatus.Preparing, GeneratedAt = now.AddMinutes(-30), OrderItems = new List<FoodOrderItem> { new FoodOrderItem { MenuItemId = menu[1].Id, Quantity = 1, PriceAtPurchase = 20.0m } } },
             new FoodOrder { BookingId = bookings[1].Id, OrderStatus = FoodOrderStatus.Pending, GeneratedAt = now.AddMinutes(-5), OrderItems = new List<FoodOrderItem> { new FoodOrderItem { MenuItemId = menu[2].Id, Quantity = 1, PriceAtPurchase = 3.0m } } },
-                        
+
             // Edge cases
             // Huge order (10+ items)
-            new FoodOrder { BookingId = bookings[10].Id, OrderStatus = FoodOrderStatus.Pending, GeneratedAt = now.AddMinutes(-2), OrderItems = new List<FoodOrderItem> { 
-                new FoodOrderItem { MenuItemId = menu[0].Id, Quantity = 5, PriceAtPurchase = 15.0m }, 
+            new FoodOrder
+            {
+                BookingId = bookings[10].Id,
+                OrderStatus = FoodOrderStatus.Pending,
+                GeneratedAt = now.AddMinutes(-2),
+                OrderItems = new List<FoodOrderItem> {
+                new FoodOrderItem { MenuItemId = menu[0].Id, Quantity = 5, PriceAtPurchase = 15.0m },
                 new FoodOrderItem { MenuItemId = menu[1].Id, Quantity = 5, PriceAtPurchase = 20.0m },
                 new FoodOrderItem { MenuItemId = menu[2].Id, Quantity = 10, PriceAtPurchase = 3.0m }
-            }},
+            }
+            },
             // Order that was just placed
             new FoodOrder { BookingId = bookings[11].Id, OrderStatus = FoodOrderStatus.Pending, GeneratedAt = now.AddDays(-1), OrderItems = new List<FoodOrderItem> { new FoodOrderItem { MenuItemId = menu[0].Id, Quantity = 1, PriceAtPurchase = 15.0m } } },
             // Order with free and expensive items
@@ -176,13 +183,19 @@ public static class MainDatabaseSeeder
             new FoodOrder { BookingId = bookings[0].Id, OrderStatus = FoodOrderStatus.Delivered, GeneratedAt = now.AddDays(-1), OrderItems = new List<FoodOrderItem> { new FoodOrderItem { MenuItemId = menu[8].Id, Quantity = 2, PriceAtPurchase = 4.0m } } },
             new FoodOrder { BookingId = bookings[1].Id, OrderStatus = FoodOrderStatus.Preparing, GeneratedAt = now.AddMinutes(-45), OrderItems = new List<FoodOrderItem> { new FoodOrderItem { MenuItemId = menu[9].Id, Quantity = 1, PriceAtPurchase = 8.0m } } },
             new FoodOrder { BookingId = bookings[10].Id, OrderStatus = FoodOrderStatus.Delivered, GeneratedAt = now.AddHours(-1), OrderItems = new List<FoodOrderItem> { new FoodOrderItem { MenuItemId = menu[2].Id, Quantity = 3, PriceAtPurchase = 3.0m } } },
-            
+
             // Ultra luxury room-service orders
-            new FoodOrder { BookingId = bookings[16].Id, OrderStatus = FoodOrderStatus.Delivered, GeneratedAt = now.AddHours(-4), OrderItems = new List<FoodOrderItem> { 
+            new FoodOrder
+            {
+                BookingId = bookings[16].Id,
+                OrderStatus = FoodOrderStatus.Delivered,
+                GeneratedAt = now.AddHours(-4),
+                OrderItems = new List<FoodOrderItem> {
                 new FoodOrderItem { MenuItemId = menu[12].Id, Quantity = 2, PriceAtPurchase = 120.0m },
                 new FoodOrderItem { MenuItemId = menu[6].Id, Quantity = 2, PriceAtPurchase = 500.0m },
                 new FoodOrderItem { MenuItemId = menu[14].Id, Quantity = 4, PriceAtPurchase = 8.5m }
-            }}
+            }
+            }
         );
 
         // 8. Housekeeping
@@ -191,7 +204,7 @@ public static class MainDatabaseSeeder
             new Housekeeping { RoomId = rooms[0].Id, OriginType = HousekeepingOriginType.GuestRequested, Status = HousekeepingStatus.Completed, StartedAt = now.AddHours(-4), FinishedAt = now.AddHours(-1) },
             new Housekeeping { RoomId = rooms[5].Id, OriginType = HousekeepingOriginType.GuestRequested, Status = HousekeepingStatus.InProgress, StartedAt = now.AddMinutes(-15) },
             new Housekeeping { RoomId = rooms[6].Id, OriginType = HousekeepingOriginType.CheckoutAutomated, Status = HousekeepingStatus.Pending },
-                        
+
             // Edge cases
             // Multiple tasks for the same room
             new Housekeeping { RoomId = rooms[7].Id, OriginType = HousekeepingOriginType.CheckoutAutomated, Status = HousekeepingStatus.Pending },
@@ -212,7 +225,7 @@ public static class MainDatabaseSeeder
             new MaintenanceTask { RoomId = rooms[1].Id, OriginType = MaintenanceOriginType.SystemAutomated, Status = MaintenanceStatus.Completed, Description = "Fix leaking sink", StartedAt = now.AddDays(-1), FinishedAt = now.AddDays(-1).AddHours(2) },
             new MaintenanceTask { RoomId = rooms[2].Id, OriginType = MaintenanceOriginType.StaffRequested, Status = MaintenanceStatus.InProgress, Description = "Replace broken lightbulb", StartedAt = now.AddHours(-1) },
             new MaintenanceTask { RoomId = rooms[12].Id, OriginType = MaintenanceOriginType.GuestRequested, Status = MaintenanceStatus.Pending, Description = "AC not cooling properly" },
-                        
+
             // Edge cases
             // Multiple maintenance issues for one offline room
             new MaintenanceTask { RoomId = rooms[18].Id, OriginType = MaintenanceOriginType.StaffRequested, Status = MaintenanceStatus.InProgress, Description = "Major plumbing overhaul", StartedAt = now.AddDays(-2) },
@@ -230,7 +243,7 @@ public static class MainDatabaseSeeder
             // Normal
             new Feedback { BookingId = bookings[4].Id, Rating = 4, Comments = "Good, but AC was loud." },
             new Feedback { BookingId = bookings[5].Id, Rating = 5, Comments = "Perfect stay!" },
-                        
+
             // Edge cases
             // 1-star scathing review
             new Feedback { BookingId = bookings[13].Id, Rating = 1, Comments = "Absolutely terrible. Found a bug in the bed, room smelled like smoke, and the receptionist ignored us. Never coming back." },
@@ -272,7 +285,7 @@ public static class MainDatabaseSeeder
             new BookingAmenity { BookingId = bookings[0].Id, AmenityId = amenities[1].Id, PriceAtPurchase = 15.0m },
             new BookingAmenity { BookingId = bookings[1].Id, AmenityId = amenities[2].Id, PriceAtPurchase = 10.0m },
             new BookingAmenity { BookingId = bookings[1].Id, AmenityId = amenities[3].Id, PriceAtPurchase = 40.0m },
-                        
+
             // Edge case: Subscribed to ALL amenities
             new BookingAmenity { BookingId = bookings[10].Id, AmenityId = amenities[0].Id, PriceAtPurchase = 25.0m },
             new BookingAmenity { BookingId = bookings[10].Id, AmenityId = amenities[1].Id, PriceAtPurchase = 15.0m },
@@ -302,7 +315,7 @@ public static class MainDatabaseSeeder
             new Receipt { BookingId = bookings[0].Id, AmountPaid = 50.0m, PaymentMethod = "Credit Card", TransactionId = "TXN-007", PaidAt = now.AddDays(-1) },
             new Receipt { BookingId = bookings[1].Id, AmountPaid = 100.0m, PaymentMethod = "Cash", TransactionId = "TXN-008", PaidAt = now.AddDays(-1) },
             new Receipt { BookingId = bookings[2].Id, AmountPaid = 1250.0m, PaymentMethod = "Credit Card", TransactionId = "TXN-009", PaidAt = now.AddDays(5) },
-            
+
             // Whale Booking Settlement (7 nights * 1500 = 10500 + amenities + premium food orders)
             new Receipt { BookingId = bookings[16].Id, AmountPaid = 12500.0m, PaymentMethod = "Bank Transfer", TransactionId = "TXN-VIP-777", PaidAt = now.AddDays(-1) }
         );

@@ -14,6 +14,7 @@ public class RoomStatusDashboardDTO
     public string RoomNumber { get; set; } = string.Empty;
     public string RoomTypeName { get; set; } = string.Empty;
     public string Status { get; set; } = string.Empty; // "Available", "Occupied", "Reserved", "Maintenance"
+    public int? CurrentBookingId { get; set; }
     public string? CurrentGuestName { get; set; }
     public DateTime? NextCheckInDate { get; set; }
 }
