@@ -107,12 +107,12 @@ export class RoomManagementComponent implements OnInit {
         sortable: true,
         getValue: (r: Room) => String(r.maxOccupancy),
       },
-      {
-        header: 'Active',
-        field: 'isActive',
-        sortable: false,
-        getValue: (r: Room) => (r.isActive ? 'Yes' : 'No'),
-      },
+      // {
+      //   header: 'Active',
+      //   field: 'isActive',
+      //   sortable: false,
+      //   getValue: (r: Room) => (r.isActive ? 'Yes' : 'No'),
+      // },
       {
         header: 'Available',
         field: 'isAvailable',

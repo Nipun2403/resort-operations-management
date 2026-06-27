@@ -6,7 +6,7 @@ export interface Room {
   basePrice: number;
   maxOccupancy: number;
   isAvailable: boolean;
-  isActive: boolean;
+
 }
 
 export interface CreateRoomDTO {
