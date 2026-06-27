@@ -622,3 +622,100 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: staff-crud.md
+Date: 2026-06-27
+================================================================================
+
+FILES CREATED
+-------------
+✓ src/app/features/admin/models/staff.model.ts
+✓ src/app/features/admin/services/staff-api.service.ts
+✓ src/app/features/admin/pages/management/staff-management.component.html
+✓ src/app/features/admin/pages/management/staff-management.component.scss
+
+FILES MODIFIED
+--------------
+✓ src/app/features/admin/pages/management/staff-management.component.ts (overwritten placeholder)
+✓ src/app/shared/models/crud-config.model.ts — updated FormFieldDef with showInAdd, showInEdit and extra types
+✓ src/app/shared/components/generic-crud/crud-modal/crud-modal.component.ts — active fields filter logic in ngOnInit
+✓ src/app/shared/components/generic-crud/crud-modal/crud-modal.component.html — active fields filter loop, toggle hidden in add mode
+✓ src/app/app.routes.ts — lazily loaded staff route refers to StaffManagementComponent
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Models (§6)
+  ✓ StaffRole union type, Staff, CreateStaffDTO, and UpdateStaffDTO.
+✓ StaffApiService (§6)
+  ✓ getAll() GET /api/v1/staff with 6 parameters and normalized error handler.
+  ✓ create() POST /api/v1/staff CreateStaffDTO → Staff.
+  ✓ update() PATCH /api/v1/staff/{id} UpdateStaffDTO → void.
+✓ StaffManagementComponent State & Logic (§5, §6)
+  ✓ signals: data, totalCount, loading, error, pageIndex, pageSize, sortField, sortDescending, searchQuery, includeFired, editingEntity.
+  ✓ restoreState() matches exact validation code per §13.
+  ✓ saveState() saves correct fields to STORAGE_KEY 'staffState'.
+  ✓ onSearchChange() sets searchQuery, resets pageIndex, saves, and fetches.
+  ✓ onFilterChange() checks 'includeFired' key, resets pageIndex, saves, and fetches.
+  ✓ onSortChange() resets pageIndex, saves, and fetches.
+  ✓ onPageChange() saves and fetches.
+  ✓ onSave() handles edit mode with deactivation dialog or direct update; otherwise performCreate().
+  ✓ performUpdate() uses UpdateStaffDTO, notifies via SnackBar.
+  ✓ performCreate() uses CreateStaffDTO, notifies via SnackBar.
+✓ CrudConfig for Staff (§7)
+  ✓ columns: First Name, Last Name, Email, Role, Active.
+  ✓ filters: Status (includeFired).
+  ✓ formFields: email, password, firstName, lastName, role.
+  ✓ showInAdd and showInEdit configured to hide email/password in edit mode.
+✓ CrudModal Component Active Field Filtering (§8)
+  ✓ data.formFields filtered using activeFields logic based on editMode.
+  ✓ ngOnInit uses activeFields for form control creation.
+  ✓ Template renders only activeFields.
+  ✓ slide-toggle Active only rendered in editMode.
+
+API INTEGRATION
+---------------
+✓ GET    /api/v1/staff — includeFired, pageNumber, pageSize, sortBy, sortDescending, searchQuery
+✓ POST   /api/v1/staff — CreateStaffDTO
+✓ PATCH  /api/v1/staff/{id} — UpdateStaffDTO
+
+LOGIC TRACES
+------------
+Flow: Create Staff
+  Entry: Click "Add Staff" -> fills form -> click save
+  Path: generic-crud saves -> performCreate(formValue) -> staffApi.create() -> SnackBar success -> fetchData()
+  Result: ✓ Matches spec
+
+Flow: Edit Staff
+  Entry: Click "Edit" icon -> form modal opens with firstName, lastName, role, Active toggle (email/password absent)
+  Path: generic-crud save -> onSave(formValue, isActive) -> checks deactivation -> performUpdate(formValue, isActive) -> staffApi.update() -> SnackBar success -> fetchData()
+  Result: ✓ Matches spec
+
+Flow: Staff Deactivation Confirmation
+  Entry: Click "Edit" icon on active staff -> set Active toggle to false -> click save
+  Path: generic-crud save -> onSave(event) -> editingEntity.isActive=true, isActive=false -> showDisableConfirmation() -> ConfirmDialogComponent opens -> user clicks confirm -> performUpdate() -> staffApi.update() -> SnackBar success -> fetchData()
+  Result: ✓ Matches spec
+
+KNOWN DEVIATIONS
+----------------
+None. All requirements implemented exactly as specified.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+☑ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+☑ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+☑ I confirm that all API calls match the spec contracts exactly.
+☑ I confirm that all regex validators are character-for-character matches
+  to the spec.
+☑ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+

@@ -40,7 +40,7 @@
         }
       }
 
-      @if (data.supportsToggle) {
+      @if (data.supportsToggle && data.editMode) {
         <div class="toggle-row">
           <label class="toggle-label">Active</label>
           <mat-slide-toggle [formControl]="isActiveControl"></mat-slide-toggle>

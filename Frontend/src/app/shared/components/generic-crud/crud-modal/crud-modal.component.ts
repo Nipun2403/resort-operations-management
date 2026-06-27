@@ -35,10 +35,19 @@ export class CrudModalComponent implements OnInit {
 
   modalForm!: FormGroup;
   isActiveControl = new FormControl<boolean>(true);
+  activeFields: FormFieldDef[] = [];
 
   ngOnInit(): void {
+    this.activeFields = this.data.formFields.filter((f) => {
+      if (this.data.editMode) {
+        return f.showInEdit !== false;
+      } else {
+        return f.showInAdd !== false;
+      }
+    });
+
     const controls: Record<string, FormControl> = {};
-    for (const field of this.data.formFields) {
+    for (const field of this.activeFields) {
       const value = this.data.entity ? (this.data.entity[field.key] ?? null) : null;
       controls[field.key] = new FormControl(value, field.validators ?? []);
     }
@@ -50,7 +59,7 @@ export class CrudModalComponent implements OnInit {
   }
 
   getFieldDefs(): FormFieldDef[] {
-    return this.data.formFields;
+    return this.activeFields;
   }
 
   getControl(key: string): FormControl {

@@ -22,9 +22,20 @@ export interface ColumnDef {
 export interface FormFieldDef {
   key: string;
   label: string;
-  type: 'text' | 'number' | 'textarea' | 'select';
+  type:
+    | 'text'
+    | 'number'
+    | 'email'
+    | 'password'
+    | 'textarea'
+    | 'date'
+    | 'url'
+    | 'select'
+    | 'toggle';
   options?: FilterOption[];
   validators?: any[];
+  showInAdd?: boolean;
+  showInEdit?: boolean;
 }
 
 export interface CrudConfig<T> {
