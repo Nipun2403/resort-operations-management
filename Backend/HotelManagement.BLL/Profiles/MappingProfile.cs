@@ -12,7 +12,8 @@ public class MappingProfile : Profile
         // Entity to DTO
         CreateMap<Room, RoomDTO>()
             .ForMember(dest => dest.BasePrice, opt => opt.MapFrom(src => src.RoomType != null ? src.RoomType.BasePrice : 0))
-            .ForMember(dest => dest.MaxOccupancy, opt => opt.MapFrom(src => src.RoomType != null ? src.RoomType.MaxOccupancy : 0));
+            .ForMember(dest => dest.MaxOccupancy, opt => opt.MapFrom(src => src.RoomType != null ? src.RoomType.MaxOccupancy : 0))
+            .ForMember(dest => dest.IsAvailable, opt => opt.MapFrom(src => src.IsActive)); ;
         // RoomTypeName is automatically mapped from RoomType.Name by AutoMapper's flattening convention.
 
         CreateMap<Booking, BookingDTO>()
