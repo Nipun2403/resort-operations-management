@@ -62,7 +62,7 @@ public class AmenitiesController : ControllerBase
 
         try
         {
-            await _amenityService.UpdateAmenityAsync(id, request);
+            await _amenityService.UpdateAmenityAsync(id, request, request.IsAvailable);
             return Ok(new { Message = "Amenity updated successfully." });
         }
         catch (ArgumentException ex)
@@ -71,20 +71,20 @@ public class AmenitiesController : ControllerBase
         }
     }
 
-    [HttpPatch("{id}/status")]
-    [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> UpdateAmenityStatus(int id, [FromQuery] bool isAvailable)
-    {
-        try
-        {
-            await _amenityService.UpdateAmenityStatusAsync(id, isAvailable);
-            return Ok(new { Message = $"Amenity availability updated to {isAvailable}." });
-        }
-        catch (ArgumentException ex)
-        {
-            return NotFound(ex.Message);
-        }
-    }
+    // [HttpPatch("{id}/status")]
+    // [Authorize(Roles = "Admin")]
+    // public async Task<IActionResult> UpdateAmenityStatus(int id, [FromQuery] bool isAvailable)
+    // {
+    //     try
+    //     {
+    //         await _amenityService.UpdateAmenityStatusAsync(id, isAvailable);
+    //         return Ok(new { Message = $"Amenity availability updated to {isAvailable}." });
+    //     }
+    //     catch (ArgumentException ex)
+    //     {
+    //         return NotFound(ex.Message);
+    //     }
+    // }
 
     // [HttpDelete("{id}")]
     // [Authorize(Roles = "Admin")]

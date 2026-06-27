@@ -74,7 +74,7 @@ public class AmenityService : IAmenityService
         return _mapper.Map<AmenityDTO>(amenity);
     }
 
-    public async Task UpdateAmenityAsync(int id, CreateUpdateAmenityDTO dto)
+    public async Task UpdateAmenityAsync(int id, CreateUpdateAmenityDTO dto, bool isAvailable)
     {
         var amenity = await _amenityRepository.GetByIdAsync(id);
         if (amenity == null) throw new KeyNotFoundException("Amenity not found.");
@@ -82,21 +82,22 @@ public class AmenityService : IAmenityService
         amenity.Name = dto.Name;
         amenity.Description = dto.Description;
         amenity.Price = dto.Price;
+        amenity.IsAvailable = dto.IsAvailable;
 
         _amenityRepository.Update(amenity);
         await _amenityRepository.SaveChangesAsync();
     }
 
-    public async Task UpdateAmenityStatusAsync(int id, bool isAvailable)
-    {
-        var amenity = await _amenityRepository.GetByIdAsync(id);
-        if (amenity == null) throw new KeyNotFoundException("Amenity not found.");
+    // public async Task UpdateAmenityStatusAsync(int id, bool isAvailable)
+    // {
+    //     var amenity = await _amenityRepository.GetByIdAsync(id);
+    //     if (amenity == null) throw new KeyNotFoundException("Amenity not found.");
 
-        amenity.IsAvailable = isAvailable;
+    //     amenity.IsAvailable = isAvailable;
 
-        _amenityRepository.Update(amenity);
-        await _amenityRepository.SaveChangesAsync();
-    }
+    //     _amenityRepository.Update(amenity);
+    //     await _amenityRepository.SaveChangesAsync();
+    // }
 
 
     public async Task SubscribeAsync(int bookingId, int amenityId)
