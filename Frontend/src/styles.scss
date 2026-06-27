@@ -49,4 +49,42 @@ body {
   max-width: 100%;
   overflow-x: auto;
 }
+
+// Prevent text inflation and improve touch usability (spec §5.1)
+html,
+body {
+  -webkit-text-size-adjust: 100%;
+  touch-action: manipulation;
+}
+
+// Prevent media elements from causing overflow (spec §5.1)
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
+  height: auto;
+}
+
+@media (max-width: 500px) {
+  mat-form-field,
+  mat-button-toggle-group,
+  .mat-button-toggle-group {
+    width: 100%;
+  }
+
+  .table-section,
+  .mat-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mat-card,
+  .kpi-card,
+  .health-cards .mat-card {
+    margin: 8px 0;
+    padding: 12px;
+  }
+}
 /* You can add global styles to this file, and also import other style files */
+

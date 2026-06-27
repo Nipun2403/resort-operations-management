@@ -37,7 +37,7 @@ export class AdminShellComponent {
   private router = inject(Router);
 
   isMobile = toSignal(
-    this.breakpointObserver.observe('(max-width: 768px)').pipe(
+    this.breakpointObserver.observe('(max-width: 1024px)').pipe(
       map(result => result.matches)
     ),
     { initialValue: false }
