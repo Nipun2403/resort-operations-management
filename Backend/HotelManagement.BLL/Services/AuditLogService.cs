@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using HotelManagement.Repository.Models;
 using HotelManagement.Repository.Utilities;
 using HotelManagement.DAL.Entities;
+using System.Linq.Expressions;
 
 namespace HotelManagement.BLL.Services;
 
@@ -21,17 +22,32 @@ public class AuditLogService : IAuditLogService
         _mapper = mapper;
     }
 
-    public async Task<PaginatedResult<AuditLogDTO>> GetAuditLogsAsync(int pageNumber, int pageSize, string? sortBy = null, bool sortDescending = false)
+    public async Task<PaginatedResult<AuditLogDTO>> GetAuditLogsAsync(int pageNumber, int pageSize, string? guestQuery = null, string? sortBy = null, bool sortDescending = false)
     {
+        var predicates = new List<Expression<Func<AuditLog, bool>>>();
+
+        if (!string.IsNullOrWhiteSpace(guestQuery))
+        {
+            var lowerQuery = guestQuery.ToLower();
+            predicates.Add(log => (log.ChangedByName != null && log.ChangedByName.ToLower().Contains(lowerQuery)) || (log.ChangedByEmail != null && log.ChangedByEmail.ToLower().Contains(lowerQuery)));
+        }
+
+        Expression<Func<AuditLog, bool>>? predicate = predicates.Any()
+            ? predicates[0]
+            : null;
+        // Note: AuditLogService currently doesn't have a complex predicate builder like BookingService, 
+        // but since it's a simple single-filter implementation here, this matches the requirement.
+        // If multiple filters were added, a proper Expression combiner would be needed.
+
         Func<IQueryable<AuditLog>, IOrderedQueryable<AuditLog>>? orderBy = null;
         if (!string.IsNullOrEmpty(sortBy))
         {
             orderBy = q => q.OrderByDynamic(sortBy, sortDescending);
         }
 
-        var pagedLogs = await _auditLogRepository.GetPaginatedResultAsync(pageNumber, pageSize, null, orderBy);
+        var pagedLogs = await _auditLogRepository.GetPaginatedResultAsync(pageNumber, pageSize, predicate, orderBy);
         var dtos = _mapper.Map<IEnumerable<AuditLogDTO>>(pagedLogs.Data);
-        
+
         return new PaginatedResult<AuditLogDTO>
         {
             TotalCount = pagedLogs.TotalCount,
