@@ -137,6 +137,7 @@
       <tr
         mat-row
         *matRowDef="let row; columns: displayedColumns"
+        [attr.data-row-id]="row.id"
       ></tr>
     </table>
   </div>

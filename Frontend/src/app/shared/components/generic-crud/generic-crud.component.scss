@@ -83,3 +83,16 @@
     }
   }
 }
+
+@keyframes highlight-fade {
+  0% {
+    background-color: #fff176;
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+:host ::ng-deep .highlight-row {
+  animation: highlight-fade 2s ease-out;
+}

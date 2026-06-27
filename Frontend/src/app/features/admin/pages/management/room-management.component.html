@@ -1,0 +1,56 @@
+<!-- View toggle (mobile only) -->
+@if (isMobile()) {
+  <div class="view-toggle">
+    <mat-button-toggle-group
+      [formControl]="viewMode"
+      aria-label="View mode"
+    >
+      <mat-button-toggle value="table">
+        <mat-icon>table_chart</mat-icon> Table
+      </mat-button-toggle>
+      <mat-button-toggle value="grid">
+        <mat-icon>grid_view</mat-icon> Grid
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+}
+
+<div
+  class="rooms-layout"
+  [class.table-only]="isMobile() && viewMode.value === 'table'"
+  [class.grid-only]="isMobile() && viewMode.value === 'grid'"
+>
+  <!-- Desktop or Mobile Table view -->
+  <div
+    class="table-section"
+    [class.hidden]="isMobile() && viewMode.value === 'grid'"
+  >
+    <app-generic-crud
+      [config]="crudConfig"
+      [highlightId]="highlightRoomId()"
+      (searchChange)="onSearchChange($event)"
+      (filterChange)="onFilterChange($event)"
+      (sortChange)="onSortChange($event)"
+      (pageChange)="onPageChange($event)"
+      (save)="onSave($event)"
+    ></app-generic-crud>
+  </div>
+
+  <!-- Desktop or Mobile Grid view -->
+  @defer (on viewport) {
+    <div
+      class="grid-section"
+      [class.hidden]="isMobile() && viewMode.value === 'table'"
+    >
+      <app-room-status-grid
+        [roomTypeId]="roomTypeFilter()"
+        (roomClicked)="onGridRoomClicked($event)"
+      ></app-room-status-grid>
+    </div>
+  } @placeholder {
+    <div class="grid-placeholder">
+      <mat-spinner diameter="30"></mat-spinner>
+      <p>Loading room status...</p>
+    </div>
+  }
+</div>

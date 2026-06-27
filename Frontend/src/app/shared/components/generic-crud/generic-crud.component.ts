@@ -2,11 +2,11 @@ import {
   Component,
   inject,
   signal,
-  computed,
   DestroyRef,
-  OnInit,
   input,
   output,
+  effect,
+  ElementRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -61,6 +61,25 @@ import { AlertComponent } from '../../../features/auth/components/alert.componen
 export class GenericCrudComponent {
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly elementRef = inject(ElementRef);
+
+  constructor() {
+    effect(() => {
+      const id = this.highlightId();
+      if (id !== null && id !== undefined) {
+        setTimeout(() => {
+          const el = this.elementRef.nativeElement.querySelector(
+            `[data-row-id="${id}"]`,
+          );
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            el.classList.add('highlight-row');
+            setTimeout(() => el.classList.remove('highlight-row'), 2000);
+          }
+        });
+      }
+    });
+  }
 
   // Inputs & Outputs per spec §4
   config = input.required<CrudConfig<any>>();
@@ -70,6 +89,7 @@ export class GenericCrudComponent {
   sortChange = output<{ active: string; direction: 'asc' | 'desc' }>();
   pageChange = output<{ pageIndex: number; pageSize: number }>();
   save = output<{ formValue: any; isActive: boolean; entityId?: number }>();
+  highlightId = input<number | null>(null);
 
   // Internal signals per spec §4
   isModalOpen = signal(false);

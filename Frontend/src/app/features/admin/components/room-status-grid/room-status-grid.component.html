@@ -1,0 +1,30 @@
+@if (loading()) {
+  <mat-spinner diameter="30"></mat-spinner>
+} @else if (error()) {
+  <app-alert
+    type="error"
+    [message]="error()!"
+    (closed)="error.set(null)"
+  >
+    <button mat-button (click)="fetchStatuses()">Retry</button>
+  </app-alert>
+} @else {
+  <div class="status-grid">
+    @for (room of rooms(); track room.roomId) {
+      <div
+        class="room-card"
+        [class.occupied]="room.status === 'Occupied'"
+        [class.available]="room.status === 'Available'"
+        (click)="roomClicked.emit(room.roomId)"
+        [matTooltip]="tooltipContent(room)"
+        matTooltipPosition="above"
+        [attr.aria-label]="room.roomNumber + ' - ' + room.status"
+      >
+        <span class="room-number">{{ room.roomNumber }}</span>
+        <mat-icon aria-hidden="true">{{ room.status === 'Occupied' ? 'lock' : 'lock_open' }}</mat-icon>
+      </div>
+    } @empty {
+      <p>No room statuses available.</p>
+    }
+  </div>
+}
