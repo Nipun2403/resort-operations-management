@@ -10,7 +10,8 @@ public interface IAmenityService
     int pageSize,
     string? searchQuery = null,
     string? sortBy = null,
-    bool sortDescending = false);
+    bool sortDescending = false,
+    bool isAvailable = true);
     Task<AmenityDTO?> GetAmenityByIdAsync(int id);
     Task<AmenityDTO> CreateAmenityAsync(CreateUpdateAmenityDTO dto);
     Task UpdateAmenityAsync(int id, CreateUpdateAmenityDTO dto, bool isAvailable);

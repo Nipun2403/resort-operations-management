@@ -10,5 +10,7 @@ public interface IAmenityRepository : IGenericRepository<Amenity>
       int pageSize,
       string? searchQuery,
       string? sortBy,
-      bool sortDescending);
+      bool sortDescending,
+      bool isAvailable
+      );
 }

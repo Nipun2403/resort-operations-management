@@ -49,6 +49,7 @@ export class AmenitiesManagementComponent implements OnInit {
   sortField = signal('name');
   sortDescending = signal(false);
   searchQuery = signal('');
+  availabilityFilter = signal<boolean | null>(null);
   editingEntity = signal<Amenity | null>(null);
 
   crudConfig: CrudConfig<Amenity> = {
@@ -75,7 +76,17 @@ export class AmenitiesManagementComponent implements OnInit {
         getValue: (r) => (r.isAvailable ? 'Yes' : 'No'),
       },
     ],
-    filters: [], // no filters
+    filters: [
+      {
+        key: 'isAvailable',
+        label: 'Availability',
+        options: [
+          { value: null, label: 'All' },
+          { value: true, label: 'Available' },
+          { value: false, label: 'Unavailable' },
+        ],
+      },
+    ],
     formFields: [
       {
         key: 'name',
@@ -85,6 +96,7 @@ export class AmenitiesManagementComponent implements OnInit {
           Validators.required,
           Validators.maxLength(100),
           Validators.minLength(1),
+          Validators.pattern(/^(?=.*[a-zA-Z])[a-zA-Z0-9\s\-']+$/),
         ],
         showInAdd: true,
         showInEdit: true,
@@ -146,6 +158,7 @@ export class AmenitiesManagementComponent implements OnInit {
         searchQuery: this.searchQuery() || undefined,
         sortBy: this.sortField(),
         sortDescending: this.sortDescending(),
+        isAvailable: this.availabilityFilter() ?? undefined,
       })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
@@ -228,9 +241,12 @@ export class AmenitiesManagementComponent implements OnInit {
     this.fetchData();
   }
 
-  // Filter change: no filters implemented, but method must exist to satisfy output binding
   onFilterChange(filters: Record<string, any>): void {
-    // Intentionally empty – the Amenities page has no filter controls
+    const val = filters['isAvailable'];
+    this.availabilityFilter.set(val === '' || val === null ? null : val);
+    this.pageIndex.set(0);
+    this.saveState();
+    this.fetchData();
   }
 
   // Sort change: update sort field/direction, reset page, save, fetch
@@ -266,6 +282,9 @@ export class AmenitiesManagementComponent implements OnInit {
         this.pageIndex.set(parsed.pageIndex);
       if (Number.isInteger(parsed.pageSize) && parsed.pageSize > 0)
         this.pageSize.set(parsed.pageSize);
+      if (parsed.availabilityFilter === null || typeof parsed.availabilityFilter === 'boolean') {
+        this.availabilityFilter.set(parsed.availabilityFilter);
+      }
     } catch {
       /* fallback silently */
     }
@@ -280,6 +299,7 @@ export class AmenitiesManagementComponent implements OnInit {
         sortDescending: this.sortDescending(),
         pageIndex: this.pageIndex(),
         pageSize: this.pageSize(),
+        availabilityFilter: this.availabilityFilter(),
       }),
     );
   }

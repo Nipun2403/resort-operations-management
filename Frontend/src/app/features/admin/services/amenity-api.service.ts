@@ -19,6 +19,7 @@ export class AmenityApiService {
     searchQuery?: string;
     sortBy: string;
     sortDescending: boolean;
+    isAvailable?: boolean;
   }): Observable<PaginatedResponse<Amenity>> {
     let httpParams = new HttpParams()
       .set('pageNumber', params.pageNumber.toString())
@@ -28,6 +29,10 @@ export class AmenityApiService {
 
     if (params.searchQuery) {
       httpParams = httpParams.set('searchQuery', params.searchQuery);
+    }
+
+    if (params.isAvailable !== undefined) {
+      httpParams = httpParams.set('isAvailable', params.isAvailable.toString());
     }
 
     return this.http.get<PaginatedResponse<Amenity>>(this.baseUrl, { params: httpParams }).pipe(

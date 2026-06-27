@@ -23,7 +23,8 @@ public class AmenitiesController : ControllerBase
         [FromQuery] int pageSize = 10,
         [FromQuery] string? searchQuery = null,      // NEW
         [FromQuery] string? sortBy = null,           // NEW
-        [FromQuery] bool sortDescending = false)     // NEW
+        [FromQuery] bool sortDescending = false,
+        [FromQuery] bool isAvailable = true)
     {
         pageSize = Math.Min(pageSize, 100);
         var amenities = await _amenityService.GetAllAmenitiesAsync(
@@ -31,7 +32,8 @@ public class AmenitiesController : ControllerBase
             pageSize,
             searchQuery,
             sortBy,
-            sortDescending);
+            sortDescending,
+            isAvailable);
         return Ok(amenities);
     }
 

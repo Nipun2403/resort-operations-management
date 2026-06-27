@@ -27,14 +27,16 @@ public class AmenityService : IAmenityService
             int pageSize,
             string? searchQuery = null,
             string? sortBy = null,
-            bool sortDescending = false)
+            bool sortDescending = false,
+            bool isAvailable = true)
     {
         var pagedResult = await _amenityRepository.GetPaginatedAmenitiesAsync(
             pageNumber,
             pageSize,
             searchQuery,
             sortBy,
-            sortDescending);
+            sortDescending,
+            isAvailable);
 
         var dtos = _mapper.Map<IEnumerable<AmenityDTO>>(pagedResult.Data);
 

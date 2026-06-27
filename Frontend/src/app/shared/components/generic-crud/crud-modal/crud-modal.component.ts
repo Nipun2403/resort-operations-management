@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, DestroyRef } from '@angular/core';
+import { Component, inject, OnInit, signal, DestroyRef, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, AbstractControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -34,8 +34,9 @@ export class CrudModalComponent implements OnInit {
   private readonly dialogRef = inject(MatDialogRef<CrudModalComponent>);
 
   modalForm!: FormGroup;
-  isActiveControl = new FormControl<boolean>(true);
+  isActiveControl = new FormControl<any>(true);
   activeFields: FormFieldDef[] = [];
+  hasToggleField = computed(() => this.activeFields.some(f => f.type === 'toggle'));
 
   ngOnInit(): void {
     this.activeFields = this.data.formFields.filter((f) => {
@@ -53,8 +54,13 @@ export class CrudModalComponent implements OnInit {
     }
     this.modalForm = new FormGroup(controls);
 
-    if (this.data.supportsToggle && this.data.entity) {
-      this.isActiveControl.setValue(this.data.entity.isActive ?? true);
+    const toggleField = this.activeFields.find(f => f.type === 'toggle');
+    if (toggleField) {
+      this.isActiveControl = this.getControl(toggleField.key);
+    } else {
+      if (this.data.supportsToggle && this.data.entity) {
+        this.isActiveControl.setValue(this.data.entity.isActive ?? this.data.entity.isAvailable ?? true);
+      }
     }
   }
 

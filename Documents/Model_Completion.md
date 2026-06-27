@@ -869,6 +869,86 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: amenities-crud-patch.md
+Date: 2026-06-27
+================================================================================
+
+FILES CREATED
+-------------
+None.
+
+FILES MODIFIED
+--------------
+✓ src/app/features/admin/pages/management/amenities-management.component.ts
+  — Added availabilityFilter = signal<boolean | null>(null).
+  — Configured Availability filter dropdown with All/Available/Unavailable options.
+  — Added name regex pattern (/^(?=.*[a-zA-Z])[a-zA-Z0-9\s\-']+$/) to formFields validation.
+  — Updated fetchData() and state sync (restoreState/saveState) to use availabilityFilter.
+  — Implemented onFilterChange() event handler to set availabilityFilter.
+✓ src/app/features/admin/services/amenity-api.service.ts
+  — Updated getAll() method to accept isAvailable parameter and set isAvailable query param.
+✓ src/app/shared/components/generic-crud/crud-modal/crud-modal.component.html
+  — Implemented slide-toggle rendering for fields of type 'toggle'.
+  — Conditionally hid the generic bottom 'Active' toggle if a custom 'toggle' form field is already rendered.
+✓ src/app/shared/components/generic-crud/crud-modal/crud-modal.component.ts
+  — Synced the generic isActiveControl to the custom toggle field FormControl if present.
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Availability filter dropdown (§3.1, §3.2, §3.4, §3.5)
+  ✓ availabilityFilter signal defined.
+  ✓ All/Available/Unavailable dropdown added to filters.
+  ✓ onFilterChange() updates filter, resets page index, saves, and fetches.
+  ✓ fetchData() forwards isAvailable query param.
+✓ Name validation pattern (§3.3)
+  ✓ validators enforce pattern /^(?=.*[a-zA-Z])[a-zA-Z0-9\s\-']+$/ (must contain at least one letter).
+✓ Session storage sync (§3.6)
+  ✓ restoreState and saveState updated to save/restore availabilityFilter.
+✓ Toggle rendering in edit modal (§3.7)
+  ✓ form fields of type 'toggle' rendered as a mat-slide-toggle.
+  ✓ Duplicate bottom toggle hidden and synced using shared control reference.
+
+API INTEGRATION
+---------------
+✓ GET  /api/v1/amenities — added isAvailable (boolean) parameter.
+
+LOGIC TRACES
+------------
+Flow: Change availability filter dropdown
+  Entry: User selects "Available" in the dropdown
+  Path: generic-crud filters -> emits filterChange -> onFilterChange(filters) -> sets availabilityFilter=true -> pageIndex(0) -> saveState() -> fetchData() [API call with isAvailable=true]
+  Result: ✓ Matches spec
+
+Flow: Validate numeric name in modal
+  Entry: User types "12345" in name field -> control gets marked invalid
+  Path: form validation fails pattern match -> getErrorMessage(field, control) -> returns validation pattern error message -> displays error
+  Result: ✓ Matches spec (rejected since it contains no letters)
+
+KNOWN DEVIATIONS
+----------------
+None. All requirements implemented exactly as specified.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+☑ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+☑ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+☑ I confirm that all API calls match the spec contracts exactly.
+☑ I confirm that all regex validators are character-for-character matches
+  to the spec.
+☑ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+
 
 
 

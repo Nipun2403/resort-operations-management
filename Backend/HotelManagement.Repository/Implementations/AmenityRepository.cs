@@ -17,7 +17,8 @@ public class AmenityRepository : GenericRepository<Amenity>, IAmenityRepository
         int pageSize,
         string? searchQuery,
         string? sortBy,
-        bool sortDescending)
+        bool sortDescending,
+        bool isAvailable)
     {
         var query = _dbSet.AsQueryable();
 
@@ -30,6 +31,10 @@ public class AmenityRepository : GenericRepository<Amenity>, IAmenityRepository
                 a.Description.ToLower().Contains(lowerQuery)
             );
         }
+
+        // Availability filter
+        if (isAvailable)
+            query = query.Where(a => a.IsAvailable);
 
         // Sorting
         if (!string.IsNullOrEmpty(sortBy))

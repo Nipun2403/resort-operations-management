@@ -29,6 +29,11 @@
               <mat-error>{{ getErrorMessage(field, getControl(field.key)) }}</mat-error>
             }
           </mat-form-field>
+        } @else if (field.type === 'toggle') {
+          <div class="toggle-row">
+            <label class="toggle-label">{{ field.label }}</label>
+            <mat-slide-toggle [formControl]="getControl(field.key)"></mat-slide-toggle>
+          </div>
         } @else {
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>{{ field.label }}</mat-label>
@@ -40,7 +45,7 @@
         }
       }
 
-      @if (data.supportsToggle && data.editMode) {
+      @if (data.supportsToggle && data.editMode && !hasToggleField()) {
         <div class="toggle-row">
           <label class="toggle-label">Active</label>
           <mat-slide-toggle [formControl]="isActiveControl"></mat-slide-toggle>
