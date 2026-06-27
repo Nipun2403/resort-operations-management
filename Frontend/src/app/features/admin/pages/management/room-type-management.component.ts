@@ -108,15 +108,28 @@ export class RoomTypeManagementComponent implements OnInit {
         type: 'number',
         validators: [Validators.required, Validators.min(1)],
       },
-      { key: 'imageUrl', label: 'Image URL', type: 'text', validators: [] },
       {
         key: 'squareFootage',
         label: 'Square Footage',
         type: 'number',
         validators: [],
       },
-      { key: 'bedType', label: 'Bed Type', type: 'text', validators: [] },
-      { key: 'bedCount', label: 'Bed Count', type: 'number', validators: [] },
+      {
+        key: 'bedConfiguration',
+        label: 'Bed Configuration',
+        type: 'keyValueList',
+        validators: [],
+        showInAdd: true,
+        showInEdit: true,
+      },
+      {
+        key: 'imageUrls',
+        label: 'Images',
+        type: 'imageUrlList',
+        validators: [],
+        showInAdd: true,
+        showInEdit: true,
+      },
     ],
     supportsToggle: true,
     data: this.data,
@@ -219,11 +232,8 @@ export class RoomTypeManagementComponent implements OnInit {
   onSave(event: { formValue: any; isActive: boolean; entityId?: number }): void {
     const { formValue, isActive, entityId } = event;
 
-    const imageUrls = formValue.imageUrl ? [formValue.imageUrl] : [];
-    let bedConfig: Record<string, number> | undefined;
-    if (formValue.bedType && formValue.bedCount) {
-      bedConfig = { [formValue.bedType]: Number(formValue.bedCount) };
-    }
+    const imageUrls = formValue.imageUrls ?? [];
+    const bedConfig = formValue.bedConfiguration || null;
 
     if (entityId != null) {
       // Edit mode

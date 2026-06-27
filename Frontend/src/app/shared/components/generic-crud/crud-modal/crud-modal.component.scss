@@ -52,3 +52,53 @@ mat-dialog-actions {
   border-top: 1px solid #e0e0e0;
   gap: 8px;
 }
+
+.key-value-list, .image-url-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 8px 0;
+
+  .list-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  .pair-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+
+    mat-form-field {
+      flex: 1;
+      margin-bottom: -1.25em;
+    }
+    
+    button {
+      align-self: center;
+    }
+  }
+
+  .url-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+
+    mat-form-field {
+      flex: 1;
+      margin-bottom: -1.25em;
+    }
+
+    button {
+      align-self: center;
+    }
+  }
+
+  .add-btn {
+    align-self: flex-start;
+    margin-top: 8px;
+  }
+}

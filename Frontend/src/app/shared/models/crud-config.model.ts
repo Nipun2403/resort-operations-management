@@ -31,7 +31,9 @@ export interface FormFieldDef {
     | 'date'
     | 'url'
     | 'select'
-    | 'toggle';
+    | 'toggle'
+    | 'keyValueList'
+    | 'imageUrlList';
   options?: FilterOption[];
   validators?: any[];
   showInAdd?: boolean;

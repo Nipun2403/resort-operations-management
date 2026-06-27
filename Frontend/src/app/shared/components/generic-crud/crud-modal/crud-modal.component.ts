@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal, DestroyRef, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormControl, FormGroup, ReactiveFormsModule, AbstractControl } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, AbstractControl, FormArray, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -47,19 +47,49 @@ export class CrudModalComponent implements OnInit {
       }
     });
 
-    const controls: Record<string, FormControl> = {};
+    const controls: Record<string, AbstractControl> = {};
     for (const field of this.activeFields) {
-      const value = this.data.entity ? (this.data.entity[field.key] ?? null) : null;
-      controls[field.key] = new FormControl(value, field.validators ?? []);
+      if (field.type === 'keyValueList') {
+        const pairsArray = new FormArray<FormGroup>([]);
+        const bedConfig = this.data.entity ? this.data.entity[field.key] : null;
+        if (bedConfig && typeof bedConfig === 'object') {
+          Object.entries(bedConfig).forEach(([key, value]) => {
+            pairsArray.push(
+              new FormGroup({
+                key: new FormControl(key, [
+                  Validators.required,
+                  Validators.pattern(/^[a-zA-Z0-9\s\-']+$/),
+                ]),
+                value: new FormControl(value, [Validators.required, Validators.min(1)]),
+              }),
+            );
+          });
+        }
+        controls[field.key] = new FormGroup({ pairs: pairsArray });
+      } else if (field.type === 'imageUrlList') {
+        const urlsArray = new FormArray<FormControl>([]);
+        const urls = this.data.entity ? this.data.entity[field.key] : null;
+        if (urls && Array.isArray(urls)) {
+          urls.forEach((url) => {
+            urlsArray.push(new FormControl(url, [Validators.pattern(/^https?:\/\/.+/)]));
+          });
+        }
+        controls[field.key] = new FormGroup({ urls: urlsArray });
+      } else {
+        const value = this.data.entity ? (this.data.entity[field.key] ?? null) : null;
+        controls[field.key] = new FormControl(value, field.validators ?? []);
+      }
     }
     this.modalForm = new FormGroup(controls);
 
-    const toggleField = this.activeFields.find(f => f.type === 'toggle');
+    const toggleField = this.activeFields.find((f) => f.type === 'toggle');
     if (toggleField) {
       this.isActiveControl = this.getControl(toggleField.key);
     } else {
       if (this.data.supportsToggle && this.data.entity) {
-        this.isActiveControl.setValue(this.data.entity.isActive ?? this.data.entity.isAvailable ?? true);
+        this.isActiveControl.setValue(
+          this.data.entity.isActive ?? this.data.entity.isAvailable ?? true,
+        );
       }
     }
   }
@@ -76,8 +106,22 @@ export class CrudModalComponent implements OnInit {
     this.modalForm.markAllAsTouched();
     if (this.modalForm.invalid) return;
 
+    const rawValue = this.modalForm.getRawValue();
+    for (const field of this.activeFields) {
+      if (field.type === 'keyValueList') {
+        const pairs: { key: string; value: number }[] = rawValue[field.key]?.pairs ?? [];
+        const obj: Record<string, number> = {};
+        pairs.forEach((p) => {
+          if (p.key) obj[p.key] = p.value;
+        });
+        rawValue[field.key] = Object.keys(obj).length > 0 ? obj : null;
+      } else if (field.type === 'imageUrlList') {
+        rawValue[field.key] = (rawValue[field.key]?.urls ?? []).filter(Boolean);
+      }
+    }
+
     const result: CrudModalResult = {
-      formValue: this.modalForm.value,
+      formValue: rawValue,
       isActive: this.data.supportsToggle ? (this.isActiveControl.value ?? true) : true,
       previousIsActive: this.data.supportsToggle && this.data.entity
         ? (this.data.entity.isActive ?? true)
@@ -86,6 +130,39 @@ export class CrudModalComponent implements OnInit {
     };
 
     this.dialogRef.close(result);
+  }
+
+  getKeyValueArray(fieldName: string): FormArray {
+    return this.modalForm.get(fieldName + '.pairs') as FormArray;
+  }
+
+  getImageUrlArray(fieldName: string): FormArray {
+    return this.modalForm.get(fieldName + '.urls') as FormArray;
+  }
+
+  addKeyValuePair(fieldName: string): void {
+    const pair = new FormGroup({
+      key: new FormControl('', [
+        Validators.required,
+        Validators.pattern(/^[a-zA-Z0-9\s\-']+$/),
+      ]),
+      value: new FormControl(1, [Validators.required, Validators.min(1)]),
+    });
+    this.getKeyValueArray(fieldName).push(pair);
+  }
+
+  removeKeyValuePair(fieldName: string, index: number): void {
+    this.getKeyValueArray(fieldName).removeAt(index);
+  }
+
+  addImageUrl(fieldName: string): void {
+    this.getImageUrlArray(fieldName).push(
+      new FormControl('', [Validators.pattern(/^https?:\/\/.+/)]),
+    );
+  }
+
+  removeImageUrl(fieldName: string, index: number): void {
+    this.getImageUrlArray(fieldName).removeAt(index);
   }
 
   cancel(): void {
