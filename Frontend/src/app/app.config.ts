@@ -1,8 +1,9 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
+import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { routes } from './app.routes';
 import { provideEchartsCore } from 'ngx-echarts';
 import * as echarts from 'echarts';
@@ -11,8 +12,8 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClient(withInterceptors([authInterceptor])),
     provideAnimationsAsync(),
-    provideEchartsCore({ echarts })
-  ]
+    provideEchartsCore({ echarts }),
+  ],
 };
