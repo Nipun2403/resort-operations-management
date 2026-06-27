@@ -1,0 +1,162 @@
+<div class="crud-container">
+  <!-- Top bar -->
+  <div class="top-bar">
+    <h2>{{ config().entityNamePlural }}</h2>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="openAddModal()"
+    >
+      <mat-icon>add</mat-icon> Add {{ config().entityName }}
+    </button>
+  </div>
+
+  <!-- Search & Filter Bar -->
+  <div class="search-filter-bar">
+    <mat-form-field
+      appearance="outline"
+      class="search-field"
+    >
+      <mat-label>Search {{ config().entityNamePlural }}</mat-label>
+      <input
+        matInput
+        [formControl]="searchControl"
+        (keyup)="onSearchDebounced()"
+      />
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+    @for (filter of config().filters; track filter.key) {
+    <mat-form-field appearance="outline">
+      <mat-label>{{ filter.label }}</mat-label>
+      <mat-select
+        [formControl]="getFilterControl(filter.key)"
+        (selectionChange)="onFilterChange(filter.key)"
+      >
+        @for (option of filter.options; track option.value) {
+        <mat-option [value]="option.value">{{ option.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    } @if (hasActiveFilters()) {
+    <button
+      mat-button
+      (click)="clearFilters()"
+    >
+      Clear Filters
+    </button>
+    }
+  </div>
+
+  <!-- Loading / Error / Content -->
+  @if (config().loading()) {
+  <div class="loading"><mat-spinner diameter="40"></mat-spinner></div>
+  } @else if (config().error()) {
+  <app-alert
+    type="error"
+    [message]="config().error()!"
+    (closed)="config().error.set(null)"
+  ></app-alert>
+  } @else if (!config().data() || config().data().length === 0) {
+  <div class="empty-state">
+    <img
+      src="assets/empty-state.svg"
+      alt=""
+    />
+    <p>No {{ config().entityNamePlural }} found.</p>
+    @if (hasActiveFilters()) {
+    <p>Try adjusting your filters.</p>
+    <button
+      mat-button
+      (click)="clearFilters()"
+    >
+      Clear Filters
+    </button>
+    } @else {
+    <button
+      mat-raised-button
+      (click)="openAddModal()"
+    >
+      Add your first {{ config().entityName }}
+    </button>
+    }
+  </div>
+  } @else {
+  <!-- Desktop Table -->
+  <div class="desktop-view">
+    <table
+      mat-table
+      [dataSource]="config().data()"
+      matSort
+      (matSortChange)="onSortChange($event)"
+    >
+      @for (col of config().columns; track col.field) {
+      <ng-container [matColumnDef]="col.field">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header="{{ col.sortable ? col.field : '' }}"
+        >
+          {{ col.header }}
+        </th>
+        <td
+          mat-cell
+          *matCellDef="let row"
+        >
+          @if (col.cellTemplate) {
+          <ng-container
+            *ngTemplateOutlet="col.cellTemplate; context: { $implicit: row }"
+          ></ng-container>
+          } @else { {{ col.getValue(row) }} }
+        </td>
+      </ng-container>
+      }
+      <ng-container matColumnDef="actions">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+        >
+          Actions
+        </th>
+        <td
+          mat-cell
+          *matCellDef="let row"
+        >
+          <button
+            mat-icon-button
+            (click)="openEditModal(row)"
+            aria-label="Edit"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+      <tr
+        mat-header-row
+        *matHeaderRowDef="displayedColumns"
+      ></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns"
+      ></tr>
+    </table>
+  </div>
+
+  <!-- Mobile Card View -->
+  <div class="mobile-view">
+    <app-cards-view
+      [data]="config().data()"
+      [columns]="config().columns"
+      (edit)="openEditModal($event)"
+    ></app-cards-view>
+  </div>
+
+  <!-- Paginator -->
+  <mat-paginator
+    [length]="config().totalCount()"
+    [pageIndex]="config().pageIndex()"
+    [pageSize]="config().pageSize()"
+    [pageSizeOptions]="[10, 25, 50, 100]"
+    (page)="onPageChange($event)"
+  ></mat-paginator>
+  }
+</div>

@@ -1,0 +1,85 @@
+.crud-container {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  // Top bar
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+  }
+
+  // Search & filter bar
+  .search-filter-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    .search-field {
+      min-width: 240px;
+      flex: 1;
+    }
+  }
+
+  // Loading spinner
+  .loading {
+    display: flex;
+    justify-content: center;
+    padding: 48px 0;
+  }
+
+  // Empty state
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 48px 24px;
+    text-align: center;
+    color: rgba(0, 0, 0, 0.5);
+
+    img {
+      width: 120px;
+      opacity: 0.5;
+    }
+
+    p {
+      margin: 0;
+      font-size: 0.95rem;
+    }
+  }
+
+  // Desktop table — hide on mobile
+  .desktop-view {
+    display: block;
+    overflow-x: auto;
+
+    table {
+      width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      display: none;
+    }
+  }
+
+  // Mobile card view — hide on desktop
+  .mobile-view {
+    display: none;
+
+    @media (max-width: 768px) {
+      display: block;
+    }
+  }
+}

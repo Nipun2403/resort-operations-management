@@ -1,0 +1,63 @@
+<h2 mat-dialog-title>
+  {{ data.editMode ? 'Edit' : 'Add' }} {{ data.formFields.length > 0 ? '' : 'Item' }}
+  <button mat-icon-button mat-dialog-close class="close-btn" aria-label="Close dialog">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+
+<mat-dialog-content>
+  @if (modalForm) {
+    <form [formGroup]="modalForm" (ngSubmit)="submit()">
+      @for (field of getFieldDefs(); track field.key) {
+        @if (field.type === 'select') {
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ field.label }}</mat-label>
+            <mat-select [formControl]="getControl(field.key)">
+              @for (option of field.options; track option.value) {
+                <mat-option [value]="option.value">{{ option.label }}</mat-option>
+              }
+            </mat-select>
+            @if (getControl(field.key).invalid && getControl(field.key).touched) {
+              <mat-error>{{ field.label }} is required.</mat-error>
+            }
+          </mat-form-field>
+        } @else if (field.type === 'textarea') {
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ field.label }}</mat-label>
+            <textarea matInput rows="3" [formControl]="getControl(field.key)"></textarea>
+            @if (getControl(field.key).invalid && getControl(field.key).touched) {
+              <mat-error>{{ field.label }} is required.</mat-error>
+            }
+          </mat-form-field>
+        } @else {
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ field.label }}</mat-label>
+            <input matInput [type]="field.type" [formControl]="getControl(field.key)" />
+            @if (getControl(field.key).invalid && getControl(field.key).touched) {
+              <mat-error>{{ field.label }} is required.</mat-error>
+            }
+          </mat-form-field>
+        }
+      }
+
+      @if (data.supportsToggle) {
+        <div class="toggle-row">
+          <label class="toggle-label">Active</label>
+          <mat-slide-toggle [formControl]="isActiveControl"></mat-slide-toggle>
+        </div>
+      }
+    </form>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">Cancel</button>
+  <button
+    mat-raised-button
+    color="primary"
+    [disabled]="modalForm?.invalid"
+    (click)="submit()"
+  >
+    Save
+  </button>
+</mat-dialog-actions>

@@ -1,0 +1,23 @@
+@for (row of data(); track $index) {
+  <mat-card class="entity-card">
+    <mat-card-content>
+      @for (col of columns(); track col.field) {
+        <div class="card-row">
+          <span class="card-label">{{ col.header }}:</span>
+          <span class="card-value">
+            @if (col.cellTemplate) {
+              <ng-container *ngTemplateOutlet="col.cellTemplate; context: { $implicit: row }"></ng-container>
+            } @else {
+              {{ col.getValue(row) }}
+            }
+          </span>
+        </div>
+      }
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <button mat-icon-button (click)="edit.emit(row)" aria-label="Edit">
+        <mat-icon>edit</mat-icon>
+      </button>
+    </mat-card-actions>
+  </mat-card>
+}
