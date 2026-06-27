@@ -1,9 +1,17 @@
 <div class="feedback-page">
-  <!-- Top control: Show hidden feedback toggle -->
+  <!-- Controls -->
   <div class="controls">
-    <mat-slide-toggle [formControl]="includeHiddenControl" (change)="onIncludeHiddenToggle()">
-      Show hidden feedback
-    </mat-slide-toggle>
+    <span class="spacer"></span>
+    <mat-form-field appearance="outline">
+      <mat-label>Visibility</mat-label>
+      <mat-select
+        [formControl]="includeHiddenControl"
+        (selectionChange)="onIncludeHiddenToggle($event.value)"
+      >
+        <mat-option [value]="false">Visible only</mat-option>
+        <mat-option [value]="true">All (including hidden)</mat-option>
+      </mat-select>
+    </mat-form-field>
   </div>
 
   <!-- Loading / Error / Content -->

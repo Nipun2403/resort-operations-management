@@ -11,6 +11,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
 import { finalize } from 'rxjs';
@@ -37,6 +39,8 @@ type FeedbackSortField = 'id' | 'rating' | 'createdAt';
     MatSnackBarModule,
     MatProgressSpinnerModule,
     MatProgressBarModule,
+    MatFormFieldModule,
+    MatSelectModule,
     AlertComponent,
   ],
   templateUrl: './feedback.component.html',
@@ -101,7 +105,7 @@ export class FeedbackComponent implements OnInit {
       });
   }
 
-  onIncludeHiddenToggle(): void {
+  onIncludeHiddenToggle(value: boolean): void {
     this.pageIndex.set(0);
     this.saveState();
     this.fetchData();

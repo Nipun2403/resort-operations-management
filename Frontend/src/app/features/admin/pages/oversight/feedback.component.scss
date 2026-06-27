@@ -6,11 +6,14 @@
 
   .controls {
     display: flex;
-    justify-content: flex-start;
     align-items: center;
     gap: 16px;
     flex-wrap: wrap;
     margin-bottom: 8px;
+
+    .spacer {
+      flex: 1 1 auto;
+    }
   }
 
   .loading {

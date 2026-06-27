@@ -1576,6 +1576,72 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: feedback-ui-patch.md
+Date: 2026-06-27
+================================================================================
+
+FILES CREATED
+-------------
+None.
+
+FILES MODIFIED
+--------------
+✓ src/app/features/admin/pages/oversight/feedback.component.html
+  — Removed mat-slide-toggle controls container.
+  — Added mat-select dropdown for "Visibility" with options "Visible only" and "All (including hidden)".
+✓ src/app/features/admin/pages/oversight/feedback.component.ts
+  — Added MatFormFieldModule and MatSelectModule to the component imports array.
+  — Maintained MatSlideToggleModule as there are other mat-slide-toggles on the page.
+  — Updated onIncludeHiddenToggle() signature to accept value: boolean.
+✓ src/app/features/admin/pages/oversight/feedback.component.scss
+  — Added controls class layout modifications and .spacer CSS styles.
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Dropdown Replacement (§3.1)
+  ✓ Replaced mat-slide-toggle with mat-select inside mat-form-field.
+  ✓ Aligned select box using spacer flex properties.
+✓ Event Handler Update (§3.2)
+  ✓ onIncludeHiddenToggle signature modified to accept boolean.
+✓ Import Integrity (§3.3)
+  ✓ Maintained MatSlideToggleModule because the moderation column in the table still relies on it.
+  ✓ Verified and added MatSelectModule and MatFormFieldModule.
+
+API INTEGRATION
+---------------
+None.
+
+LOGIC TRACES
+------------
+Flow: Change Visibility select box dropdown
+  Entry: User changes Visibility dropdown from "Visible only" to "All (including hidden)"
+  Path: select change event -> onIncludeHiddenToggle(true) -> pageIndex(0) -> saveState() -> fetchData() [GET request with includeHidden=true]
+  Result: ✓ Matches spec
+
+KNOWN DEVIATIONS
+----------------
+None.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+☑ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+☑ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+☑ I confirm that all API calls match the spec contracts exactly.
+☑ I confirm that all regex validators are character-for-character matches
+  to the spec.
+☑ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
 
 
 
