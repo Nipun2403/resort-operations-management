@@ -1712,6 +1712,117 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: UI-refactor.md
+Date: 2026-06-28
+================================================================================
+
+FILES CREATED
+-------------
+None. All changes are modifications to existing files.
+
+FILES MODIFIED
+--------------
+✓ src/styles.scss
+  — Added global box-sizing: border-box, body overflow-x: hidden, .table-section rule (§2)
+✓ src/app/features/admin/components/room-status-grid/room-status-grid.component.ts
+  — Added getStatusClass() method with lowercase normalisation (§3.3)
+✓ src/app/features/admin/components/room-status-grid/room-status-grid.component.html
+  — Changed card binding to [ngClass]="getStatusClass(room.status)" (§3.3)
+✓ src/app/features/admin/components/room-status-grid/room-status-grid.component.scss
+  — Replaced wrap grid with 3-row horizontal scroll strip per spec §3.2
+  — Added .neutral fallback; updated occupied/available colours per §3.3
+✓ src/app/features/admin/pages/management/room-management.component.html
+  — Relocated status grid above table using @if blocks per spec §3.1
+✓ src/app/features/admin/pages/management/room-management.component.scss
+  — Removed 70/30 flex layout; added .status-grid-row container (§3.1)
+✓ src/app/shared/models/crud-config.model.ts
+  — Added optional width?: string to ColumnDef interface (§4.2)
+✓ src/app/shared/components/generic-crud/generic-crud.component.ts
+  — Added columnWidths computed signal with equal-fraction fallback (§4.2)
+✓ src/app/shared/components/generic-crud/generic-crud.component.html
+  — Bound [style.width]="columnWidths()[i]" on all th and td elements (§4.2)
+✓ src/app/shared/components/generic-crud/generic-crud.component.scss
+  — Added table-layout: fixed and th/td ellipsis rules inside .desktop-view (§4.1)
+✓ src/app/features/admin/pages/dashboard.component.ts
+  — Added AfterViewInit, @ViewChildren('chartRef'), ngAfterViewInit() resize dispatch (§5.1)
+  — Updated chart option signals to return minimal config when analytics() is null (§5.1)
+✓ src/app/features/admin/pages/dashboard.component.html
+  — Chart divs always rendered with #chartRef and explicit dimensions; removed @if wrappers (§5.1)
+✓ src/app/features/admin/pages/dashboard.component.scss
+  — .kpi-row: repeat(4,1fr) desktop → repeat(2,1fr) at 959px → 1fr at 599px (§5.2)
+  — .middle-row: flex-wrap, stack at 959px; .charts 60%, .health-cards 30% (§5.2)
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Global Containment (§2)
+  ✓ box-sizing: border-box applied globally via *, *::before, *::after
+  ✓ body overflow-x: hidden added
+  ✓ .table-section { max-width: 100%; overflow-x: auto } global rule added
+✓ Room Status Grid Relocation (§3.1)
+  ✓ Status grid appears above table on desktop/tablet
+  ✓ Mobile toggle logic unchanged
+✓ 3-Row Horizontal Scroll Strip (§3.2)
+  ✓ grid-auto-flow: column; grid-template-rows: repeat(3, 1fr); grid-auto-columns: 120px
+  ✓ height: calc(3 * 68px); overflow-x: auto; overflow-y: hidden
+✓ White Card Bug Fix (§3.3)
+  ✓ getStatusClass() normalises to lowercase for case-insensitive matching
+  ✓ .neutral { background-color: #eeeeee } fallback — no white cards
+✓ Table Column Width Consistency (§4.1, §4.2)
+  ✓ table-layout: fixed; th/td ellipsis rules applied
+  ✓ ColumnDef.width?: string added; columnWidths computed with equal-fraction fallback
+✓ Dashboard ECharts Fix (§5.1)
+  ✓ AfterViewInit + setTimeout resize dispatch
+  ✓ Chart containers always rendered; minimal options when data null
+✓ Dashboard Responsive Layout (§5.2)
+  ✓ KPI: 4 cols desktop, 2 tablet, 1 mobile
+  ✓ Middle row stacks at 959px; flex-wrap wraps charts and health-cards
+
+API INTEGRATION
+---------------
+None.
+
+LOGIC TRACES
+------------
+Flow: White card prevention
+  Entry: Room status value 'OCCUPIED' (uppercase) returned from API
+  Path: getStatusClass('OCCUPIED') -> .toLowerCase() -> 'occupied' -> returns 'occupied' -> [ngClass] applies .occupied -> red background
+  Result: ✓ Matches spec
+
+Flow: Dashboard ECharts initialisation
+  Entry: Component mounts before analytics data arrives
+  Path: revenueChartOptions() returns minimal config -> chart div always in DOM with height:400px -> ECharts reads dimensions successfully -> ngAfterViewInit fires resize event as backup
+  Result: ✓ Matches spec
+
+KNOWN DEVIATIONS
+----------------
+DEVIATION-1: Spec §3.3 uses [class]="getStatusClass()" which overwrites all classes in Angular.
+  Reason: This removes static class="room-card", breaking base card layout styles.
+  Applied Default: class="room-card" (static) + [ngClass]="getStatusClass()" (dynamic status class). Identical runtime output.
+  Impact: None — produces same CSS classes on the element.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+AMBIGUITY-1: Spec §3.3 [class] binding vs Angular class-merging behaviour.
+  Default Applied: [ngClass] preserves both the static base class and adds the status class.
+  Rationale: Minimum-safe equivalent; achieves spec intent without breaking card layout.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+☑ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+☑ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+☑ I confirm that all API calls match the spec contracts exactly.
+☑ I confirm that all regex validators are character-for-character matches
+  to the spec.
+☑ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+
 
 
 
