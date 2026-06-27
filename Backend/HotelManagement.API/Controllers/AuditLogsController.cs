@@ -19,17 +19,19 @@ public class AuditLogsController : ControllerBase
 
     [HttpGet]
     public async Task<IActionResult> GetAuditLogs(
-        [FromQuery] int pageNumber = 1, 
+        [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10,
+        [FromQuery] string? guestQuery = null,
         [FromQuery] string? sortBy = null,
         [FromQuery] bool sortDescending = false)
     {
         pageSize = Math.Min(pageSize, 100);
-        var logs = await _auditLogService.GetAuditLogsAsync(pageNumber, pageSize, sortBy, sortDescending);
+        var logs = await _auditLogService.GetAuditLogsAsync(pageNumber, pageSize, guestQuery, sortBy, sortDescending);
         return Ok(logs);
     }
 
     [HttpGet("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetAuditLog(int id)
     {
         var log = await _auditLogService.GetAuditLogByIdAsync(id);
