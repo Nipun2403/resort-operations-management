@@ -1822,6 +1822,117 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: Ui-Refactor-2.md
+Date: 2026-06-28
+================================================================================
+
+FILES CREATED
+-------------
+None. All changes are modifications to existing files.
+
+FILES MODIFIED
+--------------
+✓ src/app/features/admin/admin-shell.component.ts
+  — Changed isMobile breakpoint from (max-width: 768px) to (max-width: 1024px) (§4.1)
+✓ src/app/features/admin/admin-shell.component.scss
+  — Extended .content padding reduction to 1024px to match new isMobile range (§4.2)
+✓ src/styles.scss
+  — Added html/body: -webkit-text-size-adjust: 100%, touch-action: manipulation (§5.1)
+  — Added img/video/canvas/svg: max-width: 100%; height: auto (§5.1)
+  — Added @media (max-width: 500px) rules for form fields, table containers, and cards (§5.1)
+✓ src/app/shared/components/generic-crud/generic-crud.component.scss
+  — Updated .search-filter-bar: mat-form-field { flex: 1 1 200px; min-width: 150px } per §5.2
+✓ src/app/features/admin/components/room-status-grid/room-status-grid.component.scss
+  — Added @media (max-width: 767px) override: vertical 3-column grid with max-height: 60vh (§6.1)
+✓ src/app/features/admin/pages/dashboard.component.scss
+  — .kpi-row: breakpoints updated to 1024px (2-col) and 767px (1-col) per §8
+  — .chart: height updated to 400px (§7.2)
+  — Added @media (max-width: 599px) { .chart { height: 300px } } for mobile (§7.2)
+  — .movement-table: added -webkit-overflow-scrolling: touch; table { min-width: 600px } (§7.1)
+✓ src/app/features/admin/pages/dashboard.component.html
+  — Removed inline style="height: 400px; width: 100%;" from both chart divs; height now from CSS class (§7.2)
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Sidebar collapses on tablet (§4.1)
+  ✓ isMobile breakpoint changed to (max-width: 1024px)
+  ✓ Template [mode]="isMobile() ? 'over' : 'side'" already correct — no template change needed
+  ✓ Hamburger button shown when isMobile() is true — already in template
+✓ Global small-screen fixes (§5.1)
+  ✓ -webkit-text-size-adjust: 100% on html and body
+  ✓ touch-action: manipulation on html and body
+  ✓ img/video/canvas/svg: max-width: 100%; height: auto
+  ✓ @media (max-width: 500px): mat-form-field/mat-button-toggle-group width: 100%
+  ✓ @media (max-width: 500px): .table-section/-webkit-overflow-scrolling: touch
+  ✓ @media (max-width: 500px): .mat-card/.kpi-card card margin and padding adjustments
+✓ Filter bar wrapping on small screens (§5.2)
+  ✓ .search-filter-bar: mat-form-field { flex: 1 1 200px; min-width: 150px }
+✓ Room status grid mobile vertical 3-column (§6.1)
+  ✓ @media (max-width: 767px): grid-template-columns: repeat(3, 1fr)
+  ✓ grid-auto-rows: minmax(60px, auto); max-height: 60vh; overflow-y: auto; overflow-x: hidden
+✓ Dashboard "Today's Movement" table responsiveness (§7.1)
+  ✓ .movement-table: -webkit-overflow-scrolling: touch
+  ✓ .movement-table table: min-width: 600px
+✓ Dashboard chart height CSS class (§7.2)
+  ✓ .chart { height: 400px } inside .chart-container
+  ✓ @media (max-width: 599px) { .chart { height: 300px } }
+  ✓ Inline style="height: 400px; width: 100%;" removed from both chart divs
+✓ KPI grid explicit breakpoints (§8)
+  ✓ @media (max-width: 1024px): repeat(2, 1fr) for tablet
+  ✓ @media (max-width: 767px): 1fr for mobile
+
+SELF-REVIEW CHECKLIST
+----------------------
+✓ Sidebar collapses into hamburger on tablets (768–1024px) and mobile (<768px), persistent ≥1025px
+✓ Hamburger button visible and functional on tablet and mobile
+✓ No horizontal overflow on screens as narrow as 320px
+✓ Management pages' filter bars wrap gracefully on small screens
+✓ Room status grid on mobile: vertical 3-column scrollable list
+✓ "Today's Movement" table: horizontally scrollable; min-width 600px prevents column collapse
+✓ Dashboard charts: 400px desktop, 300px mobile
+✓ All breakpoint transitions (500, 767, 1024) produce clean layout
+✓ No regression in desktop or tablet views
+
+API INTEGRATION
+---------------
+None.
+
+LOGIC TRACES
+------------
+Flow: Tablet sidebar collapse
+  Entry: Screen width = 900px (tablet)
+  Path: breakpointObserver matches '(max-width: 1024px)' -> isMobile() returns true -> [mode]="over" -> [opened]="sidebarOpen()" -> sidebar hidden by default -> hamburger button visible
+  Result: ✓ Matches spec
+
+Flow: Room status grid on mobile
+  Entry: Screen width = 375px (mobile)
+  Path: @media (max-width: 767px) activates -> .status-grid: grid-template-columns: repeat(3, 1fr) -> 3-column vertical grid, overflow-y: auto, max-height: 60vh
+  Result: ✓ Matches spec
+
+KNOWN DEVIATIONS
+----------------
+None.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None — spec is fully explicit.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+☑ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+☑ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+☑ I confirm that all API calls match the spec contracts exactly.
+☑ I confirm that all regex validators are character-for-character matches
+  to the spec.
+☑ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
 
 
 
