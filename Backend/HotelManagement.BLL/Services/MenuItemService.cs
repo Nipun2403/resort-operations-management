@@ -21,8 +21,15 @@ public class MenuItemService : IMenuItemService
         _currentUserService = currentUserService;
     }
 
-    public async Task<PaginatedResult<MenuItemDTO>> GetMenuItemsAsync(int pageNumber, int pageSize, bool? isAvailable = null, string? sortBy = null, bool sortDescending = false)
+    public async Task<PaginatedResult<MenuItemDTO>> GetMenuItemsAsync(
+        int pageNumber,
+        int pageSize,
+        bool? isAvailable = null,
+        string? searchQuery = null,
+        string? sortBy = null,
+        bool sortDescending = false)
     {
+        // Role‑based default: non‑Admin/Kitchen see only available items
         if (isAvailable.HasValue && !isAvailable.Value && !_currentUserService.IsInRole("Admin") && !_currentUserService.IsInRole("Kitchen"))
         {
             isAvailable = true;
@@ -32,28 +39,21 @@ public class MenuItemService : IMenuItemService
             isAvailable = true;
         }
 
-        var allItems = await _menuItemRepository.GetAllAsync();
-        var query = allItems.AsQueryable();
+        var pagedResult = await _menuItemRepository.GetPaginatedMenuItemsAsync(
+            pageNumber,
+            pageSize,
+            isAvailable,
+            searchQuery,
+            sortBy,
+            sortDescending);
 
-        if (isAvailable.HasValue)
-        {
-            query = query.Where(m => m.IsAvailable == isAvailable.Value);
-        }
+        var dtos = _mapper.Map<IEnumerable<MenuItemDTO>>(pagedResult.Data);
 
-        if (!string.IsNullOrEmpty(sortBy))
-        {
-            query = query.OrderByDynamic(sortBy, sortDescending);
-        }
-
-        var totalCount = query.Count();
-        var pagedItems = query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
-
-        var dtos = _mapper.Map<IEnumerable<MenuItemDTO>>(pagedItems);
         return new PaginatedResult<MenuItemDTO>
         {
-            TotalCount = totalCount,
-            PageNumber = pageNumber,
-            PageSize = pageSize,
+            TotalCount = pagedResult.TotalCount,
+            PageNumber = pagedResult.PageNumber,
+            PageSize = pagedResult.PageSize,
             Data = dtos
         };
     }

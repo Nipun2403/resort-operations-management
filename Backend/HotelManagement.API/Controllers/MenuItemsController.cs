@@ -22,11 +22,18 @@ public class MenuItemsController : ControllerBase
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10,
         [FromQuery] bool? isAvailable = null,
+        [FromQuery] string? searchQuery = null,      // NEW
         [FromQuery] string? sortBy = null,
         [FromQuery] bool sortDescending = false)
     {
         pageSize = Math.Min(pageSize, 100);
-        var items = await _menuItemService.GetMenuItemsAsync(pageNumber, pageSize, isAvailable, sortBy, sortDescending);
+        var items = await _menuItemService.GetMenuItemsAsync(
+            pageNumber,
+            pageSize,
+            isAvailable,
+            searchQuery,
+            sortBy,
+            sortDescending);
         return Ok(items);
     }
 
