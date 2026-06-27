@@ -9,7 +9,7 @@ public interface IMenuItemRepository : IGenericRepository<MenuItem>
     Task<HotelManagement.Repository.Models.PaginatedResult<MenuItem>> GetPaginatedMenuItemsAsync(
     int pageNumber,
     int pageSize,
-    bool isAvailable,
+    bool? isAvailable,
     string? searchQuery,
     string? sortBy,
     bool sortDescending);

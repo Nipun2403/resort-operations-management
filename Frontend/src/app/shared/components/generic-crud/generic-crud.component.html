@@ -102,6 +102,7 @@
             mat-table
             [dataSource]="config().data()"
             matSort
+            matSortDisableClear
             (matSortChange)="onSortChange($event)"
           >
             @for (col of config().columns; track col.field) {

@@ -225,7 +225,7 @@ public class BookingService : IBookingService
         if (!string.IsNullOrWhiteSpace(guestQuery))
         {
             var lowerQuery = guestQuery.ToLower();
-            predicates.Add(b => b.GuestName.ToLower().Contains(lowerQuery) || b.GuestEmail.ToLower().Contains(lowerQuery));
+            predicates.Add(b => b.GuestName.ToLower().Contains(lowerQuery) || b.GuestEmail.ToLower().Contains(lowerQuery) || b.Id.ToString().Contains(lowerQuery));
         }
 
         Func<IQueryable<Booking>, IOrderedQueryable<Booking>>? orderBy = null;

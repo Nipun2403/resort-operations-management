@@ -83,7 +83,9 @@ export class GenericCrudComponent {
   pageChange = output<{ pageIndex: number; pageSize: number }>();
   save = output<{ formValue: any; isActive: boolean; entityId?: number }>();
   edit = output<any>();
-  searchQuery = input<string>('');
+  searchQuery = input<string, any>('', {
+    transform: (value: any) => value ?? '',
+  });
 
   // Internal signals per spec §4
   isModalOpen = signal(false);

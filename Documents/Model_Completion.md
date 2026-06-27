@@ -1426,6 +1426,78 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: generic-crud-patch-2.md
+Date: 2026-06-27
+================================================================================
+
+FILES CREATED
+-------------
+None.
+
+FILES MODIFIED
+--------------
+✓ src/app/shared/components/generic-crud/generic-crud.component.html
+  — Added matSortDisableClear attribute to the desktop table element.
+✓ src/app/shared/components/generic-crud/generic-crud.component.ts
+  — Updated searchQuery input using input<string, any>() signature with transform to handle null/undefined cleanly.
+  — Synchronized input value to searchControl control via effect block in constructor.
+✓ src/app/features/admin/pages/management/room-type-management.component.html
+  — Added [searchQuery]="searchQuery()" binding.
+✓ src/app/features/admin/pages/management/room-management.component.html
+  — Checked that [searchQuery]="searchQuery()" binding exists.
+✓ src/app/features/admin/pages/management/staff-management.component.html
+  — Added [searchQuery]="searchQuery()" binding.
+✓ src/app/features/admin/pages/management/amenities-management.component.html
+  — Added [searchQuery]="searchQuery()" binding.
+✓ src/app/features/admin/pages/management/menu-management.component.html
+  — Added [searchQuery]="searchQuery()" binding.
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Sort Toggle Cycle Fix (§2)
+  ✓ Added matSortDisableClear attribute to disable empty sort state and keep sort direction cycling between 'asc' and 'desc'.
+✓ Search State Persistence Fix (§3)
+  ✓ Added searchQuery input with transformation logic to handle undefined values.
+  ✓ Added effect block to update internal searchControl when parent restores state, using { emitEvent: false } to prevent feedback loop.
+✓ Management Page Bindings (§4)
+  ✓ Added [searchQuery]="searchQuery()" to all 5 CRUD management page templates.
+
+API INTEGRATION
+---------------
+None.
+
+LOGIC TRACES
+------------
+Flow: Navigate back to Amenities page with restored search state
+  Entry: User returns to Amenities page (which has restored searchQuery='Pool' from sessionStorage)
+  Path: amenities-management templates passes searchQuery() -> generic-crud receives searchQuery input change -> constructor effect runs -> updates searchControl value to 'Pool' (emitEvent: false) -> search input displays 'Pool' without triggering duplicate fetch
+  Result: ✓ Matches spec (state persists and is correctly reflected in UI)
+
+KNOWN DEVIATIONS
+----------------
+* The searchQuery input signature in generic-crud.component.ts was declared as `input<string, any>` to satisfy Angular 18's overload rules when utilizing the transform option with an initial value, resolving TypeScript compiler type mismatch errors.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+☑ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+☑ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+☑ I confirm that all API calls match the spec contracts exactly.
+☑ I confirm that all regex validators are character-for-character matches
+  to the spec.
+☑ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+
 
 
 

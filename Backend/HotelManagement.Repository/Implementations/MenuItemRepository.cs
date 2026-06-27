@@ -22,7 +22,7 @@ public class MenuItemRepository : GenericRepository<MenuItem>, IMenuItemReposito
     public async Task<PaginatedResult<MenuItem>> GetPaginatedMenuItemsAsync(
         int pageNumber,
         int pageSize,
-        bool isAvailable,
+        bool? isAvailable,
         string? searchQuery,
         string? sortBy,
         bool sortDescending)
@@ -30,7 +30,7 @@ public class MenuItemRepository : GenericRepository<MenuItem>, IMenuItemReposito
         var query = _dbSet.AsQueryable();
 
         // 1. Availability filter (if provided)
-        if (isAvailable)
+        if (isAvailable.HasValue && isAvailable == true)
             query = query.Where(a => a.IsAvailable);
 
         // 2. Search filter (case-insensitive) on Name and Category

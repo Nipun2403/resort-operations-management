@@ -1,5 +1,6 @@
 <app-generic-crud
   [config]="crudConfig"
+  [searchQuery]="searchQuery()"
   (searchChange)="onSearchChange($event)"
   (filterChange)="onFilterChange($event)"
   (sortChange)="onSortChange($event)"
