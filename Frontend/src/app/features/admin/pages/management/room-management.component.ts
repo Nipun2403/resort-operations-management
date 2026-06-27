@@ -15,7 +15,7 @@ import { CrudConfig } from '../../../../shared/models/crud-config.model';
 import { RoomStatusGridComponent } from '../../components/room-status-grid/room-status-grid.component';
 import { RoomApiService } from '../../services/room-api.service';
 import { RoomTypeApiService } from '../../services/room-type-api.service';
-import { Room, CreateRoomDTO, UpdateRoomDTO } from '../../models/room.model';
+import { Room, CreateRoomDTO, UpdateRoomDTO, RoomStatus } from '../../models/room.model';
 
 interface RoomsState {
   roomTypeId: number | null;
@@ -67,9 +67,6 @@ export class RoomManagementComponent implements OnInit {
   roomTypeFilter = signal<number | null>(null);
   includeRetired = signal(false);
   editingEntity = signal<Room | null>(null);
-
-  // Highlight
-  highlightRoomId = signal<number | null>(null);
 
   // Mobile
   isMobile = toSignal(
@@ -305,12 +302,10 @@ export class RoomManagementComponent implements OnInit {
     }
   }
 
-  onGridRoomClicked(roomId: number): void {
-    if (this.isMobile() && this.viewMode.value === 'grid') {
-      this.viewMode.setValue('table');
-      setTimeout(() => this.highlightRoomId.set(roomId));
-    } else {
-      this.highlightRoomId.set(roomId);
-    }
+  onGridRoomClicked(room: RoomStatus): void {
+    this.searchQuery.set(room.roomNumber);
+    this.pageIndex.set(0);
+    this.saveState();
+    this.fetchData();
   }
 }

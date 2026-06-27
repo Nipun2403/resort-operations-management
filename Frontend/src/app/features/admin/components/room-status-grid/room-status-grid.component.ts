@@ -29,7 +29,7 @@ import { AlertComponent } from '../../../../features/auth/components/alert.compo
 })
 export class RoomStatusGridComponent {
   roomTypeId = input<number | null>(null);
-  roomClicked = output<number>();
+  roomClicked = output<RoomStatus>();
 
   rooms = signal<RoomStatus[]>([]);
   loading = signal(false);

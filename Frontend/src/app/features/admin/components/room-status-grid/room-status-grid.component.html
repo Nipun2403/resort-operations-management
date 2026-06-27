@@ -15,7 +15,7 @@
         class="room-card"
         [class.occupied]="room.status === 'Occupied'"
         [class.available]="room.status === 'Available'"
-        (click)="roomClicked.emit(room.roomId)"
+        (click)="roomClicked.emit(room)"
         [matTooltip]="tooltipContent(room)"
         matTooltipPosition="above"
         [attr.aria-label]="room.roomNumber + ' - ' + room.status"

@@ -7,7 +7,6 @@ import {
   input,
   output,
   effect,
-  ElementRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -64,24 +63,14 @@ import { AlertComponent } from '../../../features/auth/components/alert.componen
 export class GenericCrudComponent {
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly elementRef = inject(ElementRef);
 
   isInitialLoad = computed(() => this.config().loading() && (!this.config().data() || this.config().data().length === 0));
 
   constructor() {
     effect(() => {
-      const id = this.highlightId();
-      if (id !== null && id !== undefined) {
-        setTimeout(() => {
-          const el = this.elementRef.nativeElement.querySelector(
-            `[data-row-id="${id}"]`,
-          );
-          if (el) {
-            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            el.classList.add('highlight-row');
-            setTimeout(() => el.classList.remove('highlight-row'), 2000);
-          }
-        });
+      const query = this.searchQuery();
+      if (query !== this.searchControl.value) {
+        this.searchControl.setValue(query, { emitEvent: false });
       }
     });
   }
@@ -95,7 +84,7 @@ export class GenericCrudComponent {
   pageChange = output<{ pageIndex: number; pageSize: number }>();
   save = output<{ formValue: any; isActive: boolean; entityId?: number }>();
   edit = output<any>();
-  highlightId = input<number | null>(null);
+  searchQuery = input<string>('');
 
   // Internal signals per spec §4
   isModalOpen = signal(false);
