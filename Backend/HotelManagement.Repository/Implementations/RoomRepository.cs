@@ -4,6 +4,7 @@ using HotelManagement.DAL.Enums;
 using HotelManagement.Repository.Interfaces;
 using HotelManagement.Repository.Models;
 using Microsoft.EntityFrameworkCore;
+using HotelManagement.Repository.Utilities;
 namespace HotelManagement.Repository.Implementations;
 
 public class RoomRepository : GenericRepository<Room>, IRoomRepository
@@ -14,7 +15,7 @@ public class RoomRepository : GenericRepository<Room>, IRoomRepository
     {
         var query = _context.Rooms.Include(r => r.RoomType).AsQueryable();
         if (!includeRetired) query = query.Where(r => r.IsActive);
-        
+
         return await query.ToListAsync();
     }
 
@@ -22,9 +23,7 @@ public class RoomRepository : GenericRepository<Room>, IRoomRepository
     {
         // 1. Get overlapping booking room counts per RoomTypeId
         var overlappingCounts = await _context.Set<BookingRoom>()
-            .Where(br => (br.Booking.BookingStatus == BookingStatus.Booked || br.Booking.BookingStatus == BookingStatus.CheckedIn) &&
-                         br.Booking.CheckInDate < checkOut && 
-                         br.Booking.CheckOutDate > checkIn)
+            .Where(br => (br.Booking.BookingStatus == BookingStatus.Booked || br.Booking.BookingStatus == BookingStatus.CheckedIn) && br.Booking.CheckInDate < checkOut && br.Booking.CheckOutDate > checkIn)
             .GroupBy(br => br.RoomTypeId)
             .Select(g => new { RoomTypeId = g.Key, ReservedCount = g.Count() })
             .ToDictionaryAsync(x => x.RoomTypeId, x => x.ReservedCount);
@@ -35,7 +34,7 @@ public class RoomRepository : GenericRepository<Room>, IRoomRepository
             .Where(rt => rt.IsActive)
             .ToListAsync();
 
-        var availableRoomTypes = roomTypes.Select(rt => 
+        var availableRoomTypes = roomTypes.Select(rt =>
         {
             var totalActiveRooms = rt.Rooms.Count(r => r.IsActive);
             var reservedCount = overlappingCounts.GetValueOrDefault(rt.Id, 0);
@@ -79,4 +78,73 @@ public class RoomRepository : GenericRepository<Room>, IRoomRepository
             .Include(r => r.RoomType)
             .FirstOrDefaultAsync(r => r.Id == id);
     }
+    public async Task<PaginatedResult<Room>> GetPaginatedRoomsAsync(
+        int pageNumber,
+        int pageSize,
+        bool includeRetired,
+        int? roomTypeId,
+        string? searchQuery,
+        string? sortBy,
+        bool sortDescending)
+    {
+        var query = _dbSet
+            .Include(r => r.RoomType)
+            .AsQueryable();
+
+        // 1. Retired filter
+        if (!includeRetired)
+            query = query.Where(r => r.IsActive);
+
+        // 2. RoomType filter
+        if (roomTypeId.HasValue)
+            query = query.Where(r => r.RoomTypeId == roomTypeId.Value);
+
+        // 3. Search filter (case-insensitive)
+        if (!string.IsNullOrWhiteSpace(searchQuery))
+        {
+            var lowerQuery = searchQuery.ToLower();
+            query = query.Where(r =>
+                r.RoomNumber.ToLower().Contains(lowerQuery) ||
+                (r.RoomType != null && r.RoomType.Name.ToLower().Contains(lowerQuery)) ||
+                (r.RoomType != null && r.RoomType.Description != null && r.RoomType.Description.ToLower().Contains(lowerQuery))
+            );
+        }
+
+        // 4. Dynamic sorting (using the same OrderByDynamic extension from Utilities)
+        if (!string.IsNullOrEmpty(sortBy))
+        {
+            if (sortBy.Equals("basePrice", StringComparison.OrdinalIgnoreCase))
+            {
+                query = sortDescending
+                    ? query.OrderByDescending(r => r.RoomType.BasePrice)
+                    : query.OrderBy(r => r.RoomType.BasePrice);
+            }
+            else if (sortBy.Equals("maxOccupancy", StringComparison.OrdinalIgnoreCase))
+            {
+                query = sortDescending
+                    ? query.OrderByDescending(r => r.RoomType.MaxOccupancy)
+                    : query.OrderBy(r => r.RoomType.MaxOccupancy);
+            }
+            else
+            {
+                query = query.OrderByDynamic(sortBy, sortDescending);
+            }
+        }
+
+        // 5. Pagination
+        var totalCount = await query.CountAsync();
+        var items = await query
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PaginatedResult<Room>
+        {
+            TotalCount = totalCount,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            Data = items
+        };
+    }
+
 }
