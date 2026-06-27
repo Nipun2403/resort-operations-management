@@ -131,6 +131,12 @@ public class RoomRepository : GenericRepository<Room>, IRoomRepository
                     ? query.OrderByDescending(r => r.RoomType.Name)
                     : query.OrderBy(r => r.RoomType.Name);
             }
+            else if (sortBy.Equals("isAvailable", StringComparison.OrdinalIgnoreCase))
+            {
+                query = sortDescending
+                    ? query.OrderByDescending(r => r.IsActive)
+                    : query.OrderBy(r => r.IsActive);
+            }
             else
             {
                 query = query.OrderByDynamic(sortBy, sortDescending);
