@@ -4,6 +4,13 @@
   flex-direction: column;
   gap: 16px;
 
+  .crud-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+  }
+
   // Top bar
   .top-bar {
     display: flex;

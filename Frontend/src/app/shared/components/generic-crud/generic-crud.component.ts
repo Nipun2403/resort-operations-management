@@ -2,6 +2,7 @@ import {
   Component,
   inject,
   signal,
+  computed,
   DestroyRef,
   input,
   output,
@@ -21,6 +22,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDialogModule, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSelectModule } from '@angular/material/select';
@@ -49,6 +51,7 @@ import { AlertComponent } from '../../../features/auth/components/alert.componen
     MatDialogModule,
     MatSlideToggleModule,
     MatProgressSpinnerModule,
+    MatProgressBarModule,
     MatTooltipModule,
     MatSnackBarModule,
     MatSelectModule,
@@ -62,6 +65,8 @@ export class GenericCrudComponent {
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);
   private readonly elementRef = inject(ElementRef);
+
+  isInitialLoad = computed(() => this.config().loading() && (!this.config().data() || this.config().data().length === 0));
 
   constructor() {
     effect(() => {
