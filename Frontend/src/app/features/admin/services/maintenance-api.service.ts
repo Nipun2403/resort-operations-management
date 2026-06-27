@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { MaintenanceTask } from '../models/maintenance-task.model';
+import { PaginatedResponse } from '../../../core/models/paginated-response.model';
 import { CreateInternalTicketRequest } from '../models/create-internal-ticket-request.dto';
 
 @Injectable({ providedIn: 'root' })
@@ -10,7 +11,7 @@ export class MaintenanceApiService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = `${environment.baseUrl}/maintenance`;
 
-  getAll(params?: { status?: string; pageNumber?: number; pageSize?: number }): Observable<MaintenanceTask[]> {
+  getAll(params?: { status?: string; pageNumber?: number; pageSize?: number }): Observable<PaginatedResponse<MaintenanceTask>> {
     let httpParams = new HttpParams();
     if (params?.status) {
       httpParams = httpParams.set('status', params.status);
@@ -21,7 +22,7 @@ export class MaintenanceApiService {
     if (params?.pageSize != null) {
       httpParams = httpParams.set('pageSize', params.pageSize.toString());
     }
-    return this.http.get<MaintenanceTask[]>(this.baseUrl, { params: httpParams });
+    return this.http.get<PaginatedResponse<MaintenanceTask>>(this.baseUrl, { params: httpParams });
   }
 
   createInternal(body: CreateInternalTicketRequest): Observable<void> {

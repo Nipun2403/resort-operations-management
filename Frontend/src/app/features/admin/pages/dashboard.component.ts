@@ -1,11 +1,4 @@
-import {
-  Component,
-  OnInit,
-  inject,
-  signal,
-  computed,
-  DestroyRef
-} from '@angular/core';
+import { Component, OnInit, inject, signal, computed, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -55,10 +48,10 @@ import { CreateInternalTicketDialogComponent } from '../components/create-intern
     MatTooltipModule,
     MatSnackBarModule,
     NgxEchartsDirective,
-    AlertComponent
+    AlertComponent,
   ],
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss']
+  styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements OnInit {
   private readonly analyticsApi = inject(AnalyticsApiService);
@@ -104,7 +97,7 @@ export class DashboardComponent implements OnInit {
         { label: 'RevPAR', value: '—' },
         { label: 'Guest Satisfaction', value: '—' },
         { label: 'Cancellation Rate', value: '—' },
-        { label: 'Avg Length of Stay', value: '—' }
+        { label: 'Avg Length of Stay', value: '—' },
       ];
     }
     return [
@@ -113,7 +106,7 @@ export class DashboardComponent implements OnInit {
       { label: 'RevPAR', value: `$${a.revPAR}` },
       { label: 'Guest Satisfaction', value: `${a.guestSatisfactionScore}%` },
       { label: 'Cancellation Rate', value: `${a.cancellationRate}%` },
-      { label: 'Avg Length of Stay', value: `${a.averageLengthOfStay} days` }
+      { label: 'Avg Length of Stay', value: `${a.averageLengthOfStay} days` },
     ];
   });
 
@@ -130,9 +123,9 @@ export class DashboardComponent implements OnInit {
         {
           type: 'bar',
           data: [a.totalRevenue, a.grossTurnover],
-          color: '#1976d2'
-        }
-      ]
+          color: '#1976d2',
+        },
+      ],
     };
   });
 
@@ -148,11 +141,11 @@ export class DashboardComponent implements OnInit {
           type: 'pie',
           data: [
             { name: 'Food', value: a.nonRoomExpenditure.totalFoodSpend },
-            { name: 'Amenities', value: a.nonRoomExpenditure.totalAmenitySpend }
+            { name: 'Amenities', value: a.nonRoomExpenditure.totalAmenitySpend },
           ],
-          label: { formatter: '{b}: {c} ({d}%)' }
-        }
-      ]
+          label: { formatter: '{b}: {c} ({d}%)' },
+        },
+      ],
     };
   });
 
@@ -165,41 +158,45 @@ export class DashboardComponent implements OnInit {
   loadAnalytics(params?: { startDate?: string; endDate?: string }): void {
     this.analyticsLoading.set(true);
     this.analyticsError.set(null);
-    this.analyticsApi.getAnalytics(params).pipe(
-      finalize(() => this.analyticsLoading.set(false))
-    ).subscribe({
-      next: (data) => this.analytics.set(data),
-      error: (err) => this.analyticsError.set(err.error?.message || 'Failed to load analytics')
-    });
+    this.analyticsApi
+      .getAnalytics(params)
+      .pipe(finalize(() => this.analyticsLoading.set(false)))
+      .subscribe({
+        next: (data) => this.analytics.set(data),
+        error: (err) => this.analyticsError.set(err.error?.message || 'Failed to load analytics'),
+      });
   }
 
   loadPendingCounts(): void {
     this.pendingLoading.set(true);
     this.pendingError.set(null);
     forkJoin({
-      hk: this.housekeepingApi.getAll({ status: 'Pending', pageNumber: 1, pageSize: 1000 }),
-      mt: this.maintenanceApi.getAll({ status: 'Pending', pageNumber: 1, pageSize: 1000 })
-    }).pipe(
-      takeUntilDestroyed(this.destroyRef),
-      finalize(() => this.pendingLoading.set(false))
-    ).subscribe({
-      next: ({ hk, mt }) => {
-        this.housekeepingPendingCount.set(hk.length);
-        this.maintenancePendingCount.set(mt.length);
-      },
-      error: (err: Error) => this.pendingError.set(err.message)
-    });
+      hk: this.housekeepingApi.getAll({ status: 'Pending', pageNumber: 1, pageSize: 10 }),
+      mt: this.maintenanceApi.getAll({ status: 'Pending', pageNumber: 1, pageSize: 10 }),
+    })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.pendingLoading.set(false)),
+      )
+      .subscribe({
+        next: ({ hk, mt }) => {
+          this.housekeepingPendingCount.set(hk.totalCount);
+          this.maintenancePendingCount.set(mt.totalCount);
+        },
+        error: (err: Error) => this.pendingError.set(err.message),
+      });
   }
 
   loadAuditLogs(): void {
     this.auditLoading.set(true);
     this.auditError.set(null);
-    this.auditLogApi.getAll({ sortBy: 'timestamp', sortDescending: true, pageSize: 5 }).pipe(
-      finalize(() => this.auditLoading.set(false))
-    ).subscribe({
-      next: (data) => this.auditEntries.set(data),
-      error: (err) => this.auditError.set(err.error?.message || 'Failed to load audit logs')
-    });
+    this.auditLogApi
+      .getAll({ sortBy: 'timestamp', sortDescending: true, pageSize: 5 })
+      .pipe(finalize(() => this.auditLoading.set(false)))
+      .subscribe({
+        next: (data) => this.auditEntries.set(Array.isArray(data) ? data : []),
+        error: (err) => this.auditError.set(err.error?.message || 'Failed to load audit logs'),
+      });
   }
 
   applyDateFilter(): void {
@@ -219,7 +216,7 @@ export class DashboardComponent implements OnInit {
 
   openCreateTicketDialog(): void {
     const dialogRef = this.dialog.open(CreateInternalTicketDialogComponent);
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result === true) {
         this.ticketCreatedMessage.set('Ticket created successfully');
         this.loadPendingCounts();
