@@ -191,10 +191,10 @@ export class DashboardComponent implements OnInit {
     this.auditLoading.set(true);
     this.auditError.set(null);
     this.auditLogApi
-      .getAll({ sortBy: 'timestamp', sortDescending: true, pageSize: 5 })
+      .getAll({ sortBy: 'timestamp', sortDescending: true, pageSize: 5, pageNumber: 1 })
       .pipe(finalize(() => this.auditLoading.set(false)))
       .subscribe({
-        next: (data) => this.auditEntries.set(Array.isArray(data) ? data : []),
+        next: (res) => this.auditEntries.set(res && Array.isArray(res.data) ? res.data : []),
         error: (err) => this.auditError.set(err.error?.message || 'Failed to load audit logs'),
       });
   }

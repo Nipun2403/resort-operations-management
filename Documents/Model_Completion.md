@@ -1261,6 +1261,93 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: auditlog.md
+Date: 2026-06-27
+================================================================================
+
+FILES CREATED
+-------------
+✓ src/app/features/admin/pages/oversight/audit-log-detail-dialog.component.ts
+✓ src/app/features/admin/pages/oversight/audit-log-detail-dialog.component.html
+✓ src/app/features/admin/pages/oversight/audit-logs.component.html
+✓ src/app/features/admin/pages/oversight/audit-logs.component.scss
+
+FILES MODIFIED
+--------------
+✓ src/app/features/admin/pages/oversight/audit-logs.component.ts (overwritten placeholder)
+✓ src/app/features/admin/services/audit-log-api.service.ts — updated paginated getAll signature
+✓ src/app/features/admin/models/audit-log-entry.model.ts — updated oldValues and newValues to support null
+✓ src/app/features/admin/pages/dashboard.component.ts — updated loadAuditLogs to support paginated getAll response
+✓ src/app/app.routes.ts — updated lazy routing from PlaceholderAuditLogsComponent to AuditLogsComponent
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ AuditLogsComponent State & Logic (§5, §6)
+  ✓ entries, totalCount, loading, error, pageIndex, pageSize, sortField, sortDescending signals.
+  ✓ searchControl UI input value changes debounced (300ms) with distinctUntilChanged, resets pageIndex, saves, and fetches.
+  ✓ clearSearch() resets search input value, resets pageIndex, saves, and fetches.
+  ✓ onSortChange() resets pageIndex, saves, and fetches.
+  ✓ onPageChange() saves and fetches.
+  ✓ openDetail() opens AuditLogDetailDialogComponent modal.
+  ✓ extractErrorMessage() helper extracts messages correctly.
+✓ AuditLogApiService Integration (§6)
+  ✓ Uses guestQuery parameter exactly matching backend contract.
+  ✓ getAuditLogs returning PaginatedResponse<AuditLogEntry>.
+✓ Detail Dialog (§7)
+  ✓ app-audit-log-detail-dialog imports CommonModule, MatDialogModule, MatButtonModule, MatIconModule, MatDividerModule.
+  ✓ Displays general info (entity, action, changedBy, timestamp).
+  ✓ Displays side-by-side Old Values and New Values.
+  ✓ Null values show "None (created)" or "None" respectively.
+  ✓ Boolean values formatted as "Yes"/"No".
+✓ Session Storage Sync (§8)
+  ✓ restoreState and saveState implemented verbatim matching STORAGE_KEY 'auditLogsState'.
+✓ Layout & Styling (§10)
+  ✓ Table scrolls horizontally on mobile.
+  ✓ Search field takes full width on mobile.
+  ✓ Detail modal uses 90% viewport width.
+
+API INTEGRATION
+---------------
+✓ GET  /api/v1/auditlogs — guestQuery, pageNumber, pageSize, sortBy, sortDescending
+
+LOGIC TRACES
+------------
+Flow: Search Audit Logs
+  Entry: User types 'Room' into search box
+  Path: searchControl value changes -> debounceTime(300) -> pageIndex(0) -> saveState() -> fetchData() [API call with guestQuery='Room']
+  Result: ✓ Matches spec
+
+Flow: Click Table Row for Detail Modal
+  Entry: User clicks table row
+  Path: table row click -> openDetail(row) -> dialog.open(AuditLogDetailDialogComponent, { data }) -> modal renders oldValues and newValues
+  Result: ✓ Matches spec
+
+KNOWN DEVIATIONS
+----------------
+* The import path for AlertComponent was updated from the spec's `../../../../shared/components/alert/alert.component` to `../../../../features/auth/components/alert.component` because the alert component is in auth features and does not exist in shared. This prevents compilation errors.
+* The DashboardComponent audit logs loading was updated to adapt to the new paginated `AuditLogApiService.getAll()` signature. It now calls with `pageNumber: 1` and reads the `.data` array from the response. This ensures both pages compile and function correctly.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+☑ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+☑ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+☑ I confirm that all API calls match the spec contracts exactly.
+☑ I confirm that all regex validators are character-for-character matches
+  to the spec.
+☑ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+
 
 
 

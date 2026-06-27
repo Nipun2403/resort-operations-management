@@ -3,8 +3,8 @@ export interface AuditLogEntry {
   entityName: string;
   action: string;
   recordId: { Id: number };
-  oldValues: Record<string, any>;
-  newValues: Record<string, any>;
+  oldValues: Record<string, any> | null;
+  newValues: Record<string, any> | null;
   changedByEmail: string;
   changedByName: string;
   timestamp: string; // ISO 8601
