@@ -5,6 +5,7 @@ using HotelManagement.DAL.Entities;
 using HotelManagement.Repository.Interfaces;
 using HotelManagement.Repository.Models;
 using HotelManagement.Repository.Utilities;
+using System.Text.Json;
 
 namespace HotelManagement.BLL.Services;
 
@@ -67,9 +68,11 @@ public class RoomTypeService : IRoomTypeService
             BasePrice = rta.RoomType.BasePrice,
             MaxOccupancy = rta.RoomType.MaxOccupancy,
             Description = rta.RoomType.Description,
-            ImageUrl = rta.RoomType.ImageUrl,
+            ImageUrls = rta.RoomType.ImageUrls,
             SquareFootage = rta.RoomType.SquareFootage,
-            BedConfiguration = rta.RoomType.BedConfiguration,
+            BedConfiguration = string.IsNullOrWhiteSpace(rta.RoomType.BedConfigurationJson)
+                ? null
+                : JsonSerializer.Deserialize<Dictionary<string, int>>(rta.RoomType.BedConfigurationJson, (JsonSerializerOptions?)null),
             AvailableCount = rta.AvailableCount
         });
 
@@ -96,9 +99,11 @@ public class RoomTypeService : IRoomTypeService
             BasePrice = dto.BasePrice,
             MaxOccupancy = dto.MaxOccupancy,
             Description = dto.Description,
-            ImageUrl = dto.ImageUrl,
+            ImageUrls = dto.ImageUrls,
             SquareFootage = dto.SquareFootage,
-            BedConfiguration = dto.BedConfiguration,
+            BedConfigurationJson = dto.BedConfiguration == null
+                ? null
+                : JsonSerializer.Serialize(dto.BedConfiguration, (JsonSerializerOptions?)null),
             IsActive = true
         };
 
@@ -121,9 +126,10 @@ public class RoomTypeService : IRoomTypeService
         if (dto.BasePrice.HasValue) existingType.BasePrice = dto.BasePrice.Value;
         if (dto.MaxOccupancy.HasValue) existingType.MaxOccupancy = dto.MaxOccupancy.Value;
         if (dto.Description != null) existingType.Description = dto.Description;
-        if (dto.ImageUrl != null || !string.IsNullOrEmpty(dto.ImageUrl)) existingType.ImageUrl = dto.ImageUrl;
+        if (dto.ImageUrls != null) existingType.ImageUrls = dto.ImageUrls;
         if (dto.SquareFootage.HasValue) existingType.SquareFootage = dto.SquareFootage.Value;
-        if (dto.BedConfiguration != null) existingType.BedConfiguration = dto.BedConfiguration;
+        if (dto.BedConfiguration != null)
+            existingType.BedConfigurationJson = JsonSerializer.Serialize(dto.BedConfiguration, (JsonSerializerOptions?)null);
         if (dto.IsActive.HasValue) existingType.IsActive = dto.IsActive.Value;
 
 

@@ -1,6 +1,7 @@
 using AutoMapper;
 using HotelManagement.DAL.Entities;
 using HotelManagement.BLL.DTOs;
+using System.Text.Json;
 
 namespace HotelManagement.BLL.Profiles;
 
@@ -52,7 +53,27 @@ public class MappingProfile : Profile
 
         CreateMap<RoomType, RoomTypeDTO>()
             .ForMember(dest => dest.MaxOccupancy, opt => opt.MapFrom(src => src.MaxOccupancy))
-            .ReverseMap();
+            .ForMember(dest => dest.BedConfiguration, opt => opt.MapFrom(src =>
+                string.IsNullOrWhiteSpace(src.BedConfigurationJson)
+                ? null
+                : JsonSerializer.Deserialize<Dictionary<string, int>>(src.BedConfigurationJson, (JsonSerializerOptions?)null)))
+            .ReverseMap()
+            .ForMember(dest => dest.BedConfigurationJson, opt => opt.MapFrom(src =>
+                src.BedConfiguration == null
+                ? null
+                : JsonSerializer.Serialize(src.BedConfiguration, (JsonSerializerOptions?)null)));
+
+        CreateMap<CreateRoomTypeDTO, RoomType>()
+            .ForMember(dest => dest.BedConfigurationJson, opt => opt.MapFrom(src =>
+                src.BedConfiguration == null
+                ? null
+                : JsonSerializer.Serialize(src.BedConfiguration, (JsonSerializerOptions?)null)));
+
+        CreateMap<UpdateRoomTypeDTO, RoomType>()
+            .ForMember(dest => dest.BedConfigurationJson, opt => opt.MapFrom(src =>
+                src.BedConfiguration == null
+                ? null
+                : JsonSerializer.Serialize(src.BedConfiguration, (JsonSerializerOptions?)null)));
 
         CreateMap<MenuItem, MenuItemDTO>().ReverseMap();
         CreateMap<Amenity, AmenityDTO>().ReverseMap();

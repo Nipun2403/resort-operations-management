@@ -1,5 +1,6 @@
 using HotelManagement.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace HotelManagement.DAL.Context;
 
@@ -84,9 +85,21 @@ public class ApplicationDbContext : DbContext
             .Property(r => r.BasePrice)
             .HasColumnType("decimal(18,2)");
 
+        modelBuilder.Entity<RoomType>()
+        .Property(r => r.ImageUrls)
+        .HasConversion(
+            v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
+            v => JsonSerializer.Deserialize<List<string>>(v, (JsonSerializerOptions?)null));
+
+        modelBuilder.Entity<RoomType>()
+            .Property(r => r.BedConfigurationJson)
+            .HasColumnName("BedConfiguration");
+
         modelBuilder.Entity<MenuItem>()
             .Property(m => m.Price)
             .HasColumnType("decimal(18,2)");
+
+
 
         modelBuilder.Entity<FoodOrderItem>()
             .Property(f => f.PriceAtPurchase)

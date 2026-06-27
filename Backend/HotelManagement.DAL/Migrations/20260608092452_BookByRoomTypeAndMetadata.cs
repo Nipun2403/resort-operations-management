@@ -27,7 +27,7 @@ namespace HotelManagement.DAL.Migrations
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
-                name: "ImageUrl",
+                name: "ImageUrls",
                 table: "RoomTypes",
                 type: "text",
                 nullable: true);

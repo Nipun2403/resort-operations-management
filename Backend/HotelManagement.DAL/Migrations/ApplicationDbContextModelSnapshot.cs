@@ -506,13 +506,14 @@ namespace HotelManagement.DAL.Migrations
                     b.Property<decimal>("BasePrice")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("BedConfiguration")
-                        .HasColumnType("text");
+                    b.Property<string>("BedConfigurationJson")
+                        .HasColumnType("text")
+                        .HasColumnName("BedConfiguration");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<string>("ImageUrl")
+                    b.Property<string>("ImageUrls")
                         .HasColumnType("text");
 
                     b.Property<bool>("IsActive")

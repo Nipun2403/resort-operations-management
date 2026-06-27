@@ -50,6 +50,7 @@ public class RoomService : IRoomService
             PageSize = pageSize,
             Data = dtos
         };
+
     }
 
     public async Task<RoomDTO> CreateRoomAsync(CreateUpdateRoomDTO dto)
@@ -138,6 +139,8 @@ public class RoomService : IRoomService
             {
                 dto.Status = "Occupied";
                 dto.CurrentGuestName = currentBooking.GuestName;
+                dto.CurrentBookingId = currentBooking.Id;
+
             }
             else
             {
