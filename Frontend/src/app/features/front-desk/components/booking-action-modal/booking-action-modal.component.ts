@@ -17,6 +17,9 @@ import { ConfirmDialogComponent } from '../../../../shared/components/confirm-di
 import { AlertComponent } from '../../../auth/components/alert.component';
 import { ExtendStayDialogComponent } from '../extend-stay-dialog/extend-stay-dialog.component';
 
+import { MatTabsModule } from '@angular/material/tabs';
+import { RoomServiceTabComponent } from './room-service-tab/room-service-tab.component';
+
 @Component({
   selector: 'app-booking-action-modal',
   standalone: true,
@@ -30,6 +33,8 @@ import { ExtendStayDialogComponent } from '../extend-stay-dialog/extend-stay-dia
     MatProgressSpinnerModule,
     MatSnackBarModule,
     AlertComponent,
+    MatTabsModule,
+    RoomServiceTabComponent,
   ],
   templateUrl: './booking-action-modal.component.html',
   styleUrls: ['./booking-action-modal.component.scss'],

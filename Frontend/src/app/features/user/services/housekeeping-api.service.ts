@@ -29,4 +29,8 @@ export class HousekeepingApiService {
     }
     return this.http.get<PaginatedResponse<HousekeepingTask>>(this.baseUrl, { params: httpParams });
   }
+
+  createInternal(body: { location: string; description: string }): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/internal`, body);
+  }
 }

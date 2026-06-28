@@ -247,10 +247,12 @@ public class BookingService : IBookingService
             var today = DateTime.UtcNow.Date;
             if (movementStatus.Equals("incoming", StringComparison.OrdinalIgnoreCase))
             {
+                predicates.Add(b => b.BookingStatus == BookingStatus.Booked);
                 predicates.Add(b => b.CheckInDate.Date == today);
             }
             else if (movementStatus.Equals("outgoing", StringComparison.OrdinalIgnoreCase))
             {
+                predicates.Add(b => b.BookingStatus == BookingStatus.CheckedIn);
                 predicates.Add(b => b.CheckOutDate.Date == today);
             }
             else

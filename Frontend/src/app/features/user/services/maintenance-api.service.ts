@@ -29,4 +29,8 @@ export class MaintenanceApiService {
     }
     return this.http.get<PaginatedResponse<MaintenanceTask>>(this.baseUrl, { params: httpParams });
   }
+
+  createInternal(body: { location: string; description: string }): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/internal`, body);
+  }
 }

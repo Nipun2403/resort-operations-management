@@ -1,0 +1,9 @@
+<div class="room-service-tab">
+  <app-food-order-panel [bookingId]="booking().id" />
+  <mat-divider></mat-divider>
+  <app-housekeeping-request-panel [rooms]="booking().rooms" />
+  <mat-divider></mat-divider>
+  <app-maintenance-request-panel [rooms]="booking().rooms" />
+  <mat-divider></mat-divider>
+  <app-internal-ticket-panel />
+</div>

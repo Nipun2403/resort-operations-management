@@ -1,0 +1,34 @@
+<div class="food-order-panel">
+  <h3>Order Food</h3>
+  @if (loading() && menuItems().length === 0) {
+    <div style="display: flex; justify-content: center; padding: 16px;">
+      <mat-spinner diameter="30"></mat-spinner>
+    </div>
+  } @else if (error()) {
+    <app-alert
+      type="error"
+      [message]="error()!"
+      (closed)="error.set(null)"
+    >
+      <button
+        mat-button
+        (click)="loadMenu()"
+      >
+        Retry
+      </button>
+    </app-alert>
+  } @else {
+    <app-menu-grid
+      [menuItems]="menuItems()"
+      (addToCart)="onAddToCart($event)"
+      (updateQuantity)="onUpdateCartQty($event)"
+    />
+  }
+  <app-cart-drawer
+    [cartItems]="cartItems()"
+    [isOpen]="cartOpen()"
+    (cartToggle)="cartOpen.set(!cartOpen())"
+    (checkout)="placeOrder()"
+    (updateQuantity)="onUpdateCartQty($event)"
+  />
+</div>

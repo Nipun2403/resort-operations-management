@@ -1,0 +1,39 @@
+<div class="request-panel">
+  <h3>Request Housekeeping</h3>
+  <form (ngSubmit)="submit()">
+    <mat-form-field appearance="outline" style="width: 100%;">
+      <mat-label>Room</mat-label>
+      <mat-select [formControl]="selectedRoomId">
+        @for (room of rooms(); track room.id) {
+          @if (room.roomId !== null) {
+            <mat-option [value]="room.roomId">
+              {{ room.roomNumber ?? 'Room ' + room.roomId }}
+            </mat-option>
+          }
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline" style="width: 100%;">
+      <mat-label>Description</mat-label>
+      <textarea
+        matInput
+        [formControl]="description"
+        rows="2"
+      ></textarea>
+      @if (description.invalid && description.touched) {
+        <mat-error>Min 5 characters required</mat-error>
+      }
+    </mat-form-field>
+    <button
+      mat-raised-button
+      color="primary"
+      type="submit"
+      [disabled]="description.invalid || selectedRoomId.invalid || submitting()"
+    >
+      @if (submitting()) {
+        <mat-spinner diameter="20" style="display: inline-block; margin-right: 8px; vertical-align: middle;"></mat-spinner>
+      }
+      Submit Request
+    </button>
+  </form>
+</div>

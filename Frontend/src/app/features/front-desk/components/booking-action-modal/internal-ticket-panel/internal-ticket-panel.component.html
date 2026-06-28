@@ -1,0 +1,41 @@
+<div class="internal-ticket-panel">
+  <h3>Create Internal Ticket</h3>
+  <form (ngSubmit)="submit()">
+    <mat-button-toggle-group [formControl]="ticketType" style="margin-bottom: 16px;">
+      <mat-button-toggle value="housekeeping">Housekeeping</mat-button-toggle>
+      <mat-button-toggle value="maintenance">Maintenance</mat-button-toggle>
+    </mat-button-toggle-group>
+    <mat-form-field appearance="outline" style="width: 100%;">
+      <mat-label>Location</mat-label>
+      <input
+        matInput
+        [formControl]="location"
+      />
+      @if (location.invalid && location.touched) {
+        <mat-error>Location is required</mat-error>
+      }
+    </mat-form-field>
+    <mat-form-field appearance="outline" style="width: 100%;">
+      <mat-label>Description</mat-label>
+      <textarea
+        matInput
+        [formControl]="description"
+        rows="2"
+      ></textarea>
+      @if (description.invalid && description.touched) {
+        <mat-error>Min 5 characters required</mat-error>
+      }
+    </mat-form-field>
+    <button
+      mat-raised-button
+      color="primary"
+      type="submit"
+      [disabled]="location.invalid || description.invalid || submitting()"
+    >
+      @if (submitting()) {
+        <mat-spinner diameter="20" style="display: inline-block; margin-right: 8px; vertical-align: middle;"></mat-spinner>
+      }
+      Create Ticket
+    </button>
+  </form>
+</div>
