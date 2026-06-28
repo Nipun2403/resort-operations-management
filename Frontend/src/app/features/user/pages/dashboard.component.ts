@@ -193,7 +193,13 @@ export class PlaceholderCustomerDashboardComponent implements OnInit {
       next: ({ hkPending, hkInProgress, mtPending, mtInProgress, food }) => {
         this.pendingHousekeeping.set([...hkPending, ...hkInProgress]);
         this.pendingMaintenance.set([...mtPending, ...mtInProgress]);
-        this.pendingFoodOrders.set(food);
+        // Normalize status field (API may return 'status' or 'orderStatus')
+        this.pendingFoodOrders.set(
+          (food as any[]).map((o: any) => ({
+            ...o,
+            status: o.status ?? o.orderStatus ?? 'Pending'
+          }))
+        );
       },
       error: (err: any) => this.snackBar.open(this.extractErrorMessage(err), 'Close', { duration: 5000 })
     });

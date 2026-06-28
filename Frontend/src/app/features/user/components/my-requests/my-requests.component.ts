@@ -5,10 +5,11 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatButtonModule } from '@angular/material/button';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { forkJoin, Observable } from 'rxjs';
-import { map, finalize } from 'rxjs/operators';
+import { forkJoin, Observable, of } from 'rxjs';
+import { map, finalize, catchError, switchMap } from 'rxjs/operators';
 import { HousekeepingApiService } from '../../services/housekeeping-api.service';
 import { MaintenanceApiService } from '../../services/maintenance-api.service';
+import { OrderApiService } from '../../services/order-api.service';
 import { CustomerRequest } from '../../models/customer-request.model';
 import { AlertComponent } from '../../../../features/auth/components/alert.component';
 
@@ -28,10 +29,12 @@ import { AlertComponent } from '../../../../features/auth/components/alert.compo
 })
 export class MyRequestsComponent {
   roomIds = input.required<number[]>();
+  bookingId = input<number | null>(null);
   refresh = input(0);
 
   private readonly housekeepingApi = inject(HousekeepingApiService);
   private readonly maintenanceApi = inject(MaintenanceApiService);
+  private readonly orderApi = inject(OrderApiService);
   private readonly destroyRef = inject(DestroyRef);
 
   requests = signal<CustomerRequest[]>([]);
@@ -78,7 +81,8 @@ export class MyRequestsComponent {
                 status: hk.status,
                 createdAt: hk.createdAt
               }))
-          )
+          ),
+          catchError(() => of([]))
         )
       );
       obsList.push(
@@ -95,10 +99,37 @@ export class MyRequestsComponent {
                 status: m.status,
                 createdAt: m.createdAt
               }))
-          )
+          ),
+          catchError(() => of([]))
         )
       );
     });
+
+    // Add food orders if bookingId is available
+    const bId = this.bookingId();
+    if (bId != null) {
+      const food$ = this.orderApi.getAll({ status: 'Pending', pageSize: 50 }).pipe(
+        switchMap((res: any) =>
+          this.orderApi.getAll({ status: 'Preparing', pageSize: 50 }).pipe(
+            map((res2: any) =>
+              [...res.data, ...res2.data]
+                .filter((o: any) => o.bookingId === bId)
+                .map((o: any) => ({
+                  id: o.id,
+                  type: 'Food Order' as const,
+                  roomId: 0,
+                  roomNumber: '—',
+                  description: `Order #${o.id}`,
+                  status: o.status ?? o.orderStatus ?? 'Pending',
+                  createdAt: o.createdAt ?? o.orderDate ?? new Date().toISOString()
+                }))
+            )
+          )
+        ),
+        catchError(() => of([]))
+      );
+      obsList.push(food$);
+    }
 
     forkJoin(obsList)
       .pipe(

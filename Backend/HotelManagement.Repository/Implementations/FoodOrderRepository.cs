@@ -24,7 +24,9 @@ public class FoodOrderRepository : GenericRepository<FoodOrder>, IFoodOrderRepos
     {
         return await _context.FoodOrders
             .Include(fo => fo.OrderItems)
-            .ThenInclude(oi => oi.MenuItem)
+                .ThenInclude(oi => oi.MenuItem)
+            .Include(fo => fo.Booking)           // <-- Add this
+                .ThenInclude(b => b.User)        // <-- Optional, but useful
             .OrderByDescending(fo => fo.GeneratedAt)
             .ToListAsync();
     }

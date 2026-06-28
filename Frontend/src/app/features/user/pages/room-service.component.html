@@ -33,6 +33,7 @@
       <mat-tab label="My Requests">
         <app-my-requests
           [roomIds]="roomIds()"
+          [bookingId]="booking.id"
           [refresh]="refreshRequests()"
         />
       </mat-tab>

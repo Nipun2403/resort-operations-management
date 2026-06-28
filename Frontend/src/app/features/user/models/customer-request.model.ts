@@ -1,6 +1,6 @@
 export interface CustomerRequest {
   id: number;
-  type: 'Housekeeping' | 'Maintenance';
+  type: 'Housekeeping' | 'Maintenance' | 'Food Order';
   roomId: number;
   roomNumber: string;
   description: string;

@@ -118,7 +118,7 @@
                 <div class="status-item">
                   <p class="status-line">
                     <span>Order #{{ order.id }}</span>
-                    <span class="badge" [class]="order.status.toLowerCase()">{{ order.status }}</span>
+                    <span class="badge" [class]="(order.status || 'pending').toLowerCase()">{{ order.status || 'Pending' }}</span>
                   </p>
                 </div>
               } @empty {
