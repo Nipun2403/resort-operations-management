@@ -2109,6 +2109,94 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: shell-routes.md
+Date: 2026-06-28
+================================================================================
+
+FILES CREATED
+-------------
+✓ src/app/core/guards/customer.guard.ts
+  — Added a functional route guard to authorise only `RegisteredUser` roles (§3)
+✓ src/app/features/user/user-shell.component.ts
+  — Created standalone layout container with mobile responsiveness mapping (§5, §6)
+✓ src/app/features/user/user-shell.component.html
+  — Created HTML template matching layout guidelines (§5, §10)
+✓ src/app/features/user/user-shell.component.scss
+  — Created styling for sidenav containment matching global aesthetics (§5, §9)
+✓ src/app/features/user/pages/dashboard.component.ts
+  — Created placeholder for Customer Dashboard (§14)
+✓ src/app/features/user/pages/bookings.component.ts
+  — Created placeholder for Customer Bookings (§14)
+✓ src/app/features/user/pages/room-service.component.ts
+  — Created placeholder for Customer Room Service (§14)
+✓ src/app/features/user/pages/profile.component.ts
+  — Created placeholder for Customer Profile (§14)
+
+FILES MODIFIED
+--------------
+✓ src/app/app.routes.ts
+  — Registered `/user` lazy route, children, and attached `customerGuard` (§2)
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Customer Shell Layout Container (§1, §5)
+  ✓ Sidenav mode toggles overlay ('over') vs sidebar ('side') dynamically based on `isMobile()` status.
+  ✓ Hamburger menu toggle button renders correctly on tablet/mobile screens.
+  ✓ Sidenav component, mat-nav-list, and dynamic page area `<router-outlet>` present in layout.
+✓ Route & Navigation Registration (§2, §15)
+  ✓ Bookings, Dashboard, Room Service, Profile child routes lazily loaded.
+  ✓ Sidebar navigations match path URLs accurately. Unknown child paths redirect to dashboard.
+✓ Authorization & Role Guard (§3, §11)
+  ✓ `customerGuard` functional guard prevents route matching and activation if authenticated user role is not `RegisteredUser`.
+  ✓ Redirects unauthenticated or unauthorized users to `/auth`.
+✓ Accessibility Compliance (§10)
+  ✓ `aria-label` added to both Customer navigation (`mat-sidenav`) and User menu toggle.
+  ✓ Decorative `mat-icon` tags carry `aria-hidden="true"` to prevent screen reader noise.
+✓ State & Navigation Logic (§6, §7)
+  ✓ `logout()` triggers jwt cleanup through `AuthService.logout()` and navigates to login.
+  ✓ Clicking sidebar links close drawer in mobile/tablet viewport layout.
+
+API INTEGRATION
+---------------
+None.
+
+LOGIC TRACES
+------------
+Flow: Customer Guard Route Authorization
+  Entry: Authenticated User attempts to navigate to `/user/bookings`
+  Path: Router checks `canMatch` -> calls `customerGuard()` -> reads `auth.role()` -> returns true if role is `RegisteredUser` -> renders BookingsComponent
+  Result: ✓ Access allowed for RegisteredUser
+
+Flow: Unauthorized Redirect
+  Entry: User role is 'Admin' attempts to navigate to `/user/dashboard`
+  Path: `customerGuard()` evaluates `auth.role() === 'RegisteredUser'` as false -> returns UrlTree pointing to `/auth` -> router redirects user to auth page
+  Result: ✓ Access blocked and redirected to login page
+
+KNOWN DEVIATIONS
+----------------
+None.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None — spec is fully explicit.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+☑ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+☑ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+☑ I confirm that all API calls match the spec contracts exactly.
+☑ I confirm that all regex validators are character-for-character matches
+  to the spec.
+☑ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+
 
 
 
