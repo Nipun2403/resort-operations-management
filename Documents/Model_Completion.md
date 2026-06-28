@@ -2002,6 +2002,114 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: Ui-Refactor-3.md
+Date: 2026-06-28
+================================================================================
+
+FILES CREATED
+-------------
+None. All changes are modifications to existing files.
+
+FILES MODIFIED
+--------------
+✓ src/app/app.routes.ts
+  — Added `data: { title: '...' }` to all administrative child routes (§2)
+✓ src/app/features/admin/admin-shell.component.ts
+  — Added `title` signal and constructor router `NavigationEnd` listener to dynamically parse active child route data title (§2)
+✓ src/app/features/admin/admin-shell.component.html
+  — Bound header toolbar title display to `{{ title() }}` (§2)
+✓ src/app/features/admin/pages/management/staff-management.component.ts
+  — Removed custom dialog method `showDisableConfirmation` and directly called performUpdate in `onSave` to delegate to generic modal deactivation handling (§3.1)
+✓ src/app/shared/models/crud-config.model.ts
+  — Added optional `entityName?: string` to `CrudModalData` (§3.2)
+✓ src/app/shared/components/generic-crud/generic-crud.component.ts
+  — Supplied `entityName` to `CrudModalData` inside `openAddModal()` and `openEditModal()` (§3.2)
+✓ src/app/shared/components/generic-crud/crud-modal/crud-modal.component.ts
+  — Injected `MatDialog` and imported `ConfirmDialogComponent` (§3.2)
+  — Added confirmation logic in `submit()` to trigger deactivation confirmation when active status transitions to disabled (§3.2)
+✓ src/app/features/admin/pages/oversight/feedback.component.ts
+  — Injected `DestroyRef`, `MatDialog`, and `BreakpointObserver` (§4, §5.2)
+  — Exposed `isMobile` signal (§5.2)
+  — Configured `onToggleHidden()` to prompt deactivation confirmation before hiding feedback; reverts toggle state on cancel (§4)
+✓ src/app/features/admin/pages/oversight/feedback.component.html
+  — Wrapped table with `@if (isMobile())` logic to switch between `.mobile-card-view` list and desktop tables (§5.2)
+✓ src/app/features/admin/pages/oversight/feedback.component.scss
+  — Added `.mobile-card-view` container and feedback cards layout with multi-line line-clamp truncation (§7.2)
+✓ src/app/features/admin/pages/oversight/audit-logs.component.ts
+  — Injected `BreakpointObserver` and exposed `isMobile` signal (§5.1)
+✓ src/app/features/admin/pages/oversight/audit-logs.component.html
+  — Wrapped table inside `@if (isMobile())` logic to dynamically render responsive card lists (§5.1)
+✓ src/app/features/admin/pages/oversight/audit-logs.component.scss
+  — Added `.mobile-card-view` styles and card item line-clamp properties (§7.2)
+✓ src/app/features/admin/pages/oversight/billing-receipts.component.ts
+  — Injected `BreakpointObserver` and exposed `isMobile` signal (§5.3)
+✓ src/app/features/admin/pages/oversight/billing-receipts.component.html
+  — Added `@if (isMobile())` card views for both Bookings view and Receipts view tables (§5.3)
+✓ src/app/features/admin/pages/oversight/billing-receipts.component.scss
+  — Appended mobile card layout rules and line-clamp truncation styles (§7.2)
+✓ src/app/features/admin/components/room-status-grid/room-status-grid.component.scss
+  — Adjusted mobile `max-width: 767px` media query to format room status grid into 2 columns with `max-height: 70vh` (§6)
+✓ src/app/shared/components/generic-crud/cards-view/cards-view.component.scss
+  — Added `.card-item` block and applied multi-line 3-line line-clamp with text overflow ellipsis/word-break rules to card values (§7.1)
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Dynamic Toolbar Title (§2)
+  ✓ Toolbar updates page title dynamically on navigation change.
+  ✓ DestroyRef used with takeUntilDestroyed for safe subscription cleanup.
+✓ Generic Modal Disable Confirmation (§3.1, §3.2)
+  ✓ Staff page double dialog confirmation removed.
+  ✓ Shared CrudModalComponent displays ConfirmDialogComponent on active -> inactive toggle transition.
+✓ Feedback Moderation Confirmation (§4)
+  ✓ ConfirmDialogComponent shown before hiding feedback. Cancel action correctly reverts optimistic toggle state.
+✓ Responsive Table-to-Card Transformation (§5.1, §5.2, §5.3)
+  ✓ Cards automatically render on mobile (Audit Logs, Feedback, Billing & Receipts) using Angular `@if (isMobile())`.
+✓ Mobile Room Status Grid 2-Column (§6)
+  ✓ Grid uses 2-column repeat(2, 1fr) format and scrolls vertically with 70vh max-height.
+✓ Card Text Clamp Truncation (§7.1, §7.2)
+  ✓ Value components truncate using vertical clamp (3 lines) and overflow rules to prevent layout breaks.
+
+API INTEGRATION
+---------------
+None.
+
+LOGIC TRACES
+------------
+Flow: Toolbar Dynamic Title
+  Entry: Navigating to Rooms Management Page
+  Path: router NavigationEnd fires -> updateTitle() traverses down activatedRoute tree -> extracts title: 'Rooms' -> updates signal -> `<span>{{ title() }}</span>` updates
+  Result: ✓ Header shows "Rooms"
+
+Flow: Generic Deactivation Confirmation
+  Entry: Moderator toggles slide slide-toggle active -> inactive in modal
+  Path: submit() called -> editMode is true && originalIsActive is true && newIsActive is false -> dialog opens -> User clicks cancel -> modal stays open
+  Result: ✓ Deactivation prevented
+
+KNOWN DEVIATIONS
+----------------
+None.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+☑ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+☑ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+☑ I confirm that all API calls match the spec contracts exactly.
+☑ I confirm that all regex validators are character-for-character matches
+  to the spec.
+☑ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+
 
 
 
