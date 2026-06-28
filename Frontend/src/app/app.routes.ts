@@ -21,31 +21,33 @@ export const routes: Routes = [
       {
         path: 'dashboard',
         loadComponent: () => import('./features/admin/pages/dashboard.component')
-          .then(m => m.DashboardComponent)
+          .then(m => m.DashboardComponent),
+        data: { title: 'Dashboard' }
       },
       {
         path: 'management',
         children: [
-          { path: 'room', loadComponent: () => import('./features/admin/pages/management/room-management.component').then(m => m.RoomManagementComponent) },
-          { path: 'room-type', loadComponent: () => import('./features/admin/pages/management/room-type-management.component').then(m => m.RoomTypeManagementComponent) },
-          { path: 'staff', loadComponent: () => import('./features/admin/pages/management/staff-management.component').then(m => m.StaffManagementComponent) },
-          { path: 'amenities', loadComponent: () => import('./features/admin/pages/management/amenities-management.component').then(m => m.AmenitiesManagementComponent) },
-          { path: 'menu', loadComponent: () => import('./features/admin/pages/management/menu-management.component').then(m => m.MenuManagementComponent) },
+          { path: 'room', loadComponent: () => import('./features/admin/pages/management/room-management.component').then(m => m.RoomManagementComponent), data: { title: 'Rooms' } },
+          { path: 'room-type', loadComponent: () => import('./features/admin/pages/management/room-type-management.component').then(m => m.RoomTypeManagementComponent), data: { title: 'Room Types' } },
+          { path: 'staff', loadComponent: () => import('./features/admin/pages/management/staff-management.component').then(m => m.StaffManagementComponent), data: { title: 'Staff' } },
+          { path: 'amenities', loadComponent: () => import('./features/admin/pages/management/amenities-management.component').then(m => m.AmenitiesManagementComponent), data: { title: 'Amenities' } },
+          { path: 'menu', loadComponent: () => import('./features/admin/pages/management/menu-management.component').then(m => m.MenuManagementComponent), data: { title: 'Menu Items' } },
         ]
       },
       {
         path: 'oversight',
         children: [
-          { path: 'analytics', loadComponent: () => import('./features/admin/pages/oversight/analytics.component').then(m => m.AnalyticsComponent) },
-          { path: 'auditlogs', loadComponent: () => import('./features/admin/pages/oversight/audit-logs.component').then(m => m.AuditLogsComponent) },
-          { path: 'billings-receipts', loadComponent: () => import('./features/admin/pages/oversight/billing-receipts.component').then(m => m.BillingReceiptsComponent) },
-          { path: 'feedback', loadComponent: () => import('./features/admin/pages/oversight/feedback.component').then(m => m.FeedbackComponent) },
+          { path: 'analytics', loadComponent: () => import('./features/admin/pages/oversight/analytics.component').then(m => m.AnalyticsComponent), data: { title: 'Analytics' } },
+          { path: 'auditlogs', loadComponent: () => import('./features/admin/pages/oversight/audit-logs.component').then(m => m.AuditLogsComponent), data: { title: 'Audit Logs' } },
+          { path: 'billings-receipts', loadComponent: () => import('./features/admin/pages/oversight/billing-receipts.component').then(m => m.BillingReceiptsComponent), data: { title: 'Billing & Receipts' } },
+          { path: 'feedback', loadComponent: () => import('./features/admin/pages/oversight/feedback.component').then(m => m.FeedbackComponent), data: { title: 'Feedback' } },
         ]
       },
       {
         path: 'profile',
         loadComponent: () => import('./features/admin/pages/profile.component')
-          .then(m => m.PlaceholderProfileComponent)
+          .then(m => m.PlaceholderProfileComponent),
+        data: { title: 'Profile' }
       },
       { path: '**', redirectTo: 'dashboard' }
     ]

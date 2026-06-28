@@ -13,13 +13,17 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+import { MatCardModule } from '@angular/material/card';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
-import { finalize } from 'rxjs';
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { finalize, map } from 'rxjs';
 
 import { FeedbackApiService } from '../../services/feedback-api.service';
 import { Feedback } from '../../models/feedback.model';
 import { AlertComponent } from '../../../../features/auth/components/alert.component';
+import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 type FeedbackSortField = 'id' | 'rating' | 'createdAt';
 
@@ -41,6 +45,8 @@ type FeedbackSortField = 'id' | 'rating' | 'createdAt';
     MatProgressBarModule,
     MatFormFieldModule,
     MatSelectModule,
+    MatDialogModule,
+    MatCardModule,
     AlertComponent,
   ],
   templateUrl: './feedback.component.html',
@@ -50,6 +56,13 @@ export class FeedbackComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly feedbackApi = inject(FeedbackApiService);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly dialog = inject(MatDialog);
+  private readonly breakpointObserver = inject(BreakpointObserver);
+
+  isMobile = toSignal(
+    this.breakpointObserver.observe('(max-width: 767px)').pipe(map((r) => r.matches)),
+    { initialValue: false },
+  );
 
   private readonly STORAGE_KEY = 'feedbackState';
 
@@ -130,28 +143,46 @@ export class FeedbackComponent implements OnInit {
   }
 
   onToggleHidden(feedback: Feedback, isHidden: boolean): void {
-    // Immediately update the local state to reflect the toggle change (optimistic UI)
-    this.entries.update((arr) =>
-      arr.map((f) => (f.id === feedback.id ? { ...f, isHidden } : f)),
-    );
-
-    this.feedbackApi
-      .moderate(feedback.id, { isHidden })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.snackBar.open(isHidden ? 'Feedback hidden' : 'Feedback visible', 'Close', {
-            duration: 2000,
-          });
-        },
-        error: (err: any) => {
-          // Revert on failure
-          this.entries.update((arr) =>
-            arr.map((f) => (f.id === feedback.id ? { ...f, isHidden: !isHidden } : f)),
-          );
-          this.snackBar.open(this.extractErrorMessage(err), 'Close', { duration: 5000 });
+    if (!feedback.isHidden && isHidden) {
+      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+        data: {
+          title: 'Hide Feedback',
+          message: 'Are you sure you want to hide this feedback?',
         },
       });
+      dialogRef.afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(confirmed => {
+        if (confirmed) {
+          this.performToggle(feedback, isHidden);
+        } else {
+          // Revert the optimistic UI toggle
+          this.entries.update(arr => arr.map(f => f.id === feedback.id ? { ...f, isHidden: false } : f));
+        }
+      });
+    } else {
+      this.performToggle(feedback, isHidden);
+    }
+  }
+
+  private performToggle(feedback: Feedback, isHidden: boolean): void {
+    // Optimistic update
+    this.entries.update(arr => arr.map(f => f.id === feedback.id ? { ...f, isHidden } : f));
+
+    this.feedbackApi.moderate(feedback.id, { isHidden }).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
+      next: () => {
+        this.snackBar.open(
+          isHidden ? 'Feedback hidden' : 'Feedback visible',
+          'Close',
+          { duration: 2000 }
+        );
+      },
+      error: (err: any) => {
+        // Revert on failure
+        this.entries.update(arr => arr.map(f => f.id === feedback.id ? { ...f, isHidden: !isHidden } : f));
+        this.snackBar.open(this.extractErrorMessage(err), 'Close', { duration: 5000 });
+      }
+    });
   }
 
   private extractErrorMessage(err: any): string {

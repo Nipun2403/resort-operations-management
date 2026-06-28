@@ -53,13 +53,13 @@ p {
 @media (max-width: 767px) {
   .status-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     grid-auto-rows: minmax(60px, auto);
     gap: 8px;
     overflow-y: auto;
     overflow-x: hidden;
     height: auto;
-    max-height: 60vh;
+    max-height: 70vh;
     padding: 8px;
   }
 

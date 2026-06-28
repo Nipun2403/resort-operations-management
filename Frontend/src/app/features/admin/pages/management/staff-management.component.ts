@@ -207,29 +207,10 @@ export class StaffManagementComponent implements OnInit {
   onSave(event: { formValue: any; isActive: boolean }): void {
     const { formValue, isActive } = event;
     if (this.editingEntity()) {
-      // Deactivation confirmation: compare original state vs submitted isActive
-      if (this.editingEntity()!.isActive && !isActive) {
-        this.showDisableConfirmation(formValue, isActive);
-        return;
-      }
       this.performUpdate(formValue, isActive);
     } else {
       this.performCreate(formValue);
     }
-  }
-
-  private showDisableConfirmation(formValue: any, isActive: boolean): void {
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: {
-        title: 'Deactivate Staff Member',
-        message: `Are you sure you want to deactivate ${this.editingEntity()!.firstName} ${this.editingEntity()!.lastName}?`,
-      },
-    });
-    dialogRef.afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(confirmed => {
-      if (confirmed) {
-        this.performUpdate(formValue, isActive);
-      }
-    });
   }
 
   private performUpdate(formValue: any, isActive: boolean): void {

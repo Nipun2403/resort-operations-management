@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, signal, DestroyRef, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, AbstractControl, FormArray, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -10,6 +10,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
 import { CrudModalData, CrudModalResult, FormFieldDef } from '../../../models/crud-config.model';
+import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-crud-modal',
@@ -32,6 +33,7 @@ import { CrudModalData, CrudModalResult, FormFieldDef } from '../../../models/cr
 export class CrudModalComponent implements OnInit {
   readonly data = inject<CrudModalData>(MAT_DIALOG_DATA);
   private readonly dialogRef = inject(MatDialogRef<CrudModalComponent>);
+  private readonly dialog = inject(MatDialog);
 
   modalForm!: FormGroup;
   isActiveControl = new FormControl<any>(true);
@@ -129,7 +131,21 @@ export class CrudModalComponent implements OnInit {
       entityId: this.data.entity?.id,
     };
 
-    this.dialogRef.close(result);
+    if (this.data.editMode && result.previousIsActive && !result.isActive) {
+      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+        data: {
+          title: 'Confirm Deactivation',
+          message: `Are you sure you want to disable this ${this.data.entityName ?? 'item'}?`,
+        },
+      });
+      dialogRef.afterClosed().subscribe((confirmed) => {
+        if (confirmed) {
+          this.dialogRef.close(result);
+        }
+      });
+    } else {
+      this.dialogRef.close(result);
+    }
   }
 
   getKeyValueArray(fieldName: string): FormArray {

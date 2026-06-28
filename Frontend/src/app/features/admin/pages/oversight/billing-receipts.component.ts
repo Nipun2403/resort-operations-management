@@ -18,9 +18,10 @@ import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatChipsModule } from '@angular/material/chips';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
-import { debounceTime, distinctUntilChanged, finalize } from 'rxjs';
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { debounceTime, distinctUntilChanged, finalize, map } from 'rxjs';
 
 import { BookingApiService } from '../../services/booking-api.service';
 import { BillingApiService } from '../../services/billing-api.service';
@@ -66,6 +67,12 @@ export class BillingReceiptsComponent implements OnInit {
   private readonly bookingApi = inject(BookingApiService);
   private readonly billingApi = inject(BillingApiService);
   private readonly dialog = inject(MatDialog);
+  private readonly breakpointObserver = inject(BreakpointObserver);
+
+  isMobile = toSignal(
+    this.breakpointObserver.observe('(max-width: 767px)').pipe(map((r) => r.matches)),
+    { initialValue: false },
+  );
 
   private readonly STORAGE_KEY = 'billingReceiptsState';
 

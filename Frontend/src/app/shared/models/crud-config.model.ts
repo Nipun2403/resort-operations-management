@@ -61,6 +61,7 @@ export interface CrudModalData {
   entity: any | null;
   formFields: FormFieldDef[];
   supportsToggle: boolean;
+  entityName?: string;
 }
 
 export interface CrudModalResult {

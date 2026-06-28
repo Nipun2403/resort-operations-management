@@ -68,6 +68,26 @@
     {
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     }
+    @if (isMobile()) {
+    <div class="mobile-card-view">
+      @for (b of bookings(); track b.id) {
+      <mat-card (click)="openBookingDetail(b)" class="booking-card">
+        <mat-card-header>
+          <mat-card-title>{{ b.guestName }}</mat-card-title>
+          <mat-card-subtitle
+            >{{ b.checkInDate }} – {{ b.checkOutDate }}</mat-card-subtitle
+          >
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            Status: <span class="status-chip" [class]="b.bookingStatus">{{ b.bookingStatus }}</span>
+            <span class="divider">|</span> Rooms: {{ getRoomsSummary(b) }}
+          </p>
+        </mat-card-content>
+      </mat-card>
+      }
+    </div>
+    } @else {
     <table
       mat-table
       [dataSource]="bookings()"
@@ -197,6 +217,7 @@
         class="clickable-row"
       ></tr>
     </table>
+    }
     <mat-paginator
       [length]="bookingsTotal()"
       [pageIndex]="bookingPage()"
@@ -275,6 +296,26 @@
     {
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     }
+    @if (isMobile()) {
+    <div class="mobile-card-view">
+      @for (r of receipts(); track r.id) {
+      <mat-card (click)="openReceiptDetail(r)" class="receipt-card">
+        <mat-card-header>
+          <mat-card-title>Receipt #{{ r.id }} – Booking #{{ r.bookingId }}</mat-card-title>
+          <mat-card-subtitle
+            >{{ r.paidAt | date:'medium' }}</mat-card-subtitle
+          >
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            Amount: {{ r.amountPaid | currency }}
+            <span class="divider">|</span> Method: {{ r.paymentMethod }}
+          </p>
+        </mat-card-content>
+      </mat-card>
+      }
+    </div>
+    } @else {
     <table
       mat-table
       [dataSource]="receipts()"
@@ -387,6 +428,7 @@
         class="clickable-row"
       ></tr>
     </table>
+    }
     <mat-paginator
       [length]="receiptsTotal()"
       [pageIndex]="receiptPage()"

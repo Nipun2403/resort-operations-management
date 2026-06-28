@@ -1,9 +1,9 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { BreakpointObserver, LayoutModule } from '@angular/cdk/layout';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs/operators';
+import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { map, filter } from 'rxjs/operators';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatListModule } from '@angular/material/list';
@@ -35,6 +35,8 @@ export class AdminShellComponent {
   private breakpointObserver = inject(BreakpointObserver);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute);
+  private destroyRef = inject(DestroyRef);
 
   isMobile = toSignal(
     this.breakpointObserver.observe('(max-width: 1024px)').pipe(
@@ -45,6 +47,30 @@ export class AdminShellComponent {
 
   sidebarOpen = signal(false);
   userDisplayName = this.authService.fullName;
+  title = signal('Admin');
+
+  constructor() {
+    // Initial extraction
+    this.updateTitle();
+
+    this.router.events
+      .pipe(
+        filter(e => e instanceof NavigationEnd),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe(() => {
+        this.updateTitle();
+      });
+  }
+
+  private updateTitle(): void {
+    let route = this.activatedRoute;
+    while (route.firstChild) {
+      route = route.firstChild;
+    }
+    const title = route.snapshot.data['title'] || 'Admin';
+    this.title.set(title);
+  }
 
   onNavClick(): void {
     if (this.isMobile()) {
