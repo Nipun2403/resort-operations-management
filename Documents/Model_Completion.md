@@ -2502,6 +2502,61 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: customer-booking-patch.md
+Date: 2026-06-28
+================================================================================
+
+FILES MODIFIED
+--------------
+✓ src/app/features/user/pages/bookings.component.ts
+  — Imported MatProgressSpinnerModule for loading spinner display
+✓ src/app/features/user/pages/bookings.component.html
+  — Wrapped app-booking-history and app-booking-wizard in @if (userProfile()) block with spinner in @else block
+✓ src/app/features/user/components/booking-wizard/booking-wizard.component.ts
+  — Added datesValues and amenitiesValues form signals using toSignal()
+  — Updated nights, capacityWarning, selectedAmenityEntries, and estimatedTotal to derive reactively from form signals
+  — Added updateValueAndValidity() call in updateRoomsFormValidity() method to propagate room quantities updates
+✓ src/app/features/user/components/booking-wizard/booking-wizard.component.html
+  — Replaced mat-vertical-stepper with mat-stepper [orientation]="isMobile() ? 'vertical' : 'horizontal'"
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Prevent Race Condition in Orchestrator (§3)
+  ✓ Spinner shown while profile is fetching; children do not instantiate prematurely
+✓ Stepper Orientation (§4)
+  ✓ Stepper orientation uses isMobile cdk observer signal to switch between vertical (mobile) and horizontal (desktop)
+✓ Reactivity of computed() (§5)
+  ✓ Form values converted to signals via toSignal()
+  ✓ Computed signals estimatedTotal, nights, capacityWarning, and selectedAmenityEntries update reactively
+✓ Form Validation Reactivity (§6)
+  ✓ roomsForm.updateValueAndValidity() triggers validation recalculation on quantity changes
+✓ Button Type Submission (§7)
+  ✓ Quantity selection buttons are type="button" preventing unsolicited submissions
+
+KNOWN DEVIATIONS
+----------------
+None.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+☑ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+☑ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+☑ I confirm that all API calls match the spec contracts exactly.
+☑ I confirm that all regex validators are character-for-character matches
+  to the spec.
+☑ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
 
 
 
