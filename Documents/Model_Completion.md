@@ -3174,6 +3174,57 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: front-desk-dashboard-6.md
+Date: 2026-06-28
+================================================================================
+
+FILES CREATED
+-------------
+None.
+
+FILES MODIFIED
+--------------
+✓ src/app/features/front-desk/pages/dashboard.component.ts
+  — Updated afterClosed to always call loadSummary.
+✓ src/app/features/front-desk/pages/dashboard.component.scss
+  — Added media query rules to stack summary cards on narrow screens.
+✓ src/app/features/front-desk/components/movement-table/movement-table.component.scss
+  — Added min-width and horizontal scrolling styles.
+✓ src/app/features/front-desk/components/booking-action-modal/booking-action-modal.component.scss
+  — Added mobile adjustments for tabs and buttons list.
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Dashboard Refresh Logic (§3)
+  ✓ Calls loadSummary() unconditionally on booking modal closure to correctly sync active ticket counts after room service submissions.
+  ✓ Keeps data table updates conditional on result === true.
+✓ Responsive Polish (§4)
+  ✓ Handled viewport widths down to 320px, stacking widgets and enabling smooth table overflows.
+
+KNOWN DEVIATIONS
+----------------
+None.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+☑ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+☑ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+☑ I confirm that all API calls match the spec contracts exactly.
+☑ I confirm that all regex validators are character-for-character matches
+  to the spec.
+☑ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
 
 
 
