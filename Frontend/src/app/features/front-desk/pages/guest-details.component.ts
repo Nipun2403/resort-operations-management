@@ -24,7 +24,7 @@ import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialo
 import { ExtendStayDialogComponent } from '../components/extend-stay-dialog/extend-stay-dialog.component';
 import { CheckoutDialogComponent } from '../components/booking-action-modal/checkout-dialog/checkout-dialog.component';
 import { RoomServiceTabComponent } from '../components/booking-action-modal/room-service-tab/room-service-tab.component';
-import { BillingTabComponent } from '../components/booking-action-modal/billing-tab/billing-tab.component';
+import { GuestBillingComponent } from '../components/guest-billing/guest-billing.component';
 
 @Component({
   selector: 'app-guest-details',
@@ -44,7 +44,7 @@ import { BillingTabComponent } from '../components/booking-action-modal/billing-
     MatDialogModule,
     AlertComponent,
     RoomServiceTabComponent,
-    BillingTabComponent,
+    GuestBillingComponent,
   ],
   templateUrl: './guest-details.component.html',
   styleUrls: ['./guest-details.component.scss'],

@@ -109,11 +109,7 @@
       [disabled]="!activeBooking()"
     >
       <div class="tab-content">
-        @if (activeBookingId() > 0) {
-        <app-billing-tab [bookingId]="activeBookingId()" />
-        } @else {
-        <p>No booking selected for billing.</p>
-        }
+        <app-guest-billing [bookings]="bookings()" />
       </div>
     </mat-tab>
   </mat-tab-group>

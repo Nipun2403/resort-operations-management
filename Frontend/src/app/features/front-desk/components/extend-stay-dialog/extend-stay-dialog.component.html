@@ -8,6 +8,7 @@
       [matDatepicker]="picker"
       [formControl]="newCheckOut"
       [min]="minDate"
+      (click)="picker.open()"
     />
     <mat-datepicker-toggle
       matSuffix

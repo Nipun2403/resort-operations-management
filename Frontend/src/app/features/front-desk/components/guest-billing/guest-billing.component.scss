@@ -1,0 +1,33 @@
+.guest-billing {
+  .bill-summary {
+    p {
+      margin: 8px 0;
+      font-size: 0.95rem;
+    }
+  }
+
+  .Paid {
+    color: #2e7d32;
+    background-color: #e8f5e9;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+  }
+
+  .Pending {
+    color: #c62828;
+    background-color: #ffebee;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+  }
+
+  table {
+    margin-top: 16px;
+    background: transparent;
+  }
+
+  th.mat-mdc-header-cell {
+    font-weight: 500;
+  }
+}

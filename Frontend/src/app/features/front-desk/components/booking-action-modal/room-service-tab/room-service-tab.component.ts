@@ -6,8 +6,6 @@ import { Booking } from '../../../../admin/models/booking.model';
 import { FoodOrderPanelComponent } from '../food-order-panel/food-order-panel.component';
 import { HousekeepingRequestPanelComponent } from '../housekeeping-request-panel/housekeeping-request-panel.component';
 import { MaintenanceRequestPanelComponent } from '../maintenance-request-panel/maintenance-request-panel.component';
-import { InternalTicketPanelComponent } from '../internal-ticket-panel/internal-ticket-panel.component';
-
 @Component({
   selector: 'app-room-service-tab',
   standalone: true,
@@ -17,7 +15,6 @@ import { InternalTicketPanelComponent } from '../internal-ticket-panel/internal-
     FoodOrderPanelComponent,
     HousekeepingRequestPanelComponent,
     MaintenanceRequestPanelComponent,
-    InternalTicketPanelComponent,
   ],
   templateUrl: './room-service-tab.component.html',
   styleUrls: ['./room-service-tab.component.scss'],

@@ -30,6 +30,7 @@ import { AlertComponent } from '../../../auth/components/alert.component';
     AlertComponent,
   ],
   templateUrl: './extend-stay-dialog.component.html',
+  host: { 'style': 'min-width: 350px; display: block;' }
 })
 export class ExtendStayDialogComponent {
   data: { bookingId: number; currentCheckOut: string } = inject(MAT_DIALOG_DATA);

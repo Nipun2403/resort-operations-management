@@ -3320,6 +3320,60 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: front-desk-bug-fixes.md
+Date: 2026-06-28
+================================================================================
+
+FILES CREATED
+-------------
+✓ src/app/features/front-desk/components/guest-billing/guest-billing.component.ts/.html/.scss
+  — GuestBillingComponent displaying latest and old folios.
+✓ src/app/features/front-desk/components/guest-billing/folio-detail-dialog.component.ts
+  — Presentational dialog for displaying detailed old folios.
+
+FILES MODIFIED
+--------------
+✓ src/app/features/front-desk/components/extend-stay-dialog/extend-stay-dialog.component.ts/.html
+  — Added host min-width and input click handler (picker.open()).
+✓ src/app/features/front-desk/components/booking-action-modal/room-service-tab/room-service-tab.component.ts/.html
+  — Removed internal ticket panel.
+✓ src/app/features/front-desk/pages/guest-details.component.ts/.html
+  — Substituted BillingTabComponent with GuestBillingComponent.
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Fix Extend Stay Date Picker (§3)
+  ✓ Clicking check-out input opens calendar overlay. Added host style min-width 350px.
+✓ Remove Internal Ticket from Room Service Tab (§4)
+  ✓ Removed internal ticket panel component and templates from guest details room service view.
+✓ Guest Billing Component (§5)
+  ✓ Computes latestBilling and oldBilling. Loads invoices for all guest bookings using forkJoin.
+  ✓ Collapsible old folios panel with detailed modal viewing functionality.
+
+KNOWN DEVIATIONS
+----------------
+None.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+☑ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+☑ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+☑ I confirm that all API calls match the spec contracts exactly.
+☑ I confirm that all regex validators are character-for-character matches
+  to the spec.
+☑ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
 
 
 
