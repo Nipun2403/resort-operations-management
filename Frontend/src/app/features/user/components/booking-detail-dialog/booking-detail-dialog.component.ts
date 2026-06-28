@@ -1,10 +1,14 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
-import { Booking } from '../../models/booking.model';
+import { Booking, BookingRoom } from '../../models/booking.model';
+import { RoomTypeApiService } from '../../services/room-type-api.service';
+import { forkJoin, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-booking-detail-dialog',
@@ -34,6 +38,38 @@ import { Booking } from '../../models/booking.model';
     }
   `]
 })
-export class BookingDetailDialogComponent {
+export class BookingDetailDialogComponent implements OnInit {
   readonly booking: Booking = inject(MAT_DIALOG_DATA);
+  private readonly roomTypeApi = inject(RoomTypeApiService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  enrichedRooms = signal<(BookingRoom & { roomTypeName: string })[]>([]);
+
+  ngOnInit(): void {
+    this.enrichRooms();
+  }
+
+  private enrichRooms(): void {
+    const rooms = this.booking.rooms ?? [];
+    if (rooms.length === 0) return;
+
+    const requests = rooms.map(room =>
+      this.roomTypeApi.getById(room.roomTypeId).pipe(
+        map(roomType => ({
+          ...room,
+          roomTypeName: roomType?.name ?? `Room Type ${room.roomTypeId}`
+        })),
+        catchError(() => of({
+          ...room,
+          roomTypeName: `Room Type ${room.roomTypeId}`
+        }))
+      )
+    );
+
+    forkJoin(requests).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(enriched => {
+      this.enrichedRooms.set(enriched);
+    });
+  }
 }

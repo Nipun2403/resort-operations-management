@@ -23,7 +23,7 @@ import { BookingWizardComponent } from '../components/booking-wizard/booking-wiz
   styleUrls: ['./bookings.component.scss']
 })
 export class BookingsComponent implements OnInit {
-  viewMode = new FormControl<'history' | 'new'>('history', { nonNullable: true });
+  viewMode = new FormControl<'history' | 'new'>('new', { nonNullable: true });
   userEmail = signal('');
   userProfile = signal<{ firstName: string; lastName: string; email: string } | null>(null);
 

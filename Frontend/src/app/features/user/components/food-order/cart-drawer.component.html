@@ -24,7 +24,16 @@
       <div class="cart-items-list">
         @for (item of cartItems(); track item.menuItemId) {
           <div class="cart-item">
-            <span class="item-name">{{ item.name }} x{{ item.quantity }}</span>
+            <span class="item-name">{{ item.name }}</span>
+            <div class="qty-controls">
+              <button type="button" mat-icon-button (click)="decrementQty(item.menuItemId)" aria-label="Decrease quantity">
+                <mat-icon>remove</mat-icon>
+              </button>
+              <span class="qty">{{ item.quantity }}</span>
+              <button type="button" mat-icon-button (click)="incrementQty(item.menuItemId)" aria-label="Increase quantity">
+                <mat-icon>add</mat-icon>
+              </button>
+            </div>
             <span class="item-price">{{ item.price * item.quantity | currency }}</span>
           </div>
         } @empty {

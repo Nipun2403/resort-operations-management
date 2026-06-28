@@ -1,35 +1,49 @@
-.menu-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  padding: 16px 0;
+.menu-categories {
+  .category-section {
+    margin-bottom: 32px;
+  }
 
-  .menu-item-card {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
+  .category-title {
+    font-size: 1.4rem;
+    font-weight: 500;
+    margin: 16px 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e0e0e0;
+    color: rgba(0, 0, 0, 0.87);
+  }
 
-    mat-card-header {
-      margin-bottom: 8px;
-    }
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    padding: 8px 0;
 
-    .price-row {
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: #3f51b5;
-    }
+    .menu-item-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
 
-    mat-card-actions {
-      padding: 8px 16px 16px 16px;
-      button {
-        width: 100%;
+      mat-card-header {
+        margin-bottom: 8px;
+      }
+
+      .price-row {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #3f51b5;
+      }
+
+      mat-card-actions {
+        padding: 8px 16px 16px 16px;
+        button {
+          width: 100%;
+        }
       }
     }
   }
 
   .no-items {
-    grid-column: 1 / -1;
     text-align: center;
     padding: 32px;
     color: rgba(0, 0, 0, 0.54);
@@ -38,13 +52,17 @@
 }
 
 @media (max-width: 1024px) {
-  .menu-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .menu-categories {
+    .menu-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
 }
 
 @media (max-width: 767px) {
-  .menu-grid {
-    grid-template-columns: 1fr;
+  .menu-categories {
+    .menu-grid {
+      grid-template-columns: 1fr;
+    }
   }
 }

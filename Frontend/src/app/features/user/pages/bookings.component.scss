@@ -3,5 +3,21 @@
 
   .toggle-row {
     margin-bottom: 24px;
+
+    mat-button-toggle-group {
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+
+      .mat-button-toggle {
+        border-radius: 0;
+        border: none;
+      }
+
+      ::ng-deep .mat-button-toggle-checked {
+        background-color: #1976d2 !important; // primary color
+        color: white !important;
+      }
+    }
   }
 }

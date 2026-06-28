@@ -2559,7 +2559,7 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 
 ================================================================================
 SPEC IMPLEMENTATION COMPLIANCE REPORT
-Spec: customer-room-service-shell.md
+Spec: customer-room-service.md
 Date: 2026-06-28
 ================================================================================
 

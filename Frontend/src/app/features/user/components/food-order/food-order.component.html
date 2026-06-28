@@ -22,6 +22,7 @@
           [isOpen]="cartOpen()"
           (cartToggle)="cartOpen.set(!cartOpen())"
           (checkout)="placeOrder()"
+          (updateQuantity)="onUpdateCartQty($event)"
         />
       </div>
     </div>

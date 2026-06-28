@@ -57,12 +57,52 @@
     justify-content: space-between;
     align-items: center;
     font-size: 0.95rem;
+    gap: 8px;
 
     .item-name {
       color: rgba(0, 0, 0, 0.87);
+      flex: 1 1 auto;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+
+      button {
+        width: 28px;
+        height: 28px;
+        line-height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        ::ng-deep .mat-mdc-button-touch-target {
+          display: none;
+        }
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
+      }
+
+      .qty {
+        font-weight: 500;
+        min-width: 16px;
+        text-align: center;
+      }
     }
     .item-price {
       font-weight: 500;
+      flex-shrink: 0;
+      min-width: 60px;
+      text-align: right;
     }
   }
 

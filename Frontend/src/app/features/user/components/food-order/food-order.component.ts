@@ -91,6 +91,18 @@ export class FoodOrderComponent implements OnInit {
     });
   }
 
+  onUpdateCartQty(event: { menuItemId: number; delta: number }): void {
+    this.cartItems.update(items => {
+      const index = items.findIndex(i => i.menuItemId === event.menuItemId);
+      if (index === -1) return items;
+      const newQty = items[index].quantity + event.delta;
+      if (newQty <= 0) {
+        return items.filter(i => i.menuItemId !== event.menuItemId);
+      }
+      return items.map(i => i.menuItemId === event.menuItemId ? { ...i, quantity: newQty } : i);
+    });
+  }
+
   placeOrder(): void {
     if (!this.canCheckout() || this.submitting()) {
       return;

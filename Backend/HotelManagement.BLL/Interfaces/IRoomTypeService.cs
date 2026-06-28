@@ -11,4 +11,5 @@ public interface IRoomTypeService
     Task<RoomTypeDTO> CreateRoomTypeAsync(CreateRoomTypeDTO dto);
     Task<RoomTypeDTO> UpdateRoomTypeAsync(int id, UpdateRoomTypeDTO dto);
     Task DeleteRoomTypeAsync(int id);
+    Task<RoomTypeDTO> GetRoomTypeByIdAsync(int id);
 }

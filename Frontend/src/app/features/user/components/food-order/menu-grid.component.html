@@ -1,26 +1,32 @@
-<div class="menu-grid">
-  @for (item of menuItems(); track item.id) {
-    <mat-card class="menu-item-card">
-      <mat-card-header>
-        <mat-card-title>{{ item.name }}</mat-card-title>
-        <mat-card-subtitle>{{ item.category }}</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="price-row">
-          <span class="price">{{ item.price | currency }}</span>
-        </div>
-      </mat-card-content>
-      <mat-card-actions>
-        <button
-          mat-raised-button
-          color="primary"
-          (click)="addToCart.emit(item)"
-          aria-label="Add to cart"
-        >
-          <mat-icon>add_shopping_cart</mat-icon> Add to Cart
-        </button>
-      </mat-card-actions>
-    </mat-card>
+<div class="menu-categories">
+  @for (group of groupedMenu(); track group.category) {
+    <div class="category-section">
+      <h3 class="category-title">{{ group.category }}</h3>
+      <div class="menu-grid">
+        @for (item of group.items; track item.id) {
+          <mat-card class="menu-item-card">
+            <mat-card-header>
+              <mat-card-title>{{ item.name }}</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="price-row">
+                <span class="price">{{ item.price | currency }}</span>
+              </div>
+            </mat-card-content>
+            <mat-card-actions>
+              <button
+                mat-raised-button
+                color="primary"
+                (click)="addToCart.emit(item)"
+                aria-label="Add to cart"
+              >
+                <mat-icon>add_shopping_cart</mat-icon> Add to Cart
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        }
+      </div>
+    </div>
   } @empty {
     <p class="no-items">No menu items available at the moment.</p>
   }

@@ -166,4 +166,11 @@ public class RoomTypeService : IRoomTypeService
         _roomTypeRepository.Update(existingType);
         await _roomTypeRepository.SaveChangesAsync();
     }
+    
+    public async Task<RoomTypeDTO> GetRoomTypeByIdAsync(int id)
+    {
+        var entity = await _roomTypeRepository.GetByIdAsync(id);
+        if (entity == null) throw new ArgumentException("Room Type not found.");
+        return _mapper.Map<RoomTypeDTO>(entity);
+    }
 }

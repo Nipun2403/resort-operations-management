@@ -24,4 +24,8 @@ export class RoomTypeApiService {
 
     return this.http.get<PaginatedResponse<AvailableRoomType>>(`${this.baseUrl}/availability`, { params });
   }
+
+  getById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/${id}`);
+  }
 }

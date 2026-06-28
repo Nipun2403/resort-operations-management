@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,4 +15,14 @@ import { MenuItem } from '../../../../features/admin/models/menu-item.model';
 export class MenuGridComponent {
   menuItems = input.required<MenuItem[]>();
   addToCart = output<MenuItem>();
+
+  groupedMenu = computed(() => {
+    const groups: Record<string, MenuItem[]> = {};
+    for (const item of this.menuItems()) {
+      const cat = item.category || 'Other';
+      if (!groups[cat]) groups[cat] = [];
+      groups[cat].push(item);
+    }
+    return Object.entries(groups).map(([category, items]) => ({ category, items }));
+  });
 }

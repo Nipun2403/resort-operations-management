@@ -106,4 +106,19 @@ public class RoomTypesController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
+
+    [HttpGet("{id}")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetRoomType(int id)
+    {
+        try
+        {
+            var result = await _roomTypeService.GetRoomTypeByIdAsync(id);
+            return Ok(result);
+        }
+        catch (ArgumentException ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
 }

@@ -33,3 +33,22 @@
     padding: 8px 16px 16px 16px;
   }
 }
+
+@media (max-width: 599px) {
+  .request-service {
+    mat-card {
+      margin: 8px;
+      padding: 12px;
+    }
+    mat-form-field {
+      width: 100%;
+    }
+    mat-button-toggle-group {
+      width: 100%;
+      display: flex;
+      mat-button-toggle {
+        flex: 1 1 50%;
+      }
+    }
+  }
+}

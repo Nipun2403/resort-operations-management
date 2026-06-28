@@ -17,7 +17,16 @@ export class CartDrawerComponent {
 
   cartToggle = output<void>();
   checkout = output<void>();
+  updateQuantity = output<{ menuItemId: number; delta: number }>();
 
   itemCount = computed(() => this.cartItems().reduce((s, i) => s + i.quantity, 0));
   subtotal = computed(() => this.cartItems().reduce((s, i) => s + i.price * i.quantity, 0));
+
+  incrementQty(menuItemId: number): void {
+    this.updateQuantity.emit({ menuItemId, delta: 1 });
+  }
+
+  decrementQty(menuItemId: number): void {
+    this.updateQuantity.emit({ menuItemId, delta: -1 });
+  }
 }

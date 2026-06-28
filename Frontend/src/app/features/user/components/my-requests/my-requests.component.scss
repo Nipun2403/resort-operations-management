@@ -50,3 +50,16 @@
     font-style: italic;
   }
 }
+
+@media (max-width: 599px) {
+  .my-requests {
+    overflow-x: auto;
+    table {
+      min-width: 600px;
+    }
+    .mat-mdc-cell, .mat-mdc-header-cell {
+      padding: 8px 4px;
+      font-size: 0.85rem;
+    }
+  }
+}
