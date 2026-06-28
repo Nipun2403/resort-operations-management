@@ -74,7 +74,7 @@ export const routes: Routes = [
       {
         path: 'room-service',
         loadComponent: () => import('./features/user/pages/room-service.component')
-          .then(m => m.PlaceholderCustomerRoomServiceComponent)
+          .then(m => m.RoomServiceComponent)
       },
       {
         path: 'profile',

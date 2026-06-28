@@ -1,0 +1,35 @@
+.request-service {
+  padding: 16px 0;
+  max-width: 600px;
+  margin: 0 auto;
+
+  .request-card {
+    padding: 16px;
+  }
+
+  .form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .type-toggle-group {
+    width: 100%;
+    display: flex;
+
+    mat-button-toggle {
+      flex: 1;
+      text-align: center;
+    }
+  }
+
+  .full-width {
+    width: 100%;
+  }
+
+  mat-card-actions {
+    justify-content: flex-end;
+    padding: 8px 16px 16px 16px;
+  }
+}

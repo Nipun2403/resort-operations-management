@@ -1,0 +1,23 @@
+import { Component, input, output, computed } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { OrderItem } from '../../models/order-item.model';
+
+@Component({
+  selector: 'app-cart-drawer',
+  standalone: true,
+  imports: [CommonModule, MatButtonModule, MatIconModule],
+  templateUrl: './cart-drawer.component.html',
+  styleUrls: ['./cart-drawer.component.scss']
+})
+export class CartDrawerComponent {
+  cartItems = input.required<OrderItem[]>();
+  isOpen = input.required<boolean>();
+
+  cartToggle = output<void>();
+  checkout = output<void>();
+
+  itemCount = computed(() => this.cartItems().reduce((s, i) => s + i.quantity, 0));
+  subtotal = computed(() => this.cartItems().reduce((s, i) => s + i.price * i.quantity, 0));
+}

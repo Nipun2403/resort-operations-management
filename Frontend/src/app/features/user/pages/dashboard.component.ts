@@ -17,7 +17,8 @@ import { AuthApiService } from '../../../core/services/auth-api.service';
 import { BookingApiService } from '../services/booking-api.service';
 import { HousekeepingApiService } from '../services/housekeeping-api.service';
 import { MaintenanceApiService } from '../services/maintenance-api.service';
-import { AuthMeResponse } from '../models/auth-me-response.model';
+import { CustomerBookingFacade } from '../facades/customer-booking.facade';
+import { of, switchMap } from 'rxjs';
 import { Booking } from '../../admin/models/booking.model';
 import { AlertComponent } from '../../auth/components/alert.component';
 import { RequestServiceDialogComponent, RequestServiceDialogData, RequestServiceDialogResult } from '../components/request-service-dialog.component';
@@ -55,6 +56,7 @@ export class PlaceholderCustomerDashboardComponent implements OnInit {
   private readonly bookingApi = inject(BookingApiService);
   private readonly housekeepingApi = inject(HousekeepingApiService);
   private readonly maintenanceApi = inject(MaintenanceApiService);
+  private readonly bookingFacade = inject(CustomerBookingFacade);
   private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
@@ -65,41 +67,37 @@ export class PlaceholderCustomerDashboardComponent implements OnInit {
     this.loading.set(true);
     this.error.set(null);
 
-    this.authApi.getMe().pipe(
+    this.bookingFacade.getCurrentCustomerProfile().pipe(
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: (me: AuthMeResponse) => {
-        const firstNameClaim = me.claims?.find(c => c.type === 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname')?.value ?? '';
-        const emailClaim = me.claims?.find(c => c.type === 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name')?.value ?? '';
-
-        this.firstName.set(firstNameClaim);
-
-        if (emailClaim) {
-          this.fetchBookings(emailClaim);
-        } else {
-          this.loading.set(false);
+      switchMap((profile) => {
+        this.firstName.set(profile.firstName);
+        if (!profile.email) {
+          return forkJoin({
+            active: of(null),
+            upcoming: of({ data: [] as Booking[] })
+          });
         }
+        return forkJoin({
+          active: this.bookingFacade.getActiveBooking(),
+          upcoming: this.bookingApi.getAll({
+            guestQuery: profile.email,
+            status: 'Booked',
+            pageNumber: 1,
+            pageSize: 1,
+            sortBy: 'checkInDate',
+            sortDescending: false
+          })
+        });
+      }),
+      finalize(() => this.loading.set(false))
+    ).subscribe({
+      next: ({ active, upcoming }) => {
+        this.currentBooking.set(active);
+        this.upcomingBooking.set(upcoming.data.length > 0 ? upcoming.data[0] : null);
       },
       error: (err: unknown) => {
         this.error.set(this.extractErrorMessage(err));
-        this.loading.set(false);
       }
-    });
-  }
-
-  private fetchBookings(email: string): void {
-    const current$ = this.bookingApi.getAll({ guestQuery: email, status: 'CheckedIn', pageNumber: 1, pageSize: 1, sortBy: 'bookedAt', sortDescending: true });
-    const upcoming$ = this.bookingApi.getAll({ guestQuery: email, status: 'Booked', pageNumber: 1, pageSize: 1, sortBy: 'checkInDate', sortDescending: false });
-
-    forkJoin([current$, upcoming$]).pipe(
-      takeUntilDestroyed(this.destroyRef),
-      finalize(() => this.loading.set(false))
-    ).subscribe({
-      next: ([currentRes, upcomingRes]) => {
-        this.currentBooking.set(currentRes.data.length > 0 ? currentRes.data[0] : null);
-        this.upcomingBooking.set(upcomingRes.data.length > 0 ? upcomingRes.data[0] : null);
-      },
-      error: (err: unknown) => this.error.set(this.extractErrorMessage(err))
     });
   }
 

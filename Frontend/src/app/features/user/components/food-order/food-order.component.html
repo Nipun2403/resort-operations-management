@@ -1,0 +1,29 @@
+<div class="food-order-container">
+  @if (loading()) {
+    <div class="spinner-container">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  } @else if (error()) {
+    <app-alert type="error" [message]="error()!" (closed)="error.set(null)">
+      <button mat-button (click)="fetchMenuItems()">Retry</button>
+    </app-alert>
+  } @else {
+    <div class="food-order-layout">
+      <div class="menu-section">
+        <app-menu-grid
+          [menuItems]="menuItems()"
+          (addToCart)="onAddToCart($event)"
+        />
+      </div>
+
+      <div class="cart-section">
+        <app-cart-drawer
+          [cartItems]="cartItems()"
+          [isOpen]="cartOpen()"
+          (cartToggle)="cartOpen.set(!cartOpen())"
+          (checkout)="placeOrder()"
+        />
+      </div>
+    </div>
+  }
+</div>

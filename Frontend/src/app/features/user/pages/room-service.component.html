@@ -1,0 +1,49 @@
+<div class="room-service">
+  @if (loadingActiveBooking()) {
+    <div style="display: flex; justify-content: center; padding: 32px;">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  } @else if (activeBookingError()) {
+    <app-alert
+      type="error"
+      [message]="activeBookingError()!"
+      (closed)="activeBookingError.set(null)"
+    >
+      <button
+        mat-button
+        (click)="loadActiveBooking()"
+      >
+        Retry
+      </button>
+    </app-alert>
+  } @else if (activeBooking(); as booking) {
+    <mat-tab-group>
+      <mat-tab label="Food Order">
+        <app-food-order
+          [activeBookingId]="booking.id"
+          (orderPlaced)="onOrderPlaced()"
+        />
+      </mat-tab>
+      <mat-tab label="Request Service">
+        <app-request-service
+          [activeBooking]="booking"
+          (requestCreated)="onRequestCreated()"
+        />
+      </mat-tab>
+      <mat-tab label="My Requests">
+        <app-my-requests
+          [roomIds]="roomIds()"
+          [refresh]="refreshRequests()"
+        />
+      </mat-tab>
+    </mat-tab-group>
+  } @else {
+    <mat-card class="no-booking-card">
+      <mat-card-content class="no-booking-content">
+        <mat-icon class="info-icon">info</mat-icon>
+        <p>You need an active stay (Checked In) to use room service.</p>
+        <p>Please visit <a routerLink="/user/bookings">My Bookings</a>.</p>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

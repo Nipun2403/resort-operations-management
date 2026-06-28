@@ -1,0 +1,52 @@
+<div
+  class="cart-drawer"
+  [class.open]="isOpen()"
+>
+  <button
+    mat-raised-button
+    class="cart-toggle-btn"
+    (click)="cartToggle.emit()"
+    aria-label="Toggle shopping cart"
+  >
+    <mat-icon>shopping_cart</mat-icon>
+    Cart ({{ itemCount() }}) – {{ subtotal() | currency }}
+  </button>
+
+  @if (isOpen()) {
+    <div class="cart-panel">
+      <div class="cart-header">
+        <h3>Shopping Cart</h3>
+        <button mat-icon-button (click)="cartToggle.emit()" aria-label="Close cart">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <div class="cart-items-list">
+        @for (item of cartItems(); track item.menuItemId) {
+          <div class="cart-item">
+            <span class="item-name">{{ item.name }} x{{ item.quantity }}</span>
+            <span class="item-price">{{ item.price * item.quantity | currency }}</span>
+          </div>
+        } @empty {
+          <p class="empty-cart">Your cart is empty.</p>
+        }
+      </div>
+
+      <div class="cart-footer">
+        <div class="total-row">
+          <span>Total:</span>
+          <span class="total-price">{{ subtotal() | currency }}</span>
+        </div>
+        <button
+          mat-raised-button
+          color="primary"
+          class="checkout-btn"
+          (click)="checkout.emit()"
+          [disabled]="cartItems().length === 0"
+        >
+          Place Order
+        </button>
+      </div>
+    </div>
+  }
+</div>
