@@ -4,6 +4,7 @@ import { MatDialogModule, MAT_DIALOG_DATA, MatDialogRef } from '@angular/materia
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { HttpErrorResponse } from '@angular/common/http';
 import { finalize } from 'rxjs/operators';
 import { BookingApiService } from '../../../../features/user/services/booking-api.service';
 
@@ -42,8 +43,24 @@ export class SuccessDialogComponent {
         this.snackBar.open(`Checked in. Room: ${updated.rooms?.[0]?.roomNumber || 'assigned'}`, 'Close', { duration: 3000 });
         this.dialogRef.close(true);
       },
-      error: (err) => this.snackBar.open('Check-in failed: ' + (err.error?.message || err.message), 'Close', { duration: 5000 })
+      error: (err: HttpErrorResponse) => {
+        const message = this.extractCheckInError(err);
+        this.snackBar.open(message, 'Close', { duration: 5000 });
+      }
     });
+  }
+
+  private extractCheckInError(err: HttpErrorResponse): string {
+    // If the response body is a plain string, use it directly.
+    if (typeof err.error === 'string') {
+      return err.error;
+    }
+    // If it's an object with a message property (e.g., JSON error)
+    if (err.error?.message) {
+      return err.error.message;
+    }
+    // Fallback to the HTTP status text or generic message
+    return `Check-in failed (${err.status})`;
   }
 
   close(): void {

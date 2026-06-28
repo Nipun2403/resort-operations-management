@@ -3282,6 +3282,44 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: front-desk-refactor-fix.md (Fix Check-In Error Message Extraction)
+Date: 2026-06-28
+================================================================================
+
+FILES MODIFIED
+--------------
+✓ src/app/features/front-desk/components/success-dialog/success-dialog.component.ts
+  — Added HttpErrorResponse import, checkInNow error callback, and extractCheckInError message extraction.
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Fix Check-In Error Message Extraction (§3)
+  ✓ Implemented extractCheckInError checking typeof err.error string, err.error.message, and falling back to check-in failed with status text.
+
+KNOWN DEVIATIONS
+----------------
+None.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+☑ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+☑ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+☑ I confirm that all API calls match the spec contracts exactly.
+☑ I confirm that all regex validators are character-for-character matches
+  to the spec.
+☑ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
 
 
 
