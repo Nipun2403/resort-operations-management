@@ -17,6 +17,8 @@ import { MaintenanceApiService } from '../../user/services/maintenance-api.servi
 import { OrderApiService } from '../../user/services/order-api.service';
 import { AlertComponent } from '../../auth/components/alert.component';
 import { ActiveTicketsDialogComponent } from '../components/active-tickets-dialog/active-tickets-dialog.component';
+import { MovementTableComponent } from '../components/movement-table/movement-table.component';
+import { Booking } from '../../admin/models/booking.model';
 
 @Component({
   selector: 'app-front-desk-dashboard',
@@ -31,11 +33,13 @@ import { ActiveTicketsDialogComponent } from '../components/active-tickets-dialo
     MatProgressSpinnerModule,
     MatSnackBarModule,
     AlertComponent,
+    MovementTableComponent,
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
 })
 export class PlaceholderDashboardComponent implements OnInit {
+  refreshTable = signal(0);
   arrivalsCount = signal(0);
   departuresCount = signal(0);
   activeTickets = signal<{
@@ -132,6 +136,10 @@ export class PlaceholderDashboardComponent implements OnInit {
       width: '90vw',
       maxWidth: '800px',
     });
+  }
+
+  openBookingModal(booking: Booking): void {
+    console.log('Selected booking:', booking.id);
   }
 
   private extractErrorMessage(err: any): string {

@@ -58,10 +58,11 @@
     </div>
   }
 
-  <!-- Placeholder for Part 2: Search Bar + Table -->
-  <div class="table-area">
-    <p>Table and search will be inserted by Part 2 spec.</p>
-  </div>
+  <!-- Movement Table -->
+  <app-movement-table 
+    [refresh]="refreshTable()" 
+    (bookingSelected)="openBookingModal($event)" 
+  />
 
   <!-- Placeholder for future Room Status Grid -->
 </div>
