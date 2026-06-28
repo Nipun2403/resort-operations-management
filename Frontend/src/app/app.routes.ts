@@ -2,6 +2,7 @@ import { inject } from '@angular/core';
 import { Routes } from '@angular/router';
 import { AuthRedirectGuard } from './core/guards/auth-redirect.guard';
 import { adminGuard } from './core/guards/admin.guard';
+import { customerGuard } from './core/guards/customer.guard';
 
 export const routes: Routes = [
   {
@@ -48,6 +49,37 @@ export const routes: Routes = [
         loadComponent: () => import('./features/admin/pages/profile.component')
           .then(m => m.PlaceholderProfileComponent),
         data: { title: 'Profile' }
+      },
+      { path: '**', redirectTo: 'dashboard' }
+    ]
+  },
+  {
+    path: 'user',
+    canMatch: [customerGuard],
+    canActivate: [customerGuard],
+    loadComponent: () => import('./features/user/user-shell.component')
+      .then(m => m.UserShellComponent),
+    children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./features/user/pages/dashboard.component')
+          .then(m => m.PlaceholderCustomerDashboardComponent)
+      },
+      {
+        path: 'bookings',
+        loadComponent: () => import('./features/user/pages/bookings.component')
+          .then(m => m.PlaceholderCustomerBookingsComponent)
+      },
+      {
+        path: 'room-service',
+        loadComponent: () => import('./features/user/pages/room-service.component')
+          .then(m => m.PlaceholderCustomerRoomServiceComponent)
+      },
+      {
+        path: 'profile',
+        loadComponent: () => import('./features/user/pages/profile.component')
+          .then(m => m.PlaceholderCustomerProfileComponent)
       },
       { path: '**', redirectTo: 'dashboard' }
     ]
