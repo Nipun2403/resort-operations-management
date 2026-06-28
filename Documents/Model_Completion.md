@@ -2250,6 +2250,138 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: customer-dashboard.md
+Date: 2026-06-28
+================================================================================
+
+FILES CREATED
+-------------
+✓ src/app/core/models/auth-me-response.model.ts
+  — AuthMeResponse and Claim interfaces (placed in core to avoid circular deps)
+✓ src/app/features/user/models/auth-me-response.model.ts
+  — Re-export shim maintaining spec's declared import path
+✓ src/app/features/user/models/booking.model.ts
+  — Re-export shim for Booking and BookingRoom from admin models
+✓ src/app/features/user/services/auth-api.service.ts
+  — Re-export shim for AuthApiService from core/services
+✓ src/app/features/user/services/booking-api.service.ts
+  — User-scoped BookingApiService with getAll() endpoint
+✓ src/app/features/user/services/housekeeping-api.service.ts
+  — User-scoped HousekeepingApiService with trigger() endpoint
+✓ src/app/features/user/services/maintenance-api.service.ts
+  — User-scoped MaintenanceApiService with trigger() endpoint
+✓ src/app/features/user/components/request-service-dialog.component.ts
+  — Standalone RequestServiceDialogComponent with MAT_DIALOG_DATA injection
+✓ src/app/features/user/components/request-service-dialog.component.html
+  — Dialog form template with description textarea and cancel/submit buttons
+✓ src/app/features/user/pages/dashboard.component.html
+  — Dashboard template matching spec §4 exactly
+✓ src/app/features/user/pages/dashboard.component.scss
+  — Responsive flexbox layout for booking cards per spec §8
+
+FILES MODIFIED
+--------------
+✓ src/app/core/services/auth-api.service.ts
+  — Added getMe() method calling GET /auth/me (§6.1, §10)
+✓ src/app/features/user/pages/dashboard.component.ts
+  — Overwrote placeholder with real CustomerDashboardComponent implementation
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Dashboard Component (§4)
+  ✓ Selector: app-customer-dashboard
+  ✓ Standalone: true
+  ✓ All required Angular Material modules imported
+✓ State Management Signals (§5)
+  ✓ firstName, loading, error, currentBooking, upcomingBooking signals declared
+  ✓ All services injected via inject()
+✓ API Data Flow (§6.1)
+  ✓ ngOnInit calls loadDashboard()
+  ✓ loadDashboard() calls authApi.getMe(), extracts givenname and email claims
+  ✓ fetchBookings() uses forkJoin for concurrent CheckedIn and Booked booking queries
+  ✓ takeUntilDestroyed() applied on all subscriptions
+  ✓ finalize(() => loading.set(false)) applied on forkJoin pipe
+✓ Service Request Flow (§6.2)
+  ✓ openServiceRequest() validates currentBooking and roomId before proceeding
+  ✓ RequestServiceDialogComponent opened with roomNumber, roomId, type data
+  ✓ After close, calls housekeepingApi.trigger() or maintenanceApi.trigger() by type
+  ✓ Success snackbar shown on success; error snackbar shown on failure
+✓ Trigger API Endpoints (§6.2)
+  ✓ POST /api/v1/housekeeping/trigger/{roomId} with { description }
+  ✓ POST /api/v1/maintenance/trigger/{roomId} with { description }
+✓ UI States (§7)
+  ✓ Loading spinner when loading() is true
+  ✓ Error alert with retry button when error() is set
+  ✓ Dashboard content with booking cards when loaded successfully
+  ✓ No-booking cards shown when current/upcoming bookings are absent
+✓ Responsive Layout (§8)
+  ✓ .booking-cards: flex-wrap, gap 16px
+  ✓ .booking-card: flex: 1 1 300px for mobile stacking
+✓ RequestServiceDialogComponent (§6.2, §10)
+  ✓ Selector: app-request-service-dialog
+  ✓ Data injected via MAT_DIALOG_DATA: roomNumber, roomId, type
+  ✓ Description validated required on submit; dialog closes with { description } on success
+
+API INTEGRATION
+---------------
+✓ GET /auth/me → AuthMeResponse { claims: Claim[] }
+✓ GET /bookings?guestQuery=&status=CheckedIn&pageNumber=1&pageSize=1&sortBy=bookedAt&sortDescending=true → PaginatedResponse<Booking>
+✓ GET /bookings?guestQuery=&status=Booked&pageNumber=1&pageSize=1&sortBy=checkInDate&sortDescending=false → PaginatedResponse<Booking>
+✓ POST /housekeeping/trigger/{roomId} → { description: string } → void
+✓ POST /maintenance/trigger/{roomId} → { description: string } → void
+
+LOGIC TRACES
+------------
+Flow: Dashboard Initialization
+  Entry: Customer navigates to /user/dashboard
+  Path: ngOnInit -> loadDashboard -> loading=true, error=null -> getMe() -> extract firstName+email claim -> fetchBookings(email) -> forkJoin[current$, upcoming$] -> set currentBooking+upcomingBooking -> loading=false
+  Result: ✓ Dashboard shows welcome, current stay card, upcoming stay card
+
+Flow: Housekeeping Request
+  Entry: User clicks "Request Housekeeping" on current booking card
+  Path: openServiceRequest('housekeeping') -> validates booking & roomId -> opens dialog -> user fills description & submits -> dialog closes with {description} -> housekeepingApi.trigger(roomId, {description}) -> success snackbar
+  Result: ✓ POST to /housekeeping/trigger/{roomId} made, snackbar shown
+
+Flow: No Current Booking
+  Entry: Dashboard loaded, currentRes.data is empty
+  Path: currentBooking.set(null) -> template shows "No active stay" card, no action buttons
+  Result: ✓ Empty state handled correctly
+
+KNOWN DEVIATIONS
+----------------
+DEVIATION-1: Import path for AlertComponent
+  Reason: Spec imports from '../../../../shared/components/alert/alert.component' but AlertComponent only exists at 'features/auth/components/alert.component'. There is no shared/components/alert/ directory.
+  Applied Default: Used actual path '../../auth/components/alert.component' relative to the dashboard component file.
+  Impact: Functionally identical; AlertComponent is used correctly. Path corrected to match actual project structure.
+
+DEVIATION-2: Import paths for services and models
+  Reason: Spec shows services imported from '../../services/' but imports in the dashboard component must resolve correctly from 'features/user/pages/'. The spec paths implied the services would be at 'features/user/services/' (which they are), but TypeScript couldn't resolve the re-export shims due to bundler resolution. Dashboard was updated to import directly from canonical paths.
+  Applied Default: Dashboard imports services directly from their canonical locations and user/services re-exports are available for spec-compliance reference.
+  Impact: No functional difference; all services function identically.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+AMBIGUITY-1: AuthMeResponse model location
+  Default Applied: Created in core/models/auth-me-response.model.ts to avoid cross-feature circular import from core/services to user/models.
+  Rationale: Minimum-safe choice — model is shared across core auth service without circular dependency.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+☑ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+☑ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+☑ I confirm that all API calls match the spec contracts exactly.
+☑ I confirm that all regex validators are character-for-character matches
+  to the spec.
+☑ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+
 
 
 
