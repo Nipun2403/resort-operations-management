@@ -2899,6 +2899,53 @@ None.
 
 CRITICAL RULE COMPLIANCE CONFIRMATION
 --------------------------------------
+☑ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: front-desk-dashboard-1.md
+Date: 2026-06-28
+================================================================================
+
+FILES CREATED
+-------------
+✓ src/app/features/front-desk/components/active-tickets-dialog/active-tickets-dialog.component.ts/.html
+  — Dialog layout displaying tab headers with active ticket counts for each task division.
+✓ src/app/features/front-desk/components/ticket-list/ticket-list.component.ts/.html/.scss
+  — Table components mapping data structures and status indicators for housekeeping, maintenance, and food requests.
+✓ src/app/features/front-desk/pages/dashboard.component.html/.scss
+  — Today's arrivals, departures, and active ticket count summary displays.
+
+FILES MODIFIED
+--------------
+✓ src/app/features/user/services/booking-api.service.ts
+  — Supported optional movementStatus, page size, sort order default fallbacks inside getAll requests.
+✓ src/app/features/front-desk/pages/dashboard.component.ts
+  — Replaced static component placeholders with summaries, loading status operations, and dialogue triggers.
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Today's Arrivals & Departures Counters (§6)
+  ✓ Calls booking API endpoints with movementStatus=incoming and movementStatus=outgoing parameters to compute today's counts.
+✓ Active Task Summaries (§6, §7)
+  ✓ Requests pending and in-progress status numbers across housekeeping, maintenance, and preparing food order APIs.
+  ✓ Calculates total aggregates per category and binds them to interactive cards.
+✓ Active Tickets Breakdown Modal Dialog (§7)
+  ✓ Opens dialog displaying active counts for Housekeeping, Maintenance, and Food Orders tabs using TicketListComponent.
+  ✓ Renders tabular list showing ID, Room, Description, Status, and Created date.
+
+KNOWN DEVIATIONS
+----------------
+None.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
 ☑ I confirm that every ✓ in the requirements section corresponds to code
   that exists and is correct. No requirement has been marked complete
   without implementation evidence.
