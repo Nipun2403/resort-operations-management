@@ -68,7 +68,7 @@ export class AdminShellComponent {
     while (route.firstChild) {
       route = route.firstChild;
     }
-    const title = route.snapshot.data['title'] || 'Admin';
+    const title = route.snapshot?.data?.['title'] || 'Admin';
     this.title.set(title);
   }
 
