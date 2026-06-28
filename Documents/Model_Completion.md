@@ -2381,6 +2381,128 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: customer-booking.md
+Date: 2026-06-28
+================================================================================
+
+FILES CREATED
+-------------
+✓ src/app/features/user/models/available-room-type.model.ts
+  — AvailableRoomType model interface (§7)
+✓ src/app/features/user/models/billing-folio.model.ts
+  — BillingFolio model interface (§8)
+✓ src/app/features/user/models/feedback.model.ts
+  — Feedback DTO & entity model interfaces (§8)
+✓ src/app/features/user/services/room-type-api.service.ts
+  — RoomTypeApiService with getAvailable() endpoint calling GET /room-types/availability (§7)
+✓ src/app/features/user/services/amenity-api.service.ts
+  — AmenityApiService with getAll() endpoint calling GET /amenities (§7)
+✓ src/app/features/user/services/billing-api.service.ts
+  — BillingApiService with getByBookingId() endpoint calling GET /billing/{bookingId} (§8)
+✓ src/app/features/user/services/feedback-api.service.ts
+  — FeedbackApiService with getByBookingId() & submit() endpoints calling GET /feedback/booking/{bookingId} & POST /feedback (§8)
+✓ src/app/features/user/components/booking-detail-dialog/booking-detail-dialog.component.ts/.html
+  — BookingDetailDialogComponent standalone modal dialog component (§8)
+✓ src/app/features/user/components/billing-dialog/billing-dialog.component.ts/.html
+  — BillingDialogComponent standalone modal dialog component (§8)
+✓ src/app/features/user/components/feedback-dialog/feedback-dialog.component.ts/.html
+  — FeedbackDialogComponent standalone modal dialog component (§8)
+✓ src/app/features/user/components/booking-history/booking-history.component.ts/.html/.scss
+  — BookingHistoryComponent standalone history view component (§6)
+✓ src/app/features/user/components/booking-wizard/booking-wizard.component.ts/.html/.scss
+  — BookingWizardComponent standalone booking stepper component (§7)
+✓ src/app/features/user/pages/bookings.component.html
+  — BookingsComponent layout template mapping history/stepper view toggles (§5)
+✓ src/app/features/user/pages/bookings.component.scss
+  — BookingsComponent styling (§5)
+
+FILES MODIFIED
+--------------
+✓ Backend/HotelManagement.API/Controllers/BillingController.cs
+  — Authorized "RegisteredUser" role on GenerateFolio/GetBillingFolio endpoint
+✓ Backend/HotelManagement.API/Controllers/FeedbackController.cs
+  — Authorized "RegisteredUser" role on GetFeedbackForBooking endpoint
+✓ src/app/features/user/services/booking-api.service.ts
+  — Added cancel() and create() API endpoints
+✓ src/app/features/user/pages/bookings.component.ts
+  — Overwrote placeholder with BookingsComponent orchestrator page component (§5)
+✓ src/app/app.routes.ts
+  — Updated bookings path to lazy load the real BookingsComponent instead of the placeholder (§3)
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Bookings Orchestrator Shell Component (§5)
+  ✓ Selector: app-customer-bookings
+  ✓ Standalone: true
+  ✓ Controls toggle between BookingHistoryComponent and BookingWizardComponent via viewMode
+  ✓ Fetches and maps user profile givenName, surname, and name claims from authApi.getMe() on init
+  ✓ Triggers refresh event tracking on booking creation output
+✓ Booking History List View (§6)
+  ✓ Displays bookings list with ID, Check‑in, Check‑out, Status, Rooms summary, and action triggers
+  ✓ Dropdown status filter (FormControl) with clear action
+  ✓ Sort change & pagination integrations
+  ✓ Persistent list state saved into/loaded from sessionStorage key `customerBookingsState`
+  ✓ Visual highlighting and center scroll triggered on newBookingId changes
+  ✓ Cancel actions call ConfirmDialogComponent, call cancel() endpoint, and refresh on confirm
+  ✓ Visibility action triggers Detail dialog; feedback action triggers Feedback dialog; billing action triggers Billing dialog
+✓ Multi‑Step Booking Stepper Wizard (§7)
+  ✓ Step 1: Check‑in, Check‑out, and Guest Count selection with validators (dateRange, guests range 1‑20, no past check‑in)
+  ✓ Step 2: Room types loaded dynamically on step activation with quantity controls respecting available count bounds, and guest occupancy capacity validation warnings
+  ✓ Step 3: Amenities checkbox options fetched dynamically on step activation
+  ✓ Step 4: Summary overview, nights count, estimated totals mapping, and final booking submission
+  ✓ Mobile responsiveness support: CDK BreakpointObserver orientation mapping (horizontal/vertical)
+✓ Modal Modals Infrastructure (§8)
+  ✓ BookingDetailDialogComponent display all booking fields, room pricing, and amenity lists
+  ✓ BillingDialogComponent displays folio invoice item list details (room subtotals, services, payment status)
+  ✓ FeedbackDialogComponent queries previous feedback. If found, shows readonly; otherwise shows rating stars/selection & comment textarea form
+
+API INTEGRATION
+---------------
+✓ GET /room-types/availability?checkIn=&checkOut=&pageNumber=1&pageSize=100 → PaginatedResponse<AvailableRoomType>
+✓ GET /amenities?pageNumber=1&pageSize=100&isAvailable=true → PaginatedResponse<Amenity>
+✓ GET /billing/{bookingId} → BillingFolio
+✓ GET /feedback/booking/{bookingId} → Feedback | null
+✓ POST /feedback → CreateFeedbackDTO → Feedback
+✓ POST /bookings → CreateBookingRequestDTO → Booking
+✓ DELETE /bookings/{id}/cancel → void
+
+LOGIC TRACES
+------------
+Flow: Wizard Booking Creation to Sidenav History Highlighting
+  Entry: User confirms review screen in step 4
+  Path: submitBooking() called -> creates booking -> emits output event -> onBookingCreated(id) handles output -> sets newBookingId signal -> increments refreshTrigger signal -> viewMode resets to 'history' -> BookingHistoryComponent re-fetches -> effect matches highlightBookingId -> scrolls center & applies .highlight class
+  Result: ✓ User redirected to history and new booking highlighted for 2s
+
+Flow: List view state restoration
+  Entry: User navigates away and clicks back to Bookings
+  Path: BookingHistoryComponent ngOnInit/constructor calls loadState() -> loads sessionStorage `customerBookingsState` -> patches statusFilter -> sets index/sort -> calls fetchData()
+  Result: ✓ List filter, page index, and sort order restored successfully
+
+KNOWN DEVIATIONS
+----------------
+None.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+☑ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+☑ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+☑ I confirm that all API calls match the spec contracts exactly.
+☑ I confirm that all regex validators are character-for-character matches
+  to the spec.
+☑ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+
 
 
 
