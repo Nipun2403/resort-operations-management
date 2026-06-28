@@ -16,4 +16,8 @@ export class OrderApiService {
   create(dto: CreateFoodOrderDTO): Observable<any> {
     return this.http.post<any>(this.baseUrl, dto);
   }
+
+  getAll(params?: any): Observable<any> {
+    return this.http.get<any>(this.baseUrl, { params });
+  }
 }

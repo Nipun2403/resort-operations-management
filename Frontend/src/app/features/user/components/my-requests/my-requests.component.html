@@ -19,87 +19,105 @@
   }
 
   @if (requests().length > 0) {
-    @if (isMobile()) {
-      <div class="table-container">
-        <table
-          mat-table
-          [dataSource]="requests()"
-          matSort
-          matSortDisableClear
-        >
-          <!-- Type Column -->
-          <ng-container matColumnDef="type">
-            <th mat-header-cell *matHeaderCellDef>Type</th>
-            <td mat-cell *matCellDef="let r">{{ r.type }}</td>
-          </ng-container>
+    <div class="table-container">
+      <table
+        mat-table
+        [dataSource]="requests()"
+        matSort
+        matSortDisableClear
+      >
+        <!-- Type Column -->
+        <ng-container matColumnDef="type">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+          >
+            Type
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let r"
+          >
+            {{ r.type }}
+          </td>
+        </ng-container>
 
-          <!-- Status Column -->
-          <ng-container matColumnDef="status">
-            <th mat-header-cell *matHeaderCellDef>Status</th>
-            <td mat-cell *matCellDef="let r">
-              <span class="status-badge" [class]="r.status.toLowerCase()">
-                {{ r.status }}
-              </span>
-            </td>
-          </ng-container>
+        <!-- Room Column -->
+        <ng-container matColumnDef="room">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+          >
+            Room
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let r"
+          >
+            {{ r.roomNumber }}
+          </td>
+        </ng-container>
 
-          <!-- Created Column -->
-          <ng-container matColumnDef="createdAt">
-            <th mat-header-cell *matHeaderCellDef>Created</th>
-            <td mat-cell *matCellDef="let r">{{ r.createdAt | date:'shortDate' }}</td>
-          </ng-container>
+        <!-- Description Column -->
+        <ng-container matColumnDef="description">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+          >
+            Description
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let r"
+          >
+            {{ r.description }}
+          </td>
+        </ng-container>
 
-          <tr mat-header-row *matHeaderRowDef="['type', 'status', 'createdAt']"></tr>
-          <tr mat-row *matRowDef="let row; columns: ['type', 'status', 'createdAt']" (click)="openDetail(row)" class="clickable-row"></tr>
-        </table>
-      </div>
-    } @else {
-      <div class="table-container">
-        <table
-          mat-table
-          [dataSource]="requests()"
-          matSort
-          matSortDisableClear
-        >
-          <!-- Type Column -->
-          <ng-container matColumnDef="type">
-            <th mat-header-cell *matHeaderCellDef>Type</th>
-            <td mat-cell *matCellDef="let r">{{ r.type }}</td>
-          </ng-container>
+        <!-- Status Column -->
+        <ng-container matColumnDef="status">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+          >
+            Status
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let r"
+          >
+            <span class="status-badge" [class]="r.status.toLowerCase()">
+              {{ r.status }}
+            </span>
+          </td>
+        </ng-container>
 
-          <!-- Room Column -->
-          <ng-container matColumnDef="room">
-            <th mat-header-cell *matHeaderCellDef>Room</th>
-            <td mat-cell *matCellDef="let r">{{ r.roomNumber }}</td>
-          </ng-container>
+        <!-- Created Column -->
+        <ng-container matColumnDef="createdAt">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+          >
+            Created
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let r"
+          >
+            {{ r.createdAt | date:'short' }}
+          </td>
+        </ng-container>
 
-          <!-- Description Column -->
-          <ng-container matColumnDef="description">
-            <th mat-header-cell *matHeaderCellDef>Description</th>
-            <td mat-cell *matCellDef="let r">{{ r.description }}</td>
-          </ng-container>
-
-          <!-- Status Column -->
-          <ng-container matColumnDef="status">
-            <th mat-header-cell *matHeaderCellDef>Status</th>
-            <td mat-cell *matCellDef="let r">
-              <span class="status-badge" [class]="r.status.toLowerCase()">
-                {{ r.status }}
-              </span>
-            </td>
-          </ng-container>
-
-          <!-- Created Column -->
-          <ng-container matColumnDef="createdAt">
-            <th mat-header-cell *matHeaderCellDef>Created</th>
-            <td mat-cell *matCellDef="let r">{{ r.createdAt | date:'short' }}</td>
-          </ng-container>
-
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-        </table>
-      </div>
-    }
+        <tr
+          mat-header-row
+          *matHeaderRowDef="displayedColumns"
+        ></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns"
+        ></tr>
+      </table>
+    </div>
   } @else if (!loading()) {
     <p class="no-requests">No housekeeping or maintenance requests found.</p>
   }

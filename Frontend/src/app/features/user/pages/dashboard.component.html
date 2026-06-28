@@ -49,6 +49,9 @@
             <p><strong>Check&#8209;in:</strong> {{ upcomingBooking()!.checkInDate }}</p>
             <p><strong>Check&#8209;out:</strong> {{ upcomingBooking()!.checkOutDate }}</p>
             <p><strong>Status:</strong> {{ upcomingBooking()!.bookingStatus }}</p>
+            @if (upcomingRoomTypes().length > 0) {
+              <p><strong>Room Type(s):</strong> {{ upcomingRoomTypes().join(', ') }}</p>
+            }
           </mat-card-content>
         </mat-card>
       } @else {
@@ -59,5 +62,65 @@
         </mat-card>
       }
     </div>
+
+    @if (currentBooking()) {
+      <div class="room-service-status">
+        <h2>Room Service Status</h2>
+        <div class="status-grid">
+          <!-- Housekeeping -->
+          <mat-card class="status-card">
+            <mat-card-header>
+              <mat-card-title>Housekeeping</mat-card-title>
+              <mat-card-subtitle>{{ pendingHousekeeping().length }} pending / in-progress</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              @for (item of pendingHousekeeping(); track item.id) {
+                <div class="status-item">
+                  <p class="status-line"><strong>{{ item.roomNumber }}</strong> – <span class="badge" [class]="item.status.toLowerCase()">{{ item.status }}</span></p>
+                  <p class="description">{{ item.description }}</p>
+                </div>
+              } @empty {
+                <p class="no-status-items">No pending requests.</p>
+              }
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Maintenance -->
+          <mat-card class="status-card">
+            <mat-card-header>
+              <mat-card-title>Maintenance</mat-card-title>
+              <mat-card-subtitle>{{ pendingMaintenance().length }} pending / in-progress</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              @for (item of pendingMaintenance(); track item.id) {
+                <div class="status-item">
+                  <p class="status-line"><strong>{{ item.roomNumber }}</strong> – <span class="badge" [class]="item.status.toLowerCase()">{{ item.status }}</span></p>
+                  <p class="description">{{ item.description }}</p>
+                </div>
+              } @empty {
+                <p class="no-status-items">No pending requests.</p>
+              }
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Food Orders -->
+          <mat-card class="status-card">
+            <mat-card-header>
+              <mat-card-title>Food Orders</mat-card-title>
+              <mat-card-subtitle>{{ pendingFoodOrders().length }} preparing / pending</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              @for (order of pendingFoodOrders(); track order.id) {
+                <div class="status-item">
+                  <p class="status-line"><strong>Order #{{ order.id }}</strong> – <span class="badge" [class]="order.status.toLowerCase()">{{ order.status }}</span></p>
+                </div>
+              } @empty {
+                <p class="no-status-items">No pending orders.</p>
+              }
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+    }
   }
 </div>

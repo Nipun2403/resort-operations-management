@@ -18,12 +18,14 @@ export class HousekeepingApiService {
     pageNumber?: number;
     pageSize?: number;
     status?: string;
+    roomId?: number;
   }): Observable<PaginatedResponse<HousekeepingTask>> {
     let httpParams = new HttpParams();
     if (params) {
       if (params.pageNumber) httpParams = httpParams.set('pageNumber', params.pageNumber.toString());
       if (params.pageSize) httpParams = httpParams.set('pageSize', params.pageSize.toString());
       if (params.status) httpParams = httpParams.set('status', params.status);
+      if (params.roomId) httpParams = httpParams.set('roomId', params.roomId.toString());
     }
     return this.http.get<PaginatedResponse<HousekeepingTask>>(this.baseUrl, { params: httpParams });
   }

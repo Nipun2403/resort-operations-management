@@ -19,9 +19,13 @@ import { HousekeepingApiService } from '../services/housekeeping-api.service';
 import { MaintenanceApiService } from '../services/maintenance-api.service';
 import { CustomerBookingFacade } from '../facades/customer-booking.facade';
 import { of, switchMap } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { Booking } from '../../admin/models/booking.model';
 import { AlertComponent } from '../../auth/components/alert.component';
 import { RequestServiceDialogComponent, RequestServiceDialogData, RequestServiceDialogResult } from '../components/request-service-dialog.component';
+import { RoomTypeApiService } from '../services/room-type-api.service';
+import { OrderApiService } from '../services/order-api.service';
+import { CustomerRequest } from '../models/customer-request.model';
 
 @Component({
   selector: 'app-customer-dashboard',
@@ -49,6 +53,10 @@ export class PlaceholderCustomerDashboardComponent implements OnInit {
   error = signal<string | null>(null);
   currentBooking = signal<Booking | null>(null);
   upcomingBooking = signal<Booking | null>(null);
+  upcomingRoomTypes = signal<string[]>([]);
+  pendingHousekeeping = signal<CustomerRequest[]>([]);
+  pendingMaintenance = signal<CustomerRequest[]>([]);
+  pendingFoodOrders = signal<any[]>([]);
 
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
@@ -56,6 +64,8 @@ export class PlaceholderCustomerDashboardComponent implements OnInit {
   private readonly bookingApi = inject(BookingApiService);
   private readonly housekeepingApi = inject(HousekeepingApiService);
   private readonly maintenanceApi = inject(MaintenanceApiService);
+  private readonly roomTypeApi = inject(RoomTypeApiService);
+  private readonly orderApi = inject(OrderApiService);
   private readonly bookingFacade = inject(CustomerBookingFacade);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -94,10 +104,88 @@ export class PlaceholderCustomerDashboardComponent implements OnInit {
       next: ({ active, upcoming }) => {
         this.currentBooking.set(active);
         this.upcomingBooking.set(upcoming.data.length > 0 ? upcoming.data[0] : null);
+        if (active) {
+          this.loadRoomServiceStatus();
+        } else {
+          this.pendingHousekeeping.set([]);
+          this.pendingMaintenance.set([]);
+          this.pendingFoodOrders.set([]);
+        }
+        if (upcoming.data.length > 0) {
+          this.loadUpcomingRoomTypes(upcoming.data[0]);
+        } else {
+          this.upcomingRoomTypes.set([]);
+        }
       },
       error: (err: unknown) => {
         this.error.set(this.extractErrorMessage(err));
       }
+    });
+  }
+
+  private loadUpcomingRoomTypes(booking: Booking): void {
+    if (!booking.rooms || booking.rooms.length === 0) {
+      this.upcomingRoomTypes.set([]);
+      return;
+    }
+    const ids = [...new Set(booking.rooms.map(r => r.roomTypeId))];
+    const requests = ids.map(id =>
+      this.roomTypeApi.getById(id).pipe(
+        catchError(() => of(null)),
+        map(rt => rt?.name ?? `Room Type ${id}`)
+      )
+    );
+    forkJoin(requests).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(names => {
+      this.upcomingRoomTypes.set(names);
+    });
+  }
+
+  private loadRoomServiceStatus(): void {
+    const booking = this.currentBooking();
+    if (!booking) return;
+    const roomIds = booking.rooms.map(r => r.roomId).filter(id => id != null) as number[];
+    if (roomIds.length === 0) return;
+
+    // Housekeeping
+    const hkReqs = roomIds.map(roomId =>
+      this.housekeepingApi.getAll({ roomId, status: 'Pending,InProgress', pageSize: 10 }).pipe(
+        map(res => res.data.map(hk => ({
+          ...hk,
+          type: 'Housekeeping' as const,
+          roomNumber: hk.location ?? `Room ${hk.roomId}`,
+          description: hk.description ?? ''
+        }))),
+        catchError(() => of([]))
+      )
+    );
+    // Maintenance
+    const mtReqs = roomIds.map(roomId =>
+      this.maintenanceApi.getAll({ roomId, status: 'Pending,InProgress', pageSize: 10 }).pipe(
+        map(res => res.data.map(mt => ({
+          ...mt,
+          type: 'Maintenance' as const,
+          roomNumber: mt.location ?? `Room ${mt.roomId}`,
+          description: mt.description ?? ''
+        }))),
+        catchError(() => of([]))
+      )
+    );
+    // Food orders for the booking
+    const food$ = this.orderApi.getAll({ status: 'Pending,Preparing', pageSize: 200 }).pipe(
+      map((res: any) => res.data.filter((order: any) => order.bookingId === booking.id)),
+      catchError(() => of([]))
+    );
+
+    forkJoin({
+      hk: forkJoin(hkReqs).pipe(map(results => results.flat())),
+      mt: forkJoin(mtReqs).pipe(map(results => results.flat())),
+      food: food$
+    }).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(({ hk, mt, food }) => {
+      this.pendingHousekeeping.set(hk);
+      this.pendingMaintenance.set(mt);
+      this.pendingFoodOrders.set(food);
     });
   }
 
