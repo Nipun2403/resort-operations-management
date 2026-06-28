@@ -1,0 +1,131 @@
+<div class="new-booking-page">
+  <h1>New Booking</h1>
+
+  <mat-stepper linear #stepper [orientation]="isMobile() ? 'vertical' : 'horizontal'" (selectionChange)="onStepChange($event)">
+    <!-- Step 1: Guest Details -->
+    <mat-step [stepControl]="guestForm" label="Guest Details">
+      <form [formGroup]="guestForm">
+        <mat-form-field appearance="outline">
+          <mat-label>First Name</mat-label>
+          <input matInput formControlName="firstName" />
+          <mat-error *ngIf="guestForm.get('firstName')?.invalid && guestForm.get('firstName')?.touched">First name is required (min 2 characters).</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Last Name</mat-label>
+          <input matInput formControlName="lastName" />
+          <mat-error *ngIf="guestForm.get('lastName')?.invalid && guestForm.get('lastName')?.touched">Last name is required (min 2 characters).</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" type="email" />
+          <mat-error *ngIf="guestForm.get('email')?.invalid && guestForm.get('email')?.touched">A valid email is required.</mat-error>
+        </mat-form-field>
+        <div class="step-actions">
+          <button mat-button matStepperNext>Next</button>
+        </div>
+      </form>
+    </mat-step>
+
+    <!-- Step 2: Dates & Guests -->
+    <mat-step [stepControl]="datesForm" label="Dates & Guests">
+      <form [formGroup]="datesForm">
+        <mat-form-field appearance="outline">
+          <mat-label>Check-in Date</mat-label>
+          <input matInput [matDatepicker]="cinPicker" formControlName="checkInDate" />
+          <mat-datepicker-toggle matSuffix [for]="cinPicker"></mat-datepicker-toggle>
+          <mat-datepicker #cinPicker></mat-datepicker>
+          <mat-error *ngIf="datesForm.get('checkInDate')?.invalid && datesForm.get('checkInDate')?.touched">Check-in date is required and must be today or later.</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Check-out Date</mat-label>
+          <input matInput [matDatepicker]="coutPicker" formControlName="checkOutDate" />
+          <mat-datepicker-toggle matSuffix [for]="coutPicker"></mat-datepicker-toggle>
+          <mat-datepicker #coutPicker></mat-datepicker>
+          <mat-error *ngIf="datesForm.get('checkOutDate')?.invalid && datesForm.get('checkOutDate')?.touched">Check-out date is required and must be after check-in.</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Number of Guests</mat-label>
+          <input matInput type="number" formControlName="guestCount" min="1" max="20" />
+          <mat-error *ngIf="datesForm.get('guestCount')?.invalid && datesForm.get('guestCount')?.touched">Guests must be between 1 and 20.</mat-error>
+        </mat-form-field>
+        <div class="step-actions">
+          <button mat-button matStepperPrevious>Back</button>
+          <button mat-button matStepperNext>Next</button>
+        </div>
+      </form>
+    </mat-step>
+
+    <!-- Step 3: Room Selection -->
+    <mat-step [stepControl]="roomsForm" label="Select Rooms">
+      <form [formGroup]="roomsForm">
+        @if (roomsLoading()) {
+          <mat-spinner diameter="30"></mat-spinner>
+        } @else if (roomsError()) {
+          <app-alert type="error" [message]="roomsError()!" (closed)="roomsError.set(null)"></app-alert>
+        } @else {
+          <div class="room-list">
+            @for (room of availableRooms(); track room.roomTypeId) {
+              <div class="room-item">
+                <p>{{ room.name }} – {{ room.basePrice | currency }}/night – Max occupancy: {{ room.maxOccupancy }} – Available: {{ room.availableCount }}</p>
+                <div class="qty-controls">
+                  <button type="button" mat-icon-button (click)="decrementRoom(room.roomTypeId)" [disabled]="getRoomQuantity(room.roomTypeId) <= 0">
+                    <mat-icon>remove</mat-icon>
+                  </button>
+                  <span>{{ getRoomQuantity(room.roomTypeId) }}</span>
+                  <button type="button" mat-icon-button (click)="incrementRoom(room.roomTypeId)" [disabled]="getRoomQuantity(room.roomTypeId) >= room.availableCount">
+                    <mat-icon>add</mat-icon>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+          @if (capacityWarning()) {
+            <p class="warning">{{ capacityWarning() }}</p>
+          }
+          <button mat-button matStepperNext [disabled]="totalSelectedQuantity() === 0 || capacityWarning()">Next</button>
+        }
+      </form>
+    </mat-step>
+
+    <!-- Step 4: Amenities -->
+    <mat-step [stepControl]="amenitiesForm" label="Add Amenities">
+      <form [formGroup]="amenitiesForm">
+        @if (amenitiesLoading()) {
+          <mat-spinner diameter="30"></mat-spinner>
+        } @else {
+          <div class="amenity-list">
+            @for (amenity of availableAmenities(); track amenity.id; let i = $index) {
+              <mat-checkbox [formControl]="getAmenityControl(i)">{{ amenity.name }} – {{ amenity.price | currency }}</mat-checkbox>
+            }
+          </div>
+          <button mat-button matStepperNext>Next</button>
+        }
+      </form>
+    </mat-step>
+
+    <!-- Step 5: Review & Confirm -->
+    <mat-step label="Review & Confirm">
+      <div class="summary">
+        <h3>Guest: {{ guestForm.value.firstName }} {{ guestForm.value.lastName }} ({{ guestForm.value.email }})</h3>
+        <p>Check-in: {{ datesForm.value.checkInDate | date }}</p>
+        <p>Check-out: {{ datesForm.value.checkOutDate | date }}</p>
+        <p>Nights: {{ nights() }}</p>
+        <p>Guests: {{ datesForm.value.guestCount }}</p>
+        <h4>Rooms:</h4>
+        <ul>
+          @for (item of selectedRoomEntries(); track item.roomTypeId) {
+            <li>{{ item.name }} x{{ item.quantity }} – {{ item.basePrice | currency }}/night – Subtotal: {{ item.quantity * item.basePrice * nights() | currency }}</li>
+          }
+        </ul>
+        <h4>Amenities:</h4>
+        <ul>
+          @for (item of selectedAmenityEntries(); track item.id) {
+            <li>{{ item.name }} – {{ item.price | currency }}</li>
+          }
+        </ul>
+        <p><strong>Total Estimated: {{ estimatedTotal() | currency }}</strong></p>
+      </div>
+      <button mat-raised-button color="primary" (click)="confirmBooking()">Confirm Booking</button>
+    </mat-step>
+  </mat-stepper>
+</div>

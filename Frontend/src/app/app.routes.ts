@@ -101,7 +101,7 @@ export const routes: Routes = [
       {
         path: 'new-booking',
         loadComponent: () => import('./features/front-desk/pages/new-booking.component')
-          .then(m => m.PlaceholderNewBookingComponent)
+          .then(m => m.FrontDeskBookingWizardComponent)
       },
       {
         path: 'profile',
