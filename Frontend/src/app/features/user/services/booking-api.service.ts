@@ -12,21 +12,25 @@ export class BookingApiService {
 
   getAll(params: {
     status?: string;
+    bookingStatus?: string;
     guestQuery?: string;
     movementStatus?: string;
-    pageNumber: number;
-    pageSize: number;
+    pageNumber?: number;
+    pageSize?: number;
     sortBy?: string;
     sortDescending?: boolean;
   }): Observable<PaginatedResponse<Booking>> {
     let httpParams = new HttpParams()
-      .set('pageNumber', params.pageNumber.toString())
-      .set('pageSize', params.pageSize.toString())
+      .set('pageNumber', (params.pageNumber ?? 1).toString())
+      .set('pageSize', (params.pageSize ?? 10).toString())
       .set('sortBy', params.sortBy ?? 'id')
       .set('sortDescending', (params.sortDescending ?? false).toString());
 
     if (params.status) {
       httpParams = httpParams.set('bookingStatus', params.status);
+    }
+    if (params.bookingStatus) {
+      httpParams = httpParams.set('bookingStatus', params.bookingStatus);
     }
     if (params.guestQuery) {
       httpParams = httpParams.set('guestQuery', params.guestQuery);

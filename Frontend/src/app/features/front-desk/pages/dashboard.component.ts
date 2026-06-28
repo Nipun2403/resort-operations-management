@@ -1,14 +1,20 @@
 import { Component, inject, signal, OnInit, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormControl } from '@angular/forms';
+import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatTableModule } from '@angular/material/table';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { finalize, forkJoin, of } from 'rxjs';
+import { finalize, forkJoin, of, debounceTime, distinctUntilChanged } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 
 import { BookingApiService } from '../../user/services/booking-api.service';
@@ -17,9 +23,15 @@ import { MaintenanceApiService } from '../../user/services/maintenance-api.servi
 import { OrderApiService } from '../../user/services/order-api.service';
 import { AlertComponent } from '../../auth/components/alert.component';
 import { ActiveTicketsDialogComponent } from '../components/active-tickets-dialog/active-tickets-dialog.component';
-import { MovementTableComponent } from '../components/movement-table/movement-table.component';
+import { InternalTicketPanelComponent } from '../components/booking-action-modal/internal-ticket-panel/internal-ticket-panel.component';
 import { Booking } from '../../admin/models/booking.model';
-import { BookingActionModalComponent } from '../components/booking-action-modal/booking-action-modal.component';
+
+interface SearchResult {
+  guestName: string;
+  guestEmail: string;
+  currentStatus: string;
+  bookings: Booking[];
+}
 
 @Component({
   selector: 'app-front-desk-dashboard',
@@ -33,14 +45,18 @@ import { BookingActionModalComponent } from '../components/booking-action-modal/
     MatDialogModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatTableModule,
+    MatButtonToggleModule,
+    MatPaginatorModule,
     AlertComponent,
-    MovementTableComponent,
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
 })
 export class PlaceholderDashboardComponent implements OnInit {
-  refreshTable = signal(0);
+  // Summary card signals (keep intact)
   arrivalsCount = signal(0);
   departuresCount = signal(0);
   activeTickets = signal<{
@@ -56,6 +72,23 @@ export class PlaceholderDashboardComponent implements OnInit {
   loadingSummary = signal(false);
   error = signal<string | null>(null);
 
+  // Search
+  searchControl = new FormControl('', { nonNullable: true });
+  searchResults = signal<SearchResult[]>([]);
+  searchLoading = signal(false);
+  searchError = signal<string | null>(null);
+
+  // Movement table (today's arrivals/departures)
+  movementData = signal<Booking[]>([]);
+  movementTotal = signal(0);
+  movementLoading = signal(false);
+  movementError = signal<string | null>(null);
+  movementPage = signal(0);
+  movementPageSize = signal(10);
+  movementActiveFilter = new FormControl<'arrivals' | 'departures'>('arrivals', {
+    nonNullable: true,
+  });
+
   private readonly bookingApi = inject(BookingApiService);
   private readonly housekeepingApi = inject(HousekeepingApiService);
   private readonly maintenanceApi = inject(MaintenanceApiService);
@@ -63,9 +96,19 @@ export class PlaceholderDashboardComponent implements OnInit {
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly router = inject(Router);
 
   ngOnInit(): void {
     this.loadSummary();
+    this.fetchMovement();
+
+    this.searchControl.valueChanges
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe(value => this.onSearch(value.trim()));
   }
 
   private loadSummary(): void {
@@ -139,22 +182,97 @@ export class PlaceholderDashboardComponent implements OnInit {
     });
   }
 
-  openBookingModal(booking: Booking): void {
-    const dialogRef = this.dialog.open(BookingActionModalComponent, {
-      data: { booking },
-      width: '95vw',
-      maxWidth: '700px',
-      panelClass: 'booking-action-modal',
+  private onSearch(query: string): void {
+    if (!query) {
+      this.searchResults.set([]);
+      return;
+    }
+    this.searchLoading.set(true);
+    this.bookingApi.getAll({ guestQuery: query, pageSize: 200 }).pipe(
+      takeUntilDestroyed(this.destroyRef),
+      finalize(() => this.searchLoading.set(false))
+    ).subscribe({
+      next: res => {
+        const grouped = this.groupByEmail(res.data);
+        this.searchResults.set(grouped);
+      },
+      error: (err: any) => this.searchError.set(this.extractErrorMessage(err))
     });
-    dialogRef
-      .afterClosed()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(result => {
-        this.loadSummary();
-        if (result === true) {
-          this.refreshTable.update(n => n + 1);
-        }
-      });
+  }
+
+  private groupByEmail(bookings: Booking[]): SearchResult[] {
+    const map = new Map<string, Booking[]>();
+    bookings.forEach(b => {
+      if (!b.guestEmail) return;
+      const arr = map.get(b.guestEmail) || [];
+      arr.push(b);
+      map.set(b.guestEmail, arr);
+    });
+    return Array.from(map.entries()).map(([email, bookings]) => {
+      const statuses = bookings.map(b => b.bookingStatus);
+      let currentStatus = 'Cancelled';
+      if (statuses.includes('CheckedIn')) currentStatus = 'CheckedIn';
+      else if (statuses.includes('Booked')) currentStatus = 'Booked';
+      else if (statuses.includes('CheckedOut')) currentStatus = 'CheckedOut';
+      return {
+        guestName: bookings[0].guestName,
+        guestEmail: email,
+        currentStatus,
+        bookings
+      };
+    });
+  }
+
+  fetchMovement(): void {
+    this.movementLoading.set(true);
+    const params: any = {
+      pageNumber: this.movementPage() + 1,
+      pageSize: this.movementPageSize(),
+    };
+    if (this.movementActiveFilter.value === 'arrivals') {
+      params.movementStatus = 'incoming';
+      params.bookingStatus = 'Booked';
+    } else {
+      params.movementStatus = 'outgoing';
+      params.bookingStatus = 'CheckedIn';
+    }
+    this.bookingApi.getAll(params).pipe(
+      takeUntilDestroyed(this.destroyRef),
+      finalize(() => this.movementLoading.set(false))
+    ).subscribe({
+      next: res => {
+        this.movementData.set(res.data);
+        this.movementTotal.set(res.totalCount);
+      },
+      error: (err: any) => this.movementError.set(this.extractErrorMessage(err))
+    });
+  }
+
+  onMovementToggle(): void {
+    this.movementPage.set(0);
+    this.fetchMovement();
+  }
+
+  onMovementPageChange(event: PageEvent): void {
+    this.movementPage.set(event.pageIndex);
+    this.movementPageSize.set(event.pageSize);
+    this.fetchMovement();
+  }
+
+  getRoomNumbers(booking: Booking): string {
+    return booking.rooms?.filter(r => r.roomNumber).map(r => r.roomNumber).join(', ') || '';
+  }
+
+  navigateToGuest(email: string): void {
+    const encoded = encodeURIComponent(email);
+    this.router.navigate(['/operations/front-desk/guest', encoded]);
+  }
+
+  openInternalTicket(): void {
+    this.dialog.open(InternalTicketPanelComponent, {
+      width: '95vw',
+      maxWidth: '500px',
+    });
   }
 
   private extractErrorMessage(err: any): string {

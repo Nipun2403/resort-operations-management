@@ -1,0 +1,114 @@
+<div class="guest-details">
+  <!-- Header with back button -->
+  <div class="header">
+    <button
+      mat-icon-button
+      routerLink="/operations/front-desk/dashboard"
+      aria-label="Back to Dashboard"
+    >
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>Guest: {{ email() }}</h1>
+  </div>
+
+  @if (loading()) {
+  <mat-spinner diameter="40"></mat-spinner>
+  } @else if (error()) {
+  <app-alert
+    type="error"
+    [message]="error()!"
+    (closed)="error.set(null)"
+  >
+    <button
+      mat-button
+      (click)="fetchBookings()"
+    >
+      Retry
+    </button>
+  </app-alert>
+  } @else {
+  <mat-tab-group>
+    <mat-tab label="Overview">
+      <div class="tab-content">
+        <h3>Current Status: {{ getOverallStatus() }}</h3>
+        <div class="booking-summary">
+          @for (b of bookings(); track b.id) {
+          <div class="booking-card">
+            <p><strong>Booking #{{ b.id }}</strong></p>
+            <p>Status: {{ b.bookingStatus }}</p>
+            <p>Check-in: {{ b.checkInDate }}</p>
+            <p>Check-out: {{ b.checkOutDate }}</p>
+            <p>Rooms: {{ getRoomNumbers(b) }}</p>
+          </div>
+          }
+        </div>
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Bookings">
+      <div class="tab-content">
+        @for (b of bookings(); track b.id) {
+        <div class="booking-item">
+          <p>
+            <strong>ID:</strong> {{ b.id }} | <strong>Status:</strong> {{
+            b.bookingStatus }} | <strong>Rooms:</strong> {{ getRoomNumbers(b) }}
+          </p>
+          <div class="actions">
+            @if (b.bookingStatus === 'Booked') {
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="checkIn(b)"
+            >
+              Check-In
+            </button>
+            <button
+              mat-raised-button
+              color="warn"
+              (click)="cancelBooking(b)"
+            >
+              Cancel
+            </button>
+            } @if (b.bookingStatus === 'CheckedIn') {
+            <button
+              mat-raised-button
+              (click)="extendStay(b)"
+            >
+              Extend Stay
+            </button>
+            <button
+              mat-raised-button
+              color="accent"
+              (click)="checkOut(b)"
+            >
+              Check-Out
+            </button>
+            }
+          </div>
+        </div>
+        }
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Room Service">
+      <div class="tab-content">
+        @if (activeBooking()) {
+        <app-room-service-tab [booking]="activeBooking()!" />
+        } @else {
+        <p>No active booking for room service.</p>
+        }
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Billing">
+      <div class="tab-content">
+        @if (activeBookingId() > 0) {
+        <app-billing-tab [bookingId]="activeBookingId()" />
+        } @else {
+        <p>No booking selected for billing.</p>
+        }
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+  }
+</div>

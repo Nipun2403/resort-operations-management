@@ -108,6 +108,12 @@ export const routes: Routes = [
         loadComponent: () => import('./features/front-desk/pages/profile.component')
           .then(m => m.PlaceholderProfileComponent)
       },
+      {
+        path: 'guest/:email',
+        loadComponent: () => import('./features/front-desk/pages/guest-details.component')
+          .then(m => m.GuestDetailsComponent),
+        canActivate: [frontDeskGuard]
+      },
       { path: '**', redirectTo: 'dashboard' }
     ]
   }

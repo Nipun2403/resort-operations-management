@@ -19,20 +19,20 @@
   } @else {
     <!-- Summary Cards Row -->
     <div class="summary-row">
-      <!-- Today’s Arrivals -->
+      <!-- Today's Arrivals -->
       <mat-card class="summary-card">
         <mat-card-header>
-          <mat-card-title>Today’s Arrivals</mat-card-title>
+          <mat-card-title>Today's Arrivals</mat-card-title>
         </mat-card-header>
         <mat-card-content>
           <span class="count">{{ arrivalsCount() }}</span>
         </mat-card-content>
       </mat-card>
 
-      <!-- Today’s Departures -->
+      <!-- Today's Departures -->
       <mat-card class="summary-card">
         <mat-card-header>
-          <mat-card-title>Today’s Departures</mat-card-title>
+          <mat-card-title>Today's Departures</mat-card-title>
         </mat-card-header>
         <mat-card-content>
           <span class="count">{{ departuresCount() }}</span>
@@ -58,11 +58,232 @@
     </div>
   }
 
-  <!-- Movement Table -->
-  <app-movement-table 
-    [refresh]="refreshTable()" 
-    (bookingSelected)="openBookingModal($event)" 
-  />
+  <!-- Internal Ticket button (floating right) -->
+  <div class="top-actions">
+    <button
+      mat-raised-button
+      color="accent"
+      (click)="openInternalTicket()"
+    >
+      <mat-icon>add_task</mat-icon> Create Internal Ticket
+    </button>
+  </div>
 
-  <!-- Placeholder for future Room Status Grid -->
+  <!-- Search Bar -->
+  <div class="search-box">
+    <mat-form-field
+      appearance="outline"
+      class="search-field"
+    >
+      <mat-label>Search guest name or email</mat-label>
+      <input
+        matInput
+        [formControl]="searchControl"
+      />
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  <!-- Search Results Table -->
+  <h2>Search Results</h2>
+  @if (searchLoading()) {
+  <mat-spinner diameter="30"></mat-spinner>
+  } @else if (searchError()) {
+  <app-alert
+    type="error"
+    [message]="searchError()!"
+    (closed)="searchError.set(null)"
+  ></app-alert>
+  } @else if (searchResults().length > 0) {
+  <table
+    mat-table
+    [dataSource]="searchResults()"
+    class="search-table"
+  >
+    <ng-container matColumnDef="guestName">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+      >
+        Guest Name
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let r"
+      >
+        {{ r.guestName }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="guestEmail">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+      >
+        Email
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let r"
+      >
+        {{ r.guestEmail }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="currentStatus">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+      >
+        Current Status
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let r"
+      >
+        {{ r.currentStatus }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+      >
+        Actions
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let r"
+      >
+        <button
+          mat-icon-button
+          (click)="navigateToGuest(r.guestEmail)"
+          aria-label="View guest details"
+        >
+          <mat-icon>visibility</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+    <tr
+      mat-header-row
+      *matHeaderRowDef="['guestName','guestEmail','currentStatus','actions']"
+    ></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: ['guestName','guestEmail','currentStatus','actions']"
+      class="clickable-row"
+      (click)="navigateToGuest(row.guestEmail)"
+    ></tr>
+  </table>
+  } @else { @if (searchControl.value) {
+  <p>No results found.</p>
+  } }
+
+  <!-- Today's Movement Table -->
+  <h2>Today's Movement</h2>
+  <div class="movement-controls">
+    <mat-button-toggle-group
+      [formControl]="movementActiveFilter"
+      (change)="onMovementToggle()"
+    >
+      <mat-button-toggle value="arrivals">Arrivals</mat-button-toggle>
+      <mat-button-toggle value="departures">Departures</mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+
+  @if (movementLoading() && movementData().length === 0) {
+  <mat-spinner diameter="30"></mat-spinner>
+  } @else if (movementError()) {
+  <app-alert
+    type="error"
+    [message]="movementError()!"
+    (closed)="movementError.set(null)"
+  ></app-alert>
+  } @else if (movementData().length > 0) {
+  <table
+    mat-table
+    [dataSource]="movementData()"
+    class="movement-table"
+  >
+    <ng-container matColumnDef="guestName">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+      >
+        Guest Name
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let b"
+      >
+        {{ b.guestName }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="room">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+      >
+        Room
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let b"
+      >
+        {{ getRoomNumbers(b) || 'Unassigned' }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="status">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+      >
+        Status
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let b"
+      >
+        {{ b.bookingStatus }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="actions">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+      >
+        Actions
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let b"
+      >
+        <button
+          mat-icon-button
+          (click)="navigateToGuest(b.guestEmail)"
+          aria-label="View guest details"
+        >
+          <mat-icon>visibility</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+    <tr
+      mat-header-row
+      *matHeaderRowDef="['guestName','room','status','actions']"
+    ></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: ['guestName','room','status','actions']"
+      (click)="navigateToGuest(row.guestEmail)"
+      class="clickable-row"
+    ></tr>
+  </table>
+  <mat-paginator
+    [length]="movementTotal()"
+    [pageIndex]="movementPage()"
+    [pageSize]="movementPageSize()"
+    [pageSizeOptions]="[10,25,50]"
+    (page)="onMovementPageChange($event)"
+  ></mat-paginator>
+  } @else {
+  <p>No {{ movementActiveFilter.value }} today.</p>
+  }
 </div>
