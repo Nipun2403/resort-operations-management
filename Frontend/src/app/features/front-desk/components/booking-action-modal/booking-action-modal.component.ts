@@ -19,6 +19,8 @@ import { ExtendStayDialogComponent } from '../extend-stay-dialog/extend-stay-dia
 
 import { MatTabsModule } from '@angular/material/tabs';
 import { RoomServiceTabComponent } from './room-service-tab/room-service-tab.component';
+import { BillingTabComponent } from './billing-tab/billing-tab.component';
+import { CheckoutDialogComponent } from './checkout-dialog/checkout-dialog.component';
 
 @Component({
   selector: 'app-booking-action-modal',
@@ -35,6 +37,7 @@ import { RoomServiceTabComponent } from './room-service-tab/room-service-tab.com
     AlertComponent,
     MatTabsModule,
     RoomServiceTabComponent,
+    BillingTabComponent,
   ],
   templateUrl: './booking-action-modal.component.html',
   styleUrls: ['./booking-action-modal.component.scss'],
@@ -131,6 +134,26 @@ export class BookingActionModalComponent {
       .subscribe(result => {
         if (result === true) {
           this.snackBar.open('Stay extended successfully.', 'Close', { duration: 3000 });
+          this.dialogRef.close(true);
+        }
+      });
+  }
+
+  // ── Check‑Out ───────────────────────────────────
+  checkOut(): void {
+    if (this.loading()) return;
+    const checkoutRef = this.dialog.open(CheckoutDialogComponent, {
+      data: { bookingId: this.booking().id },
+      width: '95vw',
+      maxWidth: '600px',
+      disableClose: true,
+    });
+    checkoutRef
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(result => {
+        if (result === true) {
+          this.snackBar.open('Check‑out successful.', 'Close', { duration: 3000 });
           this.dialogRef.close(true);
         }
       });

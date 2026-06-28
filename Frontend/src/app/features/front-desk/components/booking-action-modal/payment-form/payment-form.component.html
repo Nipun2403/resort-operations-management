@@ -1,0 +1,59 @@
+<form
+  [formGroup]="paymentForm"
+  (ngSubmit)="submitPayment()"
+  class="payment-form"
+  style="display: flex; flex-direction: column; gap: 16px; margin-top: 16px;"
+>
+  <mat-form-field appearance="outline" style="width: 100%;">
+    <mat-label>Amount</mat-label>
+    <input
+      matInput
+      type="number"
+      formControlName="amount"
+      step="0.01"
+    />
+    @if (paymentForm.get('amount')?.invalid) {
+      <mat-error>Enter a valid amount.</mat-error>
+    }
+  </mat-form-field>
+  <mat-form-field appearance="outline" style="width: 100%;">
+    <mat-label>Payment Method</mat-label>
+    <mat-select formControlName="paymentMethod">
+      <mat-option value="Cash">Cash</mat-option>
+      <mat-option value="Credit Card">Credit Card</mat-option>
+      <mat-option value="Bank Transfer">Bank Transfer</mat-option>
+    </mat-select>
+    @if (paymentForm.get('paymentMethod')?.invalid) {
+      <mat-error>Select a payment method.</mat-error>
+    }
+  </mat-form-field>
+  <mat-form-field appearance="outline" style="width: 100%;">
+    <mat-label>Transaction ID</mat-label>
+    <input
+      matInput
+      formControlName="transactionId"
+    />
+    @if (paymentForm.get('transactionId')?.invalid) {
+      <mat-error>Enter a transaction ID.</mat-error>
+    }
+  </mat-form-field>
+  @if (error()) {
+    <app-alert
+      type="error"
+      [message]="error()!"
+      (closed)="error.set(null)"
+    ></app-alert>
+  }
+  <button
+    mat-raised-button
+    color="primary"
+    type="submit"
+    [disabled]="paymentForm.invalid || submitting()"
+    style="align-self: flex-start; min-width: 140px;"
+  >
+    @if (submitting()) {
+      <mat-spinner diameter="20" style="display: inline-block; margin-right: 8px; vertical-align: middle;"></mat-spinner>
+    }
+    Pay {{ paymentForm.get('amount')?.value | currency }}
+  </button>
+</form>

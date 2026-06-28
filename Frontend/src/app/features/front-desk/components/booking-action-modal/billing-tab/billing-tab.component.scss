@@ -1,0 +1,53 @@
+.billing-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.bill-summary {
+  h3 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    font-size: 1.2rem;
+    font-weight: 500;
+  }
+  p {
+    margin: 6px 0;
+  }
+}
+
+.food-items,
+.amenity-items {
+  h4 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  p {
+    margin: 4px 0;
+    font-size: 0.9rem;
+    color: #555;
+  }
+}
+
+.status-chip {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+
+  &.Paid {
+    background: #c8e6c9;
+    color: #2e7d32;
+  }
+  &.Pending {
+    background: #ffcdd2;
+    color: #c62828;
+  }
+}
+
+.paid {
+  font-weight: 500;
+  color: #2e7d32;
+}

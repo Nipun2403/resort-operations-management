@@ -87,8 +87,17 @@
               mat-raised-button
               (click)="extendStay()"
               [disabled]="loading()"
+              style="margin-right: 8px;"
             >
               <mat-icon>edit_calendar</mat-icon> Extend Stay
+            </button>
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="checkOut()"
+              [disabled]="loading()"
+            >
+              <mat-icon>logout</mat-icon> Check‑Out
             </button>
           }
         </div>
@@ -107,6 +116,11 @@
     <mat-tab label="Room Service">
       <div class="modal-content" style="padding: 16px 0;">
         <app-room-service-tab [booking]="booking()" />
+      </div>
+    </mat-tab>
+    <mat-tab label="Billing">
+      <div class="modal-content" style="padding: 16px 0;">
+        <app-billing-tab [bookingId]="booking().id" />
       </div>
     </mat-tab>
   </mat-tab-group>

@@ -1,0 +1,80 @@
+<div class="billing-tab">
+  @if (billLoading()) {
+    <div style="display: flex; justify-content: center; padding: 16px;">
+      <mat-spinner diameter="30"></mat-spinner>
+    </div>
+  } @else if (billError()) {
+    <app-alert
+      type="error"
+      [message]="billError()!"
+      (closed)="billError.set(null)"
+    >
+      <button
+        mat-button
+        (click)="fetchBill()"
+      >
+        Retry
+      </button>
+    </app-alert>
+  } @else if (billDetails()) {
+    <div class="bill-summary">
+      <h3>Folio</h3>
+      <p><strong>Guest:</strong> {{ billDetails().guestName }}</p>
+      <p><strong>Nights Stayed:</strong> {{ billDetails().nightsStayed }}</p>
+      <p><strong>Room Total:</strong> {{ billDetails().roomTotal | currency }}</p>
+      <p><strong>Food Total:</strong> {{ billDetails().foodTotal | currency }}</p>
+      <p><strong>Amenity Total:</strong> {{ billDetails().amenityTotal | currency }}</p>
+      <p><strong>Total Bill:</strong> {{ billDetails().totalBill | currency }}</p>
+      <p>
+        <strong>Payment Status:</strong>
+        <span
+          class="status-chip"
+          [class]="billDetails().paymentStatus"
+          style="margin-left: 8px;"
+        >{{ billDetails().paymentStatus }}</span>
+      </p>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    @if (billDetails().foodItems && billDetails().foodItems.length > 0) {
+      <div class="food-items" style="margin-top: 16px;">
+        <h4>Food Items</h4>
+        @for (item of billDetails().foodItems; track item) {
+          <p>{{ item }}</p>
+        }
+      </div>
+    }
+    @if (billDetails().amenityItems && billDetails().amenityItems.length > 0) {
+      <div class="amenity-items" style="margin-top: 16px;">
+        <h4>Amenities</h4>
+        @for (item of billDetails().amenityItems; track item) {
+          <p>{{ item }}</p>
+        }
+      </div>
+    }
+
+    <mat-divider style="margin: 24px 0;"></mat-divider>
+
+    @if (billDetails().paymentStatus === 'Pending') {
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="showPayment.set(!showPayment())"
+      >
+        {{ showPayment() ? 'Cancel Payment' : 'Make Payment' }}
+      </button>
+      @if (showPayment()) {
+        <app-payment-form
+          [bookingId]="bookingId()"
+          [amountDue]="billDetails().totalBill"
+          (paymentComplete)="onPaymentComplete()"
+        />
+      }
+    } @else {
+      <p class="paid">Fully paid.</p>
+    }
+  } @else {
+    <p>No billing information available.</p>
+  }
+</div>

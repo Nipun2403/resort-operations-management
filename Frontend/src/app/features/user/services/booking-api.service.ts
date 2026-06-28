@@ -61,4 +61,8 @@ export class BookingApiService {
   extendStay(id: number, dto: { checkOutDate: string }): Observable<void> {
     return this.http.patch<void>(`${this.baseUrl}/${id}/extend-stay`, dto);
   }
+
+  checkOut(id: number): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/${id}/checkout`, {});
+  }
 }

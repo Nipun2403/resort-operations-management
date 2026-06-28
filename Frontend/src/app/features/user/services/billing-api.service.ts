@@ -12,4 +12,8 @@ export class BillingApiService {
   getByBookingId(bookingId: number): Observable<BillingFolio> {
     return this.http.get<BillingFolio>(`${this.baseUrl}/${bookingId}`);
   }
+
+  pay(bookingId: number, dto: { amount: number; paymentMethod: string; transactionId: string }): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/${bookingId}/pay`, dto);
+  }
 }
