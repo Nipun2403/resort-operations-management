@@ -109,9 +109,12 @@ export class BookingHistoryComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    // Restore sort state visually
-    this.sort.active = this.sortField;
-    this.sort.direction = this.sortDescending ? 'desc' : 'asc';
+    // Restore sort state visually — sort may be undefined on first render because
+    // the table is wrapped in an @if block (no data yet), so guard before access.
+    if (this.sort) {
+      this.sort.active = this.sortField;
+      this.sort.direction = this.sortDescending ? 'desc' : 'asc';
+    }
   }
 
   fetchData(): void {
