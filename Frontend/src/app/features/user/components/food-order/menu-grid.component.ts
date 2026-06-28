@@ -1,6 +1,7 @@
 import { Component, input, output, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -31,6 +32,7 @@ export class MenuGridComponent {
   updateQuantity = output<{ menuItemId: number; delta: number }>();
 
   categoryFilter = new FormControl('All', { nonNullable: true });
+  private categoryFilterSignal = toSignal(this.categoryFilter.valueChanges, { initialValue: this.categoryFilter.value });
 
   cartMap = computed(() => {
     const map: Record<number, number> = {};
@@ -67,7 +69,7 @@ export class MenuGridComponent {
   });
 
   filteredGroups = computed(() => {
-    const selected = this.categoryFilter.value;
+    const selected = this.categoryFilterSignal() ?? 'All';
     const items = selected === 'All' 
       ? this.menuItems() 
       : this.menuItems().filter(i => (i.category || 'Other') === selected);

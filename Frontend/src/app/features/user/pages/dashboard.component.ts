@@ -146,46 +146,56 @@ export class PlaceholderCustomerDashboardComponent implements OnInit {
     const roomIds = booking.rooms.map(r => r.roomId).filter(id => id != null) as number[];
     if (roomIds.length === 0) return;
 
-    // Housekeeping
-    const hkReqs = roomIds.map(roomId =>
-      this.housekeepingApi.getAll({ roomId, status: 'Pending,InProgress', pageSize: 10 }).pipe(
-        map(res => res.data.map(hk => ({
-          ...hk,
-          type: 'Housekeeping' as const,
-          roomNumber: hk.location ?? `Room ${hk.roomId}`,
-          description: hk.description ?? ''
-        }))),
-        catchError(() => of([]))
-      )
-    );
-    // Maintenance
-    const mtReqs = roomIds.map(roomId =>
-      this.maintenanceApi.getAll({ roomId, status: 'Pending,InProgress', pageSize: 10 }).pipe(
-        map(res => res.data.map(mt => ({
-          ...mt,
-          type: 'Maintenance' as const,
-          roomNumber: mt.location ?? `Room ${mt.roomId}`,
-          description: mt.description ?? ''
-        }))),
-        catchError(() => of([]))
-      )
-    );
-    // Food orders for the booking
-    const food$ = this.orderApi.getAll({ status: 'Pending,Preparing', pageSize: 200 }).pipe(
-      map((res: any) => res.data.filter((order: any) => order.bookingId === booking.id)),
-      catchError(() => of([]))
-    );
+    // Helper to fetch housekeeping/maintenance for a single status
+    const fetchHousekeeping = (status: string) =>
+      forkJoin(roomIds.map(roomId =>
+        this.housekeepingApi.getAll({ roomId, status, pageSize: 20 }).pipe(
+          map(res => res.data.map(hk => ({
+            ...hk,
+            type: 'Housekeeping' as const,
+            roomNumber: hk.location ?? `Room ${hk.roomId}`,
+            description: hk.description ?? ''
+          }))),
+          catchError(() => of([]))
+        )
+      )).pipe(map(results => results.flat()));
 
+    const fetchMaintenance = (status: string) =>
+      forkJoin(roomIds.map(roomId =>
+        this.maintenanceApi.getAll({ roomId, status, pageSize: 20 }).pipe(
+          map(res => res.data.map(mt => ({
+            ...mt,
+            type: 'Maintenance' as const,
+            roomNumber: mt.location ?? `Room ${mt.roomId}`,
+            description: mt.description ?? ''
+          }))),
+          catchError(() => of([]))
+        )
+      )).pipe(map(results => results.flat()));
+
+    // Fetch both statuses for housekeeping and maintenance
     forkJoin({
-      hk: forkJoin(hkReqs).pipe(map(results => results.flat())),
-      mt: forkJoin(mtReqs).pipe(map(results => results.flat())),
-      food: food$
+      hkPending: fetchHousekeeping('Pending'),
+      hkInProgress: fetchHousekeeping('InProgress'),
+      mtPending: fetchMaintenance('Pending'),
+      mtInProgress: fetchMaintenance('InProgress'),
+      food: this.orderApi.getAll({ status: 'Pending', pageSize: 50 }).pipe(
+        switchMap((res: any) => {
+          return this.orderApi.getAll({ status: 'Preparing', pageSize: 50 }).pipe(
+            map((res2: any) => [...res.data, ...res2.data].filter(o => o.bookingId === booking.id))
+          );
+        }),
+        catchError(() => of([]))
+      )
     }).pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(({ hk, mt, food }) => {
-      this.pendingHousekeeping.set(hk);
-      this.pendingMaintenance.set(mt);
-      this.pendingFoodOrders.set(food);
+    ).subscribe({
+      next: ({ hkPending, hkInProgress, mtPending, mtInProgress, food }) => {
+        this.pendingHousekeeping.set([...hkPending, ...hkInProgress]);
+        this.pendingMaintenance.set([...mtPending, ...mtInProgress]);
+        this.pendingFoodOrders.set(food);
+      },
+      error: (err: any) => this.snackBar.open(this.extractErrorMessage(err), 'Close', { duration: 5000 })
     });
   }
 

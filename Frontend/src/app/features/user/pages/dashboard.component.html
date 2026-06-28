@@ -76,8 +76,10 @@
             <mat-card-content>
               @for (item of pendingHousekeeping(); track item.id) {
                 <div class="status-item">
-                  <p class="status-line"><strong>{{ item.roomNumber }}</strong> – <span class="badge" [class]="item.status.toLowerCase()">{{ item.status }}</span></p>
-                  <p class="description">{{ item.description }}</p>
+                  <p class="status-line">
+                    <span>{{ item.description || 'No description' }}</span>
+                    <span class="badge" [class]="item.status.toLowerCase()">{{ item.status }}</span>
+                  </p>
                 </div>
               } @empty {
                 <p class="no-status-items">No pending requests.</p>
@@ -94,8 +96,10 @@
             <mat-card-content>
               @for (item of pendingMaintenance(); track item.id) {
                 <div class="status-item">
-                  <p class="status-line"><strong>{{ item.roomNumber }}</strong> – <span class="badge" [class]="item.status.toLowerCase()">{{ item.status }}</span></p>
-                  <p class="description">{{ item.description }}</p>
+                  <p class="status-line">
+                    <span>{{ item.description || 'No description' }}</span>
+                    <span class="badge" [class]="item.status.toLowerCase()">{{ item.status }}</span>
+                  </p>
                 </div>
               } @empty {
                 <p class="no-status-items">No pending requests.</p>
@@ -112,7 +116,10 @@
             <mat-card-content>
               @for (order of pendingFoodOrders(); track order.id) {
                 <div class="status-item">
-                  <p class="status-line"><strong>Order #{{ order.id }}</strong> – <span class="badge" [class]="order.status.toLowerCase()">{{ order.status }}</span></p>
+                  <p class="status-line">
+                    <span>Order #{{ order.id }}</span>
+                    <span class="badge" [class]="order.status.toLowerCase()">{{ order.status }}</span>
+                  </p>
                 </div>
               } @empty {
                 <p class="no-status-items">No pending orders.</p>
