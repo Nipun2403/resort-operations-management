@@ -89,10 +89,15 @@ export class MovementTableComponent {
     this.loading.set(true);
     this.error.set(null);
 
+    let sortBy = this.sortField();
+    if (sortBy === 'status') {
+      sortBy = 'bookingStatus';
+    }
+
     const params: any = {
       pageNumber: this.pageIndex() + 1,
       pageSize: this.pageSize(),
-      sortBy: this.sortField(),
+      sortBy: sortBy,
       sortDescending: this.sortDescending(),
     };
 

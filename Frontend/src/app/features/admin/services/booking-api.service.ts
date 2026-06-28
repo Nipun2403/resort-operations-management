@@ -27,7 +27,7 @@ export class BookingApiService {
       .set('sortDescending', params.sortDescending.toString());
 
     if (params.status) {
-      httpParams = httpParams.set('status', params.status);
+      httpParams = httpParams.set('bookingstatus', params.status);
     }
     if (params.guestQuery) {
       httpParams = httpParams.set('guestQuery', params.guestQuery);
