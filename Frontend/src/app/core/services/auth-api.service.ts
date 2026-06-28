@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { LoginRequestDTO, RegisterRequestDTO, LoginResponse } from '../models/auth.models';
 import { environment } from '../../../environments/environment';
+import { AuthMeResponse } from '../models/auth-me-response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -17,5 +18,9 @@ export class AuthApiService {
 
   register(data: RegisterRequestDTO): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/auth/register`, data);
+  }
+
+  getMe(): Observable<AuthMeResponse> {
+    return this.http.get<AuthMeResponse>(`${this.baseUrl}/auth/me`);
   }
 }

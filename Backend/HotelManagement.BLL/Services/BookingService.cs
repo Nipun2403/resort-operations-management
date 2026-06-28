@@ -199,6 +199,7 @@ public class BookingService : IBookingService
         var isStaff = _currentUserService.IsInRole("Admin") || _currentUserService.IsInRole("FrontDesk");
         var predicates = new List<Expression<Func<Booking, bool>>>();
 
+        // 1. Restrict to the current user if they are not staff
         if (!isStaff)
         {
             var userEmail = _currentUserService.GetUserEmail();
@@ -210,7 +211,9 @@ public class BookingService : IBookingService
 
             predicates.Add(b => b.UserId == user.Id);
         }
-        else if (status != null)
+
+        // 2. Apply status filter for ALL users if the status parameter is provided
+        if (status != null)
         {
             if (status.Equals("active", StringComparison.OrdinalIgnoreCase))
             {
@@ -222,19 +225,22 @@ public class BookingService : IBookingService
             }
         }
 
+        // 3. Apply guest query filter (shared logic – already fine)
         if (!string.IsNullOrWhiteSpace(guestQuery))
         {
             var lowerQuery = guestQuery.ToLower();
-            predicates.Add(b => b.GuestName.ToLower().Contains(lowerQuery) || b.GuestEmail.ToLower().Contains(lowerQuery) || b.Id.ToString().Contains(lowerQuery));
+            predicates.Add(b => b.GuestName.ToLower().Contains(lowerQuery) ||
+                                b.GuestEmail.ToLower().Contains(lowerQuery) ||
+                                b.Id.ToString().Contains(lowerQuery));
         }
 
+        // 4. Ordering and pagination (unchanged)
         Func<IQueryable<Booking>, IOrderedQueryable<Booking>>? orderBy = null;
         if (!string.IsNullOrEmpty(sortBy))
         {
             orderBy = q => q.OrderByDynamic(sortBy, sortDescending);
         }
 
-        // var pagedBookings = await _bookingRepository.GetPaginatedResultAsync(pageNumber, pageSize, predicate, orderBy);
         var pagedBookings = await _bookingRepository.GetPaginatedBookingsWithDetailsAsync(pageNumber, pageSize, predicates, orderBy);
 
         var dtos = _mapper.Map<IEnumerable<BookingDTO>>(pagedBookings.Data);

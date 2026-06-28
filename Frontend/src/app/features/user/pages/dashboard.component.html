@@ -1,0 +1,63 @@
+<div class="dashboard">
+  <!-- Welcome message -->
+  @if (loading()) {
+    <mat-spinner diameter="40"></mat-spinner>
+  } @else if (error()) {
+    <app-alert type="error" [message]="error()!" (closed)="error.set(null)">
+      <button mat-button (click)="loadDashboard()">Retry</button>
+    </app-alert>
+  } @else {
+    <h1>Welcome back, Mr {{ firstName() }}</h1>
+
+    <div class="booking-cards">
+      <!-- Current Booking (CheckedIn) -->
+      @if (currentBooking()) {
+        <mat-card class="booking-card current">
+          <mat-card-header>
+            <mat-card-title>Current Stay</mat-card-title>
+            <mat-card-subtitle>Room: {{ getRoomNumbers(currentBooking()!) }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <p><strong>Check&#8209;in:</strong> {{ currentBooking()!.checkInDate }}</p>
+            <p><strong>Check&#8209;out:</strong> {{ currentBooking()!.checkOutDate }}</p>
+            <p><strong>Status:</strong> {{ currentBooking()!.bookingStatus }}</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-raised-button color="accent" (click)="openServiceRequest('housekeeping')" aria-label="Request housekeeping">
+              <mat-icon>cleaning_services</mat-icon> Request Housekeeping
+            </button>
+            <button mat-raised-button color="warn" (click)="openServiceRequest('maintenance')" aria-label="Request maintenance">
+              <mat-icon>build</mat-icon> Request Maintenance
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      } @else {
+        <mat-card class="booking-card no-booking">
+          <mat-card-content>
+            <p>No active stay right now.</p>
+          </mat-card-content>
+        </mat-card>
+      }
+
+      <!-- Upcoming Booking (Booked) -->
+      @if (upcomingBooking()) {
+        <mat-card class="booking-card upcoming">
+          <mat-card-header>
+            <mat-card-title>Upcoming Stay</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p><strong>Check&#8209;in:</strong> {{ upcomingBooking()!.checkInDate }}</p>
+            <p><strong>Check&#8209;out:</strong> {{ upcomingBooking()!.checkOutDate }}</p>
+            <p><strong>Status:</strong> {{ upcomingBooking()!.bookingStatus }}</p>
+          </mat-card-content>
+        </mat-card>
+      } @else {
+        <mat-card class="booking-card no-booking">
+          <mat-card-content>
+            <p>No upcoming bookings.</p>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  }
+</div>

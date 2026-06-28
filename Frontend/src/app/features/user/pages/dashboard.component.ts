@@ -1,8 +1,159 @@
-import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, inject, signal, OnInit } from '@angular/core';
+import { ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DestroyRef } from '@angular/core';
+import { finalize, forkJoin } from 'rxjs';
+import { AuthApiService } from '../../../core/services/auth-api.service';
+import { BookingApiService } from '../services/booking-api.service';
+import { HousekeepingApiService } from '../services/housekeeping-api.service';
+import { MaintenanceApiService } from '../services/maintenance-api.service';
+import { AuthMeResponse } from '../models/auth-me-response.model';
+import { Booking } from '../../admin/models/booking.model';
+import { AlertComponent } from '../../auth/components/alert.component';
+import { RequestServiceDialogComponent, RequestServiceDialogData, RequestServiceDialogResult } from '../components/request-service-dialog.component';
 
 @Component({
-  selector: 'app-placeholder-customer-dashboard',
+  selector: 'app-customer-dashboard',
   standalone: true,
-  template: `<p>Coming soon: Customer Dashboard</p>`,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MatDividerModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSnackBarModule,
+    AlertComponent,
+  ],
+  templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.component.scss'],
 })
-export class PlaceholderCustomerDashboardComponent {}
+export class PlaceholderCustomerDashboardComponent implements OnInit {
+  firstName = signal('');
+  loading = signal(false);
+  error = signal<string | null>(null);
+  currentBooking = signal<Booking | null>(null);
+  upcomingBooking = signal<Booking | null>(null);
+
+  private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly authApi = inject(AuthApiService);
+  private readonly bookingApi = inject(BookingApiService);
+  private readonly housekeepingApi = inject(HousekeepingApiService);
+  private readonly maintenanceApi = inject(MaintenanceApiService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  ngOnInit(): void {
+    this.loadDashboard();
+  }
+
+  loadDashboard(): void {
+    this.loading.set(true);
+    this.error.set(null);
+
+    this.authApi.getMe().pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: (me: AuthMeResponse) => {
+        const firstNameClaim = me.claims?.find(c => c.type === 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname')?.value ?? '';
+        const emailClaim = me.claims?.find(c => c.type === 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name')?.value ?? '';
+
+        this.firstName.set(firstNameClaim);
+
+        if (emailClaim) {
+          this.fetchBookings(emailClaim);
+        } else {
+          this.loading.set(false);
+        }
+      },
+      error: (err: unknown) => {
+        this.error.set(this.extractErrorMessage(err));
+        this.loading.set(false);
+      }
+    });
+  }
+
+  private fetchBookings(email: string): void {
+    const current$ = this.bookingApi.getAll({ guestQuery: email, status: 'CheckedIn', pageNumber: 1, pageSize: 1, sortBy: 'bookedAt', sortDescending: true });
+    const upcoming$ = this.bookingApi.getAll({ guestQuery: email, status: 'Booked', pageNumber: 1, pageSize: 1, sortBy: 'checkInDate', sortDescending: false });
+
+    forkJoin([current$, upcoming$]).pipe(
+      takeUntilDestroyed(this.destroyRef),
+      finalize(() => this.loading.set(false))
+    ).subscribe({
+      next: ([currentRes, upcomingRes]) => {
+        this.currentBooking.set(currentRes.data.length > 0 ? currentRes.data[0] : null);
+        this.upcomingBooking.set(upcomingRes.data.length > 0 ? upcomingRes.data[0] : null);
+      },
+      error: (err: unknown) => this.error.set(this.extractErrorMessage(err))
+    });
+  }
+
+  openServiceRequest(type: 'housekeeping' | 'maintenance'): void {
+    const booking = this.currentBooking();
+    if (!booking || !booking.rooms.length || booking.rooms[0].roomId === null) {
+      return;
+    }
+
+    const roomId = booking.rooms[0].roomId as number;
+    const roomNumber = booking.rooms[0].roomNumber ?? roomId.toString();
+
+    const data: RequestServiceDialogData = { roomNumber, roomId, type };
+    const dialogRef = this.dialog.open<RequestServiceDialogComponent, RequestServiceDialogData, RequestServiceDialogResult>(
+      RequestServiceDialogComponent,
+      { data, width: '420px' }
+    );
+
+    dialogRef.afterClosed().pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe((result: RequestServiceDialogResult | undefined) => {
+      if (!result) return;
+
+      const api$ = type === 'housekeeping'
+        ? this.housekeepingApi.trigger(roomId, { description: result.description })
+        : this.maintenanceApi.trigger(roomId, { description: result.description });
+
+      api$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+        next: () => {
+          this.snackBar.open(
+            type === 'housekeeping' ? 'Housekeeping request submitted.' : 'Maintenance request submitted.',
+            'Close',
+            { duration: 4000 }
+          );
+        },
+        error: (err: unknown) => {
+          this.snackBar.open(this.extractErrorMessage(err), 'Close', { duration: 5000 });
+        }
+      });
+    });
+  }
+
+  getRoomNumbers(booking: Booking): string {
+    return booking.rooms
+      .filter(r => r.roomNumber !== null)
+      .map(r => r.roomNumber as string)
+      .join(', ') || '—';
+  }
+
+  private extractErrorMessage(err: unknown): string {
+    if (typeof err === 'string') return err;
+    const e = err as { error?: { message?: string }; message?: string };
+    if (e?.error?.message) return e.error.message;
+    if (e?.message) return e.message;
+    return 'An unexpected error occurred.';
+  }
+}

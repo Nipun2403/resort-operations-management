@@ -1,0 +1,28 @@
+<div class="dialog-container">
+  <h2 mat-dialog-title>
+    {{ data.type === 'housekeeping' ? 'Request Housekeeping' : 'Request Maintenance' }}
+  </h2>
+  <mat-dialog-content>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Room</mat-label>
+      <input matInput [value]="data.roomNumber" readonly aria-label="Room number (read only)" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Description</mat-label>
+      <textarea
+        matInput
+        [formControl]="descriptionControl"
+        rows="4"
+        placeholder="Describe your request..."
+        aria-label="Request description"
+      ></textarea>
+      @if (descriptionControl.invalid && descriptionControl.touched) {
+        <mat-error>Description is required.</mat-error>
+      }
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close aria-label="Cancel request">Cancel</button>
+    <button mat-raised-button color="primary" (click)="submit()" aria-label="Submit request">Submit</button>
+  </mat-dialog-actions>
+</div>
