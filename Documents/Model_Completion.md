@@ -2763,6 +2763,52 @@ None.
 
 CRITICAL RULE COMPLIANCE CONFIRMATION
 --------------------------------------
+☑ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: customer-responsive-patch-2.md
+Date: 2026-06-28
+================================================================================
+
+FILES CREATED
+-------------
+None.
+
+FILES MODIFIED
+--------------
+✓ src/app/features/user/pages/dashboard.component.ts/.html/.scss
+  — Added signals, injected APIs, implemented upcoming room types load, fetched active booking service status (housekeeping, maintenance, and preparing food orders), styled cards layout.
+✓ src/app/features/user/services/order-api.service.ts
+  — Added getAll method.
+✓ src/app/features/user/services/housekeeping-api.service.ts
+  — Added roomId parameter support to getAll method.
+✓ src/app/features/user/services/maintenance-api.service.ts
+  — Added roomId parameter support to getAll method.
+✓ src/app/features/user/components/my-requests/my-requests.component.ts/.html
+  — Reverted mobile dialog detail component, rendering a single full-columns mat-table with overflow scroll container support.
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Dashboard Upcoming Stay Room Types (§3)
+  ✓ Fetches room type names dynamically and lists them on the upcoming booking stay card.
+✓ Dashboard Room Service Status Section (§4)
+  ✓ Displays three cards showing count and task descriptions for pending/inprogress housekeeping, maintenance, and food preparing tasks.
+✓ Reverted My Requests Table (§5)
+  ✓ Restored full-columns layout for the requests table on all viewport sizes with container-level scrollbars on mobile.
+
+KNOWN DEVIATIONS
+----------------
+None.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
 ☑ I confirm that every ✓ in the requirements section corresponds to code
   that exists and is correct. No requirement has been marked complete
   without implementation evidence.
