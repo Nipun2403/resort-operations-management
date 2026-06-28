@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 import { AuthRedirectGuard } from './core/guards/auth-redirect.guard';
 import { adminGuard } from './core/guards/admin.guard';
 import { customerGuard } from './core/guards/customer.guard';
+import { frontDeskGuard } from './core/guards/front-desk.guard';
 
 export const routes: Routes = [
   {
@@ -80,6 +81,32 @@ export const routes: Routes = [
         path: 'profile',
         loadComponent: () => import('./features/user/pages/profile.component')
           .then(m => m.PlaceholderCustomerProfileComponent)
+      },
+      { path: '**', redirectTo: 'dashboard' }
+    ]
+  },
+  {
+    path: 'operations/front-desk',
+    canMatch: [frontDeskGuard],
+    canActivate: [frontDeskGuard],
+    loadComponent: () => import('./features/front-desk/front-desk-shell.component')
+      .then(m => m.FrontDeskShellComponent),
+    children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./features/front-desk/pages/dashboard.component')
+          .then(m => m.PlaceholderDashboardComponent)
+      },
+      {
+        path: 'new-booking',
+        loadComponent: () => import('./features/front-desk/pages/new-booking.component')
+          .then(m => m.PlaceholderNewBookingComponent)
+      },
+      {
+        path: 'profile',
+        loadComponent: () => import('./features/front-desk/pages/profile.component')
+          .then(m => m.PlaceholderProfileComponent)
       },
       { path: '**', redirectTo: 'dashboard' }
     ]

@@ -194,7 +194,14 @@ public class BookingService : IBookingService
         }
     }
 
-    public async Task<PaginatedResult<BookingDTO>> GetBookingsAsync(string? status, string? guestQuery, int pageNumber, int pageSize, string? sortBy = null, bool sortDescending = false)
+    public async Task<PaginatedResult<BookingDTO>> GetBookingsAsync(
+        string? status,
+        string? guestQuery,
+        int pageNumber,
+        int pageSize,
+        string? sortBy = null,
+        bool sortDescending = false,
+        string? movementStatus = null)   // new parameter
     {
         var isStaff = _currentUserService.IsInRole("Admin") || _currentUserService.IsInRole("FrontDesk");
         var predicates = new List<Expression<Func<Booking, bool>>>();
@@ -212,7 +219,7 @@ public class BookingService : IBookingService
             predicates.Add(b => b.UserId == user.Id);
         }
 
-        // 2. Apply status filter for ALL users if the status parameter is provided
+        // 2. Apply status filter
         if (status != null)
         {
             if (status.Equals("active", StringComparison.OrdinalIgnoreCase))
@@ -225,7 +232,7 @@ public class BookingService : IBookingService
             }
         }
 
-        // 3. Apply guest query filter (shared logic – already fine)
+        // 3. Apply guest query filter
         if (!string.IsNullOrWhiteSpace(guestQuery))
         {
             var lowerQuery = guestQuery.ToLower();
@@ -234,14 +241,33 @@ public class BookingService : IBookingService
                                 b.Id.ToString().Contains(lowerQuery));
         }
 
-        // 4. Ordering and pagination (unchanged)
+        // 4. NEW: Apply movementStatus filter (incoming / outgoing)
+        if (!string.IsNullOrEmpty(movementStatus))
+        {
+            var today = DateTime.UtcNow.Date;
+            if (movementStatus.Equals("incoming", StringComparison.OrdinalIgnoreCase))
+            {
+                predicates.Add(b => b.CheckInDate.Date == today);
+            }
+            else if (movementStatus.Equals("outgoing", StringComparison.OrdinalIgnoreCase))
+            {
+                predicates.Add(b => b.CheckOutDate.Date == today);
+            }
+            else
+            {
+                throw new ArgumentException("Invalid movementStatus. Allowed values: 'incoming', 'outgoing'.");
+            }
+        }
+
+        // 5. Ordering and pagination
         Func<IQueryable<Booking>, IOrderedQueryable<Booking>>? orderBy = null;
         if (!string.IsNullOrEmpty(sortBy))
         {
             orderBy = q => q.OrderByDynamic(sortBy, sortDescending);
         }
 
-        var pagedBookings = await _bookingRepository.GetPaginatedBookingsWithDetailsAsync(pageNumber, pageSize, predicates, orderBy);
+        var pagedBookings = await _bookingRepository.GetPaginatedBookingsWithDetailsAsync(
+            pageNumber, pageSize, predicates, orderBy);
 
         var dtos = _mapper.Map<IEnumerable<BookingDTO>>(pagedBookings.Data);
 

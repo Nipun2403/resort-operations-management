@@ -27,22 +27,28 @@ public class BookingsController : ControllerBase
     [HttpGet]
     [Authorize(Roles = "Admin,FrontDesk,RegisteredUser")]
     public async Task<IActionResult> GetBookings(
-        [FromQuery] string? status,
+        [FromQuery] string? bookingStatus,
         [FromQuery] string? guestQuery,
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 10,
         [FromQuery] string? sortBy = null,
-        [FromQuery] bool sortDescending = false)
+        [FromQuery] bool sortDescending = false,
+        [FromQuery] string? movementStatus = null)   // new parameter
     {
         pageSize = Math.Min(pageSize, 100);
         try
         {
-            var bookings = await _bookingService.GetBookingsAsync(status, guestQuery, pageNumber, pageSize, sortBy, sortDescending);
+            var bookings = await _bookingService.GetBookingsAsync(
+                bookingStatus, guestQuery, pageNumber, pageSize, sortBy, sortDescending, movementStatus);
             return Ok(bookings);
         }
         catch (UnauthorizedAccessException ex)
         {
             return Unauthorized(ex.Message);
+        }
+        catch (ArgumentException ex)   // catches invalid movementStatus
+        {
+            return BadRequest(ex.Message);
         }
     }
 
