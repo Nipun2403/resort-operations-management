@@ -30,18 +30,19 @@
   <mat-tab-group>
     <mat-tab label="Overview">
       <div class="tab-content">
-        <h3>Current Status: {{ getOverallStatus() }}</h3>
-        <div class="booking-summary">
-          @for (b of bookings(); track b.id) {
-          <div class="booking-card">
-            <p><strong>Booking #{{ b.id }}</strong></p>
-            <p>Status: {{ b.bookingStatus }}</p>
-            <p>Check-in: {{ b.checkInDate }}</p>
-            <p>Check-out: {{ b.checkOutDate }}</p>
-            <p>Rooms: {{ getRoomNumbers(b) }}</p>
-          </div>
-          }
+        @if (guestProfile()) {
+        <div class="profile-info">
+          <h3>{{ guestProfile()!.guestName }}</h3>
+          <p><strong>Email:</strong> {{ guestProfile()!.guestEmail }}</p>
+          <p><strong>Total Stays:</strong> {{ guestProfile()!.totalStays }}</p>
+          <p>
+            <strong>Last Check-In:</strong> {{ guestProfile()!.lastCheckInDate }}
+          </p>
+          <p><strong>Current Status:</strong> {{ getOverallStatus() }}</p>
         </div>
+        } @else {
+        <p>Loading guest profile...</p>
+        }
       </div>
     </mat-tab>
 
@@ -90,7 +91,10 @@
       </div>
     </mat-tab>
 
-    <mat-tab label="Room Service">
+    <mat-tab
+      label="Room Service"
+      [disabled]="!activeBooking()"
+    >
       <div class="tab-content">
         @if (activeBooking()) {
         <app-room-service-tab [booking]="activeBooking()!" />
@@ -100,7 +104,10 @@
       </div>
     </mat-tab>
 
-    <mat-tab label="Billing">
+    <mat-tab
+      label="Billing"
+      [disabled]="!activeBooking()"
+    >
       <div class="tab-content">
         @if (activeBookingId() > 0) {
         <app-billing-tab [bookingId]="activeBookingId()" />

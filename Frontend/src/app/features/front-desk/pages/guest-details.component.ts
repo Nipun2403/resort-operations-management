@@ -16,6 +16,8 @@ import { finalize } from 'rxjs/operators';
 
 import { BookingApiService } from '../../user/services/booking-api.service';
 import { BillingApiService } from '../../user/services/billing-api.service';
+import { GuestApiService } from '../services/guest-api.service';
+import { GuestProfile } from '../models/guest-profile.model';
 import { Booking } from '../../admin/models/booking.model';
 import { AlertComponent } from '../../auth/components/alert.component';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
@@ -52,6 +54,7 @@ export class GuestDetailsComponent implements OnInit {
   bookings = signal<Booking[]>([]);
   loading = signal(false);
   error = signal<string | null>(null);
+  guestProfile = signal<GuestProfile | null>(null);
 
   activeBooking = computed(() => {
     return (
@@ -65,6 +68,7 @@ export class GuestDetailsComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly bookingApi = inject(BookingApiService);
   private readonly billingApi = inject(BillingApiService);
+  private readonly guestApi = inject(GuestApiService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
@@ -74,6 +78,16 @@ export class GuestDetailsComponent implements OnInit {
     const decodedEmail = decodeURIComponent(encodedEmail);
     this.email.set(decodedEmail);
     this.fetchBookings();
+    this.guestApi.search(decodedEmail).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
+      next: res => {
+        if (res.data && res.data.length > 0) {
+          this.guestProfile.set(res.data[0]);
+        }
+      },
+      error: (err: any) => console.error('Failed to load guest profile', err)
+    });
   }
 
   fetchBookings(): void {
@@ -116,24 +130,22 @@ export class GuestDetailsComponent implements OnInit {
   }
 
   cancelBooking(booking: Booking): void {
-    const confirmRef = this.dialog.open(ConfirmDialogComponent, {
-      data: { title: 'Cancel Booking', message: `Cancel booking #${booking.id} for ${booking.guestName}?` }
-    });
-    confirmRef.afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(confirmed => {
-      if (!confirmed) return;
-      this.bookingApi.cancel(booking.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-        next: () => {
-          this.snackBar.open('Booking cancelled.', 'Close', { duration: 3000 });
-          this.fetchBookings();
-        },
-        error: (err: any) => this.snackBar.open(this.extractErrorMessage(err), 'Close', { duration: 5000 })
-      });
+    this.bookingApi.cancel(booking.id).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
+      next: () => {
+        this.snackBar.open('Booking cancelled.', 'Close', { duration: 3000 });
+        this.fetchBookings();
+      },
+      error: (err: any) => this.snackBar.open(this.extractErrorMessage(err), 'Close', { duration: 5000 })
     });
   }
 
   extendStay(booking: Booking): void {
     const extendRef = this.dialog.open(ExtendStayDialogComponent, {
-      data: { bookingId: booking.id, currentCheckOut: booking.checkOutDate }
+      data: { bookingId: booking.id, currentCheckOut: booking.checkOutDate },
+      width: '400px',
+      maxWidth: '90vw',
     });
     extendRef.afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(result => {
       if (result) {
