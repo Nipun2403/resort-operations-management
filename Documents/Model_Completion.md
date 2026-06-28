@@ -2849,6 +2849,56 @@ None.
 
 CRITICAL RULE COMPLIANCE CONFIRMATION
 --------------------------------------
+☑ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: front-desk-shell.md
+Date: 2026-06-28
+================================================================================
+
+FILES CREATED
+-------------
+✓ src/app/core/guards/front-desk.guard.ts
+  — Role guard allowing only users with role `'FrontDesk'` to pass.
+✓ src/app/features/front-desk/front-desk-shell.component.ts/.html/.scss
+  — Navigation shell with responsive side drawer menu, account avatar menus, dynamic titles.
+✓ src/app/features/front-desk/pages/dashboard.component.ts
+  — Standalone component placeholder for Dashboard page.
+✓ src/app/features/front-desk/pages/new-booking.component.ts
+  — Standalone component placeholder for Booking wizard.
+✓ src/app/features/front-desk/pages/profile.component.ts
+  — Standalone component placeholder for User Profile page.
+
+FILES MODIFIED
+--------------
+✓ src/app/app.routes.ts
+  — Added operations/front-desk child routing configurations, guarded by frontDeskGuard.
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Authorization & Guards (§3)
+  ✓ frontDeskGuard prevents access to unauthorized roles, redirecting to /auth.
+✓ Sidenav Container & Toolbar Layout (§5, §6)
+  ✓ Displays navigation items for Dashboard and New Booking in desktop/overlay side nav modes.
+  ✓ Sidebar closes when an overlay item is selected on mobile/tablets viewports (<1024px).
+  ✓ Displays dynamic header title and active menu options for Profile and Logout actions.
+  ✓ Logout clears authentication tokens and redirect guests to auth pages.
+✓ Lazy Loaded Routing & Child Configurations (§2)
+  ✓ All views are lazily loaded. Unknown child routes redirect to dashboard.
+
+KNOWN DEVIATIONS
+----------------
+None.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
 ☑ I confirm that every ✓ in the requirements section corresponds to code
   that exists and is correct. No requirement has been marked complete
   without implementation evidence.
