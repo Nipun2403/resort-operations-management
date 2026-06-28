@@ -1,6 +1,7 @@
-<mat-vertical-stepper
+<mat-stepper
   linear
   #stepper
+  [orientation]="isMobile() ? 'vertical' : 'horizontal'"
   (selectionChange)="onStepChange($event)"
 >
   <!-- Step 1: Dates & Guests -->
@@ -268,4 +269,4 @@
       </div>
     </div>
   </mat-step>
-</mat-vertical-stepper>
+</mat-stepper>

@@ -9,16 +9,22 @@
     </mat-button-toggle-group>
   </div>
 
-  @if (viewMode.value === 'history') {
-    <app-booking-history
-      [userEmail]="userEmail()"
-      [refresh]="refreshTrigger()"
-      [highlightBookingId]="newBookingId()"
-    />
-  } @if (viewMode.value === 'new') {
-    <app-booking-wizard
-      [userProfile]="userProfile()!"
-      (bookingCreated)="onBookingCreated($event)"
-    />
+  @if (userProfile()) {
+    @if (viewMode.value === 'history') {
+      <app-booking-history
+        [userEmail]="userEmail()"
+        [refresh]="refreshTrigger()"
+        [highlightBookingId]="newBookingId()"
+      />
+    } @if (viewMode.value === 'new') {
+      <app-booking-wizard
+        [userProfile]="userProfile()!"
+        (bookingCreated)="onBookingCreated($event)"
+      />
+    }
+  } @else {
+    <div style="display: flex; justify-content: center; padding: 24px;">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
   }
 </div>

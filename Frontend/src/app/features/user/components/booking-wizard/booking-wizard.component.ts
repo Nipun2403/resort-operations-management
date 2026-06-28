@@ -86,13 +86,17 @@ export class BookingWizardComponent {
     return this.amenityControls[index];
   }
 
+  // Convert form values to signals so computed reacts
+  private datesValues = toSignal(this.datesForm.valueChanges, { initialValue: this.datesForm.value });
+  private amenitiesValues = toSignal(this.amenitiesForm.valueChanges, { initialValue: this.amenitiesForm.value });
+
   // Computed signals
   nights = computed(() => {
-    const cin = this.datesForm.value.checkInDate;
-    const cout = this.datesForm.value.checkOutDate;
-    if (!cin || !cout) return 0;
-    const diff = cout.getTime() - cin.getTime();
-    return Math.max(1, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+    const dates = this.datesValues();
+    if (!dates || !dates.checkInDate || !dates.checkOutDate) return 0;
+    const cin = new Date(dates.checkInDate);
+    const cout = new Date(dates.checkOutDate);
+    return Math.max(0, Math.ceil((cout.getTime() - cin.getTime()) / (1000 * 3600 * 24)));
   });
 
   totalSelectedQuantity = computed(() => {
@@ -104,7 +108,8 @@ export class BookingWizardComponent {
       (sum, r) => sum + (this.selectedRoomQuantities()[r.roomTypeId] || 0) * r.maxOccupancy,
       0
     );
-    const guests = this.datesForm.value.guestCount || 0;
+    const dates = this.datesValues();
+    const guests = dates?.guestCount ?? 0;
     if (this.totalSelectedQuantity() > 0 && totalCap < guests) {
       return `The selected rooms can only accommodate ${totalCap} guests. You need ${guests}.`;
     }
@@ -126,18 +131,21 @@ export class BookingWizardComponent {
 
   selectedAmenityEntries = computed(() => {
     const list = this.availableAmenities();
-    const controls = this.amenityControls;
-    return list.filter((_, i) => controls[i]?.value === true);
+    const amenitiesVal = this.amenitiesValues();
+    const selectedList = amenitiesVal?.selectedAmenities || [];
+    return list.filter((_, i) => selectedList[i] === true);
   });
 
   estimatedTotal = computed(() => {
+    const amenitiesVal = this.amenitiesValues();
     const nights = this.nights();
     const roomCost = this.availableRooms().reduce(
       (sum, r) => sum + (this.selectedRoomQuantities()[r.roomTypeId] || 0) * r.basePrice * nights,
       0
     );
+    const selectedList = amenitiesVal?.selectedAmenities || [];
     const amenityCost = this.availableAmenities().reduce(
-      (sum, a, i) => sum + (this.getAmenityControl(i)?.value ? a.price : 0),
+      (sum, a, i) => sum + (selectedList[i] ? a.price : 0),
       0
     );
     return roomCost + amenityCost;
@@ -234,6 +242,7 @@ export class BookingWizardComponent {
   updateRoomsFormValidity(): void {
     const isValid = this.totalSelectedQuantity() > 0 && !this.capacityWarning();
     this.roomsForm.controls.dummy.setValue(isValid);
+    this.roomsForm.updateValueAndValidity();
   }
 
   submitBooking(): void {
