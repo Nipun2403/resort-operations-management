@@ -19,6 +19,7 @@ import { AlertComponent } from '../../auth/components/alert.component';
 import { ActiveTicketsDialogComponent } from '../components/active-tickets-dialog/active-tickets-dialog.component';
 import { MovementTableComponent } from '../components/movement-table/movement-table.component';
 import { Booking } from '../../admin/models/booking.model';
+import { BookingActionModalComponent } from '../components/booking-action-modal/booking-action-modal.component';
 
 @Component({
   selector: 'app-front-desk-dashboard',
@@ -139,7 +140,21 @@ export class PlaceholderDashboardComponent implements OnInit {
   }
 
   openBookingModal(booking: Booking): void {
-    console.log('Selected booking:', booking.id);
+    const dialogRef = this.dialog.open(BookingActionModalComponent, {
+      data: { booking },
+      width: '95vw',
+      maxWidth: '700px',
+      panelClass: 'booking-action-modal',
+    });
+    dialogRef
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(result => {
+        if (result === true) {
+          this.refreshTable.update(n => n + 1);
+          this.loadSummary();
+        }
+      });
   }
 
   private extractErrorMessage(err: any): string {

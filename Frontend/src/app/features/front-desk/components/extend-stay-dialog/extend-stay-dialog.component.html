@@ -1,0 +1,47 @@
+<h2 mat-dialog-title>Extend Stay</h2>
+<mat-dialog-content>
+  <p>Current check‑out: {{ data.currentCheckOut }}</p>
+  <mat-form-field appearance="outline" style="width: 100%; margin-top: 8px;">
+    <mat-label>New check‑out date</mat-label>
+    <input
+      matInput
+      [matDatepicker]="picker"
+      [formControl]="newCheckOut"
+      [min]="minDate"
+    />
+    <mat-datepicker-toggle
+      matSuffix
+      [for]="picker"
+    ></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+    @if (newCheckOut.invalid && newCheckOut.touched) {
+      <mat-error>Please select a future date after the current check‑out.</mat-error>
+    }
+  </mat-form-field>
+  @if (error()) {
+    <app-alert
+      type="error"
+      [message]="error()!"
+      (closed)="error.set(null)"
+    ></app-alert>
+  }
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button
+    mat-button
+    mat-dialog-close
+  >
+    Cancel
+  </button>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="submit()"
+    [disabled]="newCheckOut.invalid || submitting()"
+  >
+    @if (submitting()) {
+      <mat-spinner diameter="20" style="display: inline-block; margin-right: 8px; vertical-align: middle;"></mat-spinner>
+    }
+    Extend Stay
+  </button>
+</mat-dialog-actions>

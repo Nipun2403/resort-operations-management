@@ -53,4 +53,12 @@ export class BookingApiService {
   cancel(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}/cancel`);
   }
+
+  checkIn(id: number): Observable<Booking> {
+    return this.http.post<Booking>(`${this.baseUrl}/${id}/checkin`, {});
+  }
+
+  extendStay(id: number, dto: { checkOutDate: string }): Observable<void> {
+    return this.http.patch<void>(`${this.baseUrl}/${id}/extend-stay`, dto);
+  }
 }
