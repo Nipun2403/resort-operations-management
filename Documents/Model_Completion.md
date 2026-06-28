@@ -2809,6 +2809,46 @@ None.
 
 CRITICAL RULE COMPLIANCE CONFIRMATION
 --------------------------------------
+☑ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: customer-ui-patch.md
+Date: 2026-06-28
+================================================================================
+
+FILES CREATED
+-------------
+None.
+
+FILES MODIFIED
+--------------
+✓ src/app/features/user/pages/dashboard.component.ts/.html
+  — Corrected loadRoomServiceStatus logic to query Pending and InProgress/Preparing statuses individually and merge them. Updated the dashboard cards markup to render descriptions/IDs instead of location names.
+✓ src/app/features/user/components/food-order/menu-grid.component.ts
+  — Converted FormControl valueChanges to categoryFilterSignal using toSignal, correcting computed reactivity on selection changes.
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Dashboard Room Service Status Fix (§3)
+  ✓ Executes individual status calls for Pending and InProgress/Preparing separately.
+  ✓ Combines results into pendingHousekeeping, pendingMaintenance, and pendingFoodOrders.
+  ✓ Displays task description and order ID status badges (hiding location strings).
+✓ Menu Grid Category Filter Fix (§4)
+  ✓ FormControl changes converted into categoryFilterSignal via toSignal, fixing computed filter updates on menu items.
+
+KNOWN DEVIATIONS
+----------------
+None.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
 ☑ I confirm that every ✓ in the requirements section corresponds to code
   that exists and is correct. No requirement has been marked complete
   without implementation evidence.
