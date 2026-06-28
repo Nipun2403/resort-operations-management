@@ -67,3 +67,23 @@
 mat-divider {
   margin: 16px 0;
 }
+
+.mat-mdc-tab-group {
+  max-width: 100%;
+}
+
+.mat-mdc-tab-body {
+  overflow-y: auto;
+}
+
+@media (max-width: 599px) {
+  .modal-content {
+    padding: 8px;
+  }
+  .actions {
+    flex-direction: column;
+    button {
+      width: 100%;
+    }
+  }
+}

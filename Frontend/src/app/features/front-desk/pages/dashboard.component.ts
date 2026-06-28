@@ -150,9 +150,9 @@ export class PlaceholderDashboardComponent implements OnInit {
       .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(result => {
+        this.loadSummary();
         if (result === true) {
           this.refreshTable.update(n => n + 1);
-          this.loadSummary();
         }
       });
   }
