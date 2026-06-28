@@ -88,3 +88,12 @@ svg {
 }
 /* You can add global styles to this file, and also import other style files */
 
+@media (max-width: 360px) {
+  body {
+    font-size: 14px;
+  }
+  mat-card {
+    margin: 4px;
+    padding: 8px;
+  }
+}

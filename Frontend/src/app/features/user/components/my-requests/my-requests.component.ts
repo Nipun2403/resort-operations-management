@@ -4,6 +4,9 @@ import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { forkJoin, Observable } from 'rxjs';
 import { map, finalize } from 'rxjs/operators';
@@ -11,6 +14,7 @@ import { HousekeepingApiService } from '../../services/housekeeping-api.service'
 import { MaintenanceApiService } from '../../services/maintenance-api.service';
 import { CustomerRequest } from '../../models/customer-request.model';
 import { AlertComponent } from '../../../../features/auth/components/alert.component';
+import { RequestDetailDialogComponent } from './request-detail-dialog.component';
 
 @Component({
   selector: 'app-my-requests',
@@ -21,6 +25,7 @@ import { AlertComponent } from '../../../../features/auth/components/alert.compo
     MatSortModule,
     MatProgressSpinnerModule,
     MatButtonModule,
+    MatDialogModule,
     AlertComponent
   ],
   templateUrl: './my-requests.component.html',
@@ -32,12 +37,26 @@ export class MyRequestsComponent {
 
   private readonly housekeepingApi = inject(HousekeepingApiService);
   private readonly maintenanceApi = inject(MaintenanceApiService);
+  private readonly dialog = inject(MatDialog);
+  private readonly breakpointObserver = inject(BreakpointObserver);
   private readonly destroyRef = inject(DestroyRef);
 
   requests = signal<CustomerRequest[]>([]);
   loading = signal(false);
   error = signal<string | null>(null);
   displayedColumns = ['type', 'room', 'description', 'status', 'createdAt'];
+
+  isMobile = toSignal(
+    this.breakpointObserver.observe('(max-width: 599px)').pipe(map(r => r.matches)),
+    { initialValue: false }
+  );
+
+  openDetail(request: CustomerRequest): void {
+    this.dialog.open(RequestDetailDialogComponent, {
+      data: request,
+      width: '400px'
+    });
+  }
 
   constructor() {
     effect(() => {

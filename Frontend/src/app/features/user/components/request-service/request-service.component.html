@@ -5,18 +5,28 @@
     </mat-card-header>
     <mat-card-content class="form-container">
       <div class="form-row">
-        <mat-button-toggle-group
-          [formControl]="requestType"
-          aria-label="Service type"
-          class="type-toggle-group"
-        >
-          <mat-button-toggle value="housekeeping">
-            <mat-icon>cleaning_services</mat-icon> Housekeeping
-          </mat-button-toggle>
-          <mat-button-toggle value="maintenance">
-            <mat-icon>build</mat-icon> Maintenance
-          </mat-button-toggle>
-        </mat-button-toggle-group>
+        @if (isMobile()) {
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Service Type</mat-label>
+            <mat-select [formControl]="requestType">
+              <mat-option value="housekeeping">Housekeeping</mat-option>
+              <mat-option value="maintenance">Maintenance</mat-option>
+            </mat-select>
+          </mat-form-field>
+        } @else {
+          <mat-button-toggle-group
+            [formControl]="requestType"
+            aria-label="Service type"
+            class="type-toggle-group"
+          >
+            <mat-button-toggle value="housekeeping">
+              <mat-icon>cleaning_services</mat-icon> Housekeeping
+            </mat-button-toggle>
+            <mat-button-toggle value="maintenance">
+              <mat-icon>build</mat-icon> Maintenance
+            </mat-button-toggle>
+          </mat-button-toggle-group>
+        }
       </div>
 
       <div class="form-row">

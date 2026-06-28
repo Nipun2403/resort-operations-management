@@ -1,6 +1,8 @@
 import { Component, OnInit, inject, signal, computed, input, output, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MenuItemApiService } from '../../services/menu-item-api.service';
 import { OrderApiService } from '../../services/order-api.service';
@@ -19,6 +21,7 @@ import { AlertComponent } from '../../../../features/auth/components/alert.compo
     CommonModule,
     MatSnackBarModule,
     MatProgressSpinnerModule,
+    MatDialogModule,
     MenuGridComponent,
     CartDrawerComponent,
     AlertComponent
@@ -33,6 +36,7 @@ export class FoodOrderComponent implements OnInit {
   private readonly menuApi = inject(MenuItemApiService);
   private readonly orderApi = inject(OrderApiService);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);
 
   menuItems = signal<MenuItem[]>([]);
@@ -44,6 +48,7 @@ export class FoodOrderComponent implements OnInit {
   submitting = signal(false);
 
   canCheckout = computed(() => this.cartItems().length > 0);
+  subtotal = computed(() => this.cartItems().reduce((s, i) => s + i.price * i.quantity, 0));
 
   ngOnInit(): void {
     this.fetchMenuItems();
@@ -108,6 +113,23 @@ export class FoodOrderComponent implements OnInit {
       return;
     }
 
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Confirm Order',
+        message: `Place this order? Total: $${this.subtotal().toFixed(2)}`
+      }
+    });
+
+    dialogRef.afterClosed().pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe((confirmed) => {
+      if (confirmed) {
+        this.submitOrder();
+      }
+    });
+  }
+
+  private submitOrder(): void {
     this.submitting.set(true);
     const dto = {
       bookingId: this.activeBookingId(),

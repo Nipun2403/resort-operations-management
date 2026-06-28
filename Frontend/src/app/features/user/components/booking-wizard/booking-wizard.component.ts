@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, input, output, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, signal, computed, input, output, ChangeDetectorRef, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, FormArray, Validators, AbstractControl } from '@angular/forms';
 import { MatStepperModule } from '@angular/material/stepper';
@@ -9,6 +9,8 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { map } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -20,6 +22,7 @@ import { Amenity } from '../../../../features/admin/models/amenity.model';
 import { AlertComponent } from '../../../../features/auth/components/alert.component';
 import { MatDividerModule } from '@angular/material/divider';
 import { finalize } from 'rxjs/operators';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-booking-wizard',
@@ -36,6 +39,7 @@ import { finalize } from 'rxjs/operators';
     MatIconModule,
     MatProgressSpinnerModule,
     MatDividerModule,
+    MatDialogModule,
     AlertComponent
   ],
   templateUrl: './booking-wizard.component.html',
@@ -49,6 +53,8 @@ export class BookingWizardComponent {
   private readonly amenityApi = inject(AmenityApiService);
   private readonly bookingApi = inject(BookingApiService);
   private readonly breakpointObserver = inject(BreakpointObserver);
+  private readonly dialog = inject(MatDialog);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly cdr = inject(ChangeDetectorRef);
 
   isMobile = toSignal(
@@ -246,6 +252,23 @@ export class BookingWizardComponent {
   }
 
   submitBooking(): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Confirm Booking',
+        message: `Create this booking? Total estimated: $${this.estimatedTotal().toFixed(2)}`
+      }
+    });
+
+    dialogRef.afterClosed().pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe((confirmed) => {
+      if (confirmed) {
+        this.performBooking();
+      }
+    });
+  }
+
+  private performBooking(): void {
     this.loading.set(true);
     this.error.set(null);
 
@@ -273,7 +296,10 @@ export class BookingWizardComponent {
     };
 
     this.bookingApi.create(bookingDto)
-      .pipe(finalize(() => this.loading.set(false)))
+      .pipe(
+        finalize(() => this.loading.set(false)),
+        takeUntilDestroyed(this.destroyRef)
+      )
       .subscribe({
         next: (response) => {
           this.bookingCreated.emit(response.id);

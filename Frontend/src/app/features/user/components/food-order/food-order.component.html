@@ -12,7 +12,9 @@
       <div class="menu-section">
         <app-menu-grid
           [menuItems]="menuItems()"
+          [cartItems]="cartItems()"
           (addToCart)="onAddToCart($event)"
+          (updateQuantity)="onUpdateCartQty($event)"
         />
       </div>
 

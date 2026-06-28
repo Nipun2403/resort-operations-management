@@ -12,6 +12,17 @@
     color: rgba(0, 0, 0, 0.87);
   }
 
+  .filter-row {
+    margin-bottom: 24px;
+    
+    .category-select {
+      width: 200px;
+      @media (max-width: 599px) {
+        width: 100%;
+      }
+    }
+  }
+
   .menu-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -36,8 +47,40 @@
 
       mat-card-actions {
         padding: 8px 16px 16px 16px;
-        button {
+
+        .action-btn {
           width: 100%;
+        }
+
+        .inline-qty-controls {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          width: 100%;
+          border: 1px solid rgba(0, 0, 0, 0.12);
+          border-radius: 4px;
+          height: 36px;
+          box-sizing: border-box;
+
+          button {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 36px;
+            border-radius: 0;
+
+            ::ng-deep .mat-mdc-button-touch-target {
+              display: none;
+            }
+          }
+
+          .qty-display {
+            font-weight: 600;
+            font-size: 1rem;
+            color: rgba(0, 0, 0, 0.87);
+          }
         }
       }
     }
