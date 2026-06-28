@@ -2706,6 +2706,63 @@ None.
 
 CRITICAL RULE COMPLIANCE CONFIRMATION
 --------------------------------------
+☑ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: customer-responsive-patch.md
+Date: 2026-06-28
+================================================================================
+
+FILES CREATED
+-------------
+✓ Frontend/src/app/features/user/components/my-requests/request-detail-dialog.component.ts
+  — Created standalone modal component to display housekeeping/maintenance ticket details on mobile.
+
+FILES MODIFIED
+--------------
+✓ src/app/features/user/components/food-order/menu-grid.component.ts/.html/.scss
+  — Added computed cartMap, select filter control, inline quantity selectors (+/-).
+✓ src/app/features/user/components/food-order/food-order.component.ts/.html
+  — Bound cartItems input on app-menu-grid and wrapped checkout inside ConfirmDialogComponent check.
+✓ src/app/features/user/components/request-service/request-service.component.ts/.html
+  — Wrapped service submit inside ConfirmDialogComponent check, added isMobile detection, and swapped toggle buttons to select dropdown on mobile.
+✓ src/app/features/user/components/booking-wizard/booking-wizard.component.ts
+  — Imported DestroyRef, injected dialog services, and wrapped finalize booking submit in ConfirmDialogComponent.
+✓ src/app/features/user/components/my-requests/my-requests.component.ts/.html/.scss
+  — Added mobile vs desktop conditional table structure, injected MatDialog, and implemented openDetail click action for mobile row clicks.
+✓ src/styles.scss
+  — Appended global max-width 360px font-size constraints.
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Inline Quantity Selector (§3)
+  ✓ First click triggers addToCart output.
+  ✓ Subsequent clicks trigger updateQuantity outputs.
+  ✓ Cart quantities computed dynamically from parent cartItems input.
+✓ Confirmation Dialog wrappers (§4)
+  ✓ ConfirmDialogComponent displays before placeOrder inside food-order.
+  ✓ ConfirmDialogComponent displays before submitRequest inside request-service.
+  ✓ ConfirmDialogComponent displays before submitBooking inside booking-wizard.
+✓ Category Dropdown Filter (§5)
+  ✓ mat-select filters food items and groups categories automatically.
+✓ Mobile Layout Optimizations (§6)
+  ✓ Global styling scales body font and constraints down to 320px screen widths.
+  ✓ My Requests tables simplify to Type, Status, and Created columns on mobile. Clicking a row opens the full details dialog.
+  ✓ Service Type toggle is rendered as a standard select dropdown on viewport width < 600px.
+
+KNOWN DEVIATIONS
+----------------
+None.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
 ☑ I confirm that every ✓ in the requirements section corresponds to code
   that exists and is correct. No requirement has been marked complete
   without implementation evidence.
