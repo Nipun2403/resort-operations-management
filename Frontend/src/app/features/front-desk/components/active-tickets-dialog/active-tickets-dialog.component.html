@@ -1,0 +1,22 @@
+<h2 mat-dialog-title>Active Tickets</h2>
+<mat-dialog-content>
+  <mat-tab-group>
+    <mat-tab label="Housekeeping ({{ data.housekeepingCount }})">
+      <app-ticket-list type="housekeeping"></app-ticket-list>
+    </mat-tab>
+    <mat-tab label="Maintenance ({{ data.maintenanceCount }})">
+      <app-ticket-list type="maintenance"></app-ticket-list>
+    </mat-tab>
+    <mat-tab label="Food Orders ({{ data.foodOrdersCount }})">
+      <app-ticket-list type="foodOrder"></app-ticket-list>
+    </mat-tab>
+  </mat-tab-group>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button
+    mat-button
+    mat-dialog-close
+  >
+    Close
+  </button>
+</mat-dialog-actions>

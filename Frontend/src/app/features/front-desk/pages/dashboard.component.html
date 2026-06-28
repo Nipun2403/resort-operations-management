@@ -1,0 +1,67 @@
+<div class="dashboard">
+  @if (loadingSummary()) {
+    <div style="display: flex; justify-content: center; padding: 32px;">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  } @else if (error()) {
+    <app-alert
+      type="error"
+      [message]="error()!"
+      (closed)="error.set(null)"
+    >
+      <button
+        mat-button
+        (click)="ngOnInit()"
+      >
+        Retry
+      </button>
+    </app-alert>
+  } @else {
+    <!-- Summary Cards Row -->
+    <div class="summary-row">
+      <!-- Today’s Arrivals -->
+      <mat-card class="summary-card">
+        <mat-card-header>
+          <mat-card-title>Today’s Arrivals</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <span class="count">{{ arrivalsCount() }}</span>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Today’s Departures -->
+      <mat-card class="summary-card">
+        <mat-card-header>
+          <mat-card-title>Today’s Departures</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <span class="count">{{ departuresCount() }}</span>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Active Tickets (clickable) -->
+      <mat-card
+        class="summary-card clickable"
+        (click)="openActiveTickets()"
+      >
+        <mat-card-header>
+          <mat-card-title>Active Tickets</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="ticket-breakdown">
+            <span>Housekeeping: {{ activeTickets().housekeeping }}</span>
+            <span>Maintenance: {{ activeTickets().maintenance }}</span>
+            <span>Food Orders: {{ activeTickets().foodOrders }}</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  }
+
+  <!-- Placeholder for Part 2: Search Bar + Table -->
+  <div class="table-area">
+    <p>Table and search will be inserted by Part 2 spec.</p>
+  </div>
+
+  <!-- Placeholder for future Room Status Grid -->
+</div>
