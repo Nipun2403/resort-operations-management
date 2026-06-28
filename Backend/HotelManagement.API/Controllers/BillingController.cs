@@ -91,7 +91,7 @@ public class BillingController : ControllerBase
     }
 
     [HttpGet("{bookingId}")]
-    [Authorize(Roles = "FrontDesk,Admin")]
+    [Authorize(Roles = "FrontDesk,Admin,RegisteredUser")]
     public async Task<IActionResult> GetBillingFolio(int bookingId)
     {
         try

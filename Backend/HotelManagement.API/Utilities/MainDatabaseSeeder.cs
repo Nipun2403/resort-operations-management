@@ -21,25 +21,51 @@ public static class MainDatabaseSeeder
 
         // 1. Users
         var admin = new User { Email = "admin@hotel.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123"), Role = "Admin", FirstName = "Super", LastName = "Admin", IsActive = true };
-        var frontdesk1 = new User { Email = "fd1@hotel.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass123"), Role = "FrontDesk", FirstName = "Sarah", LastName = "Desk", IsActive = true };
-        var frontdesk2 = new User { Email = "fd2@hotel.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass123"), Role = "FrontDesk", FirstName = "Mike", LastName = "Desk", IsActive = true };
-        var frontdesk3 = new User { Email = "fd3@hotel.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass123"), Role = "FrontDesk", FirstName = "Elena", LastName = "Rostova", IsActive = true };
-        var kitchen = new User { Email = "chef@hotel.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass123"), Role = "Kitchen", FirstName = "Gordon", LastName = "Ramsay", IsActive = true };
-        var kitchenAsst = new User { Email = "sous@hotel.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass123"), Role = "Kitchen", FirstName = "Marco", LastName = "Pierre", IsActive = true };
-        var housekeeping = new User { Email = "clean@hotel.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass123"), Role = "Housekeeping", FirstName = "Maria", LastName = "Clean", IsActive = true };
-        var housekeeping2 = new User { Email = "clean2@hotel.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass123"), Role = "Housekeeping", FirstName = "Anna", LastName = "Svensson", IsActive = true };
-        var maintenance = new User { Email = "fix@hotel.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass123"), Role = "Maintenance", FirstName = "Bob", LastName = "Fixer", IsActive = true };
-        var customer1 = new User { Email = "cust1@gmail.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass123"), Role = "RegisteredUser", FirstName = "John", LastName = "Doe", IsActive = true };
-        var customer2 = new User { Email = "cust2@gmail.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass123"), Role = "RegisteredUser", FirstName = "Jane", LastName = "Smith", IsActive = true };
-        var customer3 = new User { Email = "cust3@gmail.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass123"), Role = "RegisteredUser", FirstName = "Alex", LastName = "Vance", IsActive = true };
-        var customer4 = new User { Email = "cust4@gmail.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass123"), Role = "RegisteredUser", FirstName = "David", LastName = "Miller", IsActive = true };
-        var customer5 = new User { Email = "cust5@gmail.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass123"), Role = "RegisteredUser", FirstName = "Emily", LastName = "Watson", IsActive = true };
+        var frontdesk1 = new User { Email = "fd1@hotel.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass@1234"), Role = "FrontDesk", FirstName = "Sarah", LastName = "Desk", IsActive = true };
+        var frontdesk2 = new User { Email = "fd2@hotel.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass@1234"), Role = "FrontDesk", FirstName = "Mike", LastName = "Desk", IsActive = true };
+        var frontdesk3 = new User { Email = "fd3@hotel.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass@1234"), Role = "FrontDesk", FirstName = "Elena", LastName = "Rostova", IsActive = true };
+        var kitchen = new User { Email = "chef@hotel.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass@1234"), Role = "Kitchen", FirstName = "Gordon", LastName = "Ramsay", IsActive = true };
+        var kitchenAsst = new User { Email = "sous@hotel.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass@1234"), Role = "Kitchen", FirstName = "Marco", LastName = "Pierre", IsActive = true };
+        var housekeeping = new User { Email = "clean@hotel.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass@1234"), Role = "Housekeeping", FirstName = "Maria", LastName = "Clean", IsActive = true };
+        var housekeeping2 = new User { Email = "clean2@hotel.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass@1234"), Role = "Housekeeping", FirstName = "Anna", LastName = "Svensson", IsActive = true };
+        var maintenance = new User { Email = "fix@hotel.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass@1234"), Role = "Maintenance", FirstName = "Bob", LastName = "Fixer", IsActive = true };
+        var customer1 = new User { Email = "cust1@gmail.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass@1234"), Role = "RegisteredUser", FirstName = "John", LastName = "Doe", IsActive = true };
+        var customer2 = new User { Email = "cust2@gmail.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass@1234"), Role = "RegisteredUser", FirstName = "Jane", LastName = "Smith", IsActive = true };
+        var customer3 = new User { Email = "cust3@gmail.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass@1234"), Role = "RegisteredUser", FirstName = "Alex", LastName = "Vance", IsActive = true };
+        var customer4 = new User { Email = "cust4@gmail.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass@1234"), Role = "RegisteredUser", FirstName = "David", LastName = "Miller", IsActive = true };
+        var customer5 = new User
+        {
+            Email = "cust5@gmail.com",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass@1234"),
+            Role = "RegisteredUser",
+            FirstName =
+"Emily",
+            LastName =
+"Watson",
+            IsActive =
+true
+        };
 
         // Edge case users
-        var inactiveUser = new User { Email = "fired@hotel.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass123"), Role = "FrontDesk", FirstName = "Fired", LastName = "Guy", IsActive = false };
-        var userNoBookings = new User { Email = "nobookings@gmail.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass123"), Role = "RegisteredUser", FirstName = "Ghost", LastName = "User", IsActive = true };
-        var deletedCustomer = new User { Email = "banned@gmail.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass123"), Role = "RegisteredUser", FirstName = "Banned", LastName = "Customer", IsActive = false };
-        var pendingActivationUser = new User { Email = "pending@gmail.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass123"), Role = "RegisteredUser", FirstName = "Newborn", LastName = "Account", IsActive = true };
+        var inactiveUser =
+new User
+{
+    Email =
+"fired@hotel.com",
+    PasswordHash =
+BCrypt.Net.BCrypt.HashPassword("Pass@1234"),
+    Role =
+"FrontDesk",
+    FirstName =
+"Fired",
+    LastName =
+"Guy",
+    IsActive =
+false
+};
+        var userNoBookings = new User { Email = "nobookings@gmail.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass@1234"), Role = "RegisteredUser", FirstName = "Ghost", LastName = "User", IsActive = true };
+        var deletedCustomer = new User { Email = "banned@gmail.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass@1234"), Role = "RegisteredUser", FirstName = "Banned", LastName = "Customer", IsActive = false };
+        var pendingActivationUser = new User { Email = "pending@gmail.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass@1234"), Role = "RegisteredUser", FirstName = "Newborn", LastName = "Account", IsActive = true };
 
         context.Users.AddRange(admin, frontdesk1, frontdesk2, frontdesk3, kitchen, kitchenAsst, housekeeping, housekeeping2, maintenance, customer1, customer2, customer3, customer4, customer5, inactiveUser, userNoBookings, deletedCustomer, pendingActivationUser);
         context.SaveChanges();

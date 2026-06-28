@@ -31,7 +31,7 @@ public class FeedbackController : ControllerBase
     }
 
     [HttpGet("booking/{bookingId}")]
-    [Authorize(Roles = "Admin,FrontDesk")]
+    [Authorize(Roles = "Admin,FrontDesk,RegisteredUser")]
     public async Task<IActionResult> GetFeedbackForBooking(int bookingId)
     {
         var feedback = await _feedbackService.GetFeedbackForBookingAsync(bookingId);

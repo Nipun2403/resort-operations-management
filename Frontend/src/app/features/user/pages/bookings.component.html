@@ -1,0 +1,24 @@
+<div class="bookings-page">
+  <div class="toggle-row">
+    <mat-button-toggle-group
+      [formControl]="viewMode"
+      aria-label="View"
+    >
+      <mat-button-toggle value="history">My Bookings</mat-button-toggle>
+      <mat-button-toggle value="new">New Booking</mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+
+  @if (viewMode.value === 'history') {
+    <app-booking-history
+      [userEmail]="userEmail()"
+      [refresh]="refreshTrigger()"
+      [highlightBookingId]="newBookingId()"
+    />
+  } @if (viewMode.value === 'new') {
+    <app-booking-wizard
+      [userProfile]="userProfile()!"
+      (bookingCreated)="onBookingCreated($event)"
+    />
+  }
+</div>

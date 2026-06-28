@@ -1,0 +1,310 @@
+import { Component, inject, signal, computed, input, output, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormGroup, FormControl, FormArray, Validators, AbstractControl } from '@angular/forms';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { map } from 'rxjs/operators';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { RoomTypeApiService } from '../../services/room-type-api.service';
+import { AmenityApiService } from '../../services/amenity-api.service';
+import { BookingApiService } from '../../services/booking-api.service';
+import { AvailableRoomType } from '../../models/available-room-type.model';
+import { Amenity } from '../../../../features/admin/models/amenity.model';
+import { AlertComponent } from '../../../../features/auth/components/alert.component';
+import { MatDividerModule } from '@angular/material/divider';
+import { finalize } from 'rxjs/operators';
+
+@Component({
+  selector: 'app-booking-wizard',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatStepperModule,
+    MatInputModule,
+    MatButtonModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatCheckboxModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MatDividerModule,
+    AlertComponent
+  ],
+  templateUrl: './booking-wizard.component.html',
+  styleUrls: ['./booking-wizard.component.scss']
+})
+export class BookingWizardComponent {
+  userProfile = input.required<{ firstName: string; lastName: string; email: string }>();
+  bookingCreated = output<number>();
+
+  private readonly roomTypeApi = inject(RoomTypeApiService);
+  private readonly amenityApi = inject(AmenityApiService);
+  private readonly bookingApi = inject(BookingApiService);
+  private readonly breakpointObserver = inject(BreakpointObserver);
+  private readonly cdr = inject(ChangeDetectorRef);
+
+  isMobile = toSignal(
+    this.breakpointObserver.observe('(max-width: 767px)').pipe(map(r => r.matches)),
+    { initialValue: false }
+  );
+
+  loading = signal(false);
+  error = signal<string | null>(null);
+
+  availableRooms = signal<AvailableRoomType[]>([]);
+  availableAmenities = signal<Amenity[]>([]);
+  selectedRoomQuantities = signal<Record<number, number>>({});
+
+  // Forms definition
+  datesForm = new FormGroup({
+    checkInDate: new FormControl<Date | null>(null, { validators: [Validators.required] }),
+    checkOutDate: new FormControl<Date | null>(null, { validators: [Validators.required] }),
+    guestCount: new FormControl<number>(1, { validators: [Validators.required, Validators.min(1), Validators.max(20)], nonNullable: true })
+  }, { validators: this.dateRangeValidator });
+
+  roomsForm = new FormGroup({
+    dummy: new FormControl<boolean>(false, { validators: [Validators.requiredTrue], nonNullable: true })
+  });
+
+  amenitiesForm = new FormGroup({
+    selectedAmenities: new FormArray<FormControl<boolean>>([])
+  });
+
+  get amenityControls(): FormControl<boolean>[] {
+    return (this.amenitiesForm.get('selectedAmenities') as FormArray).controls as FormControl<boolean>[];
+  }
+
+  getAmenityControl(index: number): FormControl<boolean> {
+    return this.amenityControls[index];
+  }
+
+  // Computed signals
+  nights = computed(() => {
+    const cin = this.datesForm.value.checkInDate;
+    const cout = this.datesForm.value.checkOutDate;
+    if (!cin || !cout) return 0;
+    const diff = cout.getTime() - cin.getTime();
+    return Math.max(1, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+  });
+
+  totalSelectedQuantity = computed(() => {
+    return Object.values(this.selectedRoomQuantities()).reduce((a, b) => a + b, 0);
+  });
+
+  capacityWarning = computed(() => {
+    const totalCap = this.availableRooms().reduce(
+      (sum, r) => sum + (this.selectedRoomQuantities()[r.roomTypeId] || 0) * r.maxOccupancy,
+      0
+    );
+    const guests = this.datesForm.value.guestCount || 0;
+    if (this.totalSelectedQuantity() > 0 && totalCap < guests) {
+      return `The selected rooms can only accommodate ${totalCap} guests. You need ${guests}.`;
+    }
+    return null;
+  });
+
+  selectedRoomEntries = computed(() => {
+    const quantities = this.selectedRoomQuantities();
+    return this.availableRooms()
+      .filter(r => (quantities[r.roomTypeId] || 0) > 0)
+      .map(r => ({
+        roomTypeId: r.roomTypeId,
+        name: r.name,
+        basePrice: r.basePrice,
+        maxOccupancy: r.maxOccupancy,
+        quantity: quantities[r.roomTypeId]
+      }));
+  });
+
+  selectedAmenityEntries = computed(() => {
+    const list = this.availableAmenities();
+    const controls = this.amenityControls;
+    return list.filter((_, i) => controls[i]?.value === true);
+  });
+
+  estimatedTotal = computed(() => {
+    const nights = this.nights();
+    const roomCost = this.availableRooms().reduce(
+      (sum, r) => sum + (this.selectedRoomQuantities()[r.roomTypeId] || 0) * r.basePrice * nights,
+      0
+    );
+    const amenityCost = this.availableAmenities().reduce(
+      (sum, a, i) => sum + (this.getAmenityControl(i)?.value ? a.price : 0),
+      0
+    );
+    return roomCost + amenityCost;
+  });
+
+  onStepChange(event: any): void {
+    if (event.selectedIndex === 1) {
+      this.loadRooms();
+    } else if (event.selectedIndex === 2) {
+      this.loadAmenities();
+    }
+  }
+
+  loadRooms(): void {
+    const cin = this.datesForm.value.checkInDate;
+    const cout = this.datesForm.value.checkOutDate;
+    if (!cin || !cout) return;
+
+    this.loading.set(true);
+    this.error.set(null);
+
+    this.roomTypeApi.getAvailable(this.formatDate(cin), this.formatDate(cout))
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (res) => {
+          this.availableRooms.set(res.data);
+          // Pre-populate empty quantities
+          const quantities: Record<number, number> = {};
+          res.data.forEach(r => {
+            quantities[r.roomTypeId] = 0;
+          });
+          this.selectedRoomQuantities.set(quantities);
+          this.updateRoomsFormValidity();
+        },
+        error: (err) => {
+          const message = err.error?.message || err.message || 'Failed to load available rooms.';
+          this.error.set(message);
+        }
+      });
+  }
+
+  loadAmenities(): void {
+    this.loading.set(true);
+    this.error.set(null);
+
+    this.amenityApi.getAll({ pageNumber: 1, pageSize: 100, isAvailable: true })
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (res) => {
+          this.availableAmenities.set(res.data);
+          const formArray = this.amenitiesForm.get('selectedAmenities') as FormArray;
+          formArray.clear();
+          res.data.forEach(() => {
+            formArray.push(new FormControl<boolean>(false, { nonNullable: true }));
+          });
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          const message = err.error?.message || err.message || 'Failed to load amenities.';
+          this.error.set(message);
+        }
+      });
+  }
+
+  incrementRoom(roomTypeId: number): void {
+    const current = this.selectedRoomQuantities();
+    const limit = this.availableRooms().find(r => r.roomTypeId === roomTypeId)?.availableCount ?? 0;
+    const val = current[roomTypeId] || 0;
+    if (val < limit) {
+      this.selectedRoomQuantities.set({
+        ...current,
+        [roomTypeId]: val + 1
+      });
+      this.updateRoomsFormValidity();
+    }
+  }
+
+  decrementRoom(roomTypeId: number): void {
+    const current = this.selectedRoomQuantities();
+    const val = current[roomTypeId] || 0;
+    if (val > 0) {
+      this.selectedRoomQuantities.set({
+        ...current,
+        [roomTypeId]: val - 1
+      });
+      this.updateRoomsFormValidity();
+    }
+  }
+
+  getRoomQuantity(roomTypeId: number): number {
+    return this.selectedRoomQuantities()[roomTypeId] || 0;
+  }
+
+  updateRoomsFormValidity(): void {
+    const isValid = this.totalSelectedQuantity() > 0 && !this.capacityWarning();
+    this.roomsForm.controls.dummy.setValue(isValid);
+  }
+
+  submitBooking(): void {
+    this.loading.set(true);
+    this.error.set(null);
+
+    const roomTypeIds: number[] = [];
+    const quantities = this.selectedRoomQuantities();
+    Object.keys(quantities).forEach(key => {
+      const typeId = Number(key);
+      const qty = quantities[typeId] || 0;
+      for (let i = 0; i < qty; i++) {
+        roomTypeIds.push(typeId);
+      }
+    });
+
+    const amenityIds = this.selectedAmenityEntries().map(a => a.id);
+    const profile = this.userProfile();
+
+    const bookingDto = {
+      roomTypeIds,
+      guestCount: this.datesForm.value.guestCount!,
+      checkInDate: this.datesForm.value.checkInDate!.toISOString(),
+      checkOutDate: this.datesForm.value.checkOutDate!.toISOString(),
+      guestName: `${profile.firstName} ${profile.lastName}`,
+      guestEmail: profile.email,
+      amenityIds
+    };
+
+    this.bookingApi.create(bookingDto)
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (response) => {
+          this.bookingCreated.emit(response.id);
+        },
+        error: (err) => {
+          const message = err.error?.message || err.message || 'Failed to confirm booking.';
+          this.error.set(message);
+        }
+      });
+  }
+
+  formatDate(date: Date): string {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  }
+
+  private dateRangeValidator(control: AbstractControl): { [key: string]: boolean } | null {
+    const cin = control.get('checkInDate')?.value as Date | null;
+    const cout = control.get('checkOutDate')?.value as Date | null;
+    if (!cin || !cout) return null;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const cinDate = new Date(cin);
+    cinDate.setHours(0, 0, 0, 0);
+
+    if (cinDate < today) {
+      return { checkInInPast: true };
+    }
+
+    const coutDate = new Date(cout);
+    coutDate.setHours(0, 0, 0, 0);
+
+    if (coutDate <= cinDate) {
+      return { checkOutBeforeCheckIn: true };
+    }
+
+    return null;
+  }
+}

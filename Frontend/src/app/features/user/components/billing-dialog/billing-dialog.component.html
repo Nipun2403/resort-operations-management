@@ -1,0 +1,70 @@
+<h2 mat-dialog-title>Billing Folio – Booking #{{ bookingId }}</h2>
+<mat-dialog-content class="billing-content">
+  @if (loading()) {
+    <div style="display: flex; justify-content: center; padding: 24px;">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  } @else if (error()) {
+    <app-alert type="error" [message]="error()!" (closed)="error.set(null)">
+      <button mat-button (click)="fetchBilling()">Retry</button>
+    </app-alert>
+  } @else if (folio()) {
+    <div class="bill-row">
+      <span class="bill-label">Guest:</span>
+      <span class="bill-value">{{ folio()!.guestName }}</span>
+    </div>
+    <div class="bill-row">
+      <span class="bill-label">Nights:</span>
+      <span class="bill-value">{{ folio()!.nightsStayed }}</span>
+    </div>
+    <div class="bill-row">
+      <span class="bill-label">Room Rate:</span>
+      <span class="bill-value">{{ folio()!.roomBasePrice | currency }}/night</span>
+    </div>
+    <div class="bill-row">
+      <span class="bill-label">Room Subtotal:</span>
+      <span class="bill-value">{{ folio()!.roomTotal | currency }}</span>
+    </div>
+    <div class="bill-row">
+      <span class="bill-label">Room Services / Food:</span>
+      <span class="bill-value">{{ folio()!.foodTotal | currency }}</span>
+    </div>
+    <div class="bill-row">
+      <span class="bill-label">Amenities Subtotal:</span>
+      <span class="bill-value">{{ folio()!.amenityTotal | currency }}</span>
+    </div>
+    <div class="bill-row total-bill-row">
+      <span>Total Bill:</span>
+      <span>{{ folio()!.totalBill | currency }}</span>
+    </div>
+    <div class="bill-row" style="margin-top: 12px;">
+      <span class="bill-label">Payment Status:</span>
+      <span class="bill-value" [style.color]="folio()!.paymentStatus === 'Paid' ? 'green' : 'red'">
+        {{ folio()!.paymentStatus }}
+      </span>
+    </div>
+
+    @if (folio()!.foodItems && folio()!.foodItems.length > 0) {
+      <h3>Room Service Orders</h3>
+      <ul>
+        @for (item of folio()!.foodItems; track item) {
+          <li>{{ item }}</li>
+        }
+      </ul>
+    }
+
+    @if (folio()!.amenityItems && folio()!.amenityItems.length > 0) {
+      <h3>Amenities Subscribed</h3>
+      <ul>
+        @for (item of folio()!.amenityItems; track item) {
+          <li>{{ item }}</li>
+        }
+      </ul>
+    }
+  } @else {
+    <p>No billing details found.</p>
+  }
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Close</button>
+</mat-dialog-actions>

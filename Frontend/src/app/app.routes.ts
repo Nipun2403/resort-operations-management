@@ -69,7 +69,7 @@ export const routes: Routes = [
       {
         path: 'bookings',
         loadComponent: () => import('./features/user/pages/bookings.component')
-          .then(m => m.PlaceholderCustomerBookingsComponent)
+          .then(m => m.BookingsComponent)
       },
       {
         path: 'room-service',

@@ -1,0 +1,65 @@
+<h2 mat-dialog-title>Booking Feedback – Booking #{{ bookingId }}</h2>
+<mat-dialog-content class="feedback-content">
+  @if (loading()) {
+    <div style="display: flex; justify-content: center; padding: 24px;">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  } @else if (error()) {
+    <app-alert type="error" [message]="error()!" (closed)="error.set(null)">
+      @if (!submitting()) {
+        <button mat-button (click)="checkExistingFeedback()">Retry</button>
+      }
+    </app-alert>
+  } @else if (existingFeedback()) {
+    <div class="read-only-feedback">
+      <p>Thank you for submitting feedback for this stay!</p>
+      <p><strong>Rating:</strong> <span class="rating-value">{{ existingFeedback()!.rating }} / 5</span></p>
+      <p><strong>Comments:</strong></p>
+      <p style="white-space: pre-wrap; font-style: italic; background: #f9f9f9; padding: 12px; border-radius: 4px;">
+        {{ existingFeedback()!.comments || 'No comments provided.' }}
+      </p>
+      <p style="font-size: 0.8rem; color: rgba(0,0,0,0.54);">Submitted on {{ existingFeedback()!.createdAt | date:'mediumDate' }}</p>
+    </div>
+  } @else {
+    <form [formGroup]="feedbackForm">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Rating</mat-label>
+        <mat-select formControlName="rating">
+          <mat-option [value]="5">5 – Excellent</mat-option>
+          <mat-option [value]="4">4 – Good</mat-option>
+          <mat-option [value]="3">3 – Average</mat-option>
+          <mat-option [value]="2">2 – Poor</mat-option>
+          <mat-option [value]="1">1 – Terrible</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Comments (Optional)</mat-label>
+        <textarea
+          matInput
+          formControlName="comments"
+          rows="4"
+          placeholder="Tell us about your stay..."
+          maxlength="500"
+        ></textarea>
+        <mat-hint align="end">{{ feedbackForm.value.comments?.length || 0 }}/500</mat-hint>
+      </mat-form-field>
+    </form>
+  }
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  @if (!existingFeedback() && !loading()) {
+    <button
+      mat-raised-button
+      color="primary"
+      [disabled]="feedbackForm.invalid || submitting()"
+      (click)="submitFeedback()"
+    >
+      @if (submitting()) {
+        <mat-spinner diameter="18" style="display: inline-block; margin-right: 8px;"></mat-spinner>
+      }
+      Submit
+    </button>
+  }
+</mat-dialog-actions>

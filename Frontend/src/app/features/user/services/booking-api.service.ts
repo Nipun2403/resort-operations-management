@@ -33,4 +33,20 @@ export class BookingApiService {
 
     return this.http.get<PaginatedResponse<Booking>>(this.baseUrl, { params: httpParams });
   }
+
+  create(booking: {
+    roomTypeIds: number[];
+    guestCount: number;
+    checkInDate: string;
+    checkOutDate: string;
+    guestName?: string;
+    guestEmail?: string;
+    amenityIds?: number[];
+  }): Observable<Booking> {
+    return this.http.post<Booking>(this.baseUrl, booking);
+  }
+
+  cancel(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}/cancel`);
+  }
 }
