@@ -2637,6 +2637,75 @@ None.
 
 CRITICAL RULE COMPLIANCE CONFIRMATION
 --------------------------------------
+☑ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: customer-room-service-patch.md
+Date: 2026-06-28
+================================================================================
+
+FILES CREATED
+-------------
+None.
+
+FILES MODIFIED
+--------------
+✓ Backend/HotelManagement.API/Controllers/RoomTypesController.cs
+  — Added HttpGet GetRoomType single endpoint (§4)
+✓ Backend/HotelManagement.BLL/Interfaces/IRoomTypeService.cs
+  — Added GetRoomTypeByIdAsync signature (§4)
+✓ Backend/HotelManagement.BLL/Services/RoomTypeService.cs
+  — Implemented GetRoomTypeByIdAsync (§4)
+✓ src/app/features/user/services/room-type-api.service.ts
+  — Added getById() method (§4)
+✓ src/app/features/user/components/food-order/cart-drawer.component.ts/.html/.scss
+  — Added direct quantity increments/decrements (+/-) inside shopping cart drawer (§2)
+✓ src/app/features/user/components/food-order/food-order.component.ts/.html
+  — Implemented updateQuantity event handler listening to quantity adjustments (§2)
+✓ src/app/features/user/components/request-service/request-service.component.scss
+  — Adjusted margins, form width, and toggle buttons for mobile screens (§3)
+✓ src/app/features/user/components/my-requests/my-requests.component.scss
+  — Implemented horizontal table overflow and touch friendly cell padding for mobile (§3)
+✓ src/app/features/user/components/booking-detail-dialog/booking-detail-dialog.component.ts/.html
+  — Enriched dialog with resolved room type names using RoomTypeApiService and forkJoin (§4)
+✓ src/app/features/user/pages/bookings.component.ts/.html/.scss
+  — Swapped bookings view toggle order to default to 'New Booking' first and applied pill borders (§5)
+✓ src/app/features/user/components/food-order/menu-grid.component.ts/.html/.scss
+  — Implemented menu items categorisation headers grouping menu items by category (§6)
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ CartDrawerComponent Quantity Controls (§2)
+  ✓ +/- buttons added alongside each cart item in the panel
+  ✓ updateQuantity event emitter outputs delta changes
+  ✓ onUpdateCartQty updates state cleanly and handles item removal on zero
+✓ Mobile View UX Refinement (§3)
+  ✓ CSS grids and paddings adjust dynamically below 600px width
+  ✓ tables scroll horizontally without breaking desktop grid layouts
+✓ Booking Detail Modal Room Type Names (§4)
+  ✓ getById endpoint maps room type ID to name
+  ✓ forkJoin resolves names in parallel and loads signals asynchronously
+✓ Bookings Toggle Order & Styling (§5)
+  ✓ Default state set to 'new'
+  ✓ button toggle items swapped position
+  ✓ border-radius: 24px applied to make a clean visual pill
+✓ Menu Categorisation by Category (§6)
+  ✓ groupedMenu computed groups food dishes by category
+  ✓ nested templates display headers with grid list blocks
+
+KNOWN DEVIATIONS
+----------------
+None.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
 ☑ I confirm that every ✓ in the requirements section corresponds to code
   that exists and is correct. No requirement has been marked complete
   without implementation evidence.
