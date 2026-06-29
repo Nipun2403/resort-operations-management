@@ -4129,6 +4129,81 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: public-menu-amenities.md (Public Menu & Amenities Showcase Pages)
+Date: 2026-06-29
+================================================================================
+
+FILES CREATED
+-------------
+✓ src/app/features/public/pages/menu.component.html
+✓ src/app/features/public/pages/menu.component.scss
+✓ src/app/features/public/pages/amenities.component.html
+✓ src/app/features/public/pages/amenities.component.scss
+
+FILES MODIFIED (existing files updated per spec)
+-------------------------------------------------
+✓ src/app/features/public/pages/menu.component.ts — Overwrote placeholder file with menu showcase logic
+✓ src/app/features/public/pages/amenities.component.ts — Overwrote placeholder file with amenities showcase logic
+
+FILES DELETED
+--------------
+None.
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Public Restaurant Menu
+  ✓ Small hero banner showcasing headers
+  ✓ Groups menu items dynamically by category, sorting default categories
+  ✓ Displays menu card listings with price currencies and placeholder food icons
+✓ Public Amenities Showcase
+  ✓ Displays available amenities in a grid
+  ✓ Renders cards showing name, descriptions, and price details
+  ✓ Highlights free amenities as 'Complimentary'
+
+API INTEGRATION
+---------------
+✓ GET /menu-items — queries available menu items
+✓ GET /amenities — queries available premium hotel amenities
+
+LOGIC TRACES
+------------
+Flow: Grouped Menu Load
+  Entry: OnInit initializes on /menu route
+  Path: queries MenuItemApiService.getAll(), groups results in key-value categories, binds to groupedMenu signal
+  Result: ✓ Matches spec
+
+Flow: Amenities Showcase Load
+  Entry: OnInit initializes on /amenities route
+  Path: queries AmenityApiService.getAll(), feeds template grid list, computes complimentary label
+  Result: ✓ Matches spec
+
+KNOWN DEVIATIONS
+----------------
+None. All requirements implemented exactly as specified.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+AMBIGUITY-1: MenuItemApiService.getAll and AmenityApiService.getAll require pageNumber, sortBy, and sortDescending in types, but the spec call is missing them.
+  Default Applied: Passed `pageNumber: 1`, `sortBy: 'name'`, and `sortDescending: false` explicitly in parameters lists.
+  Rationale: Avoid compilation crashes due to required property type omissions.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+✓ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+✓ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+✓ I confirm that all API calls match the spec contracts exactly.
+✓ I confirm that all regex validators are character-for-character matches
+  to the spec.
+✓ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+
 
 
 

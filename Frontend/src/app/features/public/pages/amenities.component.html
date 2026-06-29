@@ -1,0 +1,30 @@
+<div class="amenities-page">
+  <div class="hero-small">
+    <h1>Amenities</h1>
+    <p>Relax and enjoy our premium facilities designed for your comfort.</p>
+  </div>
+
+  @if (loading()) {
+    <mat-spinner diameter="40"></mat-spinner>
+  } @else if (error()) {
+    <p class="error">{{ error() }}</p>
+    <button mat-button (click)="fetchAmenities()">Retry</button>
+  } @else {
+    <div class="amenities-grid">
+      @for (amenity of amenities(); track amenity.id) {
+        <mat-card class="amenity-card">
+          <div class="card-icon">
+            <mat-icon>spa</mat-icon>
+          </div>
+          <mat-card-header>
+            <mat-card-title>{{ amenity.name }}</mat-card-title>
+            <mat-card-subtitle>{{ amenity.price ? (amenity.price | currency) : 'Complimentary' }}</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <p>{{ amenity.description || 'No description available.' }}</p>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  }
+</div>

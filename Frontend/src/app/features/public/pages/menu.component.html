@@ -1,0 +1,32 @@
+<div class="menu-page">
+  <div class="hero-small">
+    <h1>Our Restaurant</h1>
+    <p>Indulge in culinary excellence crafted by our world‑class chefs.</p>
+  </div>
+
+  @if (loading()) {
+    <mat-spinner diameter="40"></mat-spinner>
+  } @else if (error()) {
+    <p class="error">{{ error() }}</p>
+    <button mat-button (click)="fetchMenu()">Retry</button>
+  } @else {
+    @for (group of groupedMenu(); track group.category) {
+      <section class="category-section">
+        <h2>{{ group.category }}</h2>
+        <div class="menu-grid">
+          @for (item of group.items; track item.id) {
+            <mat-card class="menu-card">
+              <div class="card-image">
+                <mat-icon class="food-icon">restaurant</mat-icon>
+              </div>
+              <mat-card-header>
+                <mat-card-title>{{ item.name }}</mat-card-title>
+                <mat-card-subtitle>{{ item.price | currency }}</mat-card-subtitle>
+              </mat-card-header>
+            </mat-card>
+          }
+        </div>
+      </section>
+    }
+  }
+</div>
