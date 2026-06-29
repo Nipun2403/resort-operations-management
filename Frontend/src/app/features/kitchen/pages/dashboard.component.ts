@@ -23,10 +23,10 @@ export class KitchenDashboardComponent {
             (order: any) =>
               ({
                 id: order.id,
-                status: order.status, // 'Pending', 'Preparing', 'Delivered'
+                status: order.foodOrderStatus ?? order.status ?? 'Unknown',
                 location: order.roomId ? `Room ${order.roomId}` : 'N/A',
                 description: `Order #${order.id}`,
-                createdAt: order.bookedAt || order.generatedAt,
+                createdAt: order.generatedAt ?? order.bookedAt ?? '',
                 raw: order,
               } as Task)
           ),
@@ -44,19 +44,20 @@ export class KitchenDashboardComponent {
     getDescription: (t: Task) => t.description,
     getDetailSections: (t: Task) => {
       const order = t.raw as any;
-      const items = order.items
-        ? order.items.map((i: any) => `${i.quantity}x ${i.name}`).join(', ')
+      const itemsArray = order.items || order.foodOrderItems || [];
+      const items = itemsArray.length > 0
+        ? itemsArray.map((i: any) => `${i.quantity}x ${i.name ?? i.menuItemName ?? 'Item #' + i.menuItemId}`).join(', ')
         : 'None';
       return [
         {
           title: 'Order Information',
           fields: [
             { label: 'Order ID', value: String(order.id) },
-            { label: 'Status', value: order.status },
+            { label: 'Status', value: t.status },
             { label: 'Items', value: items },
             {
               label: 'Created At',
-              value: order.bookedAt ? new Date(order.bookedAt).toLocaleString() : 'N/A',
+              value: t.createdAt ? new Date(t.createdAt).toLocaleString() : 'N/A',
             },
           ],
         },

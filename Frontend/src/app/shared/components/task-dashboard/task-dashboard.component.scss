@@ -68,7 +68,7 @@
 
   .status-chip {
     display: inline-block;
-    padding: 4px 12px;
+    padding: 2px 8px;
     border-radius: 12px;
     font-size: 0.85rem;
     font-weight: 500;
@@ -79,18 +79,18 @@
     color: #424242;
 
     &.Pending {
-      background-color: #ffe0b2;
+      background-color: #fff3e0;
       color: #e65100;
     }
 
     &.InProgress, &.Preparing {
-      background-color: #bbdefb;
-      color: #0d47a1;
+      background-color: #e3f2fd;
+      color: #1565c0;
     }
 
     &.Completed, &.Delivered {
-      background-color: #c8e6c9;
-      color: #1b5e20;
+      background-color: #e8f5e9;
+      color: #2e7d32;
     }
   }
 
