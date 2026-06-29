@@ -1,5 +1,5 @@
 import { Injectable, inject, OnDestroy, effect } from '@angular/core';
-import { HubConnection, HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
+import { HubConnection, HubConnectionBuilder, HttpTransportType, LogLevel } from '@microsoft/signalr';
 import { Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { environment } from '../../../environments/environment';
@@ -51,12 +51,15 @@ export class NotificationService implements OnDestroy {
     const token = this.authService.token();
     if (!token) return;
 
-    const wsUrl = environment.baseUrl
-      .replace('http', 'ws')
-      .replace(/\/api\/v1$/, '') + '/notifications';
+    const hubUrl = environment.baseUrl.replace(/\/api\/v1$/, '') + '/notifications';
+    // Example: 'http://localhost:5264/api/v1' → 'http://localhost:5264/notifications'
 
     this.hubConnection = new HubConnectionBuilder()
-      .withUrl(wsUrl, { accessTokenFactory: () => token })
+      .withUrl(hubUrl, {
+        accessTokenFactory: () => token,
+        skipNegotiation: true,
+        transport: HttpTransportType.WebSockets,
+      })
       .configureLogging(LogLevel.Information)
       .withAutomaticReconnect()
       .build();
