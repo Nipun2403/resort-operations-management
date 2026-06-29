@@ -1,17 +1,37 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs/operators';
 import { TaskDashboardComponent } from '../../../shared/components/task-dashboard/task-dashboard.component';
 import { TaskDashboardConfig, Task, DetailSection } from '../../../shared/models/task.model';
 import { OrderApiService } from '../../user/services/order-api.service';
+import { NotificationService } from '../../../core/services/notification.service';
 
 @Component({
   selector: 'app-kitchen-dashboard',
   standalone: true,
   imports: [TaskDashboardComponent],
-  template: `<app-task-dashboard [config]="config" />`,
+  template: `<app-task-dashboard [config]="config" [refresh]="refreshTrigger()" />`,
 })
 export class KitchenDashboardComponent {
   private orderApi = inject(OrderApiService);
+  private notificationService = inject(NotificationService);
+  private destroyRef = inject(DestroyRef);
+
+  refreshTrigger = signal(0);
+
+  constructor() {
+    this.notificationService.startConnection();
+
+    this.notificationService.onNewFoodOrder
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(order => {
+        this.refreshTrigger.update(n => n + 1);
+        this.notificationService.showNotification(
+          'New Order!',
+          `Order #${order.id}${order.roomNumber ? ' for Room ' + order.roomNumber : ''}`
+        );
+      });
+  }
 
   config: TaskDashboardConfig = {
     entityName: 'Food Order',

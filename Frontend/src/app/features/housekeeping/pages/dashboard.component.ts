@@ -1,18 +1,38 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs/operators';
 import { TaskDashboardComponent } from '../../../shared/components/task-dashboard/task-dashboard.component';
 import { TaskDashboardConfig, Task, DetailSection } from '../../../shared/models/task.model';
 import { HousekeepingApiService } from '../../user/services/housekeeping-api.service';
 import { HousekeepingTask } from '../../admin/models/housekeeping-task.model';
+import { NotificationService } from '../../../core/services/notification.service';
 
 @Component({
   selector: 'app-housekeeping-dashboard',
   standalone: true,
   imports: [TaskDashboardComponent],
-  template: `<app-task-dashboard [config]="config" />`,
+  template: `<app-task-dashboard [config]="config" [refresh]="refreshTrigger()" />`,
 })
 export class HousekeepingDashboardComponent {
   private housekeepingApi = inject(HousekeepingApiService);
+  private notificationService = inject(NotificationService);
+  private destroyRef = inject(DestroyRef);
+
+  refreshTrigger = signal(0);
+
+  constructor() {
+    this.notificationService.startConnection();
+
+    this.notificationService.onNewHousekeepingTask
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(task => {
+        this.refreshTrigger.update(n => n + 1);
+        this.notificationService.showNotification(
+          'New Housekeeping Task',
+          `${task.description}${task.roomNumber ? ' – Room ' + task.roomNumber : ''}`
+        );
+      });
+  }
 
   config: TaskDashboardConfig = {
     entityName: 'Housekeeping Task',

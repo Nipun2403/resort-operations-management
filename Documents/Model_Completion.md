@@ -3708,6 +3708,57 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
   without implementation evidence.
 ☑ I confirm that no file, function, or feature was added beyond what
   the spec defines.
+☑ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: notification-component-3.md
+Date: 2026-06-29
+================================================================================
+
+FILES MODIFIED
+--------------
+✓ src/app/features/kitchen/pages/dashboard.component.ts
+  — Injected NotificationService, started connection, subscribed to onNewFoodOrder, and bound [refresh] to inline template.
+✓ src/app/features/housekeeping/pages/dashboard.component.ts
+  — Injected NotificationService, started connection, subscribed to onNewHousekeepingTask, and bound [refresh] to inline template.
+✓ src/app/features/maintenance/pages/dashboard.component.ts
+  — Injected NotificationService, started connection, subscribed to onNewMaintenanceTask, and bound [refresh] to inline template.
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Kitchen Notification Integration (§3)
+  ✓ Starts connection and listens to `onNewFoodOrder`.
+  ✓ Increments `refreshTrigger` and shows green snackbar notification for new orders.
+  ✓ Binds `[refresh]="refreshTrigger()"` to task dashboard template.
+✓ Housekeeping Notification Integration (§4)
+  ✓ Starts connection and listens to `onNewHousekeepingTask`.
+  ✓ Increments `refreshTrigger` and shows green snackbar notification for housekeeping tasks.
+  ✓ Binds `[refresh]="refreshTrigger()"` to task dashboard template.
+✓ Maintenance Notification Integration (§5)
+  ✓ Starts connection and listens to `onNewMaintenanceTask`.
+  ✓ Increments `refreshTrigger` and shows green snackbar notification for maintenance tasks.
+  ✓ Binds `[refresh]="refreshTrigger()"` to task dashboard template.
+✓ Safe Subscription Management (§6)
+  ✓ Destroys subscriptions using `takeUntilDestroyed(this.destroyRef)` on dashboard destroy.
+
+KNOWN DEVIATIONS
+----------------
+None.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+☑ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+☑ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
 ☑ I confirm that all API calls match the spec contracts exactly.
 ☑ I confirm that all regex validators are character-for-character matches
   to the spec.
