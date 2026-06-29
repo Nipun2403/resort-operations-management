@@ -23,4 +23,12 @@ export class AuthApiService {
   getMe(): Observable<AuthMeResponse> {
     return this.http.get<AuthMeResponse>(`${this.baseUrl}/auth/me`);
   }
+
+  updateProfile(dto: { firstName: string; lastName: string; email: string }): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/auth/me`, dto);
+  }
+
+  changePassword(dto: { currentPassword: string; newPassword: string; confirmNewPassword: string }): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/auth/change-password`, dto);
+  }
 }

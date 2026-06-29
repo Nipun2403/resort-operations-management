@@ -19,7 +19,7 @@ import { AlertComponent } from '../../../../features/auth/components/alert.compo
 import { FolioDetailDialogComponent } from './folio-detail-dialog.component';
 
 interface BillingRecord extends BillingFolio {
-  checkOutDate: string;
+  checkOutDate: Date;
 }
 
 @Component({
@@ -58,6 +58,14 @@ export class GuestBillingComponent implements OnInit {
     this.fetchAllBilling();
   }
 
+  private parseDate(dateStr: string): Date {
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+      return new Date(+parts[2], +parts[1] - 1, +parts[0]);
+    }
+    return new Date(dateStr);
+  }
+
   private fetchAllBilling(): void {
     const bookings = this.bookings();
     if (bookings.length === 0) return;
@@ -67,7 +75,11 @@ export class GuestBillingComponent implements OnInit {
 
     const requests = bookings.map(b =>
       this.billingApi.getByBookingId(b.id).pipe(
-        map(data => ({ ...data, bookingId: b.id, checkOutDate: b.checkOutDate } as BillingRecord)),
+        map(data => ({
+          ...data,
+          bookingId: b.id,
+          checkOutDate: this.parseDate(b.checkOutDate)
+        } as unknown as BillingRecord)),
         catchError(() => of(null))
       )
     );
@@ -80,7 +92,7 @@ export class GuestBillingComponent implements OnInit {
       .subscribe({
         next: (results) => {
           const valid = results.filter((r): r is BillingRecord => r !== null);
-          valid.sort((a, b) => new Date(b.checkOutDate).getTime() - new Date(a.checkOutDate).getTime());
+          valid.sort((a, b) => b.checkOutDate.getTime() - a.checkOutDate.getTime());
           this.billingRecords.set(valid);
         },
         error: (err) => {

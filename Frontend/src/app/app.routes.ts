@@ -50,8 +50,8 @@ export const routes: Routes = [
       },
       {
         path: 'profile',
-        loadComponent: () => import('./features/admin/pages/profile.component')
-          .then(m => m.PlaceholderProfileComponent),
+        loadComponent: () => import('./shared/components/profile/profile.component')
+          .then(m => m.ProfileComponent),
         data: { title: 'Profile' }
       },
       { path: '**', redirectTo: 'dashboard' }
@@ -82,8 +82,8 @@ export const routes: Routes = [
       },
       {
         path: 'profile',
-        loadComponent: () => import('./features/user/pages/profile.component')
-          .then(m => m.PlaceholderCustomerProfileComponent)
+        loadComponent: () => import('./shared/components/profile/profile.component')
+          .then(m => m.ProfileComponent)
       },
       { path: '**', redirectTo: 'dashboard' }
     ]
@@ -108,8 +108,8 @@ export const routes: Routes = [
       },
       {
         path: 'profile',
-        loadComponent: () => import('./features/front-desk/pages/profile.component')
-          .then(m => m.PlaceholderProfileComponent)
+        loadComponent: () => import('./shared/components/profile/profile.component')
+          .then(m => m.ProfileComponent)
       },
       {
         path: 'guest/:email',
@@ -139,6 +139,12 @@ export const routes: Routes = [
           .then(m => m.KitchenMenuItemsComponent),
         canActivate: [kitchenGuard]
       },
+      {
+        path: 'profile',
+        loadComponent: () => import('./shared/components/profile/profile.component')
+          .then(m => m.ProfileComponent),
+        canActivate: [kitchenGuard]
+      },
       { path: '**', redirectTo: 'dashboard' }
     ]
   },
@@ -155,6 +161,12 @@ export const routes: Routes = [
         loadComponent: () => import('./features/housekeeping/pages/dashboard.component')
           .then(m => m.HousekeepingDashboardComponent)
       },
+      {
+        path: 'profile',
+        loadComponent: () => import('./shared/components/profile/profile.component')
+          .then(m => m.ProfileComponent),
+        canActivate: [housekeepingGuard]
+      },
       { path: '**', redirectTo: 'dashboard' }
     ]
   },
@@ -170,6 +182,12 @@ export const routes: Routes = [
         path: 'dashboard',
         loadComponent: () => import('./features/maintenance/pages/dashboard.component')
           .then(m => m.MaintenanceDashboardComponent)
+      },
+      {
+        path: 'profile',
+        loadComponent: () => import('./shared/components/profile/profile.component')
+          .then(m => m.ProfileComponent),
+        canActivate: [maintenanceGuard]
       },
       { path: '**', redirectTo: 'dashboard' }
     ]

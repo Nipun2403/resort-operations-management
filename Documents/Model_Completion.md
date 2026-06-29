@@ -3766,6 +3766,67 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: front-desk-bug-fixes.md (Extend Stay Date Picker Fix)
+Date: 2026-06-29
+================================================================================
+
+FILES CREATED
+-------------
+None.
+
+FILES MODIFIED (existing files updated per spec)
+-------------------------------------------------
+✓ [extend-stay-dialog.component.ts](file:///Users/peewee/personal/repos/Hotel_Management_Full/Frontend/src/app/features/front-desk/components/extend-stay-dialog/extend-stay-dialog.component.ts) — Imported and added provideNativeDateAdapter to providers.
+✓ [guest-billing.component.ts](file:///Users/peewee/personal/repos/Hotel_Management_Full/Frontend/src/app/features/front-desk/components/guest-billing/guest-billing.component.ts) — Parsed string checkOutDate to Date object to fix DatePipe crashes and sorting.
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Fix Extend Stay Date Picker
+  ✓ Provide DateAdapter via provideNativeDateAdapter() to standalone ExtendStayDialogComponent
+  ✓ Datepicker successfully opens when calendar icon/input is clicked
+✓ Fix Billing Tab Crash
+  ✓ Parse dd-MM-yyyy string date returned by the API into JavaScript Date objects
+  ✓ Enabled DatePipe formatting without throwing InvalidPipeArgument error
+  ✓ Fixed date sorting logic by using getTime() on actual Date objects
+
+API INTEGRATION
+---------------
+No new endpoints added.
+
+LOGIC TRACES
+------------
+Flow: Extend Stay Date Picker Trigger
+  Entry: Click "Extend Stay" button on active booking in Guest Details page or Booking Action Modal.
+  Path: Opens ExtendStayDialogComponent. DateAdapter is successfully resolved. Click input/icon.
+  Result: ✓ Calendar opens and is fully interactive.
+
+Flow: Billing Tab Display
+  Entry: Load guest details page, navigate to Billing tab.
+  Path: Aggregates billing records, parses string checkOutDate to Date, sorts, renders.
+  Result: ✓ Folios load successfully without DatePipe crashes.
+
+KNONW DEVIATIONS
+----------------
+None.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+✓ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+✓ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+✓ I confirm that all API calls match the spec contracts exactly.
+✓ I confirm that all regex validators are character-for-character matches
+  to the spec.
+✓ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
 
 
 

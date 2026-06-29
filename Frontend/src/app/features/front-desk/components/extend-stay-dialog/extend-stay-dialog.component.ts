@@ -4,7 +4,7 @@ import { ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
 import { MatDialogModule, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -29,6 +29,7 @@ import { AlertComponent } from '../../../auth/components/alert.component';
     MatProgressSpinnerModule,
     AlertComponent,
   ],
+  providers: [provideNativeDateAdapter()],
   templateUrl: './extend-stay-dialog.component.html',
   host: { 'style': 'min-width: 350px; display: block;' }
 })

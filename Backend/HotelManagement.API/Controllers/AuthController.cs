@@ -2,6 +2,7 @@ using HotelManagement.BLL.DTOs;
 using HotelManagement.BLL.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace HotelManagement.API.Controllers;
 
@@ -35,9 +36,9 @@ public class AuthController : ControllerBase
         var result = await _authService.LoginAsync(request);
         if (!result.Success) return Unauthorized(result.Message);
 
-        return Ok(new 
-        { 
-            result.Token, 
+        return Ok(new
+        {
+            result.Token,
             result.Role,
             result.FirstName,
             result.LastName
@@ -46,14 +47,70 @@ public class AuthController : ControllerBase
 
     [HttpGet("me")]
     [Authorize]
-    public IActionResult GetMe()
+    public async Task<IActionResult> GetMe()
     {
-        var claims = User.Claims.Select(c => new { c.Type, c.Value });
-        var identity = User.Identity;
-        return Ok(new { 
-            IsAuthenticated = identity?.IsAuthenticated,
-            Name = identity?.Name,
-            Claims = claims
-        });
+        var email = User.FindFirst(ClaimTypes.Name)?.Value;
+        if (string.IsNullOrEmpty(email))
+            return Unauthorized("User not authenticated.");
+
+        try
+        {
+            var profile = await _authService.GetProfileByEmailAsync(email);
+            return Ok(profile);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound("User not found.");
+        }
+    }
+
+    [HttpPut("me")]
+    [Authorize]
+    public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDTO dto)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
+        var email = User.FindFirst(ClaimTypes.Name)?.Value;
+        if (string.IsNullOrEmpty(email))
+            return Unauthorized("User not authenticated.");
+
+        try
+        {
+            var updated = await _authService.UpdateProfileAsync(email, dto);
+            return Ok(new { Message = "Profile updated successfully.", User = updated });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpPost("change-password")]
+    [Authorize]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO dto)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
+        var email = User.FindFirst(ClaimTypes.Name)?.Value;
+        if (string.IsNullOrEmpty(email))
+            return Unauthorized("User not authenticated.");
+
+        try
+        {
+            await _authService.ChangePasswordAsync(email, dto);
+            return Ok(new { Message = "Password changed successfully." });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            return Unauthorized(new { message = ex.Message });
+        }
     }
 }

@@ -24,7 +24,6 @@ public class AuthService : IAuthService
     public string GenerateJwtToken(string email, string role, string firstName, string lastName)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        // In production, this key must be securely stored (e.g. Azure Key Vault, Environment Variables)
         var keyString = _configuration["Jwt:Key"] ?? "super_secret_fallback_key_that_should_be_long_enough_for_hmacsha256_hotel_management";
         var key = Encoding.ASCII.GetBytes(keyString);
 
@@ -37,7 +36,7 @@ public class AuthService : IAuthService
                 new Claim(ClaimTypes.GivenName, firstName),
                 new Claim(ClaimTypes.Surname, lastName)
             }),
-            Expires = DateTime.UtcNow.AddHours(4), // Short lifespan for stateless JWT
+            Expires = DateTime.UtcNow.AddHours(4),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
             Issuer = _configuration["Jwt:Issuer"] ?? "HotelManagementAPI",
             Audience = _configuration["Jwt:Audience"] ?? "HotelManagementClients"
@@ -85,5 +84,63 @@ public class AuthService : IAuthService
             FirstName = user.FirstName,
             LastName = user.LastName
         };
+    }
+
+    public async Task<UserProfileDTO> GetProfileByEmailAsync(string email)
+    {
+        var user = await _userRepository.GetByEmailAsync(email);
+        if (user == null) throw new KeyNotFoundException("User not found.");
+        return new UserProfileDTO
+        {
+            Id = user.Id,
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Role = user.Role,
+            IsActive = user.IsActive
+        };
+    }
+
+    public async Task<UserProfileDTO> UpdateProfileAsync(string email, UpdateProfileDTO dto)
+    {
+        var user = await _userRepository.GetByEmailAsync(email);
+        if (user == null) throw new KeyNotFoundException("User not found.");
+
+        if (user.Email != dto.Email)
+        {
+            var existingUser = await _userRepository.GetByEmailAsync(dto.Email);
+            if (existingUser != null && existingUser.Id != user.Id)
+                throw new InvalidOperationException("Email is already taken by another user.");
+        }
+
+        user.FirstName = dto.FirstName;
+        user.LastName = dto.LastName;
+        user.Email = dto.Email;
+
+        _userRepository.Update(user);
+        await _userRepository.SaveChangesAsync();
+
+        return new UserProfileDTO
+        {
+            Id = user.Id,
+            Email = user.Email,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Role = user.Role,
+            IsActive = user.IsActive
+        };
+    }
+
+    public async Task ChangePasswordAsync(string email, ChangePasswordDTO dto)
+    {
+        var user = await _userRepository.GetByEmailAsync(email);
+        if (user == null) throw new KeyNotFoundException("User not found.");
+
+        if (!BCrypt.Net.BCrypt.Verify(dto.CurrentPassword, user.PasswordHash))
+            throw new UnauthorizedAccessException("Current password is incorrect.");
+
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
+        _userRepository.Update(user);
+        await _userRepository.SaveChangesAsync();
     }
 }
