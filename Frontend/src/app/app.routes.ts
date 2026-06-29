@@ -191,6 +191,45 @@ export const routes: Routes = [
       },
       { path: '**', redirectTo: 'dashboard' }
     ]
+  },
+  {
+    path: '',
+    loadComponent: () => import('./features/public/public-shell.component')
+      .then(m => m.PublicShellComponent),
+    children: [
+      { path: '', redirectTo: 'home', pathMatch: 'full' },
+      {
+        path: 'home',
+        loadComponent: () => import('./features/public/pages/home.component')
+          .then(m => m.HomeComponent)
+      },
+      {
+        path: 'rooms',
+        loadComponent: () => import('./features/public/pages/room-catalogue.component')
+          .then(m => m.RoomCatalogueComponent)
+      },
+      {
+        path: 'rooms/:id',
+        loadComponent: () => import('./features/public/pages/room-detail.component')
+          .then(m => m.RoomDetailComponent)
+      },
+      {
+        path: 'menu',
+        loadComponent: () => import('./features/public/pages/menu.component')
+          .then(m => m.MenuComponent)
+      },
+      {
+        path: 'amenities',
+        loadComponent: () => import('./features/public/pages/amenities.component')
+          .then(m => m.AmenitiesComponent)
+      },
+      {
+        path: 'availability',
+        loadComponent: () => import('./features/public/pages/availability.component')
+          .then(m => m.AvailabilityComponent)
+      },
+      { path: '**', redirectTo: 'home' }
+    ]
   }
 ];
 

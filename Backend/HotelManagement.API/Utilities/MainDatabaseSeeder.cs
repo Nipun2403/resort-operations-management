@@ -1,7 +1,6 @@
 using HotelManagement.DAL.Context;
 using HotelManagement.DAL.Entities;
 using HotelManagement.DAL.Enums;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json;
 
@@ -19,7 +18,9 @@ public static class MainDatabaseSeeder
 
         var now = DateTime.UtcNow;
 
-        // 1. Users
+        // ======================================================
+        // 1. USERS – All roles, active/inactive, with/without bookings
+        // ======================================================
         var admin = new User { Email = "admin@hotel.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123"), Role = "Admin", FirstName = "Super", LastName = "Admin", IsActive = true };
         var frontdesk1 = new User { Email = "fd1@hotel.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass@1234"), Role = "FrontDesk", FirstName = "Sarah", LastName = "Desk", IsActive = true };
         var frontdesk2 = new User { Email = "fd2@hotel.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass@1234"), Role = "FrontDesk", FirstName = "Mike", LastName = "Desk", IsActive = true };
@@ -33,36 +34,10 @@ public static class MainDatabaseSeeder
         var customer2 = new User { Email = "cust2@gmail.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass@1234"), Role = "RegisteredUser", FirstName = "Jane", LastName = "Smith", IsActive = true };
         var customer3 = new User { Email = "cust3@gmail.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass@1234"), Role = "RegisteredUser", FirstName = "Alex", LastName = "Vance", IsActive = true };
         var customer4 = new User { Email = "cust4@gmail.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass@1234"), Role = "RegisteredUser", FirstName = "David", LastName = "Miller", IsActive = true };
-        var customer5 = new User
-        {
-            Email = "cust5@gmail.com",
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass@1234"),
-            Role = "RegisteredUser",
-            FirstName =
-"Emily",
-            LastName =
-"Watson",
-            IsActive =
-true
-        };
+        var customer5 = new User { Email = "cust5@gmail.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass@1234"), Role = "RegisteredUser", FirstName = "Emily", LastName = "Watson", IsActive = true };
 
         // Edge case users
-        var inactiveUser =
-new User
-{
-    Email =
-"fired@hotel.com",
-    PasswordHash =
-BCrypt.Net.BCrypt.HashPassword("Pass@1234"),
-    Role =
-"FrontDesk",
-    FirstName =
-"Fired",
-    LastName =
-"Guy",
-    IsActive =
-false
-};
+        var inactiveUser = new User { Email = "fired@hotel.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass@1234"), Role = "FrontDesk", FirstName = "Fired", LastName = "Guy", IsActive = false };
         var userNoBookings = new User { Email = "nobookings@gmail.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass@1234"), Role = "RegisteredUser", FirstName = "Ghost", LastName = "User", IsActive = true };
         var deletedCustomer = new User { Email = "banned@gmail.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass@1234"), Role = "RegisteredUser", FirstName = "Banned", LastName = "Customer", IsActive = false };
         var pendingActivationUser = new User { Email = "pending@gmail.com", PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pass@1234"), Role = "RegisteredUser", FirstName = "Newborn", LastName = "Account", IsActive = true };
@@ -70,94 +45,500 @@ false
         context.Users.AddRange(admin, frontdesk1, frontdesk2, frontdesk3, kitchen, kitchenAsst, housekeeping, housekeeping2, maintenance, customer1, customer2, customer3, customer4, customer5, inactiveUser, userNoBookings, deletedCustomer, pendingActivationUser);
         context.SaveChanges();
 
-        // 2. Room Types
-        var standard = new RoomType { Name = "Standard", BasePrice = 100m, MaxOccupancy = 2, Description = "Cozy room.", ImageUrls = new List<string> { "standard.jpg" }, SquareFootage = 300, BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "Queen", 1 } }), IsActive = true };
-        var deluxe = new RoomType { Name = "Deluxe Suite", BasePrice = 150m, MaxOccupancy = 2, Description = "Spacious suite.", ImageUrls = new List<string> { "deluxe.jpg" }, SquareFootage = 500, BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "King", 1 } }), IsActive = true };
-        var family = new RoomType { Name = "Family Suite", BasePrice = 250m, MaxOccupancy = 4, Description = "Great for kids.", ImageUrls = new List<string> { "family.jpg" }, SquareFootage = 700, BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "Queen", 2 } }), IsActive = true };
-        var presidential = new RoomType { Name = "Presidential", BasePrice = 500m, MaxOccupancy = 4, Description = "Top tier.", ImageUrls = new List<string> { "presidential.jpg" }, SquareFootage = 1200, BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "King", 1 }, { "Twin", 2 } }), IsActive = true };
+        // ======================================================
+        // 2. ROOM TYPES – With real Unsplash image URLs
+        // ======================================================
+        var standard = new RoomType
+        {
+            Name = "Standard",
+            BasePrice = 100m,
+            MaxOccupancy = 2,
+            Description = "Cozy room with all essential amenities.",
+            ImageUrls = new List<string> {
+                "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=600&auto=format&fit=crop"
+            },
+            SquareFootage = 300,
+            BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "Queen", 1 } }),
+            IsActive = true
+        };
 
-        // Edge case room types
-        var retiredType = new RoomType { Name = "Legacy Economy", BasePrice = 50m, MaxOccupancy = 1, Description = "Old room.", ImageUrls = new List<string> { "legacy.jpg" }, SquareFootage = 200, BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "Twin", 1 } }), IsActive = false };
-        var noRoomsType = new RoomType { Name = "Boutique Suite", BasePrice = 300m, MaxOccupancy = 2, Description = "Concept suite, no rooms yet.", ImageUrls = new List<string> { "boutique.jpg" }, SquareFootage = 450, BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "King", 1 } }), IsActive = true };
+        var deluxe = new RoomType
+        {
+            Name = "Deluxe Suite",
+            BasePrice = 150m,
+            MaxOccupancy = 2,
+            Description = "Spacious suite with modern furnishings.",
+            ImageUrls = new List<string> {
+                "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=600&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=600&auto=format&fit=crop"
+            },
+            SquareFootage = 500,
+            BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "King", 1 } }),
+            IsActive = true
+        };
 
-        var executive = new RoomType { Name = "Executive Suite", BasePrice = 350m, MaxOccupancy = 3, Description = "For business.", ImageUrls = new List<string> { "executive.jpg" }, SquareFootage = 600, BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "King", 1 } }), IsActive = true };
-        var connecting = new RoomType { Name = "Connecting Rooms", BasePrice = 280m, MaxOccupancy = 4, Description = "Two rooms connected.", ImageUrls = new List<string> { "connecting.jpg" }, SquareFootage = 600, BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "Queen", 2 } }), IsActive = true };
-        var accessible = new RoomType { Name = "Accessible Room", BasePrice = 120m, MaxOccupancy = 2, Description = "ADA compliant.", ImageUrls = new List<string> { "ada.jpg" }, SquareFootage = 350, BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "Queen", 1 } }), IsActive = true };
-        var penthouse = new RoomType { Name = "Penthouse", BasePrice = 1000m, MaxOccupancy = 6, Description = "Top floor luxury.", ImageUrls = new List<string> { "penthouse.jpg" }, SquareFootage = 2000, BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "King", 2 }, { "Queen", 2 } }), IsActive = true };
+        var family = new RoomType
+        {
+            Name = "Family Suite",
+            BasePrice = 250m,
+            MaxOccupancy = 4,
+            Description = "Perfect for families with children.",
+            ImageUrls = new List<string> {
+                "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=600&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=600&auto=format&fit=crop"
+            },
+            SquareFootage = 700,
+            BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "Queen", 2 } }),
+            IsActive = true
+        };
 
-        // Extended options
-        var studio = new RoomType { Name = "Studio Apartment", BasePrice = 180m, MaxOccupancy = 2, Description = "Extended stay optimized.", ImageUrls = new List<string> { "studio.jpg" }, SquareFootage = 400, BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "Murphy King", 1 } }), IsActive = true };
-        var villa = new RoomType { Name = "Oceanfront Villa", BasePrice = 1500m, MaxOccupancy = 8, Description = "Detached high-end luxury property.", ImageUrls = new List<string> { "villa.jpg" }, SquareFootage = 3500, BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "King", 4 } }), IsActive = true };
+        var presidential = new RoomType
+        {
+            Name = "Presidential",
+            BasePrice = 500m,
+            MaxOccupancy = 4,
+            Description = "Top-tier luxury with panoramic views.",
+            ImageUrls = new List<string> {
+                "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=600&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=600&auto=format&fit=crop"
+            },
+            SquareFootage = 1200,
+            BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "King", 1 }, { "Twin", 2 } }),
+            IsActive = true
+        };
+
+        var retiredType = new RoomType
+        {
+            Name = "Legacy Economy",
+            BasePrice = 50m,
+            MaxOccupancy = 1,
+            Description = "Old room type – no longer offered.",
+            ImageUrls = new List<string> { "https://images.unsplash.com/photo-1540518614846-7eded433c457?w=600&auto=format&fit=crop" },
+            SquareFootage = 200,
+            BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "Twin", 1 } }),
+            IsActive = false
+        };
+
+        var noRoomsType = new RoomType
+        {
+            Name = "Boutique Suite",
+            BasePrice = 300m,
+            MaxOccupancy = 2,
+            Description = "Concept suite – no active rooms yet.",
+            ImageUrls = new List<string> { "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=600&auto=format&fit=crop" },
+            SquareFootage = 450,
+            BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "King", 1 } }),
+            IsActive = true
+        };
+
+        var executive = new RoomType
+        {
+            Name = "Executive Suite",
+            BasePrice = 350m,
+            MaxOccupancy = 3,
+            Description = "Designed for business travelers.",
+            ImageUrls = new List<string> {
+                "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=600&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=600&auto=format&fit=crop"
+            },
+            SquareFootage = 600,
+            BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "King", 1 } }),
+            IsActive = true
+        };
+
+        var connecting = new RoomType
+        {
+            Name = "Connecting Rooms",
+            BasePrice = 280m,
+            MaxOccupancy = 4,
+            Description = "Two rooms connected – ideal for families or groups.",
+            ImageUrls = new List<string> {
+                "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=600&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=600&auto=format&fit=crop"
+            },
+            SquareFootage = 600,
+            BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "Queen", 2 } }),
+            IsActive = true
+        };
+
+        var accessible = new RoomType
+        {
+            Name = "Accessible Room",
+            BasePrice = 120m,
+            MaxOccupancy = 2,
+            Description = "ADA compliant with roll-in shower.",
+            ImageUrls = new List<string> {
+                "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=600&auto=format&fit=crop"
+            },
+            SquareFootage = 350,
+            BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "Queen", 1 } }),
+            IsActive = true
+        };
+
+        var penthouse = new RoomType
+        {
+            Name = "Penthouse",
+            BasePrice = 1000m,
+            MaxOccupancy = 6,
+            Description = "Top-floor luxury with private terrace.",
+            ImageUrls = new List<string> {
+                "https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=600&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=600&auto=format&fit=crop"
+            },
+            SquareFootage = 2000,
+            BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "King", 2 }, { "Queen", 2 } }),
+            IsActive = true
+        };
+
+        var studio = new RoomType
+        {
+            Name = "Studio Apartment",
+            BasePrice = 180m,
+            MaxOccupancy = 2,
+            Description = "Extended-stay optimized with kitchenette.",
+            ImageUrls = new List<string> {
+                "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=600&auto=format&fit=crop"
+            },
+            SquareFootage = 400,
+            BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "Murphy King", 1 } }),
+            IsActive = true
+        };
+
+        var villa = new RoomType
+        {
+            Name = "Oceanfront Villa",
+            BasePrice = 1500m,
+            MaxOccupancy = 8,
+            Description = "Detached luxury villa with private pool.",
+            ImageUrls = new List<string> {
+                "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=600&auto=format&fit=crop"
+            },
+            SquareFootage = 3500,
+            BedConfigurationJson = JsonSerializer.Serialize(new Dictionary<string, int> { { "King", 4 } }),
+            IsActive = true
+        };
 
         context.RoomTypes.AddRange(standard, deluxe, family, presidential, retiredType, noRoomsType, executive, connecting, accessible, penthouse, studio, villa);
         context.SaveChanges();
 
-        // 3. Rooms
+        // ======================================================
+        // 3. ROOMS – Mix of active, retired, and under maintenance
+        // ======================================================
         var rooms = new List<Room>
         {
+            // Standard
             new Room { RoomNumber = "101", RoomTypeId = standard.Id, IsActive = true },
             new Room { RoomNumber = "102", RoomTypeId = standard.Id, IsActive = true },
             new Room { RoomNumber = "103", RoomTypeId = standard.Id, IsActive = true },
             new Room { RoomNumber = "104", RoomTypeId = standard.Id, IsActive = true },
             new Room { RoomNumber = "105", RoomTypeId = accessible.Id, IsActive = true },
+            // Deluxe
             new Room { RoomNumber = "201", RoomTypeId = deluxe.Id, IsActive = true },
             new Room { RoomNumber = "202", RoomTypeId = deluxe.Id, IsActive = true },
             new Room { RoomNumber = "203", RoomTypeId = deluxe.Id, IsActive = true },
+            // Executive
             new Room { RoomNumber = "204", RoomTypeId = executive.Id, IsActive = true },
+            // Connecting
             new Room { RoomNumber = "205", RoomTypeId = connecting.Id, IsActive = true },
+            // Family
             new Room { RoomNumber = "301", RoomTypeId = family.Id, IsActive = true },
             new Room { RoomNumber = "302", RoomTypeId = family.Id, IsActive = true },
             new Room { RoomNumber = "303", RoomTypeId = family.Id, IsActive = true },
+            // Studio
             new Room { RoomNumber = "304", RoomTypeId = studio.Id, IsActive = true },
+            // Presidential
             new Room { RoomNumber = "401", RoomTypeId = presidential.Id, IsActive = true },
+            new Room { RoomNumber = "402", RoomTypeId = presidential.Id, IsActive = false }, // Offline
+            // Penthouse
             new Room { RoomNumber = "501", RoomTypeId = penthouse.Id, IsActive = true },
+            new Room { RoomNumber = "502", RoomTypeId = penthouse.Id, IsActive = false }, // Under renovation
+            // Villa
             new Room { RoomNumber = "V01", RoomTypeId = villa.Id, IsActive = true },
-            
-            // Edge case rooms
-            new Room { RoomNumber = "999", RoomTypeId = retiredType.Id, IsActive = false }, // Under renovation forever
-            new Room { RoomNumber = "402", RoomTypeId = presidential.Id, IsActive = false }, // Currently offline for maintenance
-            new Room { RoomNumber = "502", RoomTypeId = penthouse.Id, IsActive = false } // Offline for deep biological sanitation
+            // Edge: Retired room
+            new Room { RoomNumber = "999", RoomTypeId = retiredType.Id, IsActive = false }
         };
         context.Rooms.AddRange(rooms);
         context.SaveChanges();
 
-        // 4. Bookings
+        // ======================================================
+        // 4. BOOKINGS – Normal, edge, today arrival/departure
+        // ======================================================
         var bookings = new List<Booking>
         {
-            // Normal cases
-            new Booking { GuestName = "Alice Smith", GuestEmail = "alice@example.com", CheckInDate = now.AddDays(-2), CheckOutDate = now.AddDays(2), BookingStatus = BookingStatus.CheckedIn, PaymentStatus = PaymentStatus.Pending, Origin = BookingOrigin.WalkIn, BookingRooms = new List<BookingRoom> { new BookingRoom { RoomTypeId = standard.Id, RoomId = rooms[0].Id, LockedInPrice = 100m } } },
-            new Booking { GuestName = customer1.FirstName, GuestEmail = customer1.Email, UserId = customer1.Id, CheckInDate = now.AddDays(-1), CheckOutDate = now.AddDays(4), BookingStatus = BookingStatus.CheckedIn, PaymentStatus = PaymentStatus.Pending, Origin = BookingOrigin.RegisteredUser, BookingRooms = new List<BookingRoom> { new BookingRoom { RoomTypeId = deluxe.Id, RoomId = rooms[5].Id, LockedInPrice = 150m } } },
-            new Booking { GuestName = "Bob Johnson", GuestEmail = "bob@example.com", CheckInDate = now.AddDays(5), CheckOutDate = now.AddDays(10), BookingStatus = BookingStatus.Booked, PaymentStatus = PaymentStatus.Pending, Origin = BookingOrigin.Guest, BookingRooms = new List<BookingRoom> { new BookingRoom { RoomTypeId = family.Id, RoomId = null, LockedInPrice = 250m } } },
-            new Booking { GuestName = customer2.FirstName, GuestEmail = customer2.Email, UserId = customer2.Id, CheckInDate = now.AddDays(10), CheckOutDate = now.AddDays(14), BookingStatus = BookingStatus.Booked, PaymentStatus = PaymentStatus.Pending, Origin = BookingOrigin.RegisteredUser, BookingRooms = new List<BookingRoom> { new BookingRoom { RoomTypeId = presidential.Id, RoomId = null, LockedInPrice = 500m } } },
-            new Booking { GuestName = "Charlie Davis", GuestEmail = "charlie@example.com", CheckInDate = now.AddDays(-10), CheckOutDate = now.AddDays(-5), BookingStatus = BookingStatus.CheckedOut, PaymentStatus = PaymentStatus.Paid, Origin = BookingOrigin.Guest, BookingRooms = new List<BookingRoom> { new BookingRoom { RoomTypeId = standard.Id, RoomId = rooms[1].Id, LockedInPrice = 90m } } },
-            new Booking { GuestName = "David Lee", GuestEmail = "david@example.com", CheckInDate = now.AddDays(-20), CheckOutDate = now.AddDays(-15), BookingStatus = BookingStatus.CheckedOut, PaymentStatus = PaymentStatus.Paid, Origin = BookingOrigin.WalkIn, BookingRooms = new List<BookingRoom> { new BookingRoom { RoomTypeId = deluxe.Id, RoomId = rooms[6].Id, LockedInPrice = 140m } } },
-            new Booking { GuestName = "Eve Adams", GuestEmail = "eve@example.com", CheckInDate = now.AddDays(1), CheckOutDate = now.AddDays(3), BookingStatus = BookingStatus.Cancelled, PaymentStatus = PaymentStatus.Pending, Origin = BookingOrigin.Guest, BookingRooms = new List<BookingRoom> { new BookingRoom { RoomTypeId = family.Id, RoomId = null, LockedInPrice = 250m } } },
-            new Booking { GuestName = "Frank White", GuestEmail = "frank@example.com", CheckInDate = now.AddDays(-3), CheckOutDate = now.AddDays(1), BookingStatus = BookingStatus.Cancelled, PaymentStatus = PaymentStatus.Pending, Origin = BookingOrigin.Guest, BookingRooms = new List<BookingRoom> { new BookingRoom { RoomTypeId = standard.Id, RoomId = null, LockedInPrice = 100m } } }, // Simulating NoShow
-            
-            // Additional typical configurations
-            new Booking { GuestName = customer3.FirstName, GuestEmail = customer3.Email, UserId = customer3.Id, CheckInDate = now.AddDays(2), CheckOutDate = now.AddDays(5), BookingStatus = BookingStatus.Booked, PaymentStatus = PaymentStatus.Paid, Origin = BookingOrigin.RegisteredUser, BookingRooms = new List<BookingRoom> { new BookingRoom { RoomTypeId = executive.Id, RoomId = rooms[8].Id, LockedInPrice = 350m } } },
-            new Booking { GuestName = customer4.FirstName, GuestEmail = customer4.Email, UserId = customer4.Id, CheckInDate = now.AddDays(-3), CheckOutDate = now.AddDays(3), BookingStatus = BookingStatus.CheckedIn, PaymentStatus = PaymentStatus.Paid, Origin = BookingOrigin.RegisteredUser, BookingRooms = new List<BookingRoom> { new BookingRoom { RoomTypeId = studio.Id, RoomId = rooms[13].Id, LockedInPrice = 180m } } },
+            // ---------- NORMAL CASES ----------
+            // 1. Checked In, Pending Payment
+            new Booking
+            {
+                GuestName = "Alice Smith",
+                GuestEmail = "alice@example.com",
+                CheckInDate = now.AddDays(-2),
+                CheckOutDate = now.AddDays(2),
+                BookingStatus = BookingStatus.CheckedIn,
+                PaymentStatus = PaymentStatus.Pending,
+                Origin = BookingOrigin.WalkIn,
+                BookingRooms = new List<BookingRoom> {
+                    new BookingRoom { RoomTypeId = standard.Id, RoomId = rooms[0].Id, LockedInPrice = 100m }
+                }
+            },
+            // 2. Checked In, Registered User, Pending
+            new Booking
+            {
+                GuestName = customer1.FirstName,
+                GuestEmail = customer1.Email,
+                UserId = customer1.Id,
+                CheckInDate = now.AddDays(-1),
+                CheckOutDate = now.AddDays(4),
+                BookingStatus = BookingStatus.CheckedIn,
+                PaymentStatus = PaymentStatus.Pending,
+                Origin = BookingOrigin.RegisteredUser,
+                BookingRooms = new List<BookingRoom> {
+                    new BookingRoom { RoomTypeId = deluxe.Id, RoomId = rooms[5].Id, LockedInPrice = 150m }
+                }
+            },
+            // 3. Future Booking (Booked, no room assigned)
+            new Booking
+            {
+                GuestName = "Bob Johnson",
+                GuestEmail = "bob@example.com",
+                CheckInDate = now.AddDays(5),
+                CheckOutDate = now.AddDays(10),
+                BookingStatus = BookingStatus.Booked,
+                PaymentStatus = PaymentStatus.Pending,
+                Origin = BookingOrigin.Guest,
+                BookingRooms = new List<BookingRoom> {
+                    new BookingRoom { RoomTypeId = family.Id, RoomId = null, LockedInPrice = 250m }
+                }
+            },
+            // 4. Future Booking, Registered User, Pre-Paid
+            new Booking
+            {
+                GuestName = customer2.FirstName,
+                GuestEmail = customer2.Email,
+                UserId = customer2.Id,
+                CheckInDate = now.AddDays(10),
+                CheckOutDate = now.AddDays(14),
+                BookingStatus = BookingStatus.Booked,
+                PaymentStatus = PaymentStatus.Paid,
+                Origin = BookingOrigin.RegisteredUser,
+                BookingRooms = new List<BookingRoom> {
+                    new BookingRoom { RoomTypeId = presidential.Id, RoomId = null, LockedInPrice = 500m }
+                }
+            },
+            // 5. Checked Out (paid)
+            new Booking
+            {
+                GuestName = "Charlie Davis",
+                GuestEmail = "charlie@example.com",
+                CheckInDate = now.AddDays(-10),
+                CheckOutDate = now.AddDays(-5),
+                BookingStatus = BookingStatus.CheckedOut,
+                PaymentStatus = PaymentStatus.Paid,
+                Origin = BookingOrigin.Guest,
+                BookingRooms = new List<BookingRoom> {
+                    new BookingRoom { RoomTypeId = standard.Id, RoomId = rooms[1].Id, LockedInPrice = 90m }
+                }
+            },
+            // 6. Checked Out (paid) – Deluxe
+            new Booking
+            {
+                GuestName = "David Lee",
+                GuestEmail = "david@example.com",
+                CheckInDate = now.AddDays(-20),
+                CheckOutDate = now.AddDays(-15),
+                BookingStatus = BookingStatus.CheckedOut,
+                PaymentStatus = PaymentStatus.Paid,
+                Origin = BookingOrigin.WalkIn,
+                BookingRooms = new List<BookingRoom> {
+                    new BookingRoom { RoomTypeId = deluxe.Id, RoomId = rooms[6].Id, LockedInPrice = 140m }
+                }
+            },
+            // 7. Cancelled (Pending – no refund)
+            new Booking
+            {
+                GuestName = "Eve Adams",
+                GuestEmail = "eve@example.com",
+                CheckInDate = now.AddDays(1),
+                CheckOutDate = now.AddDays(3),
+                BookingStatus = BookingStatus.Cancelled,
+                PaymentStatus = PaymentStatus.Pending,
+                Origin = BookingOrigin.Guest,
+                BookingRooms = new List<BookingRoom> {
+                    new BookingRoom { RoomTypeId = family.Id, RoomId = null, LockedInPrice = 250m }
+                }
+            },
+            // 8. Cancelled (NoShow)
+            new Booking
+            {
+                GuestName = "Frank White",
+                GuestEmail = "frank@example.com",
+                CheckInDate = now.AddDays(-3),
+                CheckOutDate = now.AddDays(1),
+                BookingStatus = BookingStatus.Cancelled,
+                PaymentStatus = PaymentStatus.Pending,
+                Origin = BookingOrigin.Guest,
+                BookingRooms = new List<BookingRoom> {
+                    new BookingRoom { RoomTypeId = standard.Id, RoomId = null, LockedInPrice = 100m }
+                }
+            },
+            // 9. Checked In, Executive, Paid
+            new Booking
+            {
+                GuestName = customer3.FirstName,
+                GuestEmail = customer3.Email,
+                UserId = customer3.Id,
+                CheckInDate = now.AddDays(2),
+                CheckOutDate = now.AddDays(5),
+                BookingStatus = BookingStatus.CheckedIn,
+                PaymentStatus = PaymentStatus.Paid,
+                Origin = BookingOrigin.RegisteredUser,
+                BookingRooms = new List<BookingRoom> {
+                    new BookingRoom { RoomTypeId = executive.Id, RoomId = rooms[8].Id, LockedInPrice = 350m }
+                }
+            },
+            // 10. Checked In, Studio, Paid
+            new Booking
+            {
+                GuestName = customer4.FirstName,
+                GuestEmail = customer4.Email,
+                UserId = customer4.Id,
+                CheckInDate = now.AddDays(-3),
+                CheckOutDate = now.AddDays(3),
+                BookingStatus = BookingStatus.CheckedIn,
+                PaymentStatus = PaymentStatus.Paid,
+                Origin = BookingOrigin.RegisteredUser,
+                BookingRooms = new List<BookingRoom> {
+                    new BookingRoom { RoomTypeId = studio.Id, RoomId = rooms[13].Id, LockedInPrice = 180m }
+                }
+            },
 
-            // Edge cases
-            // Starting today
-            new Booking { GuestName = "Today Start", GuestEmail = "today1@hotel.com", CheckInDate = now.Date, CheckOutDate = now.Date.AddDays(2), BookingStatus = BookingStatus.CheckedIn, PaymentStatus = PaymentStatus.Pending, Origin = BookingOrigin.WalkIn, BookingRooms = new List<BookingRoom> { new BookingRoom { RoomTypeId = standard.Id, RoomId = rooms[2].Id, LockedInPrice = 100m } } },
-            // Ending today
-            new Booking { GuestName = "Today End", GuestEmail = "today2@hotel.com", CheckInDate = now.Date.AddDays(-3), CheckOutDate = now.Date, BookingStatus = BookingStatus.CheckedIn, PaymentStatus = PaymentStatus.Pending, Origin = BookingOrigin.WalkIn, BookingRooms = new List<BookingRoom> { new BookingRoom { RoomTypeId = deluxe.Id, RoomId = rooms[7].Id, LockedInPrice = 150m } } },
-            // Long stay (30 days)
-            new Booking { GuestName = "Long Stay", GuestEmail = "long@hotel.com", CheckInDate = now.Date.AddDays(-15), CheckOutDate = now.Date.AddDays(15), BookingStatus = BookingStatus.CheckedIn, PaymentStatus = PaymentStatus.Pending, Origin = BookingOrigin.WalkIn, BookingRooms = new List<BookingRoom> { new BookingRoom { RoomTypeId = standard.Id, RoomId = rooms[1].Id, LockedInPrice = 95m } } },
-            // CheckedOut but UNPAID (Edge case - guest left without paying bill)
-            new Booking { GuestName = "Runner", GuestEmail = "runner@hotel.com", CheckInDate = now.Date.AddDays(-30), CheckOutDate = now.Date.AddDays(-28), BookingStatus = BookingStatus.CheckedOut, PaymentStatus = PaymentStatus.Pending, Origin = BookingOrigin.Guest, BookingRooms = new List<BookingRoom> { new BookingRoom { RoomTypeId = standard.Id, RoomId = rooms[0].Id, LockedInPrice = 100m } } },
-            // Cancelled but PAID (Edge case - needs refund)
-            new Booking { GuestName = "Refund Plz", GuestEmail = "refund@hotel.com", CheckInDate = now.Date.AddDays(20), CheckOutDate = now.Date.AddDays(22), BookingStatus = BookingStatus.Cancelled, PaymentStatus = PaymentStatus.Paid, Origin = BookingOrigin.Guest, BookingRooms = new List<BookingRoom> { new BookingRoom { RoomTypeId = presidential.Id, RoomId = null, LockedInPrice = 500m } } },
-            // Cancelled and Refunded
-            new Booking { GuestName = "Refunded", GuestEmail = "refunded@hotel.com", CheckInDate = now.Date.AddDays(25), CheckOutDate = now.Date.AddDays(27), BookingStatus = BookingStatus.Cancelled, PaymentStatus = PaymentStatus.Refunded, Origin = BookingOrigin.Guest, BookingRooms = new List<BookingRoom> { new BookingRoom { RoomTypeId = presidential.Id, RoomId = null, LockedInPrice = 500m } } },
-            // High-value whales
-            new Booking { GuestName = "VVIP High Roller", GuestEmail = "whale@lux.com", CheckInDate = now.AddDays(-1), CheckOutDate = now.AddDays(6), BookingStatus = BookingStatus.CheckedIn, PaymentStatus = PaymentStatus.Paid, Origin = BookingOrigin.Guest, BookingRooms = new List<BookingRoom> { new BookingRoom { RoomTypeId = villa.Id, RoomId = rooms[16].Id, LockedInPrice = 1500m } } }
+            // ---------- TODAY ARRIVAL & DEPARTURE ----------
+            // 11. Arriving today (Checked In)
+            new Booking
+            {
+                GuestName = "Today Arrival",
+                GuestEmail = "todayarrival@hotel.com",
+                CheckInDate = now.Date,
+                CheckOutDate = now.Date.AddDays(3),
+                BookingStatus = BookingStatus.CheckedIn,
+                PaymentStatus = PaymentStatus.Pending,
+                Origin = BookingOrigin.WalkIn,
+                BookingRooms = new List<BookingRoom> {
+                    new BookingRoom { RoomTypeId = standard.Id, RoomId = rooms[2].Id, LockedInPrice = 100m }
+                }
+            },
+            // 12. Departing today (Checked In, will check out)
+            new Booking
+            {
+                GuestName = "Today Departure",
+                GuestEmail = "todaydeparture@hotel.com",
+                CheckInDate = now.Date.AddDays(-3),
+                CheckOutDate = now.Date,
+                BookingStatus = BookingStatus.CheckedIn,
+                PaymentStatus = PaymentStatus.Pending,
+                Origin = BookingOrigin.WalkIn,
+                BookingRooms = new List<BookingRoom> {
+                    new BookingRoom { RoomTypeId = deluxe.Id, RoomId = rooms[7].Id, LockedInPrice = 150m }
+                }
+            },
+
+            // ---------- EDGE CASES ----------
+            // 13. Long stay (30 days)
+            new Booking
+            {
+                GuestName = "Long Stay",
+                GuestEmail = "long@hotel.com",
+                CheckInDate = now.Date.AddDays(-15),
+                CheckOutDate = now.Date.AddDays(15),
+                BookingStatus = BookingStatus.CheckedIn,
+                PaymentStatus = PaymentStatus.Pending,
+                Origin = BookingOrigin.WalkIn,
+                BookingRooms = new List<BookingRoom> {
+                    new BookingRoom { RoomTypeId = standard.Id, RoomId = rooms[1].Id, LockedInPrice = 95m }
+                }
+            },
+            // 14. Checked Out but UNPAID (guest left without paying)
+            new Booking
+            {
+                GuestName = "Runner",
+                GuestEmail = "runner@hotel.com",
+                CheckInDate = now.Date.AddDays(-30),
+                CheckOutDate = now.Date.AddDays(-28),
+                BookingStatus = BookingStatus.CheckedOut,
+                PaymentStatus = PaymentStatus.Pending,
+                Origin = BookingOrigin.Guest,
+                BookingRooms = new List<BookingRoom> {
+                    new BookingRoom { RoomTypeId = standard.Id, RoomId = rooms[0].Id, LockedInPrice = 100m }
+                }
+            },
+            // 15. Cancelled but PAID (needs refund)
+            new Booking
+            {
+                GuestName = "Refund Plz",
+                GuestEmail = "refund@hotel.com",
+                CheckInDate = now.Date.AddDays(20),
+                CheckOutDate = now.Date.AddDays(22),
+                BookingStatus = BookingStatus.Cancelled,
+                PaymentStatus = PaymentStatus.Paid,
+                Origin = BookingOrigin.Guest,
+                BookingRooms = new List<BookingRoom> {
+                    new BookingRoom { RoomTypeId = presidential.Id, RoomId = null, LockedInPrice = 500m }
+                }
+            },
+            // 16. Cancelled and Refunded
+            new Booking
+            {
+                GuestName = "Refunded",
+                GuestEmail = "refunded@hotel.com",
+                CheckInDate = now.Date.AddDays(25),
+                CheckOutDate = now.Date.AddDays(27),
+                BookingStatus = BookingStatus.Cancelled,
+                PaymentStatus = PaymentStatus.Refunded,
+                Origin = BookingOrigin.Guest,
+                BookingRooms = new List<BookingRoom> {
+                    new BookingRoom { RoomTypeId = presidential.Id, RoomId = null, LockedInPrice = 500m }
+                }
+            },
+            // 17. VVIP High Roller – Villa, all premium amenities
+            new Booking
+            {
+                GuestName = "VVIP High Roller",
+                GuestEmail = "whale@lux.com",
+                CheckInDate = now.AddDays(-1),
+                CheckOutDate = now.AddDays(6),
+                BookingStatus = BookingStatus.CheckedIn,
+                PaymentStatus = PaymentStatus.Paid,
+                Origin = BookingOrigin.Guest,
+                BookingRooms = new List<BookingRoom> {
+                    new BookingRoom { RoomTypeId = villa.Id, RoomId = rooms[17].Id, LockedInPrice = 1500m }
+                }
+            },
+            // 18. Multi-room booking (2 rooms)
+            new Booking
+            {
+                GuestName = "Multi-Room Family",
+                GuestEmail = "multiroom@hotel.com",
+                CheckInDate = now.AddDays(-2),
+                CheckOutDate = now.AddDays(2),
+                BookingStatus = BookingStatus.CheckedIn,
+                PaymentStatus = PaymentStatus.Pending,
+                Origin = BookingOrigin.Guest,
+                BookingRooms = new List<BookingRoom> {
+                    new BookingRoom { RoomTypeId = standard.Id, RoomId = rooms[3].Id, LockedInPrice = 100m },
+                    new BookingRoom { RoomTypeId = deluxe.Id, RoomId = rooms[7].Id, LockedInPrice = 150m }
+                }
+            }
         };
+
         context.Bookings.AddRange(bookings);
         context.SaveChanges();
 
-        // 5. Menu Items
+        // ======================================================
+        // 5. MENU ITEMS – Normal, free, expensive, retired
+        // ======================================================
         var menu = new List<MenuItem>
         {
             new MenuItem { Name = "Burger", Price = 15.0m, IsAvailable = true },
@@ -165,13 +546,11 @@ false
             new MenuItem { Name = "Soda", Price = 3.0m, IsAvailable = true },
             new MenuItem { Name = "Steak", Price = 45.0m, IsAvailable = false }, // Out of stock
             new MenuItem { Name = "Old Soup", Price = 5.0m, IsAvailable = false }, // Retired
-            // Edge cases
-            new MenuItem { Name = "Complimentary Water", Price = 0.0m, IsAvailable = true }, // Free item
-            new MenuItem { Name = "White Truffle Caviar", Price = 500.0m, IsAvailable = true }, // Very expensive item
+            new MenuItem { Name = "Complimentary Water", Price = 0.0m, IsAvailable = true }, // Free
+            new MenuItem { Name = "White Truffle Caviar", Price = 500.0m, IsAvailable = true }, // Expensive
             new MenuItem { Name = "Salad", Price = 12.0m, IsAvailable = true },
             new MenuItem { Name = "Coffee", Price = 4.0m, IsAvailable = true },
             new MenuItem { Name = "Cheesecake", Price = 8.0m, IsAvailable = true },
-            // Additional choices
             new MenuItem { Name = "Club Sandwich", Price = 14.5m, IsAvailable = true },
             new MenuItem { Name = "French Fries", Price = 6.0m, IsAvailable = true },
             new MenuItem { Name = "Lobster Thermidor", Price = 120.0m, IsAvailable = true },
@@ -181,110 +560,209 @@ false
         context.MenuItems.AddRange(menu);
         context.SaveChanges();
 
-        // 6. Food Orders
-        context.FoodOrders.AddRange(
-            // Normal orders
-            new FoodOrder { BookingId = bookings[0].Id, OrderStatus = FoodOrderStatus.Delivered, GeneratedAt = now.AddDays(-1), OrderItems = new List<FoodOrderItem> { new FoodOrderItem { MenuItemId = menu[0].Id, Quantity = 2, PriceAtPurchase = 15.0m }, new FoodOrderItem { MenuItemId = menu[2].Id, Quantity = 2, PriceAtPurchase = 3.0m } } },
-            new FoodOrder { BookingId = bookings[1].Id, OrderStatus = FoodOrderStatus.Preparing, GeneratedAt = now.AddMinutes(-30), OrderItems = new List<FoodOrderItem> { new FoodOrderItem { MenuItemId = menu[1].Id, Quantity = 1, PriceAtPurchase = 20.0m } } },
-            new FoodOrder { BookingId = bookings[1].Id, OrderStatus = FoodOrderStatus.Pending, GeneratedAt = now.AddMinutes(-5), OrderItems = new List<FoodOrderItem> { new FoodOrderItem { MenuItemId = menu[2].Id, Quantity = 1, PriceAtPurchase = 3.0m } } },
-
-            // Edge cases
-            // Huge order (10+ items)
+        // ======================================================
+        // 6. FOOD ORDERS – Now with RoomId (from the booking's room)
+        // ======================================================
+        var foodOrders = new List<FoodOrder>
+        {
+            // 1. Delivered order (Booking 1 – Alice, Room 101)
+            new FoodOrder
+            {
+                BookingId = bookings[0].Id,
+                RoomId = bookings[0].BookingRooms.FirstOrDefault()?.RoomId,
+                OrderStatus = FoodOrderStatus.Delivered,
+                GeneratedAt = now.AddDays(-1),
+                OrderItems = new List<FoodOrderItem> {
+                    new FoodOrderItem { MenuItemId = menu[0].Id, Quantity = 2, PriceAtPurchase = 15.0m },
+                    new FoodOrderItem { MenuItemId = menu[2].Id, Quantity = 2, PriceAtPurchase = 3.0m }
+                }
+            },
+            // 2. Preparing order (Booking 2 – John, Room 201)
+            new FoodOrder
+            {
+                BookingId = bookings[1].Id,
+                RoomId = bookings[1].BookingRooms.FirstOrDefault()?.RoomId,
+                OrderStatus = FoodOrderStatus.Preparing,
+                GeneratedAt = now.AddMinutes(-30),
+                OrderItems = new List<FoodOrderItem> {
+                    new FoodOrderItem { MenuItemId = menu[1].Id, Quantity = 1, PriceAtPurchase = 20.0m }
+                }
+            },
+            // 3. Pending order (Booking 2 – John, Room 201)
+            new FoodOrder
+            {
+                BookingId = bookings[1].Id,
+                RoomId = bookings[1].BookingRooms.FirstOrDefault()?.RoomId,
+                OrderStatus = FoodOrderStatus.Pending,
+                GeneratedAt = now.AddMinutes(-5),
+                OrderItems = new List<FoodOrderItem> {
+                    new FoodOrderItem { MenuItemId = menu[2].Id, Quantity = 1, PriceAtPurchase = 3.0m }
+                }
+            },
+            // 4. Huge order (10+ items) – Booking 11 (Today Arrival)
             new FoodOrder
             {
                 BookingId = bookings[10].Id,
+                RoomId = bookings[10].BookingRooms.FirstOrDefault()?.RoomId,
                 OrderStatus = FoodOrderStatus.Pending,
                 GeneratedAt = now.AddMinutes(-2),
                 OrderItems = new List<FoodOrderItem> {
-                new FoodOrderItem { MenuItemId = menu[0].Id, Quantity = 5, PriceAtPurchase = 15.0m },
-                new FoodOrderItem { MenuItemId = menu[1].Id, Quantity = 5, PriceAtPurchase = 20.0m },
-                new FoodOrderItem { MenuItemId = menu[2].Id, Quantity = 10, PriceAtPurchase = 3.0m }
-            }
+                    new FoodOrderItem { MenuItemId = menu[0].Id, Quantity = 5, PriceAtPurchase = 15.0m },
+                    new FoodOrderItem { MenuItemId = menu[1].Id, Quantity = 5, PriceAtPurchase = 20.0m },
+                    new FoodOrderItem { MenuItemId = menu[2].Id, Quantity = 10, PriceAtPurchase = 3.0m }
+                }
             },
-            // Order that was just placed
-            new FoodOrder { BookingId = bookings[11].Id, OrderStatus = FoodOrderStatus.Pending, GeneratedAt = now.AddDays(-1), OrderItems = new List<FoodOrderItem> { new FoodOrderItem { MenuItemId = menu[0].Id, Quantity = 1, PriceAtPurchase = 15.0m } } },
-            // Order with free and expensive items
-            new FoodOrder { BookingId = bookings[12].Id, OrderStatus = FoodOrderStatus.Delivered, GeneratedAt = now.AddDays(-5), OrderItems = new List<FoodOrderItem> { new FoodOrderItem { MenuItemId = menu[5].Id, Quantity = 2, PriceAtPurchase = 0.0m }, new FoodOrderItem { MenuItemId = menu[6].Id, Quantity = 1, PriceAtPurchase = 500.0m } } },
-            new FoodOrder { BookingId = bookings[0].Id, OrderStatus = FoodOrderStatus.Delivered, GeneratedAt = now.AddDays(-2), OrderItems = new List<FoodOrderItem> { new FoodOrderItem { MenuItemId = menu[7].Id, Quantity = 1, PriceAtPurchase = 12.0m } } },
-            new FoodOrder { BookingId = bookings[0].Id, OrderStatus = FoodOrderStatus.Delivered, GeneratedAt = now.AddDays(-1), OrderItems = new List<FoodOrderItem> { new FoodOrderItem { MenuItemId = menu[8].Id, Quantity = 2, PriceAtPurchase = 4.0m } } },
-            new FoodOrder { BookingId = bookings[1].Id, OrderStatus = FoodOrderStatus.Preparing, GeneratedAt = now.AddMinutes(-45), OrderItems = new List<FoodOrderItem> { new FoodOrderItem { MenuItemId = menu[9].Id, Quantity = 1, PriceAtPurchase = 8.0m } } },
-            new FoodOrder { BookingId = bookings[10].Id, OrderStatus = FoodOrderStatus.Delivered, GeneratedAt = now.AddHours(-1), OrderItems = new List<FoodOrderItem> { new FoodOrderItem { MenuItemId = menu[2].Id, Quantity = 3, PriceAtPurchase = 3.0m } } },
-
-            // Ultra luxury room-service orders
+            // 5. Order for Today Departure
+            new FoodOrder
+            {
+                BookingId = bookings[11].Id,
+                RoomId = bookings[11].BookingRooms.FirstOrDefault()?.RoomId,
+                OrderStatus = FoodOrderStatus.Pending,
+                GeneratedAt = now.AddDays(-1),
+                OrderItems = new List<FoodOrderItem> {
+                    new FoodOrderItem { MenuItemId = menu[0].Id, Quantity = 1, PriceAtPurchase = 15.0m }
+                }
+            },
+            // 6. Free + Expensive items (Booking 12 – Long Stay)
+            new FoodOrder
+            {
+                BookingId = bookings[12].Id,
+                RoomId = bookings[12].BookingRooms.FirstOrDefault()?.RoomId,
+                OrderStatus = FoodOrderStatus.Delivered,
+                GeneratedAt = now.AddDays(-5),
+                OrderItems = new List<FoodOrderItem> {
+                    new FoodOrderItem { MenuItemId = menu[5].Id, Quantity = 2, PriceAtPurchase = 0.0m },
+                    new FoodOrderItem { MenuItemId = menu[6].Id, Quantity = 1, PriceAtPurchase = 500.0m }
+                }
+            },
+            // 7. Additional orders for Booking 0 (Alice)
+            new FoodOrder
+            {
+                BookingId = bookings[0].Id,
+                RoomId = bookings[0].BookingRooms.FirstOrDefault()?.RoomId,
+                OrderStatus = FoodOrderStatus.Delivered,
+                GeneratedAt = now.AddDays(-2),
+                OrderItems = new List<FoodOrderItem> {
+                    new FoodOrderItem { MenuItemId = menu[7].Id, Quantity = 1, PriceAtPurchase = 12.0m }
+                }
+            },
+            new FoodOrder
+            {
+                BookingId = bookings[0].Id,
+                RoomId = bookings[0].BookingRooms.FirstOrDefault()?.RoomId,
+                OrderStatus = FoodOrderStatus.Delivered,
+                GeneratedAt = now.AddDays(-1),
+                OrderItems = new List<FoodOrderItem> {
+                    new FoodOrderItem { MenuItemId = menu[8].Id, Quantity = 2, PriceAtPurchase = 4.0m }
+                }
+            },
+            // 8. Booking 2 (John) – more orders
+            new FoodOrder
+            {
+                BookingId = bookings[1].Id,
+                RoomId = bookings[1].BookingRooms.FirstOrDefault()?.RoomId,
+                OrderStatus = FoodOrderStatus.Preparing,
+                GeneratedAt = now.AddMinutes(-45),
+                OrderItems = new List<FoodOrderItem> {
+                    new FoodOrderItem { MenuItemId = menu[9].Id, Quantity = 1, PriceAtPurchase = 8.0m }
+                }
+            },
+            // 9. Booking 10 (Today Arrival) – delivered order
+            new FoodOrder
+            {
+                BookingId = bookings[10].Id,
+                RoomId = bookings[10].BookingRooms.FirstOrDefault()?.RoomId,
+                OrderStatus = FoodOrderStatus.Delivered,
+                GeneratedAt = now.AddHours(-1),
+                OrderItems = new List<FoodOrderItem> {
+                    new FoodOrderItem { MenuItemId = menu[2].Id, Quantity = 3, PriceAtPurchase = 3.0m }
+                }
+            },
+            // 10. Ultra luxury room-service (Booking 17 – VVIP Villa)
             new FoodOrder
             {
                 BookingId = bookings[16].Id,
+                RoomId = bookings[16].BookingRooms.FirstOrDefault()?.RoomId,
                 OrderStatus = FoodOrderStatus.Delivered,
                 GeneratedAt = now.AddHours(-4),
                 OrderItems = new List<FoodOrderItem> {
-                new FoodOrderItem { MenuItemId = menu[12].Id, Quantity = 2, PriceAtPurchase = 120.0m },
-                new FoodOrderItem { MenuItemId = menu[6].Id, Quantity = 2, PriceAtPurchase = 500.0m },
-                new FoodOrderItem { MenuItemId = menu[14].Id, Quantity = 4, PriceAtPurchase = 8.5m }
+                    new FoodOrderItem { MenuItemId = menu[12].Id, Quantity = 2, PriceAtPurchase = 120.0m },
+                    new FoodOrderItem { MenuItemId = menu[6].Id, Quantity = 2, PriceAtPurchase = 500.0m },
+                    new FoodOrderItem { MenuItemId = menu[14].Id, Quantity = 4, PriceAtPurchase = 8.5m }
+                }
             }
-            }
-        );
+        };
 
-        // 8. Housekeeping
+        context.FoodOrders.AddRange(foodOrders);
+        context.SaveChanges();
+
+        // ======================================================
+        // 7. HOUSEKEEPING TASKS
+        // ======================================================
         context.HousekeepingTasks.AddRange(
             // Normal
             new Housekeeping { RoomId = rooms[0].Id, OriginType = HousekeepingOriginType.GuestRequested, Status = HousekeepingStatus.Completed, StartedAt = now.AddHours(-4), FinishedAt = now.AddHours(-1) },
             new Housekeeping { RoomId = rooms[5].Id, OriginType = HousekeepingOriginType.GuestRequested, Status = HousekeepingStatus.InProgress, StartedAt = now.AddMinutes(-15) },
             new Housekeeping { RoomId = rooms[6].Id, OriginType = HousekeepingOriginType.CheckoutAutomated, Status = HousekeepingStatus.Pending },
 
-            // Edge cases
-            // Multiple tasks for the same room
+            // Multiple tasks for same room
             new Housekeeping { RoomId = rooms[7].Id, OriginType = HousekeepingOriginType.CheckoutAutomated, Status = HousekeepingStatus.Pending },
             new Housekeeping { RoomId = rooms[7].Id, OriginType = HousekeepingOriginType.GuestRequested, Status = HousekeepingStatus.Pending },
-            // Task for room without an active booking (e.g. deep cleaning after someone left)
-            new Housekeeping { RoomId = rooms[11].Id, OriginType = HousekeepingOriginType.CheckoutAutomated, Status = HousekeepingStatus.Pending },
+
+            // Room without active booking
+            new Housekeeping { RoomId = rooms[10].Id, OriginType = HousekeepingOriginType.CheckoutAutomated, Status = HousekeepingStatus.Pending },
             new Housekeeping { RoomId = rooms[1].Id, OriginType = HousekeepingOriginType.CheckoutAutomated, Status = HousekeepingStatus.Completed, StartedAt = now.AddHours(-2), FinishedAt = now.AddHours(-1) },
             new Housekeeping { RoomId = rooms[2].Id, OriginType = HousekeepingOriginType.GuestRequested, Status = HousekeepingStatus.Completed, StartedAt = now.AddDays(-1), FinishedAt = now.AddDays(-1).AddHours(1) },
-            new Housekeeping { RoomId = rooms[12].Id, OriginType = HousekeepingOriginType.CheckoutAutomated, Status = HousekeepingStatus.Pending },
-            new Housekeeping { RoomId = rooms[13].Id, OriginType = HousekeepingOriginType.CheckoutAutomated, Status = HousekeepingStatus.InProgress, StartedAt = now.AddMinutes(-20) },
-            new Housekeeping { RoomId = rooms[15].Id, OriginType = HousekeepingOriginType.CheckoutAutomated, Status = HousekeepingStatus.Pending },
-            new Housekeeping { RoomId = rooms[19].Id, OriginType = HousekeepingOriginType.StaffRequested, Status = HousekeepingStatus.InProgress, StartedAt = now.AddHours(-3) }
+            new Housekeeping { RoomId = rooms[11].Id, OriginType = HousekeepingOriginType.CheckoutAutomated, Status = HousekeepingStatus.Pending },
+            new Housekeeping { RoomId = rooms[12].Id, OriginType = HousekeepingOriginType.CheckoutAutomated, Status = HousekeepingStatus.InProgress, StartedAt = now.AddMinutes(-20) },
+            new Housekeeping { RoomId = rooms[14].Id, OriginType = HousekeepingOriginType.CheckoutAutomated, Status = HousekeepingStatus.Pending },
+            new Housekeeping { RoomId = rooms[18].Id, OriginType = HousekeepingOriginType.StaffRequested, Status = HousekeepingStatus.InProgress, StartedAt = now.AddHours(-3) }
         );
 
-        // 8.5 Maintenance Tasks
+        // ======================================================
+        // 8. MAINTENANCE TASKS
+        // ======================================================
         context.MaintenanceTasks.AddRange(
             // Normal
             new MaintenanceTask { RoomId = rooms[1].Id, OriginType = MaintenanceOriginType.SystemAutomated, Status = MaintenanceStatus.Completed, Description = "Fix leaking sink", StartedAt = now.AddDays(-1), FinishedAt = now.AddDays(-1).AddHours(2) },
             new MaintenanceTask { RoomId = rooms[2].Id, OriginType = MaintenanceOriginType.StaffRequested, Status = MaintenanceStatus.InProgress, Description = "Replace broken lightbulb", StartedAt = now.AddHours(-1) },
-            new MaintenanceTask { RoomId = rooms[12].Id, OriginType = MaintenanceOriginType.GuestRequested, Status = MaintenanceStatus.Pending, Description = "AC not cooling properly" },
+            new MaintenanceTask { RoomId = rooms[11].Id, OriginType = MaintenanceOriginType.GuestRequested, Status = MaintenanceStatus.Pending, Description = "AC not cooling properly" },
 
-            // Edge cases
-            // Multiple maintenance issues for one offline room
-            new MaintenanceTask { RoomId = rooms[18].Id, OriginType = MaintenanceOriginType.StaffRequested, Status = MaintenanceStatus.InProgress, Description = "Major plumbing overhaul", StartedAt = now.AddDays(-2) },
-            new MaintenanceTask { RoomId = rooms[18].Id, OriginType = MaintenanceOriginType.StaffRequested, Status = MaintenanceStatus.Pending, Description = "Repaint walls after plumbing fix" },
+            // Multiple issues for one offline room
+            new MaintenanceTask { RoomId = rooms[16].Id, OriginType = MaintenanceOriginType.StaffRequested, Status = MaintenanceStatus.InProgress, Description = "Major plumbing overhaul", StartedAt = now.AddDays(-2) },
+            new MaintenanceTask { RoomId = rooms[16].Id, OriginType = MaintenanceOriginType.StaffRequested, Status = MaintenanceStatus.Pending, Description = "Repaint walls after plumbing fix" },
             new MaintenanceTask { RoomId = rooms[0].Id, OriginType = MaintenanceOriginType.SystemAutomated, Status = MaintenanceStatus.Completed, Description = "Filter replacement", StartedAt = now.AddDays(-5), FinishedAt = now.AddDays(-5).AddHours(1) },
             new MaintenanceTask { RoomId = rooms[5].Id, OriginType = MaintenanceOriginType.GuestRequested, Status = MaintenanceStatus.Completed, Description = "TV remote not working", StartedAt = now.AddDays(-3), FinishedAt = now.AddDays(-3).AddHours(1) },
             new MaintenanceTask { RoomId = rooms[6].Id, OriginType = MaintenanceOriginType.StaffRequested, Status = MaintenanceStatus.InProgress, Description = "Carpet cleaning", StartedAt = now.AddHours(-2) },
             new MaintenanceTask { RoomId = rooms[7].Id, OriginType = MaintenanceOriginType.GuestRequested, Status = MaintenanceStatus.Pending, Description = "Window won't close" },
-            new MaintenanceTask { RoomId = rooms[14].Id, OriginType = MaintenanceOriginType.SystemAutomated, Status = MaintenanceStatus.Pending, Description = "Quarterly inspection" },
-            new MaintenanceTask { RoomId = rooms[16].Id, OriginType = MaintenanceOriginType.GuestRequested, Status = MaintenanceStatus.Pending, Description = "Infinity pool deck-chair hinge cracked" }
+            new MaintenanceTask { RoomId = rooms[13].Id, OriginType = MaintenanceOriginType.SystemAutomated, Status = MaintenanceStatus.Pending, Description = "Quarterly inspection" },
+            new MaintenanceTask { RoomId = rooms[17].Id, OriginType = MaintenanceOriginType.GuestRequested, Status = MaintenanceStatus.Pending, Description = "Infinity pool deck-chair hinge cracked" }
         );
 
-        // 9. Feedback
+        // ======================================================
+        // 9. FEEDBACK – Ratings from 1–5, some with comments
+        // ======================================================
         context.Feedbacks.AddRange(
             // Normal
             new Feedback { BookingId = bookings[4].Id, Rating = 4, Comments = "Good, but AC was loud." },
             new Feedback { BookingId = bookings[5].Id, Rating = 5, Comments = "Perfect stay!" },
 
             // Edge cases
-            // 1-star scathing review
             new Feedback { BookingId = bookings[13].Id, Rating = 1, Comments = "Absolutely terrible. Found a bug in the bed, room smelled like smoke, and the receptionist ignored us. Never coming back." },
-            // No comments
-            new Feedback { BookingId = bookings[14].Id, Rating = 3, Comments = "" },
+            new Feedback { BookingId = bookings[14].Id, Rating = 3, Comments = "" }, // No comment
             new Feedback { BookingId = bookings[0].Id, Rating = 5, Comments = "Great service!" },
             new Feedback { BookingId = bookings[1].Id, Rating = 4, Comments = "Nice room." },
             new Feedback { BookingId = bookings[10].Id, Rating = 2, Comments = "Too noisy." },
             new Feedback { BookingId = bookings[11].Id, Rating = 5, Comments = "Excellent food." },
             new Feedback { BookingId = bookings[12].Id, Rating = 4, Comments = "Comfortable bed." },
             new Feedback { BookingId = bookings[13].Id, Rating = 3, Comments = "Average experience." },
-            new Feedback { BookingId = bookings[9].Id, Rating = 5, Comments = "Studio room setup is spectacular for programmers working remotely." }
+            new Feedback { BookingId = bookings[9].Id, Rating = 5, Comments = "Studio room setup is spectacular for programmers working remotely." },
+            new Feedback { BookingId = bookings[16].Id, Rating = 5, Comments = "The VVIP treatment was beyond expectations. Pure luxury." }
         );
 
-        // 10. Amenities
+        // ======================================================
+        // 10. AMENITIES – Normal and ultra-premium
+        // ======================================================
         var amenities = new List<Amenity>
         {
             new Amenity { Name = "Swimming Pool", Description = "Olympic-sized heated pool", Price = 25.0m, IsAvailable = true },
@@ -297,14 +775,15 @@ false
             new Amenity { Name = "Parking", Description = "Valet parking", Price = 30.0m, IsAvailable = true },
             new Amenity { Name = "Laundry", Description = "Next day service", Price = 15.0m, IsAvailable = true },
             new Amenity { Name = "Pet Fee", Description = "Bring your dog", Price = 75.0m, IsAvailable = true },
-            // Ultra VIP Extras
             new Amenity { Name = "Private Chef Experience", Description = "In-room custom dining", Price = 450.0m, IsAvailable = true },
             new Amenity { Name = "Helicopter Pad Access", Description = "Exclusive landing coordination", Price = 800.0m, IsAvailable = true }
         };
         context.Amenities.AddRange(amenities);
         context.SaveChanges();
 
-        // 11. Booking Amenities
+        // ======================================================
+        // 11. BOOKING AMENITIES
+        // ======================================================
         context.BookingAmenities.AddRange(
             // Normal
             new BookingAmenity { BookingId = bookings[0].Id, AmenityId = amenities[0].Id, PriceAtPurchase = 25.0m },
@@ -312,37 +791,44 @@ false
             new BookingAmenity { BookingId = bookings[1].Id, AmenityId = amenities[2].Id, PriceAtPurchase = 10.0m },
             new BookingAmenity { BookingId = bookings[1].Id, AmenityId = amenities[3].Id, PriceAtPurchase = 40.0m },
 
-            // Edge case: Subscribed to ALL amenities
+            // Booking 10 (Today Arrival) – all standard amenities
             new BookingAmenity { BookingId = bookings[10].Id, AmenityId = amenities[0].Id, PriceAtPurchase = 25.0m },
             new BookingAmenity { BookingId = bookings[10].Id, AmenityId = amenities[1].Id, PriceAtPurchase = 15.0m },
             new BookingAmenity { BookingId = bookings[10].Id, AmenityId = amenities[2].Id, PriceAtPurchase = 10.0m },
             new BookingAmenity { BookingId = bookings[10].Id, AmenityId = amenities[3].Id, PriceAtPurchase = 40.0m },
             new BookingAmenity { BookingId = bookings[10].Id, AmenityId = amenities[4].Id, PriceAtPurchase = 20.0m },
 
-            // High tier package assignments
+            // VVIP Villa (Booking 17) – premium amenities
             new BookingAmenity { BookingId = bookings[16].Id, AmenityId = amenities[10].Id, PriceAtPurchase = 450.0m },
             new BookingAmenity { BookingId = bookings[16].Id, AmenityId = amenities[11].Id, PriceAtPurchase = 800.0m },
             new BookingAmenity { BookingId = bookings[16].Id, AmenityId = amenities[7].Id, PriceAtPurchase = 30.0m }
         );
 
-        // 12. Receipts for Paid bookings
+        // ======================================================
+        // 12. RECEIPTS
+        // ======================================================
         context.Receipts.AddRange(
-            // bookings[4] = CheckedOut Paid (Standard room, 5 nights * 90 = 450)
+            // Booking 5 (Checked Out, Paid)
             new Receipt { BookingId = bookings[4].Id, AmountPaid = 450.0m, PaymentMethod = "Credit Card", TransactionId = "TXN-001", PaidAt = now.AddDays(-5) },
-            // bookings[5] = CheckedOut Paid (Deluxe room, 5 nights * 140 = 700)
+            // Booking 6 (Checked Out, Paid)
             new Receipt { BookingId = bookings[5].Id, AmountPaid = 700.0m, PaymentMethod = "Cash", TransactionId = "TXN-002", PaidAt = now.AddDays(-15) },
-            // bookings[14] = Cancelled Paid (needs refund) (Presidential room, 500)
+            // Booking 15 (Cancelled, Paid – needs refund)
             new Receipt { BookingId = bookings[14].Id, AmountPaid = 500.0m, PaymentMethod = "Credit Card", TransactionId = "TXN-003", PaidAt = now.AddDays(15) },
-            // bookings[15] = Cancelled Refunded
+            // Booking 16 (Cancelled, Refunded)
             new Receipt { BookingId = bookings[15].Id, AmountPaid = -500.0m, PaymentMethod = "Credit Card", TransactionId = "REF-001", PaidAt = now.AddDays(16) },
-            new Receipt { BookingId = bookings[10].Id, AmountPaid = 200.0m, PaymentMethod = "Cash", TransactionId = "TXN-004", PaidAt = now.AddDays(-1) },
+            // Booking 9 (Paid)
+            new Receipt { BookingId = bookings[9].Id, AmountPaid = 200.0m, PaymentMethod = "Cash", TransactionId = "TXN-004", PaidAt = now.AddDays(-1) },
+            // Booking 11 (Today Departure – paid)
             new Receipt { BookingId = bookings[11].Id, AmountPaid = 450.0m, PaymentMethod = "Credit Card", TransactionId = "TXN-005", PaidAt = now.AddDays(-2) },
+            // Booking 12 (Long Stay – paid)
             new Receipt { BookingId = bookings[12].Id, AmountPaid = 2850.0m, PaymentMethod = "Bank Transfer", TransactionId = "TXN-006", PaidAt = now.AddDays(-10) },
+            // Booking 0 (Alice – partial payment)
             new Receipt { BookingId = bookings[0].Id, AmountPaid = 50.0m, PaymentMethod = "Credit Card", TransactionId = "TXN-007", PaidAt = now.AddDays(-1) },
+            // Booking 1 (John – partial payment)
             new Receipt { BookingId = bookings[1].Id, AmountPaid = 100.0m, PaymentMethod = "Cash", TransactionId = "TXN-008", PaidAt = now.AddDays(-1) },
+            // Booking 2 (Future – prepaid)
             new Receipt { BookingId = bookings[2].Id, AmountPaid = 1250.0m, PaymentMethod = "Credit Card", TransactionId = "TXN-009", PaidAt = now.AddDays(5) },
-
-            // Whale Booking Settlement (7 nights * 1500 = 10500 + amenities + premium food orders)
+            // VVIP Villa (Booking 17) – full settlement
             new Receipt { BookingId = bookings[16].Id, AmountPaid = 12500.0m, PaymentMethod = "Bank Transfer", TransactionId = "TXN-VIP-777", PaidAt = now.AddDays(-1) }
         );
 

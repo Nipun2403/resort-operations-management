@@ -1,0 +1,44 @@
+<!-- Header -->
+<mat-toolbar color="primary" class="public-header">
+  <!-- Logo / Hotel Name -->
+  <span class="logo" routerLink="/home">Hotel Name</span>
+  <span class="spacer"></span>
+
+  <!-- Desktop Navigation -->
+  @if (!isMobile()) {
+    <nav class="desktop-nav">
+      <a mat-button routerLink="/home" routerLinkActive="active">Home</a>
+      <a mat-button routerLink="/rooms" routerLinkActive="active">Rooms</a>
+      <a mat-button routerLink="/menu" routerLinkActive="active">Menu</a>
+      <a mat-button routerLink="/amenities" routerLinkActive="active">Amenities</a>
+      <a mat-raised-button color="accent" routerLink="/availability">Check Availability</a>
+      <a mat-stroked-button routerLink="/auth">Login</a>
+    </nav>
+  }
+
+  <!-- Mobile Hamburger -->
+  @if (isMobile()) {
+    <button mat-icon-button [matMenuTriggerFor]="mobileMenu" aria-label="Menu">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <mat-menu #mobileMenu="matMenu">
+      <a mat-menu-item routerLink="/home">Home</a>
+      <a mat-menu-item routerLink="/rooms">Rooms</a>
+      <a mat-menu-item routerLink="/menu">Menu</a>
+      <a mat-menu-item routerLink="/amenities">Amenities</a>
+      <a mat-menu-item routerLink="/availability">Check Availability</a>
+      <a mat-menu-item routerLink="/auth">Login</a>
+    </mat-menu>
+  }
+</mat-toolbar>
+
+<!-- Main Content -->
+<main>
+  <router-outlet></router-outlet>
+</main>
+
+<!-- Footer -->
+<footer class="public-footer">
+  <p>&copy; 2026 Hotel Name. All rights reserved.</p>
+  <p>123 Luxury Lane, Paradise City</p>
+</footer>
