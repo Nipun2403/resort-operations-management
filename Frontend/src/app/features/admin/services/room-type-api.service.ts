@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { RoomType, CreateRoomTypeDTO, UpdateRoomTypeDTO } from '../models/room-type.model';
 import { PaginatedResponse } from '../../../core/models/paginated-response.model';
+import { AvailableRoomType } from '../../user/models/available-room-type.model';
 
 @Injectable({ providedIn: 'root' })
 export class RoomTypeApiService {
@@ -40,5 +41,21 @@ export class RoomTypeApiService {
 
   getById(id: number): Observable<RoomType> {
     return this.http.get<RoomType>(`${this.baseUrl}/${id}`);
+  }
+
+  getAvailability(params: {
+    checkIn: string;
+    checkOut: string;
+    pageSize?: number;
+    pageNumber?: number;
+  }): Observable<PaginatedResponse<AvailableRoomType>> {
+    const pageNum = params.pageNumber || 1;
+    const size = params.pageSize || 50;
+    let httpParams = new HttpParams()
+      .set('checkIn', params.checkIn)
+      .set('checkOut', params.checkOut)
+      .set('pageNumber', pageNum.toString())
+      .set('pageSize', size.toString());
+    return this.http.get<PaginatedResponse<AvailableRoomType>>(`${this.baseUrl}/availability`, { params: httpParams });
   }
 }

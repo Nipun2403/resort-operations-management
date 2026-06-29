@@ -4203,6 +4203,84 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: public-availability.md (Public Availability Page & Booking Redirect)
+Date: 2026-06-29
+================================================================================
+
+FILES CREATED
+-------------
+✓ src/app/features/public/pages/availability.component.html
+✓ src/app/features/public/pages/availability.component.scss
+
+FILES MODIFIED (existing files updated per spec)
+-------------------------------------------------
+✓ src/app/features/admin/services/room-type-api.service.ts — Added getAvailability API method and AvailableRoomType import
+✓ src/app/features/public/pages/availability.component.ts — Overwrote placeholder file with availability scanner logic
+
+FILES DELETED
+--------------
+None.
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Public Availability Form
+  ✓ Date checkIn and checkOut forms, with required field validations
+  ✓ Guests number input with bounds constraints (1-20)
+  ✓ Form automatic pre-filling from URL parameters and sessionStorage keys
+✓ Available Rooms Grid
+  ✓ Displays available room types matching search criteria
+  ✓ Renders metadata: name, base price, max occupancy, and available count details
+  ✓ Displays empty state messaging on zero results
+✓ Booking Redirection Flow
+  ✓ Checks user authenticated state using `AuthService.isAuthenticated()`
+  ✓ Redirection paths: redirects logged-in user to customer bookings with query parameters; unauthenticated user records pending details to sessionStorage and redirects to `/auth?returnUrl=/user/dashboard`
+
+API INTEGRATION
+---------------
+✓ GET /room-types/availability — queries list of available room types
+
+LOGIC TRACES
+------------
+Flow: Form Pre-filling
+  Entry: OnInit initializes on /availability route
+  Path: Subscribes to query parameters, updates form states, reads selectedRoomTypeId and availabilitySearch from sessionStorage
+  Result: ✓ Matches spec
+
+Flow: Availability Submission
+  Entry: User clicks Search button
+  Path: searchAvailability() executes date validation, requests results list from RoomTypeApiService.getAvailability(), updates availableRooms signal
+  Result: ✓ Matches spec
+
+Flow: Booking Process Redirect
+  Entry: User clicks Book Now button on a search card result
+  Path: bookNow() evaluates authentication status; redirects to bookings view or sessionStorage pending booking login flow
+  Result: ✓ Matches spec
+
+KNOWN DEVIATIONS
+----------------
+None. All requirements implemented exactly as specified.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+✓ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+✓ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+✓ I confirm that all API calls match the spec contracts exactly.
+✓ I confirm that all regex validators are character-for-character matches
+  to the spec.
+✓ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+
 
 
 

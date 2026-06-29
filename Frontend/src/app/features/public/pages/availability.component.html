@@ -1,0 +1,65 @@
+<div class="availability-page">
+  <div class="hero-small">
+    <h1>Check Availability</h1>
+    <p>Find the perfect room for your stay.</p>
+  </div>
+
+  <!-- Search Form -->
+  <section class="search-section">
+    <mat-card>
+      <mat-card-content>
+        <div class="search-form">
+          <mat-form-field appearance="outline">
+            <mat-label>Check‑in</mat-label>
+            <input matInput [matDatepicker]="cinPicker" [formControl]="checkIn" />
+            <mat-datepicker-toggle matSuffix [for]="cinPicker"></mat-datepicker-toggle>
+            <mat-datepicker #cinPicker></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Check‑out</mat-label>
+            <input matInput [matDatepicker]="coutPicker" [formControl]="checkOut" />
+            <mat-datepicker-toggle matSuffix [for]="coutPicker"></mat-datepicker-toggle>
+            <mat-datepicker #coutPicker></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Guests</mat-label>
+            <input matInput type="number" [formControl]="guests" min="1" max="20" />
+          </mat-form-field>
+          <button mat-raised-button color="primary" (click)="searchAvailability()" [disabled]="checkIn.invalid || checkOut.invalid || guests.invalid || searchLoading()">
+            Search
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </section>
+
+  <!-- Results -->
+  <section class="results-section">
+    @if (searchLoading()) {
+      <mat-spinner diameter="40"></mat-spinner>
+    } @else if (searchError()) {
+      <p class="error">{{ searchError() }}</p>
+    } @else if (hasSearched() && availableRooms().length === 0) {
+      <p class="empty">No rooms available for the selected dates and guests.</p>
+    } @else if (availableRooms().length > 0) {
+      <h2>Available Rooms</h2>
+      <div class="results-grid">
+        @for (room of availableRooms(); track room.roomTypeId) {
+          <mat-card class="room-card">
+            <img [src]="getFirstImage(room)" alt="{{ room.name }}" class="room-image" />
+            <mat-card-header>
+              <mat-card-title>{{ room.name }}</mat-card-title>
+              <mat-card-subtitle>
+                {{ room.basePrice | currency }}/night – Up to {{ room.maxOccupancy }} guests
+                <br />Available: <strong>{{ room.availableCount }}</strong> room(s)
+              </mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-actions>
+              <button mat-raised-button color="accent" (click)="bookNow(room)">Book Now</button>
+            </mat-card-actions>
+          </mat-card>
+        }
+      </div>
+    }
+  </section>
+</div>

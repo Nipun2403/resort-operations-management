@@ -1,0 +1,52 @@
+.availability-page {
+  .hero-small {
+    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/assets/availability-hero.jpg') center/cover no-repeat;
+    height: 30vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    h1 { font-size: 2.5rem; margin-bottom: 8px; }
+    p { font-size: 1.2rem; }
+  }
+  .search-section {
+    position: relative;
+    margin-top: -30px;
+    z-index: 5;
+    .search-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      mat-form-field { flex: 1 1 200px; }
+    }
+  }
+  .results-section {
+    padding: 32px 16px;
+    h2 { margin-bottom: 16px; }
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+    }
+    .room-card {
+      .room-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+      }
+      mat-card-actions { justify-content: center; }
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .availability-page {
+    .search-section {
+      margin-top: 0;
+    }
+  }
+}
