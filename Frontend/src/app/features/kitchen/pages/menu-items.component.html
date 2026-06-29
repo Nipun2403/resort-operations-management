@@ -1,0 +1,69 @@
+<div class="menu-items-page">
+  <h1>Menu Items</h1>
+
+  <div class="filter-bar">
+    <mat-form-field appearance="outline">
+      <mat-label>Category</mat-label>
+      <mat-select
+        [formControl]="categoryFilter"
+        (selectionChange)="applyFilters()"
+      >
+        <mat-option value="All">All</mat-option>
+        @for (cat of categories(); track cat) {
+        <mat-option [value]="cat">{{ cat }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Search</mat-label>
+      <input
+        matInput
+        [formControl]="searchControl"
+        (keyup)="applyFiltersDebounced()"
+      />
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  @if (loading()) {
+  <mat-spinner diameter="40"></mat-spinner>
+  } @else if (error()) {
+  <app-alert
+    type="error"
+    [message]="error()!"
+    (closed)="error.set(null)"
+  >
+    <button
+      mat-button
+      (click)="fetchMenuItems()"
+    >
+      Retry
+    </button>
+  </app-alert>
+  } @else if (filteredItems().length === 0) {
+  <p>No menu items found.</p>
+  } @else {
+  <div class="menu-grid">
+    @for (item of filteredItems(); track item.id) {
+    <mat-card class="menu-card">
+      <mat-card-header>
+        <mat-card-title>{{ item.name }}</mat-card-title>
+        <mat-card-subtitle
+          >{{ item.category || 'Other' }} – {{ item.price | currency
+          }}</mat-card-subtitle
+        >
+      </mat-card-header>
+      <mat-card-actions>
+        <mat-slide-toggle
+          [checked]="item.isAvailable"
+          (change)="onToggleAvailability(item, $event.checked)"
+          color="primary"
+        >
+          {{ item.isAvailable ? 'Available' : 'Unavailable' }}
+        </mat-slide-toggle>
+      </mat-card-actions>
+    </mat-card>
+    }
+  </div>
+  }
+</div>

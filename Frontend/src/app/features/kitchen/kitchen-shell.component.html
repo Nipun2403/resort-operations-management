@@ -16,6 +16,15 @@
         <mat-icon matListItemIcon>dashboard</mat-icon>
         <span matListItemTitle>Dashboard</span>
       </a>
+      <a
+        mat-list-item
+        routerLink="./menu-items"
+        routerLinkActive="active"
+        (click)="onNavClick()"
+      >
+        <mat-icon matListItemIcon>restaurant_menu</mat-icon>
+        <span matListItemTitle>Menu Items</span>
+      </a>
     </mat-nav-list>
   </mat-sidenav>
 

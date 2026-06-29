@@ -133,6 +133,12 @@ export const routes: Routes = [
         loadComponent: () => import('./features/kitchen/pages/dashboard.component')
           .then(m => m.KitchenDashboardComponent)
       },
+      {
+        path: 'menu-items',
+        loadComponent: () => import('./features/kitchen/pages/menu-items.component')
+          .then(m => m.KitchenMenuItemsComponent),
+        canActivate: [kitchenGuard]
+      },
       { path: '**', redirectTo: 'dashboard' }
     ]
   },

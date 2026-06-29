@@ -60,7 +60,6 @@ public class OrderService : IOrderService
 
         if (!string.IsNullOrEmpty(sortBy))
             orders = orders.OrderByDynamic(sortBy, sortDescending);
-            
         var totalCount = orders.Count();
         var pagedOrders = orders.Skip((pageNumber - 1) * pageSize).Take(pageSize);
 
@@ -147,7 +146,7 @@ public class OrderService : IOrderService
     {
         var booking = await _bookingRepository.GetByIdAsync(dto.BookingId);
         if (booking == null) throw new ArgumentException("Booking not found.");
-        
+
         if (booking.PaymentStatus == PaymentStatus.Paid)
             throw new InvalidOperationException("Cannot add food orders to a booking that has already been paid.");
 
@@ -206,12 +205,12 @@ public class OrderService : IOrderService
 
         await _foodOrderRepository.AddAsync(order);
         await _foodOrderRepository.SaveChangesAsync();
-        
+
         var rooms = string.Join(", ", booking.BookingRooms.Where(br => br.RoomId.HasValue).Select(br => br.RoomId!.Value));
         var roomMessage = !string.IsNullOrEmpty(rooms) ? $"Rooms {rooms}" : $"Booking #{booking.Id}";
         var orderDetailsString = string.Join(" , ", orderDetailsList);
         await _notificationService.SendKitchenAlertAsync($"New room service order placed for {roomMessage}.\nOrder : {orderDetailsString}");
-        
+
         // Return DTO. We must manually map the items because EF might not load the related MenuItems immediately on insert
         var responseDto = _mapper.Map<FoodOrderDTO>(order);
         return responseDto;

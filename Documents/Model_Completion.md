@@ -3473,6 +3473,53 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
   without implementation evidence.
 ☑ I confirm that no file, function, or feature was added beyond what
   the spec defines.
+☑ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: kitchen-menu-feature.md
+Date: 2026-06-29
+================================================================================
+
+FILES CREATED
+-------------
+✓ src/app/features/kitchen/pages/menu-items.component.ts/.html/.scss
+  — Component handling items listing, category filtering, search input control, and availability toggles.
+
+FILES MODIFIED
+--------------
+✓ src/app/features/admin/services/menu-item-api.service.ts
+  — Added updateStatus availability PATCH query method.
+✓ src/app/features/kitchen/kitchen-shell.component.html
+  — Added Menu Items sidebar link.
+✓ src/app/app.routes.ts
+  — Appended menu-items child route under /operations/kitchen.
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Kitchen Menu Item Availability Toggle (§1, §4, §5)
+  ✓ Slide toggles reflect availability state.
+  ✓ Confirmation dialog appears when turning off item availability.
+  ✓ Toggling on has no confirmation, executes immediately.
+  ✓ Reverts toggle state visually if the backend update fails.
+
+KNOWN DEVIATIONS
+----------------
+None.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+☑ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+☑ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
 ☑ I confirm that all API calls match the spec contracts exactly.
 ☑ I confirm that all regex validators are character-for-character matches
   to the spec.

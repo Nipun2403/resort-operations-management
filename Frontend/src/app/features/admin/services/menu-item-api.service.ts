@@ -60,4 +60,14 @@ export class MenuItemApiService {
       })
     );
   }
+
+  updateStatus(id: number, isAvailable: boolean): Observable<void> {
+    const params = new HttpParams().set('isAvailable', isAvailable.toString());
+    return this.http.patch<void>(`${this.baseUrl}/${id}/status`, null, { params }).pipe(
+      catchError((err) => {
+        const message = err.error?.message || err.message || 'Unexpected error';
+        return throwError(() => new Error(message));
+      })
+    );
+  }
 }
