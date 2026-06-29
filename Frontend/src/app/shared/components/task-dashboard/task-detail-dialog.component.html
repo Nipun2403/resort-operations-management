@@ -1,0 +1,41 @@
+<h2 mat-dialog-title>
+  {{ data.task.type ? data.task.type + ' #' : '' }}{{ data.task.id }}
+</h2>
+<mat-dialog-content>
+  @for (section of data.detailSections; track section.title) {
+  <div class="detail-section" style="margin-bottom: 12px; margin-top: 12px;">
+    <h3 style="margin-bottom: 8px; font-weight: 500; font-size: 1.05rem;">{{ section.title }}</h3>
+    @for (field of section.fields; track field.label) {
+    <p style="margin: 4px 0;"><strong>{{ field.label }}:</strong> {{ field.value }}</p>
+    }
+  </div>
+  <mat-divider *ngIf="!$last"></mat-divider>
+  }
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  @if (data.canStart) {
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="start()"
+    style="margin-right: 8px;"
+  >
+    Start
+  </button>
+  } @if (data.canComplete) {
+  <button
+    mat-raised-button
+    color="accent"
+    (click)="complete()"
+    style="margin-right: 8px;"
+  >
+    Complete
+  </button>
+  }
+  <button
+    mat-button
+    mat-dialog-close
+  >
+    Close
+  </button>
+</mat-dialog-actions>
