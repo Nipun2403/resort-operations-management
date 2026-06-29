@@ -22,13 +22,13 @@ export class KitchenDashboardComponent {
   constructor() {
     this.notificationService.startConnection();
 
-    this.notificationService.onNewFoodOrder
+    this.notificationService.onAlert
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(order => {
+      .subscribe(notification => {
         this.refreshTrigger.update(n => n + 1);
         this.notificationService.showNotification(
-          'New Order!',
-          `Order #${order.id}${order.roomNumber ? ' for Room ' + order.roomNumber : ''}`
+          notification.type === 'FoodOrder' ? 'New Order!' : 'Alert',
+          notification.description
         );
       });
   }

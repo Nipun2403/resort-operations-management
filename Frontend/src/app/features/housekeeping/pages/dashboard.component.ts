@@ -23,14 +23,11 @@ export class HousekeepingDashboardComponent {
   constructor() {
     this.notificationService.startConnection();
 
-    this.notificationService.onNewHousekeepingTask
+    this.notificationService.onAlert
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(task => {
+      .subscribe(notification => {
         this.refreshTrigger.update(n => n + 1);
-        this.notificationService.showNotification(
-          'New Housekeeping Task',
-          `${task.description}${task.roomNumber ? ' – Room ' + task.roomNumber : ''}`
-        );
+        this.notificationService.showNotification('New Task', notification.description);
       });
   }
 

@@ -21,9 +21,7 @@ export class NotificationService implements OnDestroy {
   private snackBar = inject(MatSnackBar);
 
   // Event streams
-  readonly onNewFoodOrder = new Subject<NewTaskNotification>();
-  readonly onNewHousekeepingTask = new Subject<NewTaskNotification>();
-  readonly onNewMaintenanceTask = new Subject<NewTaskNotification>();
+  readonly onAlert = new Subject<NewTaskNotification>();
 
   constructor() {
     effect(() => {
@@ -35,15 +33,7 @@ export class NotificationService implements OnDestroy {
       }
     });
 
-    this.onNewFoodOrder.pipe(takeUntilDestroyed()).subscribe(n => {
-      this.showNotification('New Food Order', `Order #${n.id} received for room ${n.roomNumber || 'N/A'}`);
-    });
-    this.onNewHousekeepingTask.pipe(takeUntilDestroyed()).subscribe(n => {
-      this.showNotification('New Housekeeping Task', `${n.description} for room ${n.roomNumber || 'N/A'}`);
-    });
-    this.onNewMaintenanceTask.pipe(takeUntilDestroyed()).subscribe(n => {
-      this.showNotification('New Maintenance Task', `${n.description} for room ${n.roomNumber || 'N/A'}`);
-    });
+
   }
 
   startConnection(): void {
@@ -64,31 +54,21 @@ export class NotificationService implements OnDestroy {
       .withAutomaticReconnect()
       .build();
 
-    this.hubConnection.on('NewFoodOrder', (data: any) => {
-      this.onNewFoodOrder.next({
-        id: data.id,
+    this.hubConnection.on('ReceiveAlert', (message: string) => {
+      const notification: NewTaskNotification = {
+        id: 0,
         type: 'FoodOrder',
-        description: `Order #${data.id}`,
-        roomNumber: data.roomNumber
-      });
-    });
-
-    this.hubConnection.on('NewHousekeepingTask', (data: any) => {
-      this.onNewHousekeepingTask.next({
-        id: data.id,
-        type: 'Housekeeping',
-        description: data.description || `Housekeeping task #${data.id}`,
-        roomNumber: data.roomNumber
-      });
-    });
-
-    this.hubConnection.on('NewMaintenanceTask', (data: any) => {
-      this.onNewMaintenanceTask.next({
-        id: data.id,
-        type: 'Maintenance',
-        description: data.description || `Maintenance task #${data.id}`,
-        roomNumber: data.roomNumber
-      });
+        description: message,
+        roomNumber: undefined
+      };
+      if (message.toLowerCase().includes('housekeeping')) {
+        notification.type = 'Housekeeping';
+      } else if (message.toLowerCase().includes('maintenance')) {
+        notification.type = 'Maintenance';
+      } else if (message.toLowerCase().includes('order') || message.toLowerCase().includes('food')) {
+        notification.type = 'FoodOrder';
+      }
+      this.onAlert.next(notification);
     });
 
     this.hubConnection.start().catch(err => console.error('SignalR connection error:', err));
