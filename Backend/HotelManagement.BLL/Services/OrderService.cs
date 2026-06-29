@@ -144,15 +144,23 @@ public class OrderService : IOrderService
 
     public async Task<FoodOrderDTO> CreateOrderAsync(CreateFoodOrderDTO dto)
     {
-        var booking = await _bookingRepository.GetByIdAsync(dto.BookingId);
+        // 1. Fetch the booking (with its rooms)
+        var booking = await _bookingRepository.GetBookingWithDetailsAsync(dto.BookingId);
         if (booking == null) throw new ArgumentException("Booking not found.");
 
+        // 2. ✅ VALIDATE: The provided RoomId must belong to this booking
+        var roomExists = booking.BookingRooms?.Any(br => br.RoomId == dto.RoomId) ?? false;
+        if (!roomExists)
+            throw new ArgumentException("The specified room does not belong to this booking.");
+
+        // 3. Validate payment and check-in status
         if (booking.PaymentStatus == PaymentStatus.Paid)
             throw new InvalidOperationException("Cannot add food orders to a booking that has already been paid.");
 
         if (booking.BookingStatus != BookingStatus.CheckedIn)
             throw new InvalidOperationException("Food orders can only be placed for guests currently checked in.");
 
+        // 4. Prevent duplicate identical pending orders
         var activeOrders = await _foodOrderRepository.GetActiveOrdersWithDetailsAsync();
         var pendingOrdersForBooking = activeOrders.Where(o => o.BookingId == dto.BookingId && o.OrderStatus == FoodOrderStatus.Pending).ToList();
         var newOrderItems = dto.Items.OrderBy(i => i.MenuItemId).ToList();
@@ -178,9 +186,11 @@ public class OrderService : IOrderService
             }
         }
 
+        // 5. Create the order – ✅ SET THE ROOM ID
         var order = new FoodOrder
         {
             BookingId = dto.BookingId,
+            RoomId = dto.RoomId,                     // ✅ Saves the room
             GeneratedAt = DateTime.UtcNow,
             OrderStatus = FoodOrderStatus.Pending
         };
@@ -197,7 +207,7 @@ public class OrderService : IOrderService
             {
                 MenuItemId = itemDto.MenuItemId,
                 Quantity = itemDto.Quantity,
-                PriceAtPurchase = menuItem.Price // Lock in price at time of purchase
+                PriceAtPurchase = menuItem.Price
             });
 
             orderDetailsList.Add($"{menuItem.Name} * {itemDto.Quantity}");
@@ -206,13 +216,17 @@ public class OrderService : IOrderService
         await _foodOrderRepository.AddAsync(order);
         await _foodOrderRepository.SaveChangesAsync();
 
-        var rooms = string.Join(", ", booking.BookingRooms.Where(br => br.RoomId.HasValue).Select(br => br.RoomId!.Value));
-        var roomMessage = !string.IsNullOrEmpty(rooms) ? $"Rooms {rooms}" : $"Booking #{booking.Id}";
-        var orderDetailsString = string.Join(" , ", orderDetailsList);
-        await _notificationService.SendKitchenAlertAsync($"New room service order placed for {roomMessage}.\nOrder : {orderDetailsString}");
+        // 6. ✅ Reload the order with Room loaded so we can get the RoomNumber
+        var createdOrder = await _foodOrderRepository.GetOrderWithDetailsByIdAsync(order.Id);
+        var roomNumber = createdOrder?.Room?.RoomNumber ?? "Unknown";
 
-        // Return DTO. We must manually map the items because EF might not load the related MenuItems immediately on insert
-        var responseDto = _mapper.Map<FoodOrderDTO>(order);
-        return responseDto;
+        // 7. ✅ UPDATED KITCHEN ALERT – now shows the exact room number
+        var orderDetailsString = string.Join(" , ", orderDetailsList);
+        await _notificationService.SendKitchenAlertAsync(
+            $"New room service order placed for Room {roomNumber} (Booking #{booking.Id}).\nOrder: {orderDetailsString}"
+        );
+
+        // 8. Return DTO
+        return _mapper.Map<FoodOrderDTO>(createdOrder);
     }
 }

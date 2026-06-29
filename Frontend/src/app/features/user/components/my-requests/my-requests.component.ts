@@ -117,11 +117,11 @@ export class MyRequestsComponent {
                 .map((o: any) => ({
                   id: o.id,
                   type: 'Food Order' as const,
-                  roomId: 0,
-                  roomNumber: '—',
+                  roomId: o.roomId ?? 0,
+                  roomNumber: o.roomNumber ?? 'N/A',
                   description: `Order #${o.id}`,
-                  status: o.status ?? o.orderStatus ?? 'Pending',
-                  createdAt: o.createdAt ?? o.orderDate ?? new Date().toISOString()
+                  status: o.orderStatus ?? 'Pending',
+                  createdAt: o.generatedAt ?? new Date().toISOString()
                 }))
             )
           )

@@ -15,6 +15,7 @@ public class FoodOrderRepository : GenericRepository<FoodOrder>, IFoodOrderRepos
         return await _context.FoodOrders
             .Include(fo => fo.OrderItems)
             .ThenInclude(oi => oi.MenuItem)
+            .Include(fo => fo.Room)
             .Where(fo => fo.OrderStatus == FoodOrderStatus.Pending || fo.OrderStatus == FoodOrderStatus.Preparing)
             .OrderBy(fo => fo.GeneratedAt)
             .ToListAsync();
@@ -27,7 +28,17 @@ public class FoodOrderRepository : GenericRepository<FoodOrder>, IFoodOrderRepos
                 .ThenInclude(oi => oi.MenuItem)
             .Include(fo => fo.Booking)           // <-- Add this
                 .ThenInclude(b => b.User)        // <-- Optional, but useful
+                .Include(fo => fo.Room)
             .OrderByDescending(fo => fo.GeneratedAt)
             .ToListAsync();
+    }
+
+    public async Task<FoodOrder?> GetOrderWithDetailsByIdAsync(int id)
+    {
+        return await _context.FoodOrders
+            .Include(fo => fo.OrderItems)
+                .ThenInclude(oi => oi.MenuItem)
+            .Include(fo => fo.Room)
+            .FirstOrDefaultAsync(fo => fo.Id == id);
     }
 }

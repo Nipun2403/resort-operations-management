@@ -78,13 +78,15 @@ public class MappingProfile : Profile
 
         CreateMap<MenuItem, MenuItemDTO>().ReverseMap();
         CreateMap<Amenity, AmenityDTO>().ReverseMap();
-
         CreateMap<FoodOrder, FoodOrderDTO>()
             .ForMember(dest => dest.GeneratedAt, opt => opt.MapFrom(src => src.GeneratedAt.ToString("yyyy-MM-ddTHH:mm:ssZ")))
             .ForMember(dest => dest.FinishedAt, opt => opt.MapFrom(src => src.FinishedAt.HasValue ? src.FinishedAt.Value.ToString("yyyy-MM-ddTHH:mm:ssZ") : null))
+            .ForMember(dest => dest.RoomNumber, opt => opt.MapFrom(src => src.Room != null ? src.Room.RoomNumber : null))
             .ReverseMap()
             .ForMember(dest => dest.GeneratedAt, opt => opt.Ignore())
             .ForMember(dest => dest.FinishedAt, opt => opt.Ignore());
+        // .ForMember(dest => dest.RoomNumber, opt => opt.Ignore());
+
         CreateMap<FoodOrderItem, FoodOrderItemDTO>()
             .ForMember(dest => dest.MenuItemName, opt => opt.MapFrom(src => src.MenuItem != null ? src.MenuItem.Name : string.Empty))
             .ReverseMap();

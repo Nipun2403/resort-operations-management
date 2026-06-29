@@ -10,6 +10,20 @@
   } @else {
     <div class="food-order-layout">
       <div class="menu-section">
+        <mat-form-field appearance="outline" style="width: 100%; max-width: 300px; margin-bottom: 16px; display: block;">
+          <mat-label>Deliver to Room</mat-label>
+          <mat-select [formControl]="selectedRoomId">
+            @for (room of validRooms(); track room.roomId) {
+              <mat-option [value]="room.roomId">
+                {{ room.roomNumber ?? 'Room ' + room.roomId }}
+              </mat-option>
+            }
+          </mat-select>
+          @if (selectedRoomId.invalid && selectedRoomId.touched) {
+            <mat-error>Please select a room for delivery.</mat-error>
+          }
+        </mat-form-field>
+
         <app-menu-grid
           [menuItems]="menuItems()"
           [cartItems]="cartItems()"

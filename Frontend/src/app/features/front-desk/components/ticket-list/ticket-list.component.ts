@@ -93,12 +93,22 @@ export class TicketListComponent implements OnInit {
       )
       .subscribe({
         next: data => {
-          const normalized = data.map(t => ({
-            ...t,
-            status: t.status ?? t.orderStatus ?? 'Pending',
-            roomNumber: t.roomNumber ?? t.location ?? '—',
-            description: t.description ?? `Order #${t.id}`
-          }));
+          const normalized = data.map(t => {
+            let description = t.description;
+            if (this.type() === 'foodOrder') {
+              const itemsArray = t.orderItems || [];
+              description = itemsArray.length > 0
+                ? itemsArray.map((i: any) => `${i.quantity}x ${i.menuItemName ?? 'Item #' + i.menuItemId}`).join(', ')
+                : `Order #${t.id}`;
+            }
+            return {
+              ...t,
+              status: t.orderStatus ?? t.status ?? 'Pending',
+              roomNumber: t.roomNumber ?? (t.roomId ? 'Room ' + t.roomId : 'N/A'),
+              description: description ?? `Order #${t.id}`,
+              createdAt: t.generatedAt ?? t.createdAt ?? ''
+            };
+          });
           this.tickets.set(normalized);
         },
         error: err => this.error.set(this.extractErrorMessage(err)),

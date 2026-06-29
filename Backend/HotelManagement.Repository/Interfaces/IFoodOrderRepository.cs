@@ -6,4 +6,6 @@ public interface IFoodOrderRepository : IGenericRepository<FoodOrder>
 {
     Task<IEnumerable<FoodOrder>> GetActiveOrdersWithDetailsAsync();
     Task<IEnumerable<FoodOrder>> GetAllOrdersWithDetailsAsync();
+
+    Task<FoodOrder?> GetOrderWithDetailsByIdAsync(int id);
 }

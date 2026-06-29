@@ -5,6 +5,7 @@ import { environment } from '../../../../environments/environment';
 
 export interface CreateFoodOrderDTO {
   bookingId: number;
+  roomId: number;
   items: { menuItemId: number; quantity: number }[];
 }
 

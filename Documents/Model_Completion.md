@@ -3559,6 +3559,63 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
   without implementation evidence.
 ☑ I confirm that no file, function, or feature was added beyond what
   the spec defines.
+☑ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: kitchen-orders.patch.md
+Date: 2026-06-29
+================================================================================
+
+FILES MODIFIED
+--------------
+✓ src/app/features/user/services/order-api.service.ts
+  — Added roomId parameter to CreateFoodOrderDTO.
+✓ src/app/features/user/components/food-order/food-order.component.ts/.html
+  — Added rooms input, validRooms computed, and selectedRoomId select form dropdown. Corrected error handler extraction.
+✓ src/app/features/user/pages/room-service.component.html
+  — Passed rooms array to app-food-order.
+✓ src/app/features/front-desk/components/booking-action-modal/food-order-panel/food-order-panel.component.ts/.html
+  — Added rooms input, validRooms computed, and selectedRoomId select form dropdown. Corrected error handler extraction.
+✓ src/app/features/front-desk/components/booking-action-modal/room-service-tab/room-service-tab.component.html
+  — Passed rooms array to app-food-order-panel.
+✓ src/app/features/kitchen/pages/dashboard.component.ts
+  — Updated fetchTasks and getDetailSections to read properties (orderStatus, generatedAt, orderItems, roomNumber).
+✓ src/app/features/front-desk/components/ticket-list/ticket-list.component.ts
+  — Updated normalization to read food order status, items, room, and date.
+✓ src/app/features/user/pages/dashboard.component.ts/.html
+  — Updated mapping and templates to bind orderStatus instead of status.
+✓ src/app/features/user/components/my-requests/my-requests.component.ts
+  — Updated food order mapping to bind orderStatus, generatedAt, and roomNumber.
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Food Orders Room Selector dropdowns (§4.2, §4.4)
+  ✓ Renders Select field for Deliver to Room with validation error handling.
+  ✓ Filter validRooms where roomId !== null and default to first room.
+✓ New Backend API Response Field Maps (§2, §4.6, §4.7, §4.8, §4.9)
+  ✓ Adapt list and details components to read orderStatus, orderItems, roomNumber, and generatedAt fields.
+  ✓ Support legacy null roomNumber fallbacks.
+✓ Consistent 400 Error messages snackbar extraction (§5)
+  ✓ Extracts string messages from http responses to display clear snackbars.
+
+KNOWN DEVIATIONS
+----------------
+None.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+☑ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+☑ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
 ☑ I confirm that all API calls match the spec contracts exactly.
 ☑ I confirm that all regex validators are character-for-character matches
   to the spec.

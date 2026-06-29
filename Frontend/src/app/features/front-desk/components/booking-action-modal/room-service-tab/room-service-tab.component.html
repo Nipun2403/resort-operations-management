@@ -1,5 +1,5 @@
 <div class="room-service-tab">
-  <app-food-order-panel [bookingId]="booking().id" />
+  <app-food-order-panel [bookingId]="booking().id" [rooms]="booking().rooms" />
   <mat-divider></mat-divider>
   <app-housekeeping-request-panel [rooms]="booking().rooms" />
   <mat-divider></mat-divider>

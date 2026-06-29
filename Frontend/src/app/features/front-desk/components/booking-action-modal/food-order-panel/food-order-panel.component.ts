@@ -1,9 +1,13 @@
-import { Component, input, inject, signal, OnInit, DestroyRef } from '@angular/core';
+import { Component, input, inject, signal, computed, OnInit, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs/operators';
 
@@ -12,6 +16,7 @@ import { CartDrawerComponent } from '../../../../user/components/food-order/cart
 import { OrderApiService } from '../../../../user/services/order-api.service';
 import { MenuItemApiService } from '../../../../user/services/menu-item-api.service';
 import { MenuItem } from '../../../../admin/models/menu-item.model';
+import { BookingRoom } from '../../../../admin/models/booking.model';
 import { OrderItem } from '../../../../user/models/order-item.model';
 import { ConfirmDialogComponent } from '../../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { AlertComponent } from '../../../../auth/components/alert.component';
@@ -21,18 +26,23 @@ import { AlertComponent } from '../../../../auth/components/alert.component';
   standalone: true,
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     MenuGridComponent,
     CartDrawerComponent,
     MatSnackBarModule,
     MatDialogModule,
     MatProgressSpinnerModule,
     MatButtonModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
     AlertComponent,
   ],
   templateUrl: './food-order-panel.component.html',
 })
 export class FoodOrderPanelComponent implements OnInit {
   bookingId = input.required<number>();
+  rooms = input.required<BookingRoom[]>();
 
   menuItems = signal<MenuItem[]>([]);
   cartItems = signal<OrderItem[]>([]);
@@ -40,14 +50,22 @@ export class FoodOrderPanelComponent implements OnInit {
   loading = signal(false);
   error = signal<string | null>(null);
 
+  selectedRoomId = new FormControl<number>(0, { nonNullable: true, validators: Validators.required });
+
   private menuItemApi = inject(MenuItemApiService);
   private orderApi = inject(OrderApiService);
   private snackBar = inject(MatSnackBar);
   private dialog = inject(MatDialog);
   private destroyRef = inject(DestroyRef);
 
+  validRooms = computed(() => this.rooms().filter((r): r is typeof r & { roomId: number } => r.roomId !== null));
+
   ngOnInit(): void {
     this.loadMenu();
+    const roomsList = this.validRooms();
+    if (roomsList.length > 0) {
+      this.selectedRoomId.setValue(roomsList[0].roomId);
+    }
   }
 
   loadMenu(): void {
@@ -91,6 +109,11 @@ export class FoodOrderPanelComponent implements OnInit {
 
   placeOrder(): void {
     if (this.cartItems().length === 0) return;
+    if (this.selectedRoomId.invalid) {
+      this.selectedRoomId.markAsTouched();
+      return;
+    }
+
     const confirmRef = this.dialog.open(ConfirmDialogComponent, {
       data: { title: 'Confirm Order', message: 'Place this food order for the guest?' },
     });
@@ -102,6 +125,7 @@ export class FoodOrderPanelComponent implements OnInit {
         this.orderApi
           .create({
             bookingId: this.bookingId(),
+            roomId: this.selectedRoomId.value,
             items: this.cartItems().map(i => ({ menuItemId: i.menuItemId, quantity: i.quantity })),
           })
           .pipe(takeUntilDestroyed(this.destroyRef))
@@ -110,7 +134,10 @@ export class FoodOrderPanelComponent implements OnInit {
               this.snackBar.open('Order placed successfully', 'Close', { duration: 3000 });
               this.cartItems.set([]); // clear cart
             },
-            error: (err: any) => this.snackBar.open(this.extractErrorMessage(err), 'Close', { duration: 5000 }),
+            error: (err: any) => {
+              const msg = typeof err.error === 'string' ? err.error : (err.error?.message || 'Failed to place order.');
+              this.snackBar.open(msg, 'Close', { duration: 5000 });
+            },
           });
       });
   }

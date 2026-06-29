@@ -197,7 +197,7 @@ export class PlaceholderCustomerDashboardComponent implements OnInit {
         this.pendingFoodOrders.set(
           (food as any[]).map((o: any) => ({
             ...o,
-            status: o.status ?? o.orderStatus ?? 'Pending'
+            orderStatus: o.orderStatus ?? o.status ?? 'Pending'
           }))
         );
       },

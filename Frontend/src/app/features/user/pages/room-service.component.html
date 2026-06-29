@@ -21,6 +21,7 @@
       <mat-tab label="Food Order">
         <app-food-order
           [activeBookingId]="booking.id"
+          [rooms]="booking.rooms"
           (orderPlaced)="onOrderPlaced()"
         />
       </mat-tab>

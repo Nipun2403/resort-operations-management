@@ -23,10 +23,10 @@ export class KitchenDashboardComponent {
             (order: any) =>
               ({
                 id: order.id,
-                status: order.foodOrderStatus ?? order.status ?? 'Unknown',
-                location: order.roomId ? `Room ${order.roomId}` : 'N/A',
+                status: order.orderStatus ?? 'Pending',
+                location: order.roomNumber ?? (order.roomId ? `Room ${order.roomId}` : 'N/A'),
                 description: `Order #${order.id}`,
-                createdAt: order.generatedAt ?? order.bookedAt ?? '',
+                createdAt: order.generatedAt ?? '',
                 raw: order,
               } as Task)
           ),
@@ -44,9 +44,9 @@ export class KitchenDashboardComponent {
     getDescription: (t: Task) => t.description,
     getDetailSections: (t: Task) => {
       const order = t.raw as any;
-      const itemsArray = order.items || order.foodOrderItems || [];
+      const itemsArray = order.orderItems || [];
       const items = itemsArray.length > 0
-        ? itemsArray.map((i: any) => `${i.quantity}x ${i.name ?? i.menuItemName ?? 'Item #' + i.menuItemId}`).join(', ')
+        ? itemsArray.map((i: any) => `${i.quantity}x ${i.menuItemName ?? 'Item #' + i.menuItemId}`).join(', ')
         : 'None';
       return [
         {
@@ -54,6 +54,7 @@ export class KitchenDashboardComponent {
           fields: [
             { label: 'Order ID', value: String(order.id) },
             { label: 'Status', value: t.status },
+            { label: 'Room', value: t.location },
             { label: 'Items', value: items },
             {
               label: 'Created At',
