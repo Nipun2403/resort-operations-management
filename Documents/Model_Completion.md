@@ -4056,6 +4056,80 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: public-room-catelogue.md (Public Room Catalogue & Detail Pages)
+Date: 2026-06-29
+================================================================================
+
+FILES CREATED
+-------------
+✓ src/app/features/public/pages/room-catalogue.component.html
+✓ src/app/features/public/pages/room-catalogue.component.scss
+✓ src/app/features/public/pages/room-detail.component.html
+✓ src/app/features/public/pages/room-detail.component.scss
+
+FILES MODIFIED (existing files updated per spec)
+-------------------------------------------------
+✓ src/app/features/admin/services/room-type-api.service.ts — Added getById API endpoint method
+✓ src/app/features/public/pages/room-catalogue.component.ts — Overwrote placeholder file with catalogue logic
+✓ src/app/features/public/pages/room-detail.component.ts — Overwrote placeholder file with detail specifications logic
+
+FILES DELETED
+--------------
+None.
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Public Room Catalogue
+  ✓ Displays all active room types in a responsive grid
+  ✓ Renders primary images, subtitles with pricing, and max occupancy limits
+  ✓ "View Details" redirects user to details sub-page `/rooms/:id`
+✓ Public Room Detail
+  ✓ Renders all image assets inside a horizontally scrollable container with scroll-snap alignment
+  ✓ Displays spec lists (price, max occupancy, size) with Material icons
+  ✓ Extracts and renders active bed configurations using dynamic lists
+  ✓ "Check Availability" stores selections in sessionStorage and redirects to `/availability?roomTypeId=X`
+
+API INTEGRATION
+---------------
+✓ GET /room-types/{id} — fetches target room type specifications by ID
+
+LOGIC TRACES
+------------
+Flow: Room Catalogue Grid Load
+  Entry: OnInit initializes on /rooms route
+  Path: queries RoomTypeApiService.getAll(), loads data list, feeds template grid
+  Result: ✓ Matches spec
+
+Flow: Room Detail Specifications Load
+  Entry: OnInit initializes on /rooms/:id route
+  Path: parses route ID parameter, queries RoomTypeApiService.getById(), loads specifications, extracts bed config list
+  Result: ✓ Matches spec
+
+KNOWN DEVIATIONS
+----------------
+None. All requirements implemented exactly as specified.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+✓ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+✓ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+✓ I confirm that all API calls match the spec contracts exactly.
+✓ I confirm that all regex validators are character-for-character matches
+  to the spec.
+✓ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+
 
 
 

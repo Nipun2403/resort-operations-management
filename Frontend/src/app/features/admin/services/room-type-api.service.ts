@@ -37,4 +37,8 @@ export class RoomTypeApiService {
   update(id: number, dto: UpdateRoomTypeDTO): Observable<RoomType> {
     return this.http.patch<RoomType>(`${this.baseUrl}/${id}`, dto);
   }
+
+  getById(id: number): Observable<RoomType> {
+    return this.http.get<RoomType>(`${this.baseUrl}/${id}`);
+  }
 }

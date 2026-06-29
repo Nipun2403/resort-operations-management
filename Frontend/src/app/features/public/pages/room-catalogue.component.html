@@ -1,0 +1,25 @@
+<div class="room-catalogue">
+  <h1>Our Rooms</h1>
+
+  @if (loading()) {
+    <mat-spinner diameter="40"></mat-spinner>
+  } @else if (error()) {
+    <p class="error">{{ error() }}</p>
+    <button mat-button (click)="fetchRooms()">Retry</button>
+  } @else {
+    <div class="rooms-grid">
+      @for (room of rooms(); track room.id) {
+        <mat-card class="room-card" (click)="viewRoom(room.id)">
+          <img [src]="getFirstImage(room)" alt="{{ room.name }}" class="room-image" />
+          <mat-card-header>
+            <mat-card-title>{{ room.name }}</mat-card-title>
+            <mat-card-subtitle>{{ room.basePrice | currency }}/night – Up to {{ room.maxOccupancy }} guests</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-actions>
+            <button mat-raised-button color="primary" (click)="viewRoom(room.id); $event.stopPropagation()">View Details</button>
+          </mat-card-actions>
+        </mat-card>
+      }
+    </div>
+  }
+</div>

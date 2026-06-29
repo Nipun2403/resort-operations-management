@@ -1,0 +1,52 @@
+<div class="room-detail">
+  @if (loading()) {
+    <mat-spinner diameter="40"></mat-spinner>
+  } @else if (error()) {
+    <p class="error">{{ error() }}</p>
+    <button mat-button routerLink="/rooms">Back to Rooms</button>
+  } @else if (room()) {
+    <!-- Image Gallery -->
+    <div class="image-gallery">
+      @for (imgUrl of room()!.imageUrls; track imgUrl) {
+        <img [src]="imgUrl" alt="{{ room()!.name }}" class="gallery-image" />
+      }
+    </div>
+
+    <!-- Room Info -->
+    <div class="room-info">
+      <h1>{{ room()!.name }}</h1>
+      <p class="description">{{ room()!.description || 'No description available.' }}</p>
+      <div class="details-grid">
+        <div class="detail-item">
+          <mat-icon>attach_money</mat-icon>
+          <span><strong>Price:</strong> {{ room()!.basePrice | currency }}/night</span>
+        </div>
+        <div class="detail-item">
+          <mat-icon>people</mat-icon>
+          <span><strong>Max Occupancy:</strong> {{ room()!.maxOccupancy }} guests</span>
+        </div>
+        <div class="detail-item">
+          <mat-icon>square_foot</mat-icon>
+          <span><strong>Square Footage:</strong> {{ room()!.squareFootage || 'N/A' }} sq ft</span>
+        </div>
+      </div>
+
+      <!-- Bed Configuration -->
+      @if (room()!.bedConfiguration && getBedEntries().length > 0) {
+        <div class="bed-config">
+          <h3>Bed Configuration</h3>
+          <ul>
+            @for (entry of getBedEntries(); track entry[0]) {
+              <li>{{ entry[0] }} x {{ entry[1] }}</li>
+            }
+          </ul>
+        </div>
+      }
+
+      <!-- Check Availability CTA -->
+      <button mat-raised-button color="accent" (click)="checkAvailability()">
+        Check Availability
+      </button>
+    </div>
+  }
+</div>
