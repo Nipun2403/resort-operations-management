@@ -3668,6 +3668,46 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
   without implementation evidence.
 ☑ I confirm that no file, function, or feature was added beyond what
   the spec defines.
+☑ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: notification-component-integration.md
+Date: 2026-06-29
+================================================================================
+
+FILES MODIFIED
+--------------
+✓ src/app/shared/components/task-dashboard/task-dashboard.component.ts
+  — Added refresh input, constructor setup, and private setupRefreshEffect() method; removed ngOnInit logic.
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Refresh Input Signal (§1, §3.1)
+  ✓ Accepts `refresh = input(0)` number signal.
+✓ Reactive effect watchdog (§3.2, §3.5)
+  ✓ Runs `effect()` in constructor to monitor the input change.
+  ✓ Resets `pageIndex` page index to 0.
+  ✓ Calls `fetchData()` and `refreshSummaryCounts()` to reload data seamlessly.
+  ✓ Replaced `ngOnInit()` to enforce single source of truth data fetch startup.
+
+KNOWN DEVIATIONS
+----------------
+None.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+☑ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+☑ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
 ☑ I confirm that all API calls match the spec contracts exactly.
 ☑ I confirm that all regex validators are character-for-character matches
   to the spec.

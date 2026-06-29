@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, OnInit, DestroyRef, input } from '@angular/core';
+import { Component, inject, signal, computed, DestroyRef, input, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -45,9 +45,10 @@ import { TaskDetailDialogComponent } from './task-detail-dialog.component';
   templateUrl: './task-dashboard.component.html',
   styleUrls: ['./task-dashboard.component.scss'],
 })
-export class TaskDashboardComponent implements OnInit {
+export class TaskDashboardComponent {
   config = input.required<TaskDashboardConfig<any>>();
   viewMode = input<'table' | 'kanban'>('table');
+  refresh = input(0);
 
   // Data
   data = signal<Task[]>([]);
@@ -75,9 +76,21 @@ export class TaskDashboardComponent implements OnInit {
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
 
-  ngOnInit(): void {
-    this.refreshSummaryCounts();
-    this.fetchData();
+  constructor() {
+    this.setupRefreshEffect();
+  }
+
+  /**
+   * Data fetching is driven by the `refresh` input via an effect.
+   * Increment the signal/input in the parent component to trigger a reload.
+   */
+  private setupRefreshEffect(): void {
+    effect(() => {
+      this.refresh(); // read to track
+      this.pageIndex.set(0); // reset to first page when refreshed
+      this.fetchData();
+      this.refreshSummaryCounts();
+    });
   }
 
   fetchData(): void {
