@@ -3414,6 +3414,65 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
   without implementation evidence.
 ☑ I confirm that no file, function, or feature was added beyond what
   the spec defines.
+☑ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: ground-staff-dashboard.md
+Date: 2026-06-29
+================================================================================
+
+FILES CREATED
+-------------
+✓ src/app/core/guards/kitchen.guard.ts
+✓ src/app/core/guards/housekeeping.guard.ts
+✓ src/app/core/guards/maintenance.guard.ts
+  — Guards protecting role boundaries.
+✓ src/app/features/kitchen/kitchen-shell.component.ts/.html/.scss
+✓ src/app/features/housekeeping/housekeeping-shell.component.ts/.html/.scss
+✓ src/app/features/maintenance/maintenance-shell.component.ts/.html/.scss
+  — Shell templates and responsive side navigation elements.
+✓ src/app/features/kitchen/pages/dashboard.component.ts
+✓ src/app/features/housekeeping/pages/dashboard.component.ts
+✓ src/app/features/maintenance/pages/dashboard.component.ts
+  — Configuration wrappers hosting the reusable TaskDashboardComponent.
+
+FILES MODIFIED
+--------------
+✓ src/app/features/user/services/order-api.service.ts
+✓ src/app/features/user/services/housekeeping-api.service.ts
+✓ src/app/features/user/services/maintenance-api.service.ts
+  — Added updateStatus methods and sorting parameter handling.
+✓ src/app/app.routes.ts
+  — Added operations/kitchen, operations/housekeeping, and operations/maintenance route mappings.
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Route Configuration (§3, §5)
+  ✓ Secured lazy-loaded children routes behind specific role-verifying guards.
+  ✓ Sidenav list linking and topbar action logout menus correctly bound.
+✓ Kitchen Dashboard (§6.1)
+  ✓ Binds OrderApiService fetching. Maps order payload details dynamically.
+✓ Housekeeping & Maintenance Dashboards (§6.2, §6.3)
+  ✓ Binds specific housekeeping/maintenance api fetchers. Handles location and descriptions mapping.
+
+KNOWN DEVIATIONS
+----------------
+None.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+☑ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+☑ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
 ☑ I confirm that all API calls match the spec contracts exactly.
 ☑ I confirm that all regex validators are character-for-character matches
   to the spec.

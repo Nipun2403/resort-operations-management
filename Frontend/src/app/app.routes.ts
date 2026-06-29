@@ -4,6 +4,9 @@ import { AuthRedirectGuard } from './core/guards/auth-redirect.guard';
 import { adminGuard } from './core/guards/admin.guard';
 import { customerGuard } from './core/guards/customer.guard';
 import { frontDeskGuard } from './core/guards/front-desk.guard';
+import { kitchenGuard } from './core/guards/kitchen.guard';
+import { housekeepingGuard } from './core/guards/housekeeping.guard';
+import { maintenanceGuard } from './core/guards/maintenance.guard';
 
 export const routes: Routes = [
   {
@@ -113,6 +116,54 @@ export const routes: Routes = [
         loadComponent: () => import('./features/front-desk/pages/guest-details.component')
           .then(m => m.GuestDetailsComponent),
         canActivate: [frontDeskGuard]
+      },
+      { path: '**', redirectTo: 'dashboard' }
+    ]
+  },
+  {
+    path: 'operations/kitchen',
+    canMatch: [kitchenGuard],
+    canActivate: [kitchenGuard],
+    loadComponent: () => import('./features/kitchen/kitchen-shell.component')
+      .then(m => m.KitchenShellComponent),
+    children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./features/kitchen/pages/dashboard.component')
+          .then(m => m.KitchenDashboardComponent)
+      },
+      { path: '**', redirectTo: 'dashboard' }
+    ]
+  },
+  {
+    path: 'operations/housekeeping',
+    canMatch: [housekeepingGuard],
+    canActivate: [housekeepingGuard],
+    loadComponent: () => import('./features/housekeeping/housekeeping-shell.component')
+      .then(m => m.HousekeepingShellComponent),
+    children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./features/housekeeping/pages/dashboard.component')
+          .then(m => m.HousekeepingDashboardComponent)
+      },
+      { path: '**', redirectTo: 'dashboard' }
+    ]
+  },
+  {
+    path: 'operations/maintenance',
+    canMatch: [maintenanceGuard],
+    canActivate: [maintenanceGuard],
+    loadComponent: () => import('./features/maintenance/maintenance-shell.component')
+      .then(m => m.MaintenanceShellComponent),
+    children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./features/maintenance/pages/dashboard.component')
+          .then(m => m.MaintenanceDashboardComponent)
       },
       { path: '**', redirectTo: 'dashboard' }
     ]

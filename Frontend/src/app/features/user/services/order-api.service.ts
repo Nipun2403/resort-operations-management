@@ -20,4 +20,8 @@ export class OrderApiService {
   getAll(params?: any): Observable<any> {
     return this.http.get<any>(this.baseUrl, { params });
   }
+
+  updateStatus(id: number, dto: { status: string }): Observable<void> {
+    return this.http.patch<void>(`${this.baseUrl}/${id}`, dto);
+  }
 }

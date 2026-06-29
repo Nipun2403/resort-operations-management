@@ -19,6 +19,8 @@ export class HousekeepingApiService {
     pageSize?: number;
     status?: string;
     roomId?: number;
+    sortBy?: string;
+    sortDescending?: boolean;
   }): Observable<PaginatedResponse<HousekeepingTask>> {
     let httpParams = new HttpParams();
     if (params) {
@@ -26,11 +28,17 @@ export class HousekeepingApiService {
       if (params.pageSize) httpParams = httpParams.set('pageSize', params.pageSize.toString());
       if (params.status) httpParams = httpParams.set('status', params.status);
       if (params.roomId) httpParams = httpParams.set('roomId', params.roomId.toString());
+      if (params.sortBy) httpParams = httpParams.set('sortBy', params.sortBy);
+      if (params.sortDescending !== undefined) httpParams = httpParams.set('sortDescending', params.sortDescending.toString());
     }
     return this.http.get<PaginatedResponse<HousekeepingTask>>(this.baseUrl, { params: httpParams });
   }
 
   createInternal(body: { location: string; description: string }): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/internal`, body);
+  }
+
+  updateStatus(id: number, dto: { status: string }): Observable<void> {
+    return this.http.patch<void>(`${this.baseUrl}/${id}/status`, dto);
   }
 }
