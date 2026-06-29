@@ -3985,6 +3985,78 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: public-home-page.md
+Date: 2026-06-29
+================================================================================
+
+FILES CREATED
+-------------
+✓ src/app/features/public/pages/home.component.html
+✓ src/app/features/public/pages/home.component.scss
+
+FILES MODIFIED (existing files updated per spec)
+-------------------------------------------------
+✓ src/app/features/public/pages/home.component.ts — Overwrote placeholder with full logic, injected RoomTypeApiService and forms
+
+FILES DELETED
+--------------
+None.
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Home Showcase UI
+  ✓ Hero banner section with background image cover and call-to-action
+  ✓ Featured rooms list with loading spinners, error fallback alerts, and carousel scrolling
+  ✓ Discover quick links grid to menu and amenities pages
+✓ Availability Search Form
+  ✓ Check-in / check-out reactive FormControl validators
+  ✓ Guests control input with min/max bounds (1-20)
+  ✓ Session storage persistence on submission
+  ✓ Navigation query parameters passing on submission
+
+API INTEGRATION
+---------------
+✓ GET /room-types — queries active, sorted room types to populate featured carousel
+
+LOGIC TRACES
+------------
+Flow: Featured Room Types Load
+  Entry: OnInit initializes on Home page load
+  Path: Triggers fetchFeaturedRooms(), calls RoomTypeApiService.getAll() (includes sort/limit), binds return values to signals
+  Result: ✓ Matches spec
+
+Flow: Availability Submission
+  Entry: User fills search form and clicks submit button
+  Path: searchAvailability() runs validation checks, serializes form data to sessionStorage under 'availabilitySearch', redirects to /availability with query params
+  Result: ✓ Matches spec
+
+KNOWN DEVIATIONS
+----------------
+None. All requirements implemented exactly as specified.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+AMBIGUITY-1: RoomTypeApiService.getAll requires pageNumber in types, but the spec call is missing it.
+  Default Applied: Passed `pageNumber: 1` explicitly in the getAll() parameters list.
+  Rationale: Satisfy TypeScript types constraints and avoid compile errors.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+✓ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+✓ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+✓ I confirm that all API calls match the spec contracts exactly.
+✓ I confirm that all regex validators are character-for-character matches
+  to the spec.
+✓ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+
 
 
 

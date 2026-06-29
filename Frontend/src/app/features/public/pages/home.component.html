@@ -1,0 +1,78 @@
+<div class="home-page">
+  <!-- Hero Banner -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Experience Luxury Like Never Before</h1>
+      <p>Discover our elegant rooms, world‑class dining, and impeccable service.</p>
+      <button mat-raised-button color="primary" routerLink="/rooms">View Rooms</button>
+    </div>
+  </section>
+
+  <!-- Availability Search Bar -->
+  <section class="availability-bar">
+    <mat-card>
+      <mat-card-content>
+        <div class="search-form">
+          <mat-form-field appearance="outline">
+            <mat-label>Check‑in</mat-label>
+            <input matInput [matDatepicker]="cinPicker" [formControl]="checkIn" />
+            <mat-datepicker-toggle matSuffix [for]="cinPicker"></mat-datepicker-toggle>
+            <mat-datepicker #cinPicker></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Check‑out</mat-label>
+            <input matInput [matDatepicker]="coutPicker" [formControl]="checkOut" />
+            <mat-datepicker-toggle matSuffix [for]="coutPicker"></mat-datepicker-toggle>
+            <mat-datepicker #coutPicker></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Guests</mat-label>
+            <input matInput type="number" [formControl]="guests" min="1" max="20" />
+          </mat-form-field>
+          <button mat-raised-button color="accent" (click)="searchAvailability()" [disabled]="checkIn.invalid || checkOut.invalid || guests.invalid">
+            Check Availability
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </section>
+
+  <!-- Featured Rooms -->
+  <section class="featured-rooms">
+    <h2>Our Featured Rooms</h2>
+    @if (roomsLoading()) {
+      <mat-spinner diameter="40"></mat-spinner>
+    } @else if (roomsError()) {
+      <p class="error">{{ roomsError() }}</p>
+    } @else {
+      <div class="carousel">
+        @for (room of featuredRooms(); track room.id) {
+          <mat-card class="room-card" (click)="viewRoom(room.id)">
+            <img [src]="getFirstImage(room)" alt="{{ room.name }}" class="room-image" />
+            <mat-card-header>
+              <mat-card-title>{{ room.name }}</mat-card-title>
+              <mat-card-subtitle>{{ room.basePrice | currency }}/night – Up to {{ room.maxOccupancy }} guests</mat-card-subtitle>
+            </mat-card-header>
+          </mat-card>
+        }
+      </div>
+    }
+  </section>
+
+  <!-- Quick Links -->
+  <section class="quick-links">
+    <h2>Discover More</h2>
+    <div class="links-grid">
+      <mat-card class="link-card" routerLink="/menu">
+        <mat-icon>restaurant</mat-icon>
+        <h3>Our Restaurant</h3>
+        <p>Explore our award‑winning menu.</p>
+      </mat-card>
+      <mat-card class="link-card" routerLink="/amenities">
+        <mat-icon>spa</mat-icon>
+        <h3>Amenities</h3>
+        <p>Pools, gyms, spa – see what we offer.</p>
+      </mat-card>
+    </div>
+  </section>
+</div>
