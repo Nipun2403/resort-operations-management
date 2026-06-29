@@ -3616,6 +3616,58 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
   without implementation evidence.
 ☑ I confirm that no file, function, or feature was added beyond what
   the spec defines.
+☑ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: notification-component.md
+Date: 2026-06-29
+================================================================================
+
+FILES CREATED
+-------------
+✓ src/app/core/services/notification.service.ts
+  — Exposes subjects onNewFoodOrder, onNewHousekeepingTask, and onNewMaintenanceTask. Auto-connects based on auth tokens.
+✓ src/app/shared/components/notification-snackbar/notification-snackbar.component.ts/.html/.scss
+  — Custom component rendering toast alerts with icons and descriptions.
+
+FILES MODIFIED
+--------------
+✓ src/app/app.ts
+  — Injected NotificationService to start up connection streams.
+✓ src/styles.scss
+  — Added global styles override for custom snackbar.
+✓ package.json
+  — Installed @microsoft/signalr client dependencies.
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ SignalR WebSocket Connection (§1, §3.2)
+  ✓ Builds websocket connection pointing to /notifications with accessTokenFactory.
+  ✓ Connects and stops cleanly based on auth tokens.
+✓ Event Stream Subjects (§3.2)
+  ✓ Dispatches incoming socket events (NewFoodOrder, NewHousekeepingTask, NewMaintenanceTask) to Subjects.
+✓ Beautiful custom toast alerts (§4)
+  ✓ Implemented custom green NotificationSnackbarComponent.
+  ✓ Automatic toast subscription alerts on new events.
+
+KNOWN DEVIATIONS
+----------------
+None.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+☑ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+☑ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
 ☑ I confirm that all API calls match the spec contracts exactly.
 ☑ I confirm that all regex validators are character-for-character matches
   to the spec.

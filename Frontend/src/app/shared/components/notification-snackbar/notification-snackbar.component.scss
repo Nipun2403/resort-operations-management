@@ -1,0 +1,22 @@
+.notification-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: #2e7d32; // green
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  max-width: 400px;
+  .icon-container {
+    mat-icon { font-size: 24px; }
+  }
+  .content {
+    flex: 1;
+    strong { font-size: 0.95rem; }
+    p { font-size: 0.85rem; margin: 4px 0 0; }
+  }
+  .close-btn {
+    color: white;
+    margin-left: auto;
+  }
+}

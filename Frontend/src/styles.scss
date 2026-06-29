@@ -97,3 +97,9 @@ svg {
     padding: 8px;
   }
 }
+
+.notification-snackbar {
+  background: transparent !important;
+  box-shadow: none !important;
+  .mat-mdc-snackbar-surface { background: transparent; box-shadow: none; }
+}

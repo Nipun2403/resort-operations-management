@@ -1,0 +1,12 @@
+<div class="notification-container">
+  <div class="icon-container">
+    <mat-icon>notifications_active</mat-icon>
+  </div>
+  <div class="content">
+    <strong>{{ data.title }}</strong>
+    <p>{{ data.message }}</p>
+  </div>
+  <button mat-icon-button class="close-btn" (click)="snackBarRef.dismiss()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
