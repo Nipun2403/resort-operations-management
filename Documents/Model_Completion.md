@@ -4280,6 +4280,87 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: public-booking-flow.md (Booking Flow Integration)
+Date: 2026-06-29
+================================================================================
+
+FILES CREATED
+-------------
+None.
+
+FILES MODIFIED (existing files updated per spec)
+-------------------------------------------------
+✓ src/app/features/auth/auth-page.component.ts — Implemented OnInit and added returnUrl login redirection logic
+✓ src/app/core/guards/auth-redirect.guard.ts — Added canActivate parameters and returnUrl checking
+✓ src/app/app.routes.ts — Switched AuthRedirectGuard configuration to direct class registration
+✓ src/app/features/user/pages/dashboard.component.ts — Intercepted pendingBooking in ngOnInit and navigated users to wizard
+✓ src/app/features/user/pages/bookings.component.ts — Extracted query parameters to populate pre-fill values
+✓ src/app/features/user/pages/bookings.component.html — Bound inputs into booking wizard component tag
+✓ src/app/features/user/components/booking-wizard/booking-wizard.component.ts — Added inputs and implemented initial checkin form patching and auto-selection of room types
+
+FILES DELETED
+--------------
+None.
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Authentication returnUrl Redirection
+  ✓ AuthRedirectGuard parses query parameters; bypasses already logged-in users directly to their returnUrl
+  ✓ AuthPageComponent intercepts returnUrl query parameter and uses router.navigateByUrl on successful login
+  ✓ returnUrl redirects verify local address prefix (starts with `/`) for security
+✓ Dashboard Pending Booking Intercept
+  ✓ UserDashboardComponent detects pendingBooking in sessionStorage, clears it, and redirects to wizard
+✓ Booking Wizard Pre-fill
+  ✓ BookingsComponent extracts query variables and switches active viewMode to 'new' booking wizard
+  ✓ BookingWizardComponent patches Dates step controls using the pre-filled inputs
+  ✓ BookingWizardComponent executes loadRooms and automatically reserves the preselected room type exactly once (using initialRoomApplied lock flag)
+
+API INTEGRATION
+---------------
+None.
+
+LOGIC TRACES
+------------
+Flow: Successful Login Redirect
+  Entry: OnInit checks for returnUrl parameter; user submits login form
+  Path: login executes successfully; handler checks returnUrl; navigates to target path using navigateByUrl()
+  Result: ✓ Matches spec
+
+Flow: Dashboard Check
+  Entry: OnInit initializes UserDashboardComponent
+  Path: checks sessionStorage for pendingBooking; JSON parses data; removes storage key; navigates to bookings wizard query path
+  Result: ✓ Matches spec
+
+Flow: Booking Wizard Auto-fill
+  Entry: OnInit initializes BookingWizardComponent with initial inputs
+  Path: patches form check-in/out and guest values; triggers loadRooms(); loadRooms() matches initialRoomTypeId to response; increments target quantity to 1
+  Result: ✓ Matches spec
+
+KNOWN DEVIATIONS
+----------------
+None. All requirements implemented exactly as specified.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+✓ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+✓ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+✓ I confirm that all API calls match the spec contracts exactly.
+✓ I confirm that all regex validators are character-for-character matches
+  to the spec.
+✓ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+
 
 
 

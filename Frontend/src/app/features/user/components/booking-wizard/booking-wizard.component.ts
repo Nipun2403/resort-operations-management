@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, input, output, ChangeDetectorRef, DestroyRef } from '@angular/core';
+import { Component, inject, signal, computed, input, output, ChangeDetectorRef, DestroyRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, FormArray, Validators, AbstractControl } from '@angular/forms';
 import { MatStepperModule } from '@angular/material/stepper';
@@ -45,9 +45,14 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   templateUrl: './booking-wizard.component.html',
   styleUrls: ['./booking-wizard.component.scss']
 })
-export class BookingWizardComponent {
+export class BookingWizardComponent implements OnInit {
   userProfile = input.required<{ firstName: string; lastName: string; email: string }>();
   bookingCreated = output<number>();
+
+  initialCheckIn = input<Date | null>(null);
+  initialCheckOut = input<Date | null>(null);
+  initialGuests = input<number | null>(null);
+  initialRoomTypeId = input<number | null>(null);
 
   private readonly roomTypeApi = inject(RoomTypeApiService);
   private readonly amenityApi = inject(AmenityApiService);
@@ -61,6 +66,19 @@ export class BookingWizardComponent {
     this.breakpointObserver.observe('(max-width: 767px)').pipe(map(r => r.matches)),
     { initialValue: false }
   );
+
+  private initialRoomApplied = false;
+
+  ngOnInit(): void {
+    if (this.initialCheckIn() && this.initialCheckOut() && this.initialGuests()) {
+      this.datesForm.patchValue({
+        checkInDate: this.initialCheckIn(),
+        checkOutDate: this.initialCheckOut(),
+        guestCount: this.initialGuests() ?? 1
+      });
+      this.loadRooms();
+    }
+  }
 
   loading = signal(false);
   error = signal<string | null>(null);
@@ -184,6 +202,18 @@ export class BookingWizardComponent {
             quantities[r.roomTypeId] = 0;
           });
           this.selectedRoomQuantities.set(quantities);
+
+          if (!this.initialRoomApplied && this.initialRoomTypeId()) {
+            const room = res.data.find(r => r.roomTypeId === this.initialRoomTypeId());
+            if (room && room.availableCount > 0) {
+              this.selectedRoomQuantities.update(q => ({
+                ...q,
+                [room.roomTypeId]: 1
+              }));
+              this.initialRoomApplied = true;
+            }
+          }
+
           this.updateRoomsFormValidity();
         },
         error: (err) => {

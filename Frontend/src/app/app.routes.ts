@@ -13,7 +13,7 @@ export const routes: Routes = [
     path: 'auth',
     loadComponent: () => import('./features/auth/auth-page.component')
       .then(m => m.AuthPageComponent),
-    canActivate: [() => inject(AuthRedirectGuard).canActivate()]
+    canActivate: [AuthRedirectGuard]
   },
   {
     path: 'operations/admin',

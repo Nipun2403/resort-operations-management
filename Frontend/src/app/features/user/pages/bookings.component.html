@@ -19,6 +19,10 @@
     } @if (viewMode.value === 'new') {
       <app-booking-wizard
         [userProfile]="userProfile()!"
+        [initialCheckIn]="initialCheckIn"
+        [initialCheckOut]="initialCheckOut"
+        [initialGuests]="initialGuests"
+        [initialRoomTypeId]="initialRoomTypeId"
         (bookingCreated)="onBookingCreated($event)"
       />
     }

@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -68,8 +69,27 @@ export class PlaceholderCustomerDashboardComponent implements OnInit {
   private readonly orderApi = inject(OrderApiService);
   private readonly bookingFacade = inject(CustomerBookingFacade);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly router = inject(Router);
 
   ngOnInit(): void {
+    const pending = sessionStorage.getItem('pendingBooking');
+    if (pending) {
+      try {
+        const data = JSON.parse(pending);
+        sessionStorage.removeItem('pendingBooking'); // clear immediately
+        // Navigate to bookings with pre‑fill query params
+        this.router.navigate(['/user/bookings'], {
+          queryParams: {
+            new: true,
+            roomTypeId: data.roomTypeId,
+            checkIn: data.checkIn,
+            checkOut: data.checkOut,
+            guests: data.guests
+          }
+        });
+        return; // skip normal dashboard loading
+      } catch { /* ignore */ }
+    }
     this.loadDashboard();
   }
 

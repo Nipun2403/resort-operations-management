@@ -9,8 +9,18 @@ export class AuthRedirectGuard {
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  canActivate(): boolean | UrlTree {
+  canActivate(
+    route?: import('@angular/router').ActivatedRouteSnapshot,
+    state?: import('@angular/router').RouterStateSnapshot
+  ): boolean | UrlTree {
     if (this.authService.isAuthenticated()) {
+      const url = state?.url ?? this.router.routerState.snapshot.url;
+      const urlTree = this.router.parseUrl(url);
+      const returnUrl = urlTree.queryParams['returnUrl'];
+      if (returnUrl && typeof returnUrl === 'string' && returnUrl.startsWith('/')) {
+        return this.router.parseUrl(returnUrl);
+      }
+
       const role = this.authService.role();
       let targetRoute = '/user/dashboard';
 
