@@ -1,0 +1,33 @@
+.custom-cursor {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  width: 12px;
+  height: 12px;
+  border: 1px solid #e4c285;
+  border-radius: 50%;
+  background: transparent;
+  transform: translate(-50%, -50%);
+  transition: width 0.2s, height 0.2s, background-color 0.2s, border-radius 0.2s;
+  mix-blend-mode: difference;
+
+  &.enlarged {
+    width: 24px;
+    height: 24px;
+    background: rgba(228, 194, 133, 0.2);
+    border-radius: 50%;
+  }
+
+  &.oval {
+    width: 4px;
+    height: 20px;
+    border-radius: 2px;
+    border-color: #e4c285;
+    background: transparent;
+  }
+}
+
+// Hide cursor on touch devices
+@media (any-pointer: coarse) {
+  .custom-cursor { display: none; }
+}

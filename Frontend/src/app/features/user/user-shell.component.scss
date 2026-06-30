@@ -1,3 +1,5 @@
+@import '../../../styles/theme/index';
+
 mat-sidenav-container {
   height: 100vh;
   width: 100%;
@@ -50,5 +52,62 @@ mat-sidenav-content {
 @media (max-width: 1024px) {
   .content {
     padding: 16px;
+  }
+}
+
+.site-footer {
+  background: var(--color-surface-container-lowest);
+  padding: 6rem 1rem 3rem;
+  text-align: center;
+  border-top: 1px solid var(--glass-border);
+  margin-top: 4rem; // Add spacing above the footer inside content container
+
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 3rem;
+    a {
+      @include font-body-md;
+      color: var(--color-on-tertiary-container);
+      text-decoration: none;
+      transition: color 0.3s;
+      &:hover { color: var(--color-secondary); }
+    }
+    @media (max-width: 768px) {
+      gap: 1.2rem;
+      a { font-size: 0.85rem; }
+    }
+  }
+
+  .footer-logo {
+    font-family: var(--font-headline);
+    font-size: clamp(3rem, 10vw, 7.5rem);
+    letter-spacing: 0.3em;
+    color: var(--color-on-surface);
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+  }
+
+  .footer-info {
+    font-family: var(--font-body);
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(228, 226, 221, 0.4);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    .separator {
+      display: inline-block;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: rgba(228, 226, 221, 0.2);
+    }
   }
 }

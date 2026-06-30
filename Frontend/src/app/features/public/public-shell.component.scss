@@ -161,17 +161,38 @@
 // Footer
 .site-footer {
   background: var(--color-surface-container-lowest);
-  padding: 10rem 1rem;
+  padding: 6rem 1rem 3rem;
   text-align: center;
   border-top: 1px solid var(--glass-border);
+
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 3rem;
+    a {
+      @include font-body-md;
+      color: var(--color-on-tertiary-container);
+      text-decoration: none;
+      transition: color 0.3s;
+      &:hover { color: var(--color-secondary); }
+    }
+    @media (max-width: 768px) {
+      gap: 1.2rem;
+      a { font-size: 0.85rem; }
+    }
+  }
+
   .footer-logo {
     font-family: var(--font-headline);
     font-size: clamp(3rem, 10vw, 7.5rem);
     letter-spacing: 0.3em;
     color: var(--color-on-surface);
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     text-transform: uppercase;
   }
+
   .footer-info {
     font-family: var(--font-body);
     font-size: 0.625rem;
