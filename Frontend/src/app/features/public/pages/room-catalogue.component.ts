@@ -93,6 +93,15 @@ export class RoomCatalogueComponent implements OnInit {
     this.isTransitioning.set(true);
     setTimeout(() => {
       updateFn();
+      
+      // Scroll the room section into view, accounting for the fixed navbar
+      const element = document.querySelector('.rooms-section');
+      if (element) {
+        const yOffset = -120; // approximate navbar height offset
+        const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+
       setTimeout(() => this.isTransitioning.set(false), this.ANIMATION_DURATION);
     }, 100);
   }

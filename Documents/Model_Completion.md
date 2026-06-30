@@ -4763,6 +4763,58 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: room-catalogue-UI-pagination-scroll-view.md
+Date: June 30, 2026
+================================================================================
+
+FILES CREATED
+-------------
+None.
+
+FILES MODIFIED (existing files updated per spec)
+-------------------------------------------------
+✓ Frontend/src/app/features/public/pages/room-catalogue.component.ts — added smooth scroll back to the rooms section top on pagination transition events
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Room Catalogue Scroll
+  ✓ User is smoothly scrolled to the top of `.rooms-section` (with a -120 px offset to clear the fixed navbar overlay) when navigating between groups
+
+API INTEGRATION
+---------------
+None.
+
+LOGIC TRACES
+------------
+Flow: Transition Smooth Scroll
+  Entry: User clicks a small chevron pagination arrow on desktop/mobile
+  Path: clicks right chevron -> calls nextGroup() -> triggers triggerTransition() -> updates group state -> queries .rooms-section -> calculates scroll offsets -> calls window.scrollTo with smooth behavior.
+  Result: ✓ Matches spec
+
+KNOWN DEVIATIONS
+----------------
+None.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+✓ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+✓ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+✓ I confirm that all API calls match the spec contracts exactly.
+✓ I confirm that all regex validators are character-for-character matches
+  to the spec.
+✓ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
 
 
 
