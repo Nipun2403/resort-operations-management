@@ -3,6 +3,9 @@
 .catalogue-page {
   overflow-x: hidden;
   padding-top: 10rem; // space from fixed navbar (design's pt-40)
+  @media (max-width: 768px) {
+    padding-top: 6rem;
+  }
 }
 
 // ── Hero Header ──────────────────────────────────
@@ -13,6 +16,9 @@
   @media (max-width: 768px) {
     padding: 0 var(--margin-mobile);
     margin-bottom: 4rem;
+  }
+  @media (max-width: 375px) {
+    padding: 0 1rem;
   }
   .section-label {
     @include font-label-caps;
@@ -70,6 +76,9 @@
   @media (max-width: 768px) {
     padding: 0 var(--margin-mobile);
   }
+  @media (max-width: 375px) {
+    padding: 0 1rem;
+  }
 }
 
 // Asymmetric Villa Grid (12‑column)
@@ -77,6 +86,9 @@
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   gap: 2rem; // 32px as design
+  @media (max-width: 340px) {
+    gap: 1rem;
+  }
 }
 
 // Base card
@@ -157,50 +169,7 @@
   color: var(--color-secondary);
 }
 
-// Glass overlay on large card only
-.glass-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  max-width: 28rem;
-  padding: 3rem;
-  background: rgba(26, 26, 26, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-top: 1px solid rgba(228, 194, 133, 0.2);
-  color: var(--color-on-surface);
-  .overlay-label {
-    @include font-label-caps;
-    font-size: 0.625rem;
-    letter-spacing: 0.3em;
-    color: var(--color-secondary);
-    display: block;
-    margin-bottom: 1rem;
-  }
-  .overlay-title {
-    @include font-headline-md;
-    margin-bottom: 1.5rem;
-    color: var(--color-on-surface);
-  }
-  .overlay-stats {
-    display: flex;
-    gap: 2rem;
-    border-top: 1px solid rgba(228, 226, 221, 0.1);
-    padding-top: 1.5rem;
-    .stat-label {
-      @include font-label-caps;
-      font-size: 0.625rem;
-      color: rgba(228, 226, 221, 0.4);
-      display: block;
-    }
-    .stat-value {
-      @include font-body-md;
-      color: var(--color-on-surface);
-    }
-  }
-}
-
-// Card body for cards 2‑4
+// Card body for all cards
 .card-body {
   padding: 1.5rem 0 0;
   border-bottom: 1px solid rgba(228, 194, 133, 0.2);
@@ -256,7 +225,7 @@
   100% { transform: translateX(100%); }
 }
 
-// ── Navigation Arrows ────────────────────────────
+// ── Navigation Arrows (Desktop) ──────────────────
 .nav-arrow {
   position: absolute;
   top: 50%;
@@ -273,23 +242,66 @@
   justify-content: center;
   cursor: pointer;
   opacity: 0;
-  transition: opacity 0.3s;
-  &:hover {
+  transition: opacity 0.3s, border-color 0.3s, color 0.3s;
+  &:hover:not(:disabled) {
     border-color: var(--color-secondary);
     color: var(--color-secondary);
   }
   &:disabled {
-    opacity: 0;
-    pointer-events: none;
+    cursor: not-allowed;
   }
   &.left { left: 0; }
   &.right { right: 0; }
 }
+
 .grid-container:hover .nav-arrow {
   opacity: 1;
+  &:disabled {
+    opacity: 0.15;
+  }
 }
+
 @media (max-width: 768px) {
   .nav-arrow { display: none; }
+}
+
+// ── Pagination Container ─────────────────────────
+.pagination-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+// Small arrows (mobile viewports)
+.small-nav-arrow {
+  display: none;
+  @media (max-width: 768px) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: rgba(26, 26, 26, 0.7);
+    border: 1px solid rgba(228, 194, 133, 0.3);
+    border-radius: 50%;
+    color: var(--color-on-surface);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    .material-symbols-outlined {
+      font-size: 18px;
+    }
+    &:hover:not(:disabled),
+    &:active:not(:disabled) {
+      border-color: var(--color-secondary);
+      color: var(--color-secondary);
+    }
+    &:disabled {
+      opacity: 0.15;
+      cursor: not-allowed;
+    }
+  }
 }
 
 // Group indicator
@@ -297,7 +309,6 @@
   text-align: center;
   @include font-label-caps;
   color: var(--color-outline);
-  margin-top: 2rem;
   letter-spacing: 0.3em;
 }
 
@@ -309,6 +320,9 @@
   text-align: center;
   @media (max-width: 768px) {
     padding: 4rem var(--margin-mobile);
+  }
+  @media (max-width: 375px) {
+    padding: 4rem 1rem;
   }
 }
 .newsletter-title {
@@ -326,6 +340,20 @@
   display: flex;
   align-items: center;
   padding-bottom: 0.5rem;
+  @media (max-width: 480px) {
+    flex-direction: column;
+    gap: 1rem;
+    border-bottom: none;
+    .newsletter-input {
+      width: 100%;
+      border-bottom: 1px solid rgba(228, 226, 221, 0.2);
+      text-align: center;
+    }
+    .subscribe-btn, .success-message {
+      width: 100%;
+      text-align: center;
+    }
+  }
 }
 .newsletter-input {
   flex: 1;
