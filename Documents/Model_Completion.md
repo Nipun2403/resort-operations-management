@@ -4879,6 +4879,61 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: room-detail-back-navigation.md
+Date: June 30, 2026
+================================================================================
+
+FILES CREATED
+-------------
+None.
+
+FILES MODIFIED (existing files updated per spec)
+-------------------------------------------------
+✓ Frontend/src/app/features/public/pages/room-detail.component.html — added back link anchor element overlay
+✓ Frontend/src/app/features/public/pages/room-detail.component.scss — styled floating button with themed glass backdrops and translation shifts
+✓ Frontend/src/app/features/public/pages/room-catalogue.component.ts — reset window scroll coordinates to top on page load
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Room Detail Back Button
+  ✓ Added floating BACK TO VILLAS button overlaying the page gallery
+  ✓ Clicking the button navigates back to /rooms and scrolls page scroll positions back to the top
+
+API INTEGRATION
+---------------
+None.
+
+LOGIC TRACES
+------------
+Flow: Back To Catalogue Navigation
+  Entry: User clicks floating BACK TO VILLAS button
+  Path: navigates to /rooms -> route loads catalogue component -> ngOnInit triggers -> resets scroll coordinates window.scrollTo({ top: 0 }).
+  Result: ✓ Matches spec
+
+KNOWN DEVIATIONS
+----------------
+None.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+✓ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+✓ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+✓ I confirm that all API calls match the spec contracts exactly.
+✓ I confirm that all regex validators are character-for-character matches
+  to the spec.
+✓ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
 
 
 

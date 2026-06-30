@@ -237,3 +237,33 @@
   from { opacity: 0; transform: translateY(2rem); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+.back-to-villas-btn {
+  position: absolute;
+  top: 2rem;
+  left: var(--margin-mobile);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  @include font-label-caps;
+  color: var(--color-on-surface);
+  text-decoration: none;
+  background: rgba(26, 26, 26, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(228, 194, 133, 0.3);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  @media (min-width: 768px) {
+    top: 3rem;
+    left: var(--margin-desktop);
+  }
+  &:hover {
+    border-color: var(--color-secondary);
+    color: var(--color-secondary);
+    background: rgba(26, 26, 26, 0.9);
+    transform: translateX(-4px);
+  }
+}

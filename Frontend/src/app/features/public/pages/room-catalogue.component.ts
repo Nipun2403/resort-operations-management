@@ -48,6 +48,7 @@ export class RoomCatalogueComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchRooms();
+    window.scrollTo({ top: 0 });
   }
 
   fetchRooms(): void {
