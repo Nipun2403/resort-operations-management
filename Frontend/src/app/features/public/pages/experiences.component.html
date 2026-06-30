@@ -53,14 +53,6 @@
         (touchstart)="onTouchStart($event)"
         (touchend)="onTouchEnd($event)"
       >
-        <!-- Desktop Chevron Navigation -->
-        <button class="nav-chevron left" (click)="prevAmenityPage()" [disabled]="amenityPageIndex() === 0">
-          <span class="material-symbols-outlined">chevron_left</span>
-        </button>
-        <button class="nav-chevron right" (click)="nextAmenityPage()" [disabled]="amenityPageIndex() === totalAmenityPages() - 1">
-          <span class="material-symbols-outlined">chevron_right</span>
-        </button>
-
         <!-- Bento Grid -->
         <div class="bento-grid">
           @for (amenity of displayAmenities(); track amenity.id; let i = $index) {
