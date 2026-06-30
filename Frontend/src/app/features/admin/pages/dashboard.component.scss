@@ -244,6 +244,12 @@
   .ledger-table {
     width: 100%;
     border-collapse: collapse;
+    background: transparent !important;
+
+    tr, th, td {
+      background: transparent !important;
+    }
+
     th {
       @include font-label-caps;
       font-size: 0.625rem;
