@@ -1,23 +1,79 @@
-<div class="auth-container">
-  <mat-card>
-    <mat-card-header>
-      <div class="toggle-buttons">
-        <button mat-button (click)="isLoginMode.set(true)" [class.active]="isLoginMode()" [attr.aria-pressed]="isLoginMode()">Login</button>
-        <button mat-button (click)="isLoginMode.set(false)" [class.active]="!isLoginMode()" [attr.aria-pressed]="!isLoginMode()">Register</button>
+<div class="auth-page">
+  <!-- Background Images (full‑screen on mobile, left half on desktop) -->
+  <div class="bg-layer">
+    <div class="bg-image bg-login" [class.active]="isLoginMode()">
+      <img
+        src="https://lh3.googleusercontent.com/aida/AP1WRLs96Bq3m1-5bMTWS2MnUb9NUzR339t_s46__6B-DM7k_zsHbclUQnvfBYqpmiULS3ZH3NlIjkf3OWbV29UOulpEOQXph-mTqauRtHRmmc3SAdd6SRpSCq2b_lhNq58wQarRb4NFgoCrGiUjYiRGktjm29mz4GT0l9Co6ETYBsy2Rttxb6g1jjEE9z_1Qidjiu_ljtNbYsfiWz2Xg_xOwbr8W4hjH9HaIYNhKklQwShK3on6XiBeXgl3Us8w"
+        alt="Obsidian structure"
+      />
+    </div>
+    <div class="bg-image bg-register" [class.active]="!isLoginMode()">
+      <img
+        src="https://lh3.googleusercontent.com/aida/AP1WRLurNZSLtyi3MhJP7JEDtMH4jgHE7_uMhDlCqWvkMccwDgjirQG2BEP9pmCJ9zX3owbxvedDm2S7YVbWt6O4EGPtuLHZ_0MUeHXsB3k40Y12gQQggYMENFLj9c_Bdojcl7qa7aR8xiVR7LrENDkpsuQAtAm7qqjDx5sOSsc7MTmOzAgyiULDL1bGj0towWgi5AReO4qps5iPlxyhGVEgWCJ2JJFWGvZi-Eed0s7VfIW91fQ6eZRtO8Z376I"
+        alt="Gold silk sculpture"
+      />
+    </div>
+    <div class="bg-overlay"></div>
+  </div>
+
+  <!-- Desktop split: image left, form right. Mobile: full‑width form overlay -->
+  <div class="content-area">
+    <div class="form-panel glass-panel">
+      <!-- Header -->
+      <header class="auth-header">
+        <h1>Aetheris</h1>
+        <p>Private Vault Access</p>
+      </header>
+
+      <!-- Toggle Tabs -->
+      <div class="tab-row">
+        <button
+          class="tab-btn"
+          [class.active]="isLoginMode()"
+          (click)="isLoginMode.set(true)"
+        >
+          Login
+          @if (isLoginMode()) {
+            <span class="tab-indicator"></span>
+          }
+        </button>
+        <button
+          class="tab-btn"
+          [class.active]="!isLoginMode()"
+          (click)="isLoginMode.set(false)"
+        >
+          Register
+          @if (!isLoginMode()) {
+            <span class="tab-indicator"></span>
+          }
+        </button>
       </div>
-    </mat-card-header>
-    <mat-card-content>
-      @if (isLoginMode()) {
-        <app-login-form (submitted)="onLogin($event)" [loading]="loading()" />
-      } @else {
-        <app-register-form (submitted)="onRegister($event)" [loading]="loading()" />
+
+      <!-- Forms -->
+      <div class="form-container">
+        @if (isLoginMode()) {
+          <app-login-form
+            [loading]="loading()"
+            (submitted)="onLogin($event)"
+          />
+        } @else {
+          <app-register-form
+            [loading]="loading()"
+            (submitted)="onRegister($event)"
+          />
+        }
+      </div>
+
+      <!-- Inline alerts (success/error) -->
+      @if (errorMessage()) {
+        <app-alert type="error" [message]="errorMessage()!" (closed)="errorMessage.set(null)"></app-alert>
       }
-      @if (errorMessage(); as msg) {
-        <app-alert type="error" [message]="msg" (closed)="errorMessage.set(null)" />
+      @if (successMessage()) {
+        <app-alert type="success" [message]="successMessage()!" (closed)="successMessage.set(null)"></app-alert>
       }
-      @if (successMessage(); as msg) {
-        <app-alert type="success" [message]="msg" (closed)="successMessage.set(null)" />
-      }
-    </mat-card-content>
-  </mat-card>
+
+      <!-- Footer note -->
+      <p class="auth-footer-note">Aetheris Private Estate • Strict Confidentiality Required</p>
+    </div>
+  </div>
 </div>

@@ -1,0 +1,54 @@
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form" novalidate>
+  <div class="input-group">
+    <input
+      type="email"
+      class="minimal-input"
+      placeholder=" "
+      formControlName="email"
+      autocomplete="email"
+      [readonly]="loading"
+    />
+    <label class="floating-label">Identification (Email)</label>
+    @if (loginForm.controls.email.invalid && loginForm.controls.email.touched) {
+      @if (loginForm.controls.email.hasError('required')) {
+        <span class="error-text">Email is required.</span>
+      }
+      @if (loginForm.controls.email.hasError('pattern')) {
+        <span class="error-text">Please enter a valid email address.</span>
+      }
+    }
+  </div>
+
+  <div class="input-group">
+    <input
+      type="password"
+      class="minimal-input"
+      placeholder=" "
+      formControlName="password"
+      autocomplete="current-password"
+      [readonly]="loading"
+    />
+    <label class="floating-label">Access Key (Password)</label>
+    @if (loginForm.controls.password.invalid && loginForm.controls.password.touched) {
+      @if (loginForm.controls.password.hasError('required')) {
+        <span class="error-text">Password is required.</span>
+      }
+      @if (loginForm.controls.password.hasError('pattern')) {
+        <span class="error-text">Password must be at least 8 characters long and contain both letters and numbers.</span>
+      }
+    }
+  </div>
+
+  <button
+    type="submit"
+    class="submit-btn"
+    [disabled]="loginForm.invalid || loading"
+  >
+    @if (loading) {
+      <mat-spinner diameter="20"></mat-spinner>
+    } @else {
+      <span>Authenticate</span>
+      <span class="material-symbols-outlined">arrow_forward</span>
+    }
+  </button>
+</form>

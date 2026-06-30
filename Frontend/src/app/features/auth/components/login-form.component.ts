@@ -18,74 +18,8 @@ import { LoginRequestDTO } from '../../../core/models/auth.models';
     MatButtonModule,
     MatProgressSpinnerModule
   ],
-  template: `
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label>Email Address</mat-label>
-        <input
-          matInput
-          type="email"
-          formControlName="email"
-          aria-describedby="email-error"
-          [readonly]="loading"
-          required
-        />
-        @if (loginForm.controls.email.hasError('required')) {
-          <mat-error id="email-error">Email is required.</mat-error>
-        }
-        @if (loginForm.controls.email.hasError('pattern')) {
-          <mat-error id="email-error">Please enter a valid email address.</mat-error>
-        }
-      </mat-form-field>
-
-      <mat-form-field appearance="fill" class="full-width">
-        <mat-label>Password</mat-label>
-        <input
-          matInput
-          type="password"
-          formControlName="password"
-          aria-describedby="password-error"
-          [readonly]="loading"
-          required
-        />
-        @if (loginForm.controls.password.hasError('required')) {
-          <mat-error id="password-error">Password is required.</mat-error>
-        }
-        @if (loginForm.controls.password.hasError('pattern')) {
-          <mat-error id="password-error">Password must be at least 8 characters long and contain both letters and numbers.</mat-error>
-        }
-      </mat-form-field>
-
-      <button
-        mat-raised-button
-        color="primary"
-        type="submit"
-        class="full-width submit-btn"
-        [disabled]="loading"
-      >
-        @if (!loading) {
-          <span>Submit</span>
-        } @else {
-          <mat-progress-spinner
-            mode="indeterminate"
-            [diameter]="20"
-          ></mat-progress-spinner>
-        }
-      </button>
-    </form>
-  `,
-  styles: [`
-    .full-width {
-      width: 100%;
-      margin-bottom: 16px;
-    }
-    .submit-btn {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 48px;
-    }
-  `]
+  templateUrl: './login-form.component.html',
+  styleUrls: ['./login-form.component.scss']
 })
 export class LoginFormComponent {
   @Input() loading = false;

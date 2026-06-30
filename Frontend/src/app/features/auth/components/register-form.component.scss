@@ -1,0 +1,89 @@
+@import '../../../../styles/theme/index';
+
+.register-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.name-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.input-group {
+  position: relative;
+  padding-top: 1.5rem;
+}
+
+.minimal-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(228, 194, 133, 0.4);
+  color: var(--color-on-surface);
+  padding: 0.5rem 0;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  transition: border-color 0.4s;
+  outline: none;
+  &:focus { border-color: var(--color-secondary); }
+  &::placeholder { color: transparent; }
+}
+
+.floating-label {
+  position: absolute;
+  top: 1.5rem;
+  left: 0;
+  @include font-label-caps;
+  color: var(--color-on-surface-variant);
+  pointer-events: none;
+  transition: all 0.3s ease;
+  transform-origin: left;
+  .minimal-input:focus + &,
+  .minimal-input:not(:placeholder-shown) + & {
+    transform: translateY(-1.5rem) scale(0.85);
+    color: var(--color-secondary);
+  }
+}
+
+.error-text {
+  @include font-label-caps;
+  font-size: 0.65rem;
+  color: var(--color-error);
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background: transparent;
+  border: 1px solid rgba(228, 194, 133, 0.4);
+  color: var(--color-secondary);
+  @include font-label-caps;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: background 0.5s, color 0.5s;
+  position: relative;
+  overflow: hidden;
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  &:not(:disabled):hover {
+    background: var(--color-secondary);
+    color: var(--color-on-secondary);
+  }
+  .material-symbols-outlined { transition: transform 0.5s; }
+  &:not(:disabled):hover .material-symbols-outlined { transform: translateX(4px); }
+  
+  ::ng-deep .mat-mdc-progress-spinner {
+    --mdc-circular-progress-active-indicator-color: var(--color-secondary);
+  }
+}
