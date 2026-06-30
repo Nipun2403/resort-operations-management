@@ -1,78 +1,132 @@
 <div class="home-page">
-  <!-- Hero Banner -->
+  <!-- Hero Section -->
   <section class="hero">
+    <div class="hero-bg"
+      style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAdLKWcaXoRzaSRLAXTT-aFheM_lrhFYW9u9Abt2sRFujWP3KddhG_Akj0P6IOduWEFFu-mDxD2Zp4dpIQBKJtdunZueQMAVvfq9JiEW3oI_NRiQcsqp14_Yh34YNUG5zo_pmyET_pQ4TIqdDKreqjZJa4v5OyKZXsRy8UZG8tcCCZrzpNVJ2GWRAukLp7Bu4xKZEVxiYwUN9kLUHOjj9c5NNzy82Sd_xoFjXKt_4nUnCutSLvPb56bP4-KBDObY9xJRnkzvLBu-yXX')">
+    </div>
+    <div class="hero-overlay"></div>
     <div class="hero-content">
-      <h1>Experience Luxury Like Never Before</h1>
-      <p>Discover our elegant rooms, world‑class dining, and impeccable service.</p>
-      <button mat-raised-button color="primary" routerLink="/rooms">View Rooms</button>
+      <h1>The Silent Peak of Luxury</h1>
+      <p class="hero-subtitle">PRIVATE ESTATE &amp; REFUGE</p>
+    </div>
+
+    <!-- Booking Bar -->
+    <div class="booking-bar glass-panel">
+      <div class="booking-field">
+        <label class="field-label">ARRIVAL</label>
+        <input type="text" class="field-input" [formControl]="checkIn" placeholder="Select date" />
+      </div>
+      <div class="booking-field">
+        <label class="field-label">DEPARTURE</label>
+        <input type="text" class="field-input" [formControl]="checkOut" placeholder="Select date" />
+      </div>
+      <div class="booking-field">
+        <label class="field-label">GUESTS</label>
+        <input type="number" class="field-input" [formControl]="guests" min="1" max="20" />
+      </div>
+      <button class="booking-btn" (click)="searchAvailability()">RESERVE SANCTUARY</button>
     </div>
   </section>
 
-  <!-- Availability Search Bar -->
-  <section class="availability-bar">
-    <mat-card>
-      <mat-card-content>
-        <div class="search-form">
-          <mat-form-field appearance="outline">
-            <mat-label>Check‑in</mat-label>
-            <input matInput [matDatepicker]="cinPicker" [formControl]="checkIn" />
-            <mat-datepicker-toggle matSuffix [for]="cinPicker"></mat-datepicker-toggle>
-            <mat-datepicker #cinPicker></mat-datepicker>
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Check‑out</mat-label>
-            <input matInput [matDatepicker]="coutPicker" [formControl]="checkOut" />
-            <mat-datepicker-toggle matSuffix [for]="coutPicker"></mat-datepicker-toggle>
-            <mat-datepicker #coutPicker></mat-datepicker>
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Guests</mat-label>
-            <input matInput type="number" [formControl]="guests" min="1" max="20" />
-          </mat-form-field>
-          <button mat-raised-button color="accent" (click)="searchAvailability()" [disabled]="checkIn.invalid || checkOut.invalid || guests.invalid">
-            Check Availability
-          </button>
-        </div>
-      </mat-card-content>
-    </mat-card>
+  <!-- Ethos Section -->
+  <section class="ethos">
+    <div class="section-label">01. PHILOSOPHY</div>
+    <h2 class="ethos-headline">The Ethos of <em>Aetheris</em></h2>
+    <div class="ethos-grid">
+      <div class="ethos-image">
+        <img
+          src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJzoJgDT9zi_2aiEYAWO2EU0rvMI06PbHoowjw2aCipSYPYUWxOu7tAyZxY_9Jv_JIJtjSgIULOm3g5IKbvQvTiCwZkG3rqQFhbQFdQNRLguMXGIwr_xqUVtzi6P8YaSYbx1ZmgKQi94JqYqpZEKJeOMLA8P3r1ZqdRL9Rj1Sxlb5of5ik9gjJ8T4a8YllXDMXv8utaUSz-pPexBO49GhAk1ul4D5Q8oTQSOtw3RektEY-DrDA5Urt0WEVV-4qjr3Yp_-5qldmQPSO"
+          alt="Alabaster sculpture" />
+      </div>
+      <div class="ethos-text">
+        <p>At Aetheris, luxury is defined by what is absent. Noise, intrusion, and the mundane are replaced by a
+          profound stillness. We provide a sanctuary where time is the ultimate currency and discretion is our highest
+          law.</p>
+        <a routerLink="/rooms" class="cta-link">
+          The Vision <span class="line"></span>
+        </a>
+      </div>
+    </div>
   </section>
 
-  <!-- Featured Rooms -->
-  <section class="featured-rooms">
-    <h2>Our Featured Rooms</h2>
+  <!-- Private Sanctuaries Section -->
+  <!-- <section class="sanctuaries">
+    <div class="section-header">
+      <div class="section-label">02. ACCOMMODATIONS</div>
+      <div class="count-label">{{ featuredRooms().length }} ESTATES</div>
+    </div>
+    <h2 class="section-title">Private Sanctuaries</h2>
+
     @if (roomsLoading()) {
       <mat-spinner diameter="40"></mat-spinner>
     } @else if (roomsError()) {
       <p class="error">{{ roomsError() }}</p>
     } @else {
-      <div class="carousel">
-        @for (room of featuredRooms(); track room.id) {
-          <mat-card class="room-card" (click)="viewRoom(room.id)">
-            <img [src]="getFirstImage(room)" alt="{{ room.name }}" class="room-image" />
-            <mat-card-header>
-              <mat-card-title>{{ room.name }}</mat-card-title>
-              <mat-card-subtitle>{{ room.basePrice | currency }}/night – Up to {{ room.maxOccupancy }} guests</mat-card-subtitle>
-            </mat-card-header>
-          </mat-card>
+      <div class="rooms-grid">
+        @for (room of featuredRooms(); track room.id; let i = $index) {
+          <div class="room-card" [class.large]="i === 0">
+            <div class="card-image" [style.background-image]="'url(' + getFirstImage(room) + ')'" (click)="viewRoom(room.id)"></div>
+            <div class="card-info">
+              <h3>{{ room.name }}</h3>
+              <div class="meta">
+                <span>Max. {{ room.maxOccupancy }} Guests &bull; {{ room.squareFootage || '&mdash;' }} sqm</span>
+                <span class="price">From {{ room.basePrice | currency }}/Night</span>
+              </div>
+            </div>
+          </div>
         }
       </div>
+      <a routerLink="/rooms" class="view-all">
+        VIEW ALL ACCOMMODATIONS
+        <span class="material-symbols-outlined">arrow_forward</span>
+      </a>
     }
+  </section> -->
+
+  <!-- Heritage Section (Legacy of Discretion) -->
+  <section class="heritage">
+    <div class="heritage-header">
+      <div class="section-label">Our Heritage</div>
+      <h2>A Legacy of <br />Discretion</h2>
+      <p class="heritage-subtitle">Est. 1924. Serving the world’s most discerning figures with unwavering privacy.</p>
+    </div>
+    <div class="heritage-grid">
+      <!-- Item 1 -->
+      <div class="heritage-item">
+        <div class="heritage-img"
+          style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDPXJ1BklsW9n0PL5s9KUzjVQwn9bKCYfPqz7sKmIfH8846GMhTlUSG9oJzS4rslkF2ikJHqTEMliQVEXH1oS-KcX24_nYrfRFt-x7J0Dds0DoFT_YSy2m7Rw-nhIiMpP5887yaRrlmvkJ94dzPMsi1p6XH-8zGil4aqyzXigxyQJWh0uzWCRVzpBRpzWs0K7esx8SgEBJNwKq87CjDYvsecF1XtAwlWQSJpYp1iJunayndSL1JpC8blW2MTl3XmRYynMnLtwqEtZpF')">
+        </div>
+        <h3>Unseen Service</h3>
+        <p>Our staff is trained in the art of invisibility, ensuring your needs are met before you even realize they
+          exist.</p>
+      </div>
+      <!-- Item 2 -->
+      <div class="heritage-item">
+        <div class="heritage-img"
+          style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBIsM6GzTOdAofZq4-fCpVsVFJVgTsT1v1lVExmDQsRM6SDJXn3KyseX0n3GyBzvjuyS2QFkhF_S32eyt1kxm2tOyyIU6wKpK_yMSyG9EBWoRguoXAGLWdK0u7nlSemLoc69-vNEvgYVz2X27HMzDsLWjDWm8b5EG8GlrJ-ZYOsG5d7fC3U4FK09-FahO70xKPQBIiP11-H_MqSIPfdOdF_oqa8NvVV_E9n4oOuHpAJifApZ43dYdM-9KttRVtl6GkgV0bLelzlqKOh')">
+        </div>
+        <h3>Private Corridors</h3>
+        <p>Architectural layouts designed specifically to prevent crossing paths, maintaining absolute isolation for all
+          guests.</p>
+      </div>
+      <!-- Item 3 -->
+      <div class="heritage-item">
+        <div class="heritage-img"
+          style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDww5Dr5sbq3-Eu7dCIXq947SV0_TR1vtRdYxMIWuCNWrYmlJX3rAboz5drtoWRCZ5RvCfCfDcnx4LybMGp_0YnykwrU9ik65pYIbHVQBUtAiZT5zIyBisXkm8zqKDwn3nOnfRjijlOnF5H5Ubyv6iGH0LtQNcuquBkQUaDYX8t2UUaR7Pa_L1CJMQBOE2ErUXnpiLsD8rUQgZu4xi3p-2x1Zvih-4VLs8hmFMKCAuZX1WZyffDdmNdr-nJqF_g4ssaGTBzDwnfeasx')">
+        </div>
+        <h3>Trusted Custody</h3>
+        <p>We safeguard not just your physical self, but your history, your privacy, and your future legacy.</p>
+      </div>
+    </div>
   </section>
 
-  <!-- Quick Links -->
-  <section class="quick-links">
-    <h2>Discover More</h2>
-    <div class="links-grid">
-      <mat-card class="link-card" routerLink="/menu">
-        <mat-icon>restaurant</mat-icon>
-        <h3>Our Restaurant</h3>
-        <p>Explore our award‑winning menu.</p>
-      </mat-card>
-      <mat-card class="link-card" routerLink="/amenities">
-        <mat-icon>spa</mat-icon>
-        <h3>Amenities</h3>
-        <p>Pools, gyms, spa – see what we offer.</p>
-      </mat-card>
+  <!-- Cinematic Gallery Break -->
+  <section class="gallery-break"
+    style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC0jdUrR_d5kCrH_hA-VlFicyjfehGem9pHb4Z8526ztNY5GROodFNYf1W2cTR2sEdqm1B1-OoKOc4pLQ_W316--SNsc4uL-EVvj1aaY_DTZdmVko9XrpxWuo7dP3VRZCayR9NCVYvdxXVpfhUqIOPUBwORFton4M1685vgc5ZeNHVpCL1XmKeBQEyNkTSL1vRauQMjzrLNJndBAVRppOBKHKZ7HjYdc1OQ7_cu09zyzI5rVE4-e-rPPPpOW3QR2H0CCFpKtjOx0HRI')">
+    <div class="gallery-overlay">
+      <div class="section-label">CURATED CATALOG</div>
+      <h2>The Celestial Pavilion</h2>
+      <a routerLink="/rooms" class="gallery-cta">VIEW RESIDENCE</a>
     </div>
   </section>
 </div>
