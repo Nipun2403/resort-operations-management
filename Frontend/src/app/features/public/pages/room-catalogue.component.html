@@ -28,14 +28,6 @@
         (touchend)="onTouchEnd($event)"
         tabindex="0"
       >
-        <!-- Navigation arrows (desktop) -->
-        <button class="nav-arrow left" (click)="previousGroup()" [disabled]="currentGroupIndex() === 0">
-          <span class="material-symbols-outlined">arrow_back_ios</span>
-        </button>
-        <button class="nav-arrow right" (click)="nextGroup()" [disabled]="currentGroupIndex() === totalGroups() - 1">
-          <span class="material-symbols-outlined">arrow_forward_ios</span>
-        </button>
-
         <!-- Asymmetric Grid (12 columns) -->
         <div class="villa-grid">
           @for (room of displayedRooms(); track room.id; let i = $index) {
