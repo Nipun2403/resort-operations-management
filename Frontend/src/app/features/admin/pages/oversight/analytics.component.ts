@@ -70,7 +70,18 @@ export class AnalyticsComponent implements OnInit {
   );
   categorySignal = signal<'all' | 'revenue' | 'operations' | 'guests'>('all');
 
-  barChartOptions = computed(() => {
+  kpiCards = computed(() => {
+    const d = this.analytics();
+    if (!d) return [];
+    return [
+      { label: 'Total Revenue', value: '$' + (d.totalRevenue?.toLocaleString() || '0') },
+      { label: 'Occupancy Rate', value: (d.occupancyRate || 0) + '%' },
+      { label: 'Guest Satisfaction', value: (d.guestSatisfactionScore || 0) + '%' },
+      { label: 'Avg Daily Rate', value: '$' + (d.averageDailyRate || 0) },
+    ];
+  });
+
+  revenueChartOptions = computed(() => {
     const d = this.analytics();
     if (!d) return {};
     const cat = this.categorySignal();
@@ -101,11 +112,20 @@ export class AnalyticsComponent implements OnInit {
         break;
     }
     return {
-      title: { text: 'Overview' },
+      backgroundColor: 'transparent',
+      textStyle: { color: '#c4c7c7', fontFamily: 'Outfit, sans-serif' },
       tooltip: { trigger: 'axis' },
-      xAxis: { type: 'category', data: xData },
-      yAxis: { type: 'value' },
-      series: [{ type: 'bar', data: yData, color: '#1976d2' }],
+      grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+      xAxis: { 
+        type: 'category', 
+        data: xData,
+        axisLine: { lineStyle: { color: 'rgba(228, 194, 133, 0.3)' } }
+      },
+      yAxis: { 
+        type: 'value',
+        splitLine: { lineStyle: { color: 'rgba(228, 194, 133, 0.1)' } }
+      },
+      series: [{ type: 'bar', data: yData, color: '#e4c285' }],
     };
   });
 
@@ -140,11 +160,20 @@ export class AnalyticsComponent implements OnInit {
         break;
     }
     return {
-      title: { text: 'Trend' },
+      backgroundColor: 'transparent',
+      textStyle: { color: '#c4c7c7', fontFamily: 'Outfit, sans-serif' },
       tooltip: { trigger: 'axis' },
-      xAxis: { type: 'category', data: xData },
-      yAxis: { type: 'value' },
-      series: [{ type: 'line', data: yData, color: '#388e3c' }],
+      grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+      xAxis: { 
+        type: 'category', 
+        data: xData,
+        axisLine: { lineStyle: { color: 'rgba(228, 194, 133, 0.3)' } }
+      },
+      yAxis: { 
+        type: 'value',
+        splitLine: { lineStyle: { color: 'rgba(228, 194, 133, 0.1)' } }
+      },
+      series: [{ type: 'line', data: yData, color: '#e4c285', smooth: true }],
     };
   });
 
@@ -206,9 +235,20 @@ export class AnalyticsComponent implements OnInit {
         break;
     }
     return {
-      title: { text: 'Radar Overview' },
-      radar: { indicator },
-      series: [{ type: 'radar', data: [{ value, name: 'Current' }] }],
+      backgroundColor: 'transparent',
+      textStyle: { color: '#c4c7c7', fontFamily: 'Outfit, sans-serif' },
+      radar: {
+        indicator,
+        axisLine: { lineStyle: { color: 'rgba(228, 194, 133, 0.2)' } },
+        splitLine: { lineStyle: { color: 'rgba(228, 194, 133, 0.05)' } },
+        splitArea: { show: false }
+      },
+      series: [{
+        type: 'radar',
+        data: [{ value, name: 'Current' }],
+        lineStyle: { color: '#e4c285' },
+        areaStyle: { color: 'rgba(228, 194, 133, 0.05)' }
+      }],
     };
   });
 
@@ -220,16 +260,22 @@ export class AnalyticsComponent implements OnInit {
       return {}; // hidden (no data)
     }
     return {
-      title: { text: 'Expenditure Breakdown' },
+      backgroundColor: 'transparent',
+      textStyle: { color: '#c4c7c7', fontFamily: 'Outfit, sans-serif' },
       tooltip: { trigger: 'item' },
+      color: ['#e4c285', '#d5b478', '#5d4514'],
       series: [
         {
           type: 'pie',
+          radius: '55%',
           data: [
             { name: 'Food', value: d.nonRoomExpenditure.totalFoodSpend },
             { name: 'Amenities', value: d.nonRoomExpenditure.totalAmenitySpend },
           ],
-          label: { formatter: '{b}: {c} ({d}%)' },
+          label: { 
+            formatter: '{b}: {c} ({d}%)',
+            color: '#c4c7c7'
+          },
         },
       ],
     };
