@@ -11,6 +11,9 @@
   position: fixed;
   inset: 0;
   z-index: 0;
+  @media (min-width: 1024px) {
+    right: 50%;
+  }
 }
 .bg-image {
   position: absolute;
