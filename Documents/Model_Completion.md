@@ -5115,6 +5115,61 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: homepage-booking-calendar-fixes.md
+Date: June 30, 2026
+================================================================================
+
+FILES CREATED
+-------------
+None.
+
+FILES MODIFIED (existing files updated per spec)
+-------------------------------------------------
+✓ Frontend/src/app/features/public/pages/availability.component.ts — mapped inputs to auto-trigger searches, and formatted API dates as dd-MM-yyyy strings
+✓ Frontend/src/styles.scss — added global override classes to theme calendar dialog popups to the Obsidian & Champagne aesthetic
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Homepage Booking Calendar Fixes
+  ✓ Outbound API calls format search dates as dd-MM-yyyy
+  ✓ Custom calendar styling applies to Material Dialog overlays (dark container, champagne outlines, highlights, and glassmorphic blurs)
+  ✓ Routing parameters automatically trigger available room search on initialization
+
+API INTEGRATION
+---------------
+✓ RoomType Api: RoomTypeApiService.getAvailability — formatted parameters as dd-MM-yyyy string values
+
+LOGIC TRACES
+------------
+Flow: Autosearch Query Initialization
+  Entry: User selects dates on homepage and clicks Reserve Sanctuary
+  Path: browser redirects to /availability?checkIn=... -> ngOnInit captures parameters -> sets form values -> detects check-in/out parameters -> executes searchAvailability() -> retrieves available rooms from API.
+  Result: ✓ Matches spec
+
+KNOWN DEVIATIONS
+----------------
+None.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+✓ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+✓ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+✓ I confirm that all API calls match the spec contracts exactly.
+✓ I confirm that all regex validators are character-for-character matches
+  to the spec.
+✓ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
 
 
 

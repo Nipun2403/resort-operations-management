@@ -57,31 +57,46 @@ export class AvailabilityComponent implements OnInit {
       if (params['roomTypeId']) {
         this.preSelectedRoomTypeId.set(+params['roomTypeId']);
       }
+
+      // Also check session storage for pre‑selected room type ID (from detail page)
+      const storedRoomId = sessionStorage.getItem('selectedRoomTypeId');
+      if (storedRoomId && !this.preSelectedRoomTypeId()) {
+        this.preSelectedRoomTypeId.set(Number(storedRoomId));
+      }
+
+      // Pre‑fill from availability search session storage (from home page)
+      const storedSearch = sessionStorage.getItem('availabilitySearch');
+      if (storedSearch) {
+        try {
+          const data = JSON.parse(storedSearch);
+          if (data.checkIn && !this.checkIn.value) this.checkIn.setValue(new Date(data.checkIn));
+          if (data.checkOut && !this.checkOut.value) this.checkOut.setValue(new Date(data.checkOut));
+          if (data.guests && this.guests.value === 1) this.guests.setValue(data.guests);
+        } catch { /* ignore */ }
+      }
+
+      // Auto-trigger search if both check-in and check-out dates are successfully set
+      if (this.checkIn.value && this.checkOut.value) {
+        this.searchAvailability();
+      }
     });
-    // Also check session storage for pre‑selected room type ID (from detail page)
-    const storedRoomId = sessionStorage.getItem('selectedRoomTypeId');
-    if (storedRoomId && !this.preSelectedRoomTypeId()) {
-      this.preSelectedRoomTypeId.set(Number(storedRoomId));
-    }
-    // Pre‑fill from availability search session storage (from home page)
-    const storedSearch = sessionStorage.getItem('availabilitySearch');
-    if (storedSearch) {
-      try {
-        const data = JSON.parse(storedSearch);
-        if (data.checkIn && !this.checkIn.value) this.checkIn.setValue(new Date(data.checkIn));
-        if (data.checkOut && !this.checkOut.value) this.checkOut.setValue(new Date(data.checkOut));
-        if (data.guests && this.guests.value === 1) this.guests.setValue(data.guests);
-      } catch { /* ignore */ }
-    }
   }
 
   searchAvailability(): void {
     if (this.checkIn.invalid || this.checkOut.invalid || this.guests.invalid) return;
     this.searchLoading.set(true);
     this.searchError.set(null);
+
+    const formatDate = (date: Date): string => {
+      const d = String(date.getDate()).padStart(2, '0');
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const y = date.getFullYear();
+      return `${d}-${m}-${y}`;
+    };
+
     const params = {
-      checkIn: this.checkIn.value!.toISOString(),
-      checkOut: this.checkOut.value!.toISOString(),
+      checkIn: formatDate(this.checkIn.value!),
+      checkOut: formatDate(this.checkOut.value!),
       pageSize: 50,
     };
     this.roomTypeApi.getAvailability(params).pipe(

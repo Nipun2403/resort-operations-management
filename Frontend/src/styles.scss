@@ -104,3 +104,68 @@ svg {
   box-shadow: none !important;
   .mat-mdc-snackbar-surface { background: transparent; box-shadow: none; }
 }
+
+// ── Material Datepicker theme overrides ────────────────
+.mat-datepicker-content {
+  background-color: var(--color-surface-container) !important;
+  border: 1px solid rgba(228, 194, 133, 0.3) !important;
+  color: var(--color-on-surface) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+  border-radius: 12px !important;
+  backdrop-filter: blur(15px) !important;
+  -webkit-backdrop-filter: blur(15px) !important;
+  
+  .mat-calendar {
+    font-family: var(--font-body) !important;
+    background-color: transparent !important;
+  }
+  
+  .mat-calendar-header {
+    color: var(--color-secondary) !important;
+    .mat-calendar-arrow {
+      fill: var(--color-secondary) !important;
+    }
+    .mat-calendar-previous-button, 
+    .mat-calendar-next-button {
+      color: var(--color-secondary) !important;
+    }
+  }
+
+  .mat-calendar-table-header {
+    color: var(--color-outline) !important;
+  }
+
+  .mat-calendar-body-label {
+    color: var(--color-secondary) !important;
+  }
+
+  .mat-calendar-body-cell-content {
+    color: var(--color-on-surface) !important;
+    border-radius: 50% !important;
+    border: 1px solid transparent !important;
+    transition: all 0.2s ease-in-out !important;
+    &:hover {
+      background-color: rgba(228, 194, 133, 0.1) !important;
+      color: var(--color-secondary) !important;
+      border-color: rgba(228, 194, 133, 0.3) !important;
+    }
+  }
+
+  .mat-calendar-body-selected {
+    background-color: var(--color-secondary) !important;
+    color: var(--color-on-secondary) !important;
+    font-weight: 600 !important;
+  }
+
+  .mat-calendar-body-today {
+    border-color: var(--color-secondary) !important;
+    background-color: rgba(228, 194, 133, 0.05) !important;
+  }
+
+  // Active hover/focus visual states
+  .mat-calendar-body-active {
+    .mat-calendar-body-cell-content {
+      border-color: var(--color-secondary) !important;
+    }
+  }
+}
