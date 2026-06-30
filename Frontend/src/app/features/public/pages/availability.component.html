@@ -1,65 +1,101 @@
 <div class="availability-page">
-  <div class="hero-small">
-    <h1>Check Availability</h1>
-    <p>Find the perfect room for your stay.</p>
-  </div>
-
-  <!-- Search Form -->
+  <!-- Search Form Section -->
   <section class="search-section">
-    <mat-card>
-      <mat-card-content>
-        <div class="search-form">
-          <mat-form-field appearance="outline">
-            <mat-label>Check-in</mat-label>
-            <input matInput [matDatepicker]="cinPicker" [formControl]="checkIn" [min]="minDate" />
-            <mat-datepicker-toggle matSuffix [for]="cinPicker"></mat-datepicker-toggle>
-            <mat-datepicker #cinPicker></mat-datepicker>
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Check-out</mat-label>
-            <input matInput [matDatepicker]="coutPicker" [formControl]="checkOut" [min]="getMinCheckOutDate()" />
-            <mat-datepicker-toggle matSuffix [for]="coutPicker"></mat-datepicker-toggle>
-            <mat-datepicker #coutPicker></mat-datepicker>
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Guests</mat-label>
-            <input matInput type="number" [formControl]="guests" min="1" max="20" />
-          </mat-form-field>
-          <button mat-raised-button color="primary" (click)="searchAvailability()" [disabled]="checkIn.invalid || checkOut.invalid || guests.invalid || searchLoading()">
-            Search
-          </button>
-        </div>
-      </mat-card-content>
-    </mat-card>
+    <h1 class="search-title">Curate Your Stay</h1>
+    <form class="search-form" (ngSubmit)="searchAvailability()">
+      <div class="form-field">
+        <label class="field-label">Check-in</label>
+        <mat-form-field class="date-field">
+          <input
+            matInput
+            [matDatepicker]="picker1"
+            [formControl]="checkIn"
+            [min]="minDate"
+            (click)="picker1.open()"
+            readonly
+          />
+          <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+          <mat-datepicker #picker1></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="form-separator"></div>
+      <div class="form-field">
+        <label class="field-label">Check-out</label>
+        <mat-form-field class="date-field">
+          <input
+            matInput
+            [matDatepicker]="picker2"
+            [formControl]="checkOut"
+            [min]="getMinCheckOutDate()"
+            (click)="picker2.open()"
+            readonly
+          />
+          <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+          <mat-datepicker #picker2></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="form-separator"></div>
+      <div class="form-field">
+        <label class="field-label">Guests</label>
+        <select class="guest-select" [formControl]="guests">
+          <option [ngValue]="1">1 Guest</option>
+          <option [ngValue]="2">2 Guests</option>
+          <option [ngValue]="3">3 Guests</option>
+          <option [ngValue]="4">4+ Guests</option>
+        </select>
+      </div>
+      <div class="form-separator"></div>
+      <button type="submit" class="search-btn arrow-link" [disabled]="checkIn.invalid || checkOut.invalid || guests.invalid || searchLoading()">
+        <span>Search</span>
+        <span class="material-symbols-outlined arrow-icon">arrow_right_alt</span>
+      </button>
+    </form>
   </section>
 
-  <!-- Results -->
+  <!-- Results Section -->
   <section class="results-section">
     @if (searchLoading()) {
-      <mat-spinner diameter="40"></mat-spinner>
-    } @else if (searchError()) {
-      <p class="error">{{ searchError() }}</p>
-    } @else if (hasSearched() && availableRooms().length === 0) {
-      <p class="empty">No rooms available for the selected dates and guests.</p>
-    } @else if (availableRooms().length > 0) {
-      <h2>Available Rooms</h2>
-      <div class="results-grid">
-        @for (room of availableRooms(); track room.roomTypeId) {
-          <mat-card class="room-card">
-            <img [src]="getFirstImage(room)" alt="{{ room.name }}" class="room-image" />
-            <mat-card-header>
-              <mat-card-title>{{ room.name }}</mat-card-title>
-              <mat-card-subtitle>
-                {{ room.basePrice | currency }}/night – Up to {{ room.maxOccupancy }} guests
-                <br />Available: <strong>{{ room.availableCount }}</strong> room(s)
-              </mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-actions>
-              <button mat-raised-button color="accent" (click)="bookNow(room)">Book Now</button>
-            </mat-card-actions>
-          </mat-card>
-        }
+      <div class="loading-spinner">
+        <mat-spinner diameter="40"></mat-spinner>
       </div>
+    } @else if (searchError()) {
+      <p class="error-message">{{ searchError() }}</p>
+    } @else if (hasSearched() && availableRooms().length === 0) {
+      <!-- Empty State -->
+      <div class="empty-state">
+        <h2>Awaiting your next visit</h2>
+        <p>No residences match these precise dates. We invite you to explore alternative timing or consult our concierge for unlisted availability.</p>
+      </div>
+    } @else {
+      @for (room of availableRooms(); track room.roomTypeId) {
+        <article class="result-card group">
+          <div class="card-image hover-pan">
+            <img [src]="getFirstImage(room)" alt="{{ room.name }}" />
+            <div class="image-overlay"></div>
+          </div>
+          <div class="card-info">
+            <div class="info-top">
+              <div class="availability-dots">
+                <span class="dot filled"></span>
+                <span class="dot" [class.filled]="room.availableCount >= 2"></span>
+                <span class="dot" [class.filled]="room.availableCount >= 3"></span>
+                <span class="availability-label">
+                  {{ room.availableCount <= 1 ? 'Last Chance' : (room.availableCount <= 2 ? 'Limited' : 'Available') }}
+                </span>
+              </div>
+              <h2 class="room-name">{{ room.name }}</h2>
+              <p class="room-description">{{ room.description || 'A private sanctuary of silence and space.' }}</p>
+            </div>
+            <div class="info-bottom">
+              <div class="price">
+                <span class="price-label">Per Night</span>
+                <span class="price-value">{{ room.basePrice | currency }}</span>
+              </div>
+              <button class="book-btn slide-in-btn" (click)="bookNow(room)">Book Now</button>
+            </div>
+          </div>
+        </article>
+      }
     }
   </section>
 </div>

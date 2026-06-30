@@ -1,52 +1,327 @@
+@import '../../../../styles/theme/index';
+
 .availability-page {
-  .hero-small {
-    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/assets/availability-hero.jpg') center/cover no-repeat;
-    height: 30vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    text-align: center;
-    h1 { font-size: 2.5rem; margin-bottom: 8px; }
-    p { font-size: 1.2rem; }
-  }
-  .search-section {
-    position: relative;
-    margin-top: -30px;
-    z-index: 5;
-    .search-form {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-      align-items: center;
-      mat-form-field { flex: 1 1 200px; }
-    }
-  }
-  .results-section {
-    padding: 32px 16px;
-    h2 { margin-bottom: 16px; }
-    .results-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 24px;
-    }
-    .room-card {
-      .room-image {
-        width: 100%;
-        height: 200px;
-        object-fit: cover;
-      }
-      mat-card-actions { justify-content: center; }
-    }
+  padding-top: 6rem;
+  overflow-x: hidden;
+}
+
+// ── Search Section ───────────────────────────────
+.search-section {
+  padding: 4rem var(--margin-mobile);
+  border-bottom: 1px solid rgba(228, 194, 133, 0.05);
+  background: var(--color-surface-container-lowest);
+  @media (min-width: 768px) {
+    padding: 6rem var(--margin-desktop);
   }
 }
 
-// Responsive adjustments
-@media (max-width: 768px) {
-  .availability-page {
-    .search-section {
-      margin-top: 0;
+.search-title {
+  @include font-headline-md;
+  font-size: clamp(2rem, 5vw, 2.5rem);
+  color: var(--color-secondary);
+  text-align: center;
+  font-style: italic;
+  margin-bottom: 3rem;
+}
+
+.search-form {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  @media (min-width: 1024px) {
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+  }
+}
+
+.form-field {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.field-label {
+  @include font-label-caps;
+  font-size: 0.625rem;
+  color: rgba(228, 194, 133, 0.5);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+// Override Material date field to be borderless
+.date-field {
+  ::ng-deep .mat-mdc-form-field-focus-overlay { display: none; }
+  ::ng-deep .mat-mdc-text-field-wrapper {
+    background: transparent !important;
+    padding: 0;
+  }
+  ::ng-deep .mat-mdc-form-field-infix {
+    padding: 0;
+  }
+  ::ng-deep .mdc-line-ripple { display: none; }
+  ::ng-deep .mat-mdc-form-field-subscript-wrapper { display: none; }
+  ::ng-deep input {
+    color: var(--color-on-surface) !important;
+    @include font-body-lg;
+    cursor: pointer;
+  }
+  ::ng-deep .mat-datepicker-toggle .mat-mdc-icon-button svg {
+    fill: var(--color-secondary);
+  }
+}
+
+.guest-select {
+  background: transparent;
+  border: none;
+  color: var(--color-on-surface);
+  @include font-body-lg;
+  padding: 0;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  option {
+    background: var(--color-surface-container);
+    color: var(--color-on-surface);
+  }
+}
+
+.form-separator {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, transparent, var(--color-secondary), transparent);
+  opacity: 0.3;
+  display: none;
+  @media (min-width: 1024px) {
+    display: block;
+    flex-shrink: 0;
+  }
+}
+
+.search-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-secondary);
+  @include font-label-caps;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.3s;
+  &:disabled { opacity: 0.3; cursor: not-allowed; }
+  .arrow-icon {
+    transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  &:hover:not(:disabled) .arrow-icon {
+    transform: translateX(8px) scaleX(1.2);
+  }
+}
+
+// ── Results Section ──────────────────────────────
+.results-section {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: var(--section-gap) var(--margin-mobile);
+  @media (min-width: 768px) {
+    padding: var(--section-gap) var(--margin-desktop);
+  }
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.loading-spinner, .error-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem 0;
+}
+.error-message { @include font-body-lg; color: var(--color-error); }
+
+// Empty State
+.empty-state {
+  text-align: center;
+  padding: 8rem 1rem;
+  h2 {
+    @include font-display-lg-mobile;
+    font-size: clamp(2rem, 6vw, 3rem);
+    color: var(--color-on-surface);
+    font-style: italic;
+    margin-bottom: 1rem;
+    position: relative;
+    display: inline-block;
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -8px;
+      width: 100%;
+      height: 1px;
+      background: var(--color-secondary);
+      animation: underlineGrow 2s ease forwards;
     }
+  }
+  p {
+    @include font-body-lg;
+    color: rgba(228, 226, 221, 0.5);
+    max-width: 500px;
+    margin: 1.5rem auto 0;
+  }
+}
+
+@keyframes underlineGrow {
+  from { transform: scaleX(0); transform-origin: left; }
+  to { transform: scaleX(1); }
+}
+
+// Result Card
+.result-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(228, 194, 133, 0.1);
+  background: var(--color-surface-container-low);
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.3s;
+  &:hover { border-color: rgba(228, 194, 133, 0.3); }
+  @media (min-width: 768px) {
+    flex-direction: row;
+    height: 580px;
+  }
+}
+
+.card-image {
+  position: relative;
+  width: 100%;
+  height: 350px;
+  overflow: hidden;
+  @media (min-width: 768px) {
+    width: 60%;
+    height: 100%;
+  }
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .image-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.2);
+  }
+}
+
+.result-card:hover {
+  .card-image img {
+    animation: kenBurns 15s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes kenBurns {
+  0% { transform: scale(1) translate(0, 0); }
+  100% { transform: scale(1.1) translate(-2%, -2%); }
+}
+
+.card-info {
+  flex: 1;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: var(--color-surface-container);
+  @media (min-width: 768px) {
+    padding: 3rem;
+  }
+}
+
+.availability-dots {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 1.5rem;
+  .dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border: 1px solid rgba(228, 194, 133, 0.3);
+    &.filled { background: var(--color-secondary); border-color: var(--color-secondary); }
+  }
+  .availability-label {
+    @include font-label-caps;
+    font-size: 0.625rem;
+    color: rgba(228, 194, 133, 0.6);
+    margin-left: 1rem;
+  }
+}
+
+.room-name {
+  @include font-headline-md;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  color: var(--color-on-surface);
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+.room-description {
+  @include font-body-md;
+  color: rgba(228, 226, 221, 0.6);
+  max-width: 400px;
+}
+
+.info-bottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  border-top: 1px solid rgba(228, 194, 133, 0.1);
+  padding-top: 2rem;
+  margin-top: 2rem;
+}
+
+.price-label {
+  display: block;
+  @include font-label-caps;
+  font-size: 0.625rem;
+  color: rgba(228, 194, 133, 0.4);
+  margin-bottom: 0.5rem;
+}
+.price-value {
+  @include font-headline-sm;
+  font-size: 1.75rem;
+  color: var(--color-secondary);
+  font-weight: 300;
+}
+
+.book-btn {
+  background: var(--color-secondary);
+  color: var(--color-background);
+  border: none;
+  @include font-label-caps;
+  padding: 0.75rem 2rem;
+  cursor: pointer;
+  transition: background 0.3s;
+  &:hover { background: rgba(228, 194, 133, 0.9); }
+}
+
+.slide-in-btn {
+  transform: translateX(40px);
+  opacity: 0;
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.group:hover .slide-in-btn {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+// Responsive – book button always visible on mobile
+@media (max-width: 768px) {
+  .slide-in-btn {
+    transform: none;
+    opacity: 1;
   }
 }
