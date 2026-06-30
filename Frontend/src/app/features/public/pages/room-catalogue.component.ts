@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
@@ -31,6 +31,21 @@ export class RoomCatalogueComponent implements OnInit {
   emailControl = new FormControl('', { nonNullable: true });
   subscribed = signal(false);
 
+  // Pagination
+  currentGroupIndex = signal(0);
+  roomsPerGroup = 4;
+  totalGroups = computed(() => Math.ceil(this.rooms().length / this.roomsPerGroup));
+
+  // Rooms to display in the current grid
+  displayedRooms = computed(() => {
+    const start = this.currentGroupIndex() * this.roomsPerGroup;
+    return this.rooms().slice(start, start + this.roomsPerGroup);
+  });
+
+  // Transition state for gold wash animation
+  isTransitioning = signal(false);
+  private readonly ANIMATION_DURATION = 600; // ms
+
   ngOnInit(): void {
     this.fetchRooms();
   }
@@ -59,6 +74,58 @@ export class RoomCatalogueComponent implements OnInit {
     this.emailControl.setValue('');
     this.subscribed.set(true);
     // TODO: wire up newsletter subscription to backend
+  }
+
+  // Navigation methods
+  nextGroup(): void {
+    if (this.currentGroupIndex() < this.totalGroups() - 1) {
+      this.triggerTransition(() => this.currentGroupIndex.update(i => i + 1));
+    }
+  }
+
+  previousGroup(): void {
+    if (this.currentGroupIndex() > 0) {
+      this.triggerTransition(() => this.currentGroupIndex.update(i => i - 1));
+    }
+  }
+
+  private triggerTransition(updateFn: () => void): void {
+    if (this.isTransitioning()) return;
+    this.isTransitioning.set(true);
+    // Start animation, then update data after a short delay so the wash is visible
+    setTimeout(() => {
+      updateFn();
+      // Remove transitioning class after the animation completes
+      setTimeout(() => this.isTransitioning.set(false), this.ANIMATION_DURATION);
+    }, 100);
+  }
+
+  // Wheel / touch detection for horizontal scroll
+  private touchStartX = 0;
+  onTouchStart(event: TouchEvent): void {
+    this.touchStartX = event.changedTouches[0].screenX;
+  }
+  onTouchEnd(event: TouchEvent): void {
+    const deltaX = event.changedTouches[0].screenX - this.touchStartX;
+    if (deltaX < -50) this.nextGroup();
+    else if (deltaX > 50) this.previousGroup();
+  }
+  onWheel(event: WheelEvent): void {
+    // Only act if the user is scrolling horizontally over the grid area
+    if (Math.abs(event.deltaX) > Math.abs(event.deltaY) && Math.abs(event.deltaX) > 30) {
+      event.preventDefault();
+      if (event.deltaX > 0) this.nextGroup();
+      else this.previousGroup();
+    }
+  }
+
+  getCardClasses(index: number): Record<string, boolean> {
+    return {
+      'card-large': index === 0,
+      'card-small': index === 1,
+      'card-medium': index === 2,
+      'card-wide': index === 3,
+    };
   }
 
   private extractErrorMessage(err: any): string {

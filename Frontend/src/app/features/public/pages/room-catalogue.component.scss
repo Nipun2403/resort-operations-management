@@ -2,10 +2,10 @@
 
 .catalogue-page {
   overflow-x: hidden;
-  padding-top: 5rem; // offset for fixed navbar
+  padding-top: 5rem;
 }
 
-// ── Hero Header ──────────────────────────────────
+// Hero Header
 .hero-header {
   max-width: var(--container-max);
   margin: 0 auto 4rem;
@@ -31,9 +31,8 @@
   }
 }
 
-// ── Loading & Error States ───────────────────────
-.loading-state,
-.error-state {
+// Loading & Error states
+.loading-state, .error-state {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -42,10 +41,7 @@
 .error-state {
   flex-direction: column;
   gap: 1rem;
-  p {
-    @include font-body-lg;
-    color: var(--color-error);
-  }
+  p { @include font-body-lg; color: var(--color-error); }
   .retry-btn {
     @include font-label-caps;
     background: transparent;
@@ -53,63 +49,84 @@
     color: var(--color-secondary);
     padding: 0.5rem 1.5rem;
     cursor: pointer;
-    &:hover {
-      background: var(--color-secondary);
-      color: var(--color-on-secondary);
-    }
+    &:hover { background: var(--color-secondary); color: var(--color-on-secondary); }
   }
 }
 
-// ── Scrollable Room Cards ────────────────────────
+// Grid Section
 .rooms-section {
   width: 100%;
   margin-bottom: var(--section-gap);
 }
 
-.scroll-container {
-  display: flex;
-  gap: 2rem;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
+.grid-container {
+  position: relative;
   padding: 0 var(--margin-desktop);
+  max-width: var(--container-max);
+  margin: 0 auto;
   @media (max-width: 768px) {
     padding: 0 var(--margin-mobile);
   }
-  &::-webkit-scrollbar { display: none; }
+  // Allow focus for wheel events
+  outline: none;
+}
+
+// Asymmetric Villa Grid (12-column)
+.villa-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 2rem;
 }
 
 .room-card {
-  flex: 0 0 42vw;
-  scroll-snap-align: start;
-  transition: transform 0.4s ease;
   cursor: pointer;
-  @media (max-width: 768px) {
-    flex: 0 0 75vw;
-  }
+  transition: transform 0.4s ease;
   &:hover {
     transform: translateY(-4px);
     .card-image { transform: scale(1.03); }
   }
-  &.first-card {
-    flex: 0 0 60vw;
-    @media (max-width: 768px) { flex: 0 0 85vw; }
+}
+
+// Card sizes (mirror design)
+.room-card.card-large {
+  grid-column: span 8;
+  .card-image { aspect-ratio: 16/9; }
+  @media (max-width: 768px) {
+    grid-column: span 12;
+  }
+}
+.room-card.card-small {
+  grid-column: span 4;
+  align-self: center;
+  .card-image { aspect-ratio: 3/4; }
+  @media (max-width: 768px) {
+    grid-column: span 12;
+  }
+}
+.room-card.card-medium {
+  grid-column: span 5;
+  .card-image { aspect-ratio: 4/5; }
+  @media (max-width: 768px) {
+    grid-column: span 12;
+  }
+}
+.room-card.card-wide {
+  grid-column: span 7;
+  margin-top: 3rem; // offset for the fourth card
+  .card-image { aspect-ratio: 16/10; }
+  @media (max-width: 768px) {
+    grid-column: span 12;
+    margin-top: 0;
   }
 }
 
 .card-image {
-  aspect-ratio: 4/3;
   background-size: cover;
   background-position: center;
-  transition: transform 0.6s cubic-bezier(0.2, 0, 0.2, 1);
+  transition: transform 0.6s cubic-bezier(0.2,0,0.2,1);
   position: relative;
   overflow: hidden;
-  // If no image, show a dark background
-  background-color: var(--color-surface-container-low);
-  .first-card & {
-    aspect-ratio: 16/9;
-  }
+  background-color: var(--color-surface-container-low); // fallback
 }
 
 .image-overlay {
@@ -164,7 +181,77 @@
   }
 }
 
-// ── Newsletter Section ────────────────────────────
+// Gold Wash Animation (on transitioning)
+.grid-container.transitioning .card-image {
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      transparent 40%,
+      rgba(228, 194, 133, 0.3),
+      transparent 60%
+    );
+    animation: goldSweep 0.6s ease forwards;
+  }
+}
+
+@keyframes goldSweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+// Navigation Arrows
+.nav-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  background: rgba(26, 26, 26, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(228, 194, 133, 0.3);
+  color: var(--color-on-surface);
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s;
+  &:hover {
+    border-color: var(--color-secondary);
+    color: var(--color-secondary);
+  }
+  &:disabled {
+    opacity: 0;
+    pointer-events: none;
+  }
+  &.left { left: 0; }
+  &.right { right: 0; }
+}
+.grid-container:hover .nav-arrow {
+  opacity: 1;
+}
+@media (max-width: 768px) {
+  .nav-arrow { display: none; }
+}
+
+// Group indicator
+.group-indicator {
+  text-align: center;
+  @include font-label-caps;
+  color: var(--color-outline);
+  margin-top: 2rem;
+  letter-spacing: 0.3em;
+}
+
+// Newsletter Section (unchanged from earlier, but adapted to theme)
 .newsletter {
   background: var(--color-surface-container-lowest);
   border-top: 1px solid var(--color-surface-container-highest);
@@ -174,7 +261,6 @@
     padding: 4rem var(--margin-mobile);
   }
 }
-
 .newsletter-title {
   @include font-display-lg-mobile;
   font-size: clamp(2rem, 5vw, 3rem);
@@ -183,7 +269,6 @@
   color: var(--color-on-surface);
   margin-bottom: 3rem;
 }
-
 .newsletter-form {
   max-width: 600px;
   margin: 0 auto;
@@ -192,7 +277,6 @@
   align-items: center;
   padding-bottom: 0.5rem;
 }
-
 .newsletter-input {
   flex: 1;
   background: transparent;
@@ -202,11 +286,8 @@
   letter-spacing: 0.2em;
   padding: 0.5rem 0;
   outline: none;
-  &::placeholder {
-    color: rgba(228, 226, 221, 0.2);
-  }
+  &::placeholder { color: rgba(228, 226, 221, 0.2); }
 }
-
 .subscribe-btn {
   @include font-label-caps;
   background: transparent;
@@ -216,14 +297,12 @@
   transition: letter-spacing 0.5s, opacity 0.3s;
   &:hover { letter-spacing: 0.3em; }
 }
-
 .success-message {
   @include font-label-caps;
   color: var(--color-secondary);
   opacity: 0;
   animation: fadeInSuccess 0.6s ease forwards;
 }
-
 @keyframes fadeInSuccess {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
