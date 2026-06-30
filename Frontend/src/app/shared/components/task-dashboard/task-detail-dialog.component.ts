@@ -16,7 +16,6 @@ import { Task, DetailSection } from '../../models/task.model';
     MatDividerModule,
   ],
   templateUrl: './task-detail-dialog.component.html',
-  styleUrls: ['./task-detail-dialog.component.scss'],
 })
 export class TaskDetailDialogComponent {
   private readonly dialogRef = inject(MatDialogRef<TaskDetailDialogComponent>);

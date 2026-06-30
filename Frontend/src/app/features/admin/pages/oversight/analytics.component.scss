@@ -1,242 +1,137 @@
-@import '../../../../../styles/theme/index';
-
 .analytics-page {
-  padding: 2rem var(--margin-desktop);
-  @media (max-width: 768px) {
-    padding: 2rem var(--margin-mobile);
-  }
-  background: var(--color-background);
-}
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 
-// ── Temporal Compass ──────────────────────────────
-.temporal-compass {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 2rem;
-  margin-bottom: 3rem;
-}
-.compass-left {
-  .page-title {
-    @include font-headline-md;
-    color: var(--color-secondary);
-    font-style: italic;
-    margin-bottom: 0.5rem;
-  }
-  .page-subtitle {
-    @include font-body-md;
-    color: var(--color-on-surface-variant);
-    max-width: 400px;
-  }
-}
-.compass-right {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 1.5rem;
-  padding: 0.75rem 1.5rem;
-  .preset-buttons {
+  .controls {
     display: flex;
-    gap: 0.5rem;
-    border-right: 1px solid rgba(228, 194, 133, 0.1);
-    padding-right: 1.5rem;
-  }
-  .preset-btn {
-    @include font-label-caps;
-    font-size: 0.625rem;
-    background: transparent;
-    border: none;
-    color: var(--color-on-surface-variant);
-    cursor: pointer;
-    padding: 0.25rem 0.5rem;
-    transition: color 0.3s;
-    &.active {
-      color: var(--color-secondary);
-      position: relative;
-      &::after {
-        content: '';
-        position: absolute;
-        bottom: -4px;
-        left: 0;
-        width: 100%;
-        height: 1px;
-        background: var(--color-secondary);
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+
+    .date-controls {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+
+      mat-form-field {
+        width: 160px;
+        margin-bottom: -1.25em; /* alignment fix for inline display */
+      }
+
+      button {
+        height: 48px;
+        align-self: center;
       }
     }
-    &:hover { color: var(--color-secondary); }
-  }
-  .custom-dates {
-    display: flex;
-    gap: 0.5rem;
-    .minimal-input {
-      background: transparent;
-      border: none;
-      border-bottom: 1px solid rgba(228, 194, 133, 0.4);
-      color: var(--color-on-surface);
-      font-family: var(--font-body);
-      font-size: 0.75rem;
-      padding: 0.25rem 0;
-      outline: none;
-    }
-    .apply-btn {
-      @include font-label-caps;
-      font-size: 0.625rem;
-      background: var(--color-secondary);
-      color: var(--color-on-secondary);
-      border: none;
-      padding: 0.25rem 0.75rem;
-      cursor: pointer;
+
+    .category-select {
+      width: 200px;
+      margin-bottom: -1.25em;
     }
   }
-  .category-filter {
+
+  .loading {
     display: flex;
+    justify-content: center;
     align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
-    .filter-label {
-      @include font-label-caps;
-      font-size: 0.625rem;
-      color: var(--color-on-surface-variant);
-    }
-    
-    ::ng-deep .category-select {
-      width: 100px;
-      .mat-mdc-select-value {
-        color: var(--color-secondary) !important;
-        font-family: var(--font-body);
-        font-size: 0.75rem;
+    padding: 100px 0;
+  }
+
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+
+    mat-card {
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+
+      mat-card-title {
+        font-size: 14px;
         font-weight: 500;
-        letter-spacing: 0.05em;
+        color: #757575;
+        margin-bottom: 8px;
       }
-      .mat-mdc-select-arrow {
-        color: var(--color-secondary) !important;
+
+      mat-card-content {
+        font-size: 28px;
+        font-weight: 700;
+        color: #212121;
+      }
+    }
+  }
+
+  .charts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+
+    .chart-container {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      min-height: 440px;
+
+      .chart {
+        width: 100%;
+        height: 400px;
       }
     }
   }
 }
 
-// ── Glass Panel ───────────────────────────────────
-.glass-panel {
-  background: rgba(26, 26, 26, 0.6);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(228, 194, 133, 0.1);
-  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), border-color 0.4s, box-shadow 0.4s;
-  &:hover {
-    transform: translateY(-4px);
-    border-color: rgba(228, 194, 133, 0.3);
-    box-shadow: 0 0 40px rgba(228, 194, 133, 0.05);
-  }
-}
-
-// ── KPI Grid ──────────────────────────────────────
-.kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--gutter);
-  margin-bottom: 3rem;
-  @media (max-width: 1200px) { grid-template-columns: repeat(2, 1fr); }
-  @media (max-width: 600px) { grid-template-columns: 1fr; }
-}
-.kpi-card {
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 200px;
-  border-top: 2px solid rgba(228, 194, 133, 0.4);
-  .kpi-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    .kpi-label {
-      @include font-label-caps;
-      font-size: 0.625rem;
-      letter-spacing: 0.2em;
-      color: var(--color-on-surface-variant);
-    }
-    .kpi-icon {
-      color: rgba(228, 194, 133, 0.4);
-      font-size: 1.25rem;
+/* Responsive Overrides */
+@media (max-width: 1024px) {
+  .analytics-page {
+    .charts-grid {
+      grid-template-columns: 1fr;
     }
   }
-  .kpi-value {
-    @include font-display-lg-mobile;
-    font-size: 2.5rem;
-    color: var(--color-secondary);
-    font-style: italic;
-    margin: 0.5rem 0;
-  }
-  .kpi-divider {
-    height: 1px;
-    width: 100%;
-    background: rgba(228, 194, 133, 0.1);
-    margin-top: 0.5rem;
-  }
 }
 
-// ── Charts Grid ───────────────────────────────────
-.charts-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--gutter);
-  margin-bottom: 3rem;
-  @media (max-width: 1024px) { grid-template-columns: 1fr; }
-}
-.chart-panel {
-  padding: 2rem;
-  min-height: 500px;
-  display: flex;
-  flex-direction: column;
-  .chart-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-    h3 {
-      @include font-headline-sm;
-      color: var(--color-on-surface);
-      font-style: italic;
+@media (max-width: 768px) {
+  .analytics-page {
+    padding: 16px;
+
+    .controls {
+      flex-direction: column;
+      align-items: stretch;
+
+      .date-controls {
+        flex-direction: column;
+        align-items: stretch;
+
+        mat-button-toggle-group {
+          align-self: center;
+        }
+
+        mat-form-field {
+          width: 100%;
+        }
+      }
+
+      .category-select {
+        width: 100%;
+      }
     }
-    .chart-meta {
-      @include font-label-caps;
-      font-size: 0.625rem;
-      color: var(--color-on-surface-variant);
+
+    .charts-grid {
+      .chart-container {
+        min-height: 340px;
+        padding: 12px;
+
+        .chart {
+          height: 300px;
+        }
+      }
     }
   }
-  .chart-container {
-    flex: 1;
-    width: 100%;
-    min-height: 350px;
-  }
 }
-
-// ── Atmospheric Banner ─────────────────────────────
-.atmospheric-banner {
-  position: relative;
-  width: 100%;
-  height: 500px;
-  overflow: hidden;
-  margin-top: 4rem;
-  filter: grayscale(1) contrast(1.25);
-  opacity: 0.4;
-  .banner-image {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
-  }
-  .banner-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, var(--color-background) 0%, transparent 50%, var(--color-background) 100%);
-  }
-}
-
-// ── Loading ───────────────────────────────────────
-.loading-container {
-  display: flex;
-  justify-content: center;
-  padding: 4rem 0;
-}
-

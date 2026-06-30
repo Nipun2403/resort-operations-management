@@ -1,48 +1,22 @@
-@import '../../../../styles/theme/index';
-
 .notification-container {
   display: flex;
   align-items: center;
   gap: 12px;
-  background-color: #1b5e20 !important; // success dark green
-  border: 1px solid var(--color-secondary) !important;
-  color: var(--color-on-surface) !important;
+  background-color: #2e7d32; // green
+  color: white;
   padding: 8px 16px;
   border-radius: 8px;
   max-width: 400px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-
-  &.error {
-    background-color: #b71c1c !important; // error dark red
-  }
-
   .icon-container {
-    mat-icon {
-      font-size: 24px;
-      color: var(--color-secondary) !important;
-    }
+    mat-icon { font-size: 24px; }
   }
-
   .content {
     flex: 1;
-    strong {
-      font-family: var(--font-headline);
-      font-size: 0.95rem;
-      letter-spacing: 0.05em;
-    }
-    p {
-      font-family: var(--font-body);
-      font-size: 0.85rem;
-      margin: 4px 0 0;
-      color: var(--color-on-surface-variant) !important;
-    }
+    strong { font-size: 0.95rem; }
+    p { font-size: 0.85rem; margin: 4px 0 0; }
   }
-
   .close-btn {
-    color: var(--color-on-surface-variant) !important;
+    color: white;
     margin-left: auto;
-    &:hover {
-      color: var(--color-secondary) !important;
-    }
   }
 }

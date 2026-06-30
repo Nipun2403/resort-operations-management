@@ -1,104 +1,146 @@
 <div class="analytics-page">
-  <!-- Temporal Compass (Date Presets + Category Dropdown) -->
-  <section class="temporal-compass">
-    <div class="compass-left">
-      <h2 class="page-title">Performance Oversight</h2>
-      <p class="page-subtitle">A panoramic view of the estate's vital signs and fiscal trajectories.</p>
-    </div>
-    <div class="compass-right glass-panel">
-      <div class="preset-buttons">
-        <button class="preset-btn" [class.active]="presetControl.value === 'last7'" (click)="presetControl.setValue('last7'); onPresetChange()">LAST 7 DAYS</button>
-        <button class="preset-btn" [class.active]="presetControl.value === 'last30'" (click)="presetControl.setValue('last30'); onPresetChange()">30 DAYS</button>
-        <button class="preset-btn" [class.active]="presetControl.value === 'thisMonth'" (click)="presetControl.setValue('thisMonth'); onPresetChange()">THIS MONTH</button>
-        <button class="preset-btn" [class.active]="presetControl.value === 'custom'" (click)="presetControl.setValue('custom')">CUSTOM</button>
-      </div>
+  <!-- Controls: Presets + Custom Date + Category Dropdown -->
+  <div class="controls">
+    <div class="date-controls">
+      <mat-button-toggle-group
+        [formControl]="presetControl"
+        (change)="onPresetChange()"
+      >
+        <mat-button-toggle value="last7">Last 7 days</mat-button-toggle>
+        <mat-button-toggle value="last30">Last 30 days</mat-button-toggle>
+        <mat-button-toggle value="thisMonth">This month</mat-button-toggle>
+        <mat-button-toggle value="custom">Custom</mat-button-toggle>
+      </mat-button-toggle-group>
       @if (presetControl.value === 'custom') {
-        <div class="custom-dates">
-          <input type="date" class="minimal-input" [formControl]="startDateCtrl" />
-          <input type="date" class="minimal-input" [formControl]="endDateCtrl" />
-          <button class="apply-btn" (click)="applyCustomRange()">APPLY</button>
-        </div>
+      <mat-form-field appearance="outline">
+        <mat-label>Start date</mat-label>
+        <input
+          matInput
+          [matDatepicker]="startPicker"
+          [formControl]="startDateCtrl"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="startPicker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>End date</mat-label>
+        <input
+          matInput
+          [matDatepicker]="endPicker"
+          [formControl]="endDateCtrl"
+        />
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="endPicker"
+        ></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+      </mat-form-field>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="applyCustomRange()"
+      >
+        Apply
+      </button>
       }
-      <div class="category-filter">
-        <span class="filter-label">CATEGORY: {{ categoryControl.value === 'all' ? 'ALL' : categoryControl.value.toUpperCase() }}</span>
-        <mat-select class="category-select" [formControl]="categoryControl" (selectionChange)="onCategoryChange()">
-          <mat-option value="all">All</mat-option>
-          <mat-option value="revenue">Revenue</mat-option>
-          <mat-option value="operations">Operations</mat-option>
-          <mat-option value="guests">Guests</mat-option>
-        </mat-select>
-      </div>
     </div>
-  </section>
+    <mat-form-field
+      appearance="outline"
+      class="category-select"
+    >
+      <mat-label>Category</mat-label>
+      <mat-select
+        [formControl]="categoryControl"
+        (selectionChange)="onCategoryChange()"
+      >
+        <mat-option value="all">All</mat-option>
+        <mat-option value="revenue">Revenue</mat-option>
+        <mat-option value="operations">Operations</mat-option>
+        <mat-option value="guests">Guests</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
 
   <!-- Loading / Error -->
   @if (loading() && !analytics()) {
-    <div class="loading-container"><mat-spinner diameter="40"></mat-spinner></div>
+  <div class="loading"><mat-spinner diameter="40"></mat-spinner></div>
   } @else if (error()) {
-    <app-alert type="error" [message]="error()!" (closed)="error.set(null)">
-      <button mat-button (click)="fetchData()">Retry</button>
-    </app-alert>
+  <app-alert
+    type="error"
+    [message]="error()!"
+    (closed)="error.set(null)"
+  >
+    <button
+      mat-button
+      (click)="fetchData()"
+    >
+      Retry
+    </button>
+  </app-alert>
   } @else {
-    <!-- Pillars of Performance (KPI Cards) -->
-    <section class="kpi-grid">
-      @for (kpi of kpiCards(); track kpi.label) {
-        <div class="kpi-card glass-panel">
-          <div class="kpi-header">
-            <span class="kpi-label">{{ kpi.label.toUpperCase() }}</span>
-            <span class="material-symbols-outlined kpi-icon">insights</span>
-          </div>
-          <div class="kpi-value">{{ kpi.value }}</div>
-          <div class="kpi-divider"></div>
-        </div>
-      }
-    </section>
+  <!-- KPI Summary Cards (top row) -->
+  <div class="kpi-row">
+    <mat-card
+      ><mat-card-title>Total Revenue</mat-card-title
+      ><mat-card-content
+        >{{ analytics()?.totalRevenue | currency }}</mat-card-content
+      ></mat-card
+    >
+    <mat-card
+      ><mat-card-title>Occupancy Rate</mat-card-title
+      ><mat-card-content
+        >{{ analytics()?.occupancyRate }}%</mat-card-content
+      ></mat-card
+    >
+    <mat-card
+      ><mat-card-title>Guest Satisfaction</mat-card-title
+      ><mat-card-content
+        >{{ analytics()?.guestSatisfactionScore }}%</mat-card-content
+      ></mat-card
+    >
+    <mat-card
+      ><mat-card-title>Avg Daily Rate</mat-card-title
+      ><mat-card-content
+        >{{ analytics()?.averageDailyRate | currency }}</mat-card-content
+      ></mat-card
+    >
+  </div>
 
-    <!-- The Grand Tapestry (Charts) -->
-    <section class="charts-grid">
-      <!-- Revenue Architecture (Bar Chart) -->
-      <div class="chart-panel glass-panel">
-        <div class="chart-header">
-          <h3>Revenue Architecture</h3>
-          <span class="chart-meta">BY REVENUE STREAM</span>
-        </div>
-        <div echarts [options]="revenueChartOptions()" class="chart-container"></div>
-      </div>
-
-      <!-- Yield Trajectory (Line Chart) -->
-      <div class="chart-panel glass-panel">
-        <div class="chart-header">
-          <h3>Yield Trajectory</h3>
-          <span class="chart-meta">TEMPORAL TRENDS</span>
-        </div>
-        <div echarts [options]="lineChartOptions()" class="chart-container"></div>
-      </div>
-
-      <!-- Service Equilibrium (Radar Chart) -->
-      <div class="chart-panel glass-panel">
-        <div class="chart-header">
-          <h3>Service Equilibrium</h3>
-          <span class="chart-meta">MULTI‑FACET PERFORMANCE</span>
-        </div>
-        <div echarts [options]="radarChartOptions()" class="chart-container"></div>
-      </div>
-
-      <!-- Expenditure Portfolio (Pie Chart) -->
-      @if (categoryControl.value !== 'revenue' && categoryControl.value !== 'operations') {
-        <div class="chart-panel glass-panel">
-          <div class="chart-header">
-            <h3>Expenditure Portfolio</h3>
-            <span class="chart-meta">ALLOCATION RATIO</span>
-          </div>
-          <div echarts [options]="pieChartOptions()" class="chart-container"></div>
-        </div>
-      }
-    </section>
+  <!-- Fixed Chart Grid -->
+  <div class="charts-grid">
+    <div class="chart-container">
+      <div
+        echarts
+        [options]="barChartOptions()"
+        class="chart"
+      ></div>
+    </div>
+    <div class="chart-container">
+      <div
+        echarts
+        [options]="lineChartOptions()"
+        class="chart"
+      ></div>
+    </div>
+    <div class="chart-container">
+      <div
+        echarts
+        [options]="radarChartOptions()"
+        class="chart"
+      ></div>
+    </div>
+    @if (categoryControl.value !== 'revenue' && categoryControl.value !== 'operations') {
+    <div class="chart-container">
+      <div
+        echarts
+        [options]="pieChartOptions()"
+        class="chart"
+      ></div>
+    </div>
+    }
+  </div>
   }
-
-  <!-- Atmospheric Banner -->
-  <section class="atmospheric-banner">
-    <div class="banner-image" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBZiyyembcRJZsE5MGmBOTEGjfHqeVoxqR9ZdI3z1MBVpuDI1MBJVBc9oX199G0CM2gzv21CKru2WWOGRS8sRDB10ZkTe2PSguPvVNobXI0rVpzsNvXtBAkh1sM1afLvAvu-1-gJ3rTcDwS61yrLtrPem-3_6vXozoUNXehbsRwtqWEWSWDltrVGTgbZ_jjmjf2aOSqqGY5aDyAR5bwNBf9JuwXRxVqTg55e2TCRYfB2MQBR7vGQZHpCFVyfiFpYt9ovXADU2sX-kx')"></div>
-    <div class="banner-overlay"></div>
-  </section>
 </div>
-

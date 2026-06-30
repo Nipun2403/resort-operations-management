@@ -1,21 +1,13 @@
-@import '../../../../styles/theme/index';
-
 .crud-container {
-  padding: 2rem var(--margin-desktop);
-  @media (max-width: 768px) {
-    padding: 1.5rem var(--margin-mobile);
-  }
+  padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-  background: var(--color-background);
-  min-height: 100vh;
-  color: var(--color-on-background);
+  gap: 16px;
 
   .crud-content {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 16px;
     width: 100%;
   }
 
@@ -25,16 +17,12 @@
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 1.5rem;
+    gap: 12px;
 
     h2 {
       margin: 0;
-      font-family: var(--font-headline);
-      font-size: 1.75rem;
-      font-weight: 300;
-      letter-spacing: 0.1em;
-      color: var(--color-secondary);
-      text-transform: uppercase;
+      font-size: 1.25rem;
+      font-weight: 600;
     }
   }
 
@@ -43,56 +31,16 @@
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 1.5rem;
-    margin-bottom: 1rem;
+    gap: 8px;
 
-    ::ng-deep {
-      mat-form-field {
-        flex: 1 1 200px;
-        min-width: 180px;
+    mat-form-field {
+      flex: 1 1 200px;
+      min-width: 150px;
+    }
 
-        .mat-mdc-text-field-wrapper {
-          background-color: transparent !important;
-          padding: 0 !important;
-          border-bottom: 1px solid rgba(228, 194, 133, 0.4) !important;
-          border-radius: 0 !important;
-          transition: border-color 0.3s;
-          &:focus-within {
-            border-color: var(--color-secondary) !important;
-          }
-        }
-        .mdc-line-ripple {
-          display: none !important;
-        }
-        .mat-mdc-form-field-focus-indicator {
-          display: none !important;
-        }
-        .mat-mdc-form-field-subscript-wrapper {
-          display: none !important;
-        }
-        .mat-mdc-form-field-infix {
-          padding: 0.5rem 0 !important;
-          min-height: unset !important;
-        }
-        .mat-mdc-select-value {
-          color: var(--color-on-surface) !important;
-          font-family: var(--font-body);
-        }
-        .mat-mdc-select-arrow {
-          color: var(--color-secondary) !important;
-        }
-        .mat-mdc-form-field-label {
-          color: var(--color-on-surface-variant) !important;
-          font-family: var(--font-body);
-        }
-        input {
-          color: var(--color-on-surface) !important;
-          font-family: var(--font-body);
-        }
-        mat-icon {
-          color: var(--color-secondary) !important;
-        }
-      }
+    .search-field {
+      min-width: 150px;
+      flex: 1 1 200px;
     }
   }
 
@@ -101,9 +49,6 @@
     display: flex;
     justify-content: center;
     padding: 48px 0;
-    ::ng-deep .mat-mdc-progress-spinner {
-      --mdc-circular-progress-active-indicator-color: var(--color-secondary);
-    }
   }
 
   // Empty state
@@ -111,75 +56,37 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.5rem;
-    padding: 4rem 2rem;
+    gap: 12px;
+    padding: 48px 24px;
     text-align: center;
-    background: rgba(26, 26, 26, 0.4);
-    border: 1px dashed rgba(228, 194, 133, 0.2);
-    backdrop-filter: blur(10px);
-    border-radius: 8px;
+    color: rgba(0, 0, 0, 0.5);
 
     img {
-      width: 80px;
-      opacity: 0.3;
-      filter: invert(1);
+      width: 120px;
+      opacity: 0.5;
     }
 
     p {
       margin: 0;
-      @include font-body-md;
-      color: var(--color-on-surface-variant);
+      font-size: 0.95rem;
     }
   }
 
-  // Desktop table
+  // Desktop table — hide on mobile
   .desktop-view {
     display: block;
     overflow-x: auto;
-    background: rgba(26, 26, 26, 0.6);
-    backdrop-filter: blur(20px);
-    border-top: 1px solid rgba(228, 194, 133, 0.2);
-    border-radius: 4px;
-    
+
     table {
       width: 100%;
       table-layout: fixed;
-      background: transparent !important;
     }
 
-    ::ng-deep {
-      tr, th, td,
-      .mat-mdc-header-cell, .mat-mdc-cell {
-        background: transparent !important;
-      }
-
-      th, .mat-mdc-header-cell {
-        @include font-label-caps;
-        font-size: 0.75rem !important;
-        color: var(--color-on-surface-variant) !important;
-        letter-spacing: 0.1em;
-        padding: 1.25rem 1rem !important;
-        text-align: left;
-        border-bottom: 1px solid rgba(228, 194, 133, 0.15) !important;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      td, .mat-mdc-cell {
-        padding: 1.25rem 1rem !important;
-        border-bottom: 1px solid rgba(228, 194, 133, 0.05) !important;
-        font-family: var(--font-body);
-        font-size: 0.9rem !important;
-        color: var(--color-on-surface) !important;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-
-        .mat-mdc-button-base {
-          color: var(--color-secondary) !important;
-        }
-      }
+    th,
+    td {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     @media (max-width: 768px) {
@@ -197,45 +104,9 @@
   }
 }
 
-// Button styles (pill / outline)
-.btn-pill-primary {
-  background: var(--color-secondary) !important;
-  color: var(--color-on-secondary) !important;
-  @include font-label-caps;
-  font-size: 0.75rem;
-  letter-spacing: 0.15em;
-  padding: 0.5rem 1.5rem !important;
-  border: none;
-  border-radius: 999px !important;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: filter 0.2s;
-  &:hover { filter: brightness(1.1); }
-  &:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
-}
-
-.btn-pill-outline {
-  background: transparent !important;
-  border: 1px solid rgba(228, 194, 133, 0.4) !important;
-  color: var(--color-secondary) !important;
-  @include font-label-caps;
-  font-size: 0.75rem;
-  letter-spacing: 0.15em;
-  padding: 0.5rem 1.5rem !important;
-  border-radius: 999px !important;
-  cursor: pointer;
-  transition: background 0.3s;
-  &:hover { background: rgba(228, 194, 133, 0.1) !important; }
-}
-
 @keyframes highlight-fade {
   0% {
-    background-color: rgba(228, 194, 133, 0.2);
+    background-color: #fff176;
   }
   100% {
     background-color: transparent;

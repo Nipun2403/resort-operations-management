@@ -12,6 +12,6 @@ import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from '@angular/material/snack-bar'
   styleUrls: ['./notification-snackbar.component.scss']
 })
 export class NotificationSnackbarComponent {
-  data: { title: string; message: string; type?: string } = inject(MAT_SNACK_BAR_DATA);
+  data: { title: string; message: string } = inject(MAT_SNACK_BAR_DATA);
   snackBarRef = inject(MatSnackBarRef);
 }

@@ -27,7 +27,6 @@ import { AuditLogApiService } from '../services/audit-log-api.service';
 import { AnalyticsDashboardDTO } from '../models/analytics-dashboard.dto';
 import { AuditLogEntry } from '../models/audit-log-entry.model';
 import { CreateInternalTicketDialogComponent } from '../components/create-internal-ticket-dialog.component';
-import { ActiveTicketsDialogComponent } from '../../front-desk/components/active-tickets-dialog/active-tickets-dialog.component';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -122,25 +121,15 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         series: [],
       };
     return {
-      backgroundColor: 'transparent',
-      textStyle: { color: '#c4c7c7', fontFamily: 'Outfit, sans-serif' },
-      title: { text: 'Revenue Overview', textStyle: { color: '#e4e2dd', fontFamily: 'Outfit, sans-serif' } },
+      title: { text: 'Revenue Overview' },
       tooltip: { trigger: 'axis' },
-      xAxis: {
-        type: 'category',
-        data: ['Total Revenue', 'Gross Turnover'],
-        axisLine: { lineStyle: { color: 'rgba(228, 194, 133, 0.3)' } }
-      },
-      yAxis: {
-        type: 'value',
-        axisLine: { lineStyle: { color: 'rgba(228, 194, 133, 0.3)' } },
-        splitLine: { lineStyle: { color: 'rgba(228, 194, 133, 0.1)' } }
-      },
+      xAxis: { type: 'category', data: ['Total Revenue', 'Gross Turnover'] },
+      yAxis: { type: 'value' },
       series: [
         {
           type: 'bar',
           data: [a.totalRevenue, a.grossTurnover],
-          color: '#e4c285',
+          color: '#1976d2',
         },
       ],
     };
@@ -156,18 +145,16 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         series: [],
       };
     return {
-      backgroundColor: 'transparent',
-      textStyle: { color: '#c4c7c7', fontFamily: 'Outfit, sans-serif' },
-      title: { text: 'Non‑Room Expenditure', textStyle: { color: '#e4e2dd', fontFamily: 'Outfit, sans-serif' } },
+      title: { text: 'Non‑Room Expenditure' },
       tooltip: { trigger: 'item' },
       series: [
         {
           type: 'pie',
           data: [
-            { name: 'Food', value: a.nonRoomExpenditure.totalFoodSpend, itemStyle: { color: '#e4c285' } },
-            { name: 'Amenities', value: a.nonRoomExpenditure.totalAmenitySpend, itemStyle: { color: '#8e9192' } },
+            { name: 'Food', value: a.nonRoomExpenditure.totalFoodSpend },
+            { name: 'Amenities', value: a.nonRoomExpenditure.totalAmenitySpend },
           ],
-          label: { formatter: '{b}: {c} ({d}%)', textStyle: { color: '#c4c7c7' } },
+          label: { formatter: '{b}: {c} ({d}%)' },
         },
       ],
     };
@@ -262,17 +249,5 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       return `${entry.action} on ${entry.entityName}: ${newKeys.slice(0, 2).join(', ')}`;
     }
     return `${entry.action} on ${entry.entityName}`;
-  }
-
-  openActiveTickets(): void {
-    this.dialog.open(ActiveTicketsDialogComponent, {
-      data: {
-        housekeepingCount: this.housekeepingPendingCount(),
-        maintenanceCount: this.maintenancePendingCount(),
-        foodOrdersCount: 0,
-      },
-      width: '90vw',
-      maxWidth: '1200px',
-    });
   }
 }

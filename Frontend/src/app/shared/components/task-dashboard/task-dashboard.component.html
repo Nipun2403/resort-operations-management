@@ -2,18 +2,18 @@
   <!-- Summary Cards Row -->
   <div class="summary-row">
     @for (card of summaryCards(); track card.status) {
-    <div
-      class="summary-card glass-card"
+    <mat-card
+      class="summary-card"
       [class.active]="statusFilter() === card.status"
       (click)="setStatusFilter(card.status)"
     >
-      <div class="card-header">
-        <span class="card-title">{{ card.label }}</span>
-      </div>
-      <div class="card-content">
+      <mat-card-header>
+        <mat-card-title>{{ card.label }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
         <span class="count">{{ card.count }}</span>
-      </div>
-    </div>
+      </mat-card-content>
+    </mat-card>
     }
   </div>
 

@@ -1,4 +1,4 @@
-<div class="billing-receipts oversight-page">
+<div class="billing-receipts">
   <!-- Toggle -->
   <div class="toggle-row">
     <mat-button-toggle-group
@@ -90,7 +90,6 @@
     } @else {
     <table
       mat-table
-      class="ledger-table"
       [dataSource]="bookings()"
       matSort
       matSortDisableClear
@@ -319,7 +318,6 @@
     } @else {
     <table
       mat-table
-      class="ledger-table"
       [dataSource]="receipts()"
       matSort
       matSortDisableClear
