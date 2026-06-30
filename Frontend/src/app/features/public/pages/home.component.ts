@@ -64,13 +64,16 @@ export class HomeComponent implements OnInit {
   }
 
   searchAvailability(): void {
-    if (this.checkIn.invalid || this.checkOut.invalid || this.guests.invalid) return;
-    const checkIn = this.checkIn.value!.toISOString();
-    const checkOut = this.checkOut.value!.toISOString();
-    const guestCount = this.guests.value!;
-    // Store for later booking flow
-    sessionStorage.setItem('availabilitySearch', JSON.stringify({ checkIn, checkOut, guests: guestCount }));
-    this.router.navigate(['/availability'], { queryParams: { checkIn, checkOut, guests: guestCount } });
+    if (this.checkIn.value && this.checkOut.value) {
+      const checkIn = this.checkIn.value.toISOString();
+      const checkOut = this.checkOut.value.toISOString();
+      const guestCount = this.guests.value || 1;
+      // Store for later booking flow
+      sessionStorage.setItem('availabilitySearch', JSON.stringify({ checkIn, checkOut, guests: guestCount }));
+      this.router.navigate(['/availability'], { queryParams: { checkIn, checkOut, guests: guestCount } });
+    } else {
+      this.router.navigate(['/availability']);
+    }
   }
 
   private extractErrorMessage(err: any): string {

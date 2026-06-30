@@ -14,11 +14,29 @@
     <div class="booking-bar glass-panel">
       <div class="booking-field">
         <label class="field-label">ARRIVAL</label>
-        <input type="text" class="field-input" [formControl]="checkIn" placeholder="Select date" />
+        <input
+          type="text"
+          class="field-input"
+          [formControl]="checkIn"
+          placeholder="Select date"
+          [matDatepicker]="cinPicker"
+          (click)="cinPicker.open()"
+          readonly
+        />
+        <mat-datepicker #cinPicker></mat-datepicker>
       </div>
       <div class="booking-field">
         <label class="field-label">DEPARTURE</label>
-        <input type="text" class="field-input" [formControl]="checkOut" placeholder="Select date" />
+        <input
+          type="text"
+          class="field-input"
+          [formControl]="checkOut"
+          placeholder="Select date"
+          [matDatepicker]="coutPicker"
+          (click)="coutPicker.open()"
+          readonly
+        />
+        <mat-datepicker #coutPicker></mat-datepicker>
       </div>
       <div class="booking-field">
         <label class="field-label">GUESTS</label>

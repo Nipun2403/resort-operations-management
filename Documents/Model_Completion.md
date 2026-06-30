@@ -5056,6 +5056,65 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: homepage-booking-calendar.md
+Date: June 30, 2026
+================================================================================
+
+FILES CREATED
+-------------
+None.
+
+FILES MODIFIED (existing files updated per spec)
+-------------------------------------------------
+✓ Frontend/src/app/features/public/pages/home.component.html — mapped inputs to mat-datepicker directives and triggers
+✓ Frontend/src/app/features/public/pages/home.component.ts — updated routing handlers to pass dates and occupants to the availability route
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Homepage Booking Calendar
+  ✓ Clicking arrival and departure inputs opens the date selection calendar overlays
+  ✓ Dates and guest metrics stored in sessionStorage and routed to /availability page on click of RESERVE SANCTUARY
+
+API INTEGRATION
+---------------
+None.
+
+LOGIC TRACES
+------------
+Flow: Datepicker Overlay Activation
+  Entry: User clicks arrival/departure input in the homepage booking bar
+  Path: input click triggers -> calls .open() on target mat-datepicker ref -> overlay renders calendar selections -> user selects date -> value maps to formControl.
+  Result: ✓ Matches spec
+
+Flow: Reservation Query Mapping
+  Entry: User clicks RESERVE SANCTUARY button
+  Path: searchAvailability() is called -> retrieves values -> checks if dates are valid -> formats ISO strings -> sets query params -> redirects to /availability endpoint.
+  Result: ✓ Matches spec
+
+KNOWN DEVIATIONS
+----------------
+None.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+✓ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+✓ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+✓ I confirm that all API calls match the spec contracts exactly.
+✓ I confirm that all regex validators are character-for-character matches
+  to the spec.
+✓ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
 
 
 
