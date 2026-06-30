@@ -1,6 +1,6 @@
 @for (row of data(); track $index) {
-  <mat-card class="entity-card">
-    <mat-card-content>
+  <div class="entity-card glass-card">
+    <div class="card-content">
       @for (col of columns(); track col.field) {
         <div class="card-row">
           <span class="card-label">{{ col.header }}:</span>
@@ -13,11 +13,11 @@
           </span>
         </div>
       }
-    </mat-card-content>
-    <mat-card-actions align="end">
+    </div>
+    <div class="card-actions">
       <button mat-icon-button (click)="edit.emit(row)" aria-label="Edit">
         <mat-icon>edit</mat-icon>
       </button>
-    </mat-card-actions>
-  </mat-card>
+    </div>
+  </div>
 }

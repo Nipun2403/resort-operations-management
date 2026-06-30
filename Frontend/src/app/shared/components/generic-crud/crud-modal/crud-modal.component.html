@@ -109,12 +109,13 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-button (click)="cancel()">Cancel</button>
+  <button mat-button (click)="cancel()" class="btn-pill-outline">Cancel</button>
   <button
     mat-raised-button
     color="primary"
     [disabled]="modalForm?.invalid"
     (click)="submit()"
+    class="btn-pill-primary"
   >
     Save
   </button>

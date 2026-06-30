@@ -12,6 +12,7 @@
           mat-raised-button
           color="primary"
           (click)="openAddModal()"
+          class="btn-pill-primary"
         >
           <mat-icon>add</mat-icon> Add {{ config().entityName }}
         </button>
@@ -47,6 +48,7 @@
         <button
           mat-button
           (click)="clearFilters()"
+          class="btn-pill-outline"
         >
           Clear Filters
         </button>

@@ -169,3 +169,40 @@ svg {
     }
   }
 }
+
+// ── Dialog Theme Overrides ───────────────────────────
+.cdk-overlay-pane {
+  .mat-mdc-dialog-container {
+    --mdc-dialog-container-shape: 8px;
+    --mdc-dialog-container-color: var(--color-surface-container);
+    background-color: var(--color-surface-container) !important;
+    border: 1px solid rgba(228, 194, 133, 0.2) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6) !important;
+  }
+}
+
+// ── Paginator Theme Overrides ────────────────────────
+.mat-mdc-paginator {
+  background: transparent !important;
+  color: var(--color-on-surface-variant) !important;
+  font-family: var(--font-body) !important;
+  
+  .mat-mdc-select-value {
+    color: var(--color-on-surface) !important;
+  }
+  .mat-mdc-select-arrow {
+    color: var(--color-secondary) !important;
+  }
+  .mat-mdc-icon-button {
+    color: var(--color-secondary) !important;
+    &:disabled {
+      color: rgba(228, 194, 133, 0.2) !important;
+    }
+  }
+}
+
+// ── MatSort Sort Arrow Overrides ─────────────────────
+.mat-sort-header-arrow {
+  color: var(--color-secondary) !important;
+}

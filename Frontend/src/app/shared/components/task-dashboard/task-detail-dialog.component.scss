@@ -17,11 +17,32 @@ mat-dialog-content {
   background: var(--color-surface-container) !important;
   color: var(--color-on-surface);
 
-  p {
-    margin: 0;
-    font-family: var(--font-body);
-    font-size: 0.95rem;
-    color: var(--color-on-surface);
+  .detail-section {
+    margin: 1rem 0;
+
+    h3 {
+      font-family: var(--font-headline);
+      font-size: 1.05rem;
+      font-weight: 400;
+      color: var(--color-secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      margin: 0.25rem 0;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      color: var(--color-on-surface);
+
+      strong {
+        color: var(--color-on-surface-variant);
+        font-weight: 500;
+      }
+    }
+  }
+
+  ::ng-deep mat-divider {
+    border-color: rgba(228, 194, 133, 0.1) !important;
   }
 }
 
@@ -33,20 +54,6 @@ mat-dialog-actions {
 }
 
 // Button styles (pill / outline)
-.btn-pill-primary {
-  background: var(--color-secondary) !important;
-  color: var(--color-on-secondary) !important;
-  @include font-label-caps;
-  font-size: 0.75rem;
-  letter-spacing: 0.15em;
-  padding: 0.5rem 1.5rem !important;
-  border: none;
-  border-radius: 999px !important;
-  cursor: pointer;
-  transition: filter 0.2s;
-  &:hover { filter: brightness(1.1); }
-}
-
 .btn-pill-outline {
   background: transparent !important;
   border: 1px solid rgba(228, 194, 133, 0.4) !important;
@@ -57,6 +64,20 @@ mat-dialog-actions {
   padding: 0.5rem 1.5rem !important;
   border-radius: 999px !important;
   cursor: pointer;
-  transition: background 0.3s;
-  &:hover { background: rgba(228, 194, 133, 0.1) !important; }
+  transition: all 0.3s;
+  &:hover {
+    background: rgba(228, 194, 133, 0.1) !important;
+  }
+
+  &.btn-start:hover {
+    border-color: #64b5f6 !important;
+    color: #64b5f6 !important;
+    background: rgba(30, 136, 229, 0.1) !important;
+  }
+
+  &.btn-complete:hover {
+    border-color: #81c784 !important;
+    color: #81c784 !important;
+    background: rgba(76, 175, 80, 0.1) !important;
+  }
 }
