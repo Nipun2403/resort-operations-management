@@ -28,7 +28,7 @@
         (touchend)="onTouchEnd($event)"
         tabindex="0"
       >
-        <!-- Navigation Arrows (desktop) -->
+        <!-- Navigation arrows (desktop) -->
         <button class="nav-arrow left" (click)="previousGroup()" [disabled]="currentGroupIndex() === 0">
           <span class="material-symbols-outlined">arrow_back_ios</span>
         </button>
@@ -36,30 +36,48 @@
           <span class="material-symbols-outlined">arrow_forward_ios</span>
         </button>
 
-        <!-- Asymmetric Grid of 4 Cards -->
+        <!-- Asymmetric Grid (12 columns) -->
         <div class="villa-grid">
           @for (room of displayedRooms(); track room.id; let i = $index) {
-            <article
-              class="room-card"
-              [ngClass]="getCardClasses(i)"
-            >
+            <article class="room-card {{ getCardClass(i) }}">
+              <!-- Image area -->
               <div class="card-image" [style.background-image]="'url(' + getFirstImage(room) + ')'">
                 <div class="image-overlay"></div>
                 <div class="card-number">
                   {{ ((currentGroupIndex() * roomsPerGroup) + i + 1).toString().padStart(2, '0') }} / VILLA
                 </div>
+                @if (i === 0) {
+                  <!-- Glass overlay for large card only -->
+                  <div class="glass-overlay">
+                    <span class="overlay-label">{{ ((currentGroupIndex() * roomsPerGroup) + 1).toString().padStart(2, '0') }} / VILLA</span>
+                    <h2 class="overlay-title">{{ room.name }}</h2>
+                    <div class="overlay-stats">
+                      <div>
+                        <span class="stat-label">GUESTS</span>
+                        <span class="stat-value">{{ room.maxOccupancy }}</span>
+                      </div>
+                      <div>
+                        <span class="stat-label">SQ METERS</span>
+                        <span class="stat-value">{{ room.squareFootage || '—' }}</span>
+                      </div>
+                    </div>
+                  </div>
+                }
               </div>
-              <div class="card-body">
-                <h2 class="room-name">{{ room.name }}</h2>
-                <div class="room-meta">
-                  <span>Max. {{ room.maxOccupancy }} Guests</span>
-                  <span class="separator">·</span>
-                  <span>{{ room.squareFootage || '—' }} sqm</span>
+              <!-- Card body for cards 2-4 (card 1 info is in overlay) -->
+              @if (i !== 0) {
+                <div class="card-body">
+                  <h2 class="room-name">{{ room.name }}</h2>
+                  <div class="room-meta">
+                    <span>Max. {{ room.maxOccupancy }} Guests</span>
+                    <span class="separator">·</span>
+                    <span>{{ room.squareFootage || '—' }} sqm</span>
+                  </div>
+                  <a [routerLink]="['/rooms', room.id]" class="view-link">
+                    VIEW DETAILS <span class="arrow">→</span>
+                  </a>
                 </div>
-                <a [routerLink]="['/rooms', room.id]" class="view-link">
-                  VIEW DETAILS <span class="arrow">→</span>
-                </a>
-              </div>
+              }
             </article>
           }
         </div>
@@ -89,5 +107,6 @@
         <span class="success-message">Thank you for your interest.</span>
       }
     </div>
+    <!-- TODO: wire up newsletter subscription to backend -->
   </section>
 </div>

@@ -78,29 +78,26 @@ export class RoomCatalogueComponent implements OnInit {
 
   // Navigation methods
   nextGroup(): void {
-    if (this.currentGroupIndex() < this.totalGroups() - 1) {
+    if (this.currentGroupIndex() < this.totalGroups() - 1 && !this.isTransitioning()) {
       this.triggerTransition(() => this.currentGroupIndex.update(i => i + 1));
     }
   }
 
   previousGroup(): void {
-    if (this.currentGroupIndex() > 0) {
+    if (this.currentGroupIndex() > 0 && !this.isTransitioning()) {
       this.triggerTransition(() => this.currentGroupIndex.update(i => i - 1));
     }
   }
 
   private triggerTransition(updateFn: () => void): void {
-    if (this.isTransitioning()) return;
     this.isTransitioning.set(true);
-    // Start animation, then update data after a short delay so the wash is visible
     setTimeout(() => {
       updateFn();
-      // Remove transitioning class after the animation completes
       setTimeout(() => this.isTransitioning.set(false), this.ANIMATION_DURATION);
     }, 100);
   }
 
-  // Wheel / touch detection for horizontal scroll
+  // Touch & wheel detection
   private touchStartX = 0;
   onTouchStart(event: TouchEvent): void {
     this.touchStartX = event.changedTouches[0].screenX;
@@ -111,7 +108,6 @@ export class RoomCatalogueComponent implements OnInit {
     else if (deltaX > 50) this.previousGroup();
   }
   onWheel(event: WheelEvent): void {
-    // Only act if the user is scrolling horizontally over the grid area
     if (Math.abs(event.deltaX) > Math.abs(event.deltaY) && Math.abs(event.deltaX) > 30) {
       event.preventDefault();
       if (event.deltaX > 0) this.nextGroup();
@@ -119,13 +115,10 @@ export class RoomCatalogueComponent implements OnInit {
     }
   }
 
-  getCardClasses(index: number): Record<string, boolean> {
-    return {
-      'card-large': index === 0,
-      'card-small': index === 1,
-      'card-medium': index === 2,
-      'card-wide': index === 3,
-    };
+  // Get CSS classes for each card position (0-3)
+  getCardClass(index: number): string {
+    const classes = ['card-large', 'card-small', 'card-medium', 'card-wide'];
+    return classes[index] || '';
   }
 
   private extractErrorMessage(err: any): string {

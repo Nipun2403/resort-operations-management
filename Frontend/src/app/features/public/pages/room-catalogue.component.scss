@@ -2,16 +2,17 @@
 
 .catalogue-page {
   overflow-x: hidden;
-  padding-top: 5rem;
+  padding-top: 10rem; // space from fixed navbar (design's pt-40)
 }
 
-// Hero Header
+// ── Hero Header ──────────────────────────────────
 .hero-header {
   max-width: var(--container-max);
-  margin: 0 auto 4rem;
+  margin: 0 auto 8rem; // design's mb-32
   padding: 0 var(--margin-desktop);
   @media (max-width: 768px) {
     padding: 0 var(--margin-mobile);
+    margin-bottom: 4rem;
   }
   .section-label {
     @include font-label-caps;
@@ -31,8 +32,9 @@
   }
 }
 
-// Loading & Error states
-.loading-state, .error-state {
+// ── Loading & Error States ───────────────────────
+.loading-state,
+.error-state {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -53,7 +55,7 @@
   }
 }
 
-// Grid Section
+// ── Grid Section ─────────────────────────────────
 .rooms-section {
   width: 100%;
   margin-bottom: var(--section-gap);
@@ -62,22 +64,22 @@
 .grid-container {
   position: relative;
   padding: 0 var(--margin-desktop);
-  max-width: 1200px;
+  max-width: var(--container-max);
   margin: 0 auto;
+  outline: none; // for focus to receive wheel events
   @media (max-width: 768px) {
     padding: 0 var(--margin-mobile);
   }
-  // Allow focus for wheel events
-  outline: none;
 }
 
-// Asymmetric Villa Grid (12-column)
+// Asymmetric Villa Grid (12‑column)
 .villa-grid {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  gap: 3.5rem;
+  gap: 2rem; // 32px as design
 }
 
+// Base card
 .room-card {
   cursor: pointer;
   transition: transform 0.4s ease;
@@ -87,43 +89,53 @@
   }
 }
 
-// Card sizes (mirror design with enhanced white space)
+// Card sizes & offsets (exactly mirror design)
 .room-card.card-large {
-  grid-column: 1 / span 7;
-  .card-image { aspect-ratio: 16/9; }
+  grid-column: span 8;
+  margin-bottom: 8rem; // design's mb-32
+  .card-image { aspect-ratio: 16 / 9; }
   @media (max-width: 768px) {
     grid-column: span 12;
+    margin-bottom: 2rem;
   }
 }
 .room-card.card-small {
-  grid-column: 9 / span 4;
-  align-self: center;
-  .card-image { aspect-ratio: 3/4; }
+  grid-column: span 4;
+  align-self: center;    // vertically centered in the row
+  margin-bottom: 8rem;
+  .card-image { aspect-ratio: 3 / 4; }
   @media (max-width: 768px) {
     grid-column: span 12;
+    margin-bottom: 2rem;
+    align-self: auto;
   }
 }
 .room-card.card-medium {
-  grid-column: 2 / span 4;
-  .card-image { aspect-ratio: 4/5; }
+  grid-column: span 5;
+  margin-bottom: 8rem;
+  .card-image { aspect-ratio: 4 / 5; }
   @media (max-width: 768px) {
     grid-column: span 12;
+    margin-bottom: 2rem;
   }
 }
 .room-card.card-wide {
-  grid-column: 7 / span 5;
-  margin-top: 3rem; // offset for the fourth card
-  .card-image { aspect-ratio: 16/10; }
+  grid-column: span 7;
+  margin-top: 8rem;      // design's lg:mt-32
+  margin-bottom: 8rem;
+  .card-image { aspect-ratio: 16 / 10; }
   @media (max-width: 768px) {
     grid-column: span 12;
     margin-top: 0;
+    margin-bottom: 2rem;
   }
 }
 
+// Image area
 .card-image {
   background-size: cover;
   background-position: center;
-  transition: transform 0.6s cubic-bezier(0.2,0,0.2,1);
+  transition: transform 0.6s cubic-bezier(0.2, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
   background-color: var(--color-surface-container-low); // fallback
@@ -145,8 +157,52 @@
   color: var(--color-secondary);
 }
 
+// Glass overlay on large card only
+.glass-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  max-width: 28rem;
+  padding: 3rem;
+  background: rgba(26, 26, 26, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(228, 194, 133, 0.2);
+  color: var(--color-on-surface);
+  .overlay-label {
+    @include font-label-caps;
+    font-size: 0.625rem;
+    letter-spacing: 0.3em;
+    color: var(--color-secondary);
+    display: block;
+    margin-bottom: 1rem;
+  }
+  .overlay-title {
+    @include font-headline-md;
+    margin-bottom: 1.5rem;
+    color: var(--color-on-surface);
+  }
+  .overlay-stats {
+    display: flex;
+    gap: 2rem;
+    border-top: 1px solid rgba(228, 226, 221, 0.1);
+    padding-top: 1.5rem;
+    .stat-label {
+      @include font-label-caps;
+      font-size: 0.625rem;
+      color: rgba(228, 226, 221, 0.4);
+      display: block;
+    }
+    .stat-value {
+      @include font-body-md;
+      color: var(--color-on-surface);
+    }
+  }
+}
+
+// Card body for cards 2‑4
 .card-body {
-  padding: 1.5rem 0;
+  padding: 1.5rem 0 0;
   border-bottom: 1px solid rgba(228, 194, 133, 0.2);
 }
 
@@ -181,32 +237,26 @@
   }
 }
 
-// Gold Wash Animation (on transitioning)
-.grid-container.transitioning .card-image {
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      105deg,
-      transparent 40%,
-      rgba(228, 194, 133, 0.3),
-      transparent 60%
-    );
-    animation: goldSweep 0.6s ease forwards;
-  }
+// ── Gold Wash Animation ──────────────────────────
+.grid-container.transitioning .card-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(228, 194, 133, 0.3),
+    transparent 60%
+  );
+  animation: goldSweep 0.6s ease forwards;
 }
 
 @keyframes goldSweep {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
-// Navigation Arrows
+// ── Navigation Arrows ────────────────────────────
 .nav-arrow {
   position: absolute;
   top: 50%;
@@ -251,7 +301,7 @@
   letter-spacing: 0.3em;
 }
 
-// Newsletter Section (unchanged from earlier, but adapted to theme)
+// ── Newsletter Section ────────────────────────────
 .newsletter {
   background: var(--color-surface-container-lowest);
   border-top: 1px solid var(--color-surface-container-highest);
