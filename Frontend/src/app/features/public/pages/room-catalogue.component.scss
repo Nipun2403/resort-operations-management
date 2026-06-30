@@ -62,7 +62,7 @@
 .grid-container {
   position: relative;
   padding: 0 var(--margin-desktop);
-  max-width: var(--container-max);
+  max-width: 1200px;
   margin: 0 auto;
   @media (max-width: 768px) {
     padding: 0 var(--margin-mobile);
@@ -75,7 +75,7 @@
 .villa-grid {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  gap: 2rem;
+  gap: 3.5rem;
 }
 
 .room-card {
@@ -87,16 +87,16 @@
   }
 }
 
-// Card sizes (mirror design)
+// Card sizes (mirror design with enhanced white space)
 .room-card.card-large {
-  grid-column: span 8;
+  grid-column: 1 / span 7;
   .card-image { aspect-ratio: 16/9; }
   @media (max-width: 768px) {
     grid-column: span 12;
   }
 }
 .room-card.card-small {
-  grid-column: span 4;
+  grid-column: 9 / span 4;
   align-self: center;
   .card-image { aspect-ratio: 3/4; }
   @media (max-width: 768px) {
@@ -104,14 +104,14 @@
   }
 }
 .room-card.card-medium {
-  grid-column: span 5;
+  grid-column: 2 / span 4;
   .card-image { aspect-ratio: 4/5; }
   @media (max-width: 768px) {
     grid-column: span 12;
   }
 }
 .room-card.card-wide {
-  grid-column: span 7;
+  grid-column: 7 / span 5;
   margin-top: 3rem; // offset for the fourth card
   .card-image { aspect-ratio: 16/10; }
   @media (max-width: 768px) {
