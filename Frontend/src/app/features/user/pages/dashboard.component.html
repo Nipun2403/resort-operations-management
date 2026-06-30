@@ -1,133 +1,159 @@
-<div class="dashboard">
-  <!-- Welcome message -->
-  @if (loading()) {
-    <mat-spinner diameter="40"></mat-spinner>
+<div class="customer-dashboard">
+  <!-- Greeting Section -->
+  <section class="greeting">
+    <h2 class="greeting-text">
+      Welcome back, {{ firstName() || 'Guest' }}
+    </h2>
+    <div class="divider"></div>
+  </section>
+
+  @if (loading() && !currentBooking() && !upcomingBooking()) {
+    <div class="loading-spinner">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
   } @else if (error()) {
     <app-alert type="error" [message]="error()!" (closed)="error.set(null)">
       <button mat-button (click)="loadDashboard()">Retry</button>
     </app-alert>
   } @else {
-    <h1>Welcome back, Mr {{ firstName() }}</h1>
+    <!-- Portfolio of Stays -->
+    <section class="stays-section">
+      <h3 class="section-label">Portfolio of Stays</h3>
+      <div class="stays-grid">
+        <!-- Current Stay Card -->
+        <div class="stay-card glass-panel current-stay">
+          @if (currentBooking()) {
+            <div class="card-header">
+              <h4 class="room-title">{{ getRoomNumbers(currentBooking()!) || 'Your Room' }}</h4>
+              <span class="status-badge">Checked In</span>
+            </div>
+            <div class="dates">
+              <div class="date-item">
+                <span class="material-symbols-outlined icon">login</span>
+                <span>{{ currentBooking()!.checkInDate }}</span>
+              </div>
+              <div class="date-item">
+                <span class="material-symbols-outlined icon">logout</span>
+                <span>{{ currentBooking()!.checkOutDate }}</span>
+              </div>
+            </div>
+            <div class="actions">
+              <button class="ghost-button" (click)="openServiceRequest('housekeeping')">
+                Request Housekeeping
+              </button>
+              <button class="ghost-button" (click)="openServiceRequest('maintenance')">
+                Request Maintenance
+              </button>
+            </div>
+          } @else {
+            <p class="empty-message">No active stay right now.</p>
+          }
+        </div>
 
-    <div class="booking-cards">
-      <!-- Current Booking (CheckedIn) -->
-      @if (currentBooking()) {
-        <mat-card class="booking-card current">
-          <mat-card-header>
-            <mat-card-title>Current Stay</mat-card-title>
-            <mat-card-subtitle>Room: {{ getRoomNumbers(currentBooking()!) }}</mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
-            <p><strong>Check&#8209;in:</strong> {{ currentBooking()!.checkInDate }}</p>
-            <p><strong>Check&#8209;out:</strong> {{ currentBooking()!.checkOutDate }}</p>
-            <p><strong>Status:</strong> {{ currentBooking()!.bookingStatus }}</p>
-          </mat-card-content>
-          <mat-card-actions>
-            <button mat-raised-button color="accent" (click)="openServiceRequest('housekeeping')" aria-label="Request housekeeping">
-              <mat-icon>cleaning_services</mat-icon> Request Housekeeping
-            </button>
-            <button mat-raised-button color="warn" (click)="openServiceRequest('maintenance')" aria-label="Request maintenance">
-              <mat-icon>build</mat-icon> Request Maintenance
-            </button>
-          </mat-card-actions>
-        </mat-card>
-      } @else {
-        <mat-card class="booking-card no-booking">
-          <mat-card-content>
-            <p>No active stay right now.</p>
-          </mat-card-content>
-        </mat-card>
-      }
-
-      <!-- Upcoming Booking (Booked) -->
-      @if (upcomingBooking()) {
-        <mat-card class="booking-card upcoming">
-          <mat-card-header>
-            <mat-card-title>Upcoming Stay</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <p><strong>Check&#8209;in:</strong> {{ upcomingBooking()!.checkInDate }}</p>
-            <p><strong>Check&#8209;out:</strong> {{ upcomingBooking()!.checkOutDate }}</p>
-            <p><strong>Status:</strong> {{ upcomingBooking()!.bookingStatus }}</p>
-            @if (upcomingRoomTypes().length > 0) {
-              <p><strong>Room Type(s):</strong> {{ upcomingRoomTypes().join(', ') }}</p>
-            }
-          </mat-card-content>
-        </mat-card>
-      } @else {
-        <mat-card class="booking-card no-booking">
-          <mat-card-content>
-            <p>No upcoming bookings.</p>
-          </mat-card-content>
-        </mat-card>
-      }
-    </div>
-
-    @if (currentBooking()) {
-      <div class="room-service-status">
-        <h2>Room Service Status</h2>
-        <div class="status-grid">
-          <!-- Housekeeping -->
-          <mat-card class="status-card">
-            <mat-card-header>
-              <mat-card-title>Housekeeping</mat-card-title>
-              <mat-card-subtitle>{{ pendingHousekeeping().length }} pending / in-progress</mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-content>
-              @for (item of pendingHousekeeping(); track item.id) {
-                <div class="status-item">
-                  <p class="status-line">
-                    <span>{{ item.description || 'No description' }}</span>
-                    <span class="badge" [class]="item.status.toLowerCase()">{{ item.status }}</span>
-                  </p>
-                </div>
-              } @empty {
-                <p class="no-status-items">No pending requests.</p>
+        <!-- Upcoming Stay Card -->
+        <div class="stay-card glass-panel upcoming-stay">
+          @if (upcomingBooking()) {
+            <div class="card-header">
+              <h4 class="room-title">Future Residence</h4>
+              <span class="material-symbols-outlined arrow-icon">arrow_forward_ios</span>
+            </div>
+            <div class="dates">
+              <div class="date-item">
+                <span class="material-symbols-outlined icon">calendar_today</span>
+                <span>{{ upcomingBooking()!.checkInDate }} — {{ upcomingBooking()!.checkOutDate }}</span>
+              </div>
+            </div>
+            <div class="tags">
+              @for (type of upcomingRoomTypes(); track type) {
+                <span class="tag">{{ type }}</span>
               }
-            </mat-card-content>
-          </mat-card>
-
-          <!-- Maintenance -->
-          <mat-card class="status-card">
-            <mat-card-header>
-              <mat-card-title>Maintenance</mat-card-title>
-              <mat-card-subtitle>{{ pendingMaintenance().length }} pending / in-progress</mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-content>
-              @for (item of pendingMaintenance(); track item.id) {
-                <div class="status-item">
-                  <p class="status-line">
-                    <span>{{ item.description || 'No description' }}</span>
-                    <span class="badge" [class]="item.status.toLowerCase()">{{ item.status }}</span>
-                  </p>
-                </div>
-              } @empty {
-                <p class="no-status-items">No pending requests.</p>
-              }
-            </mat-card-content>
-          </mat-card>
-
-          <!-- Food Orders -->
-          <mat-card class="status-card">
-            <mat-card-header>
-              <mat-card-title>Food Orders</mat-card-title>
-              <mat-card-subtitle>{{ pendingFoodOrders().length }} preparing / pending</mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-content>
-              @for (order of pendingFoodOrders(); track order.id) {
-                <div class="status-item">
-                  <p class="status-line">
-                    <span>Order #{{ order.id }}</span>
-                    <span class="badge" [class]="(order.orderStatus || 'pending').toLowerCase()">{{ order.orderStatus || 'Pending' }}</span>
-                  </p>
-                </div>
-              } @empty {
-                <p class="no-status-items">No pending orders.</p>
-              }
-            </mat-card-content>
-          </mat-card>
+            </div>
+            <a routerLink="/user/bookings" class="view-link underline-reveal">View Details</a>
+          } @else {
+            <p class="empty-message">No upcoming bookings.</p>
+          }
         </div>
       </div>
+    </section>
+
+    <!-- Pulse of Service Section -->
+    @if (currentBooking()) {
+      <section class="service-section">
+        <h3 class="section-label">Pulse of Service</h3>
+        <div class="service-grid">
+          <!-- Housekeeping -->
+          <div class="service-card glass-panel">
+            <div class="service-header">
+              <span class="material-symbols-outlined service-icon">cleaning_services</span>
+              <h4 class="service-title">Housekeeping</h4>
+            </div>
+            <div class="service-items">
+              @for (item of pendingHousekeeping(); track item.id) {
+                <div class="service-item">
+                  <span class="item-description">{{ item.description || 'Request #' + item.id }}</span>
+                  <span class="item-status" [class]="item.status">
+                    @if (item.status !== 'Completed') {
+                      <span class="pulse-dot"></span>
+                    }
+                    {{ item.status }}
+                  </span>
+                </div>
+              } @empty {
+                <p class="empty-message">No pending requests.</p>
+              }
+            </div>
+            <a routerLink="/user/room-service" class="service-link underline-reveal">Manage Requests</a>
+          </div>
+
+          <!-- Maintenance -->
+          <div class="service-card glass-panel">
+            <div class="service-header">
+              <span class="material-symbols-outlined service-icon">build</span>
+              <h4 class="service-title">Maintenance</h4>
+            </div>
+            <div class="service-items">
+              @for (item of pendingMaintenance(); track item.id) {
+                <div class="service-item">
+                  <span class="item-description">{{ item.description || 'Request #' + item.id }}</span>
+                  <span class="item-status" [class]="item.status">
+                    @if (item.status !== 'Completed') {
+                      <span class="pulse-dot"></span>
+                    }
+                    {{ item.status }}
+                  </span>
+                </div>
+              } @empty {
+                <p class="empty-message">No pending requests.</p>
+              }
+            </div>
+            <a routerLink="/user/room-service" class="service-link underline-reveal">Report Issue</a>
+          </div>
+
+          <!-- Food Orders -->
+          <div class="service-card glass-panel">
+            <div class="service-header">
+              <span class="material-symbols-outlined service-icon">restaurant</span>
+              <h4 class="service-title">Dining</h4>
+            </div>
+            <div class="service-items">
+              @for (order of pendingFoodOrders(); track order.id) {
+                <div class="service-item">
+                  <span class="item-description">Order #{{ order.id }}</span>
+                  <span class="item-status" [class]="order.orderStatus || 'Pending'">
+                    @if (order.orderStatus !== 'Delivered') {
+                      <span class="pulse-dot"></span>
+                    }
+                    {{ order.orderStatus || 'Pending' }}
+                  </span>
+                </div>
+              } @empty {
+                <p class="empty-message">No pending orders.</p>
+              }
+            </div>
+            <a routerLink="/user/room-service" class="service-link underline-reveal">New Order</a>
+          </div>
+        </div>
+      </section>
     }
   }
 </div>
