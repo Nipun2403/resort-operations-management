@@ -1,0 +1,118 @@
+<div class="experiences-page">
+  <!-- Hero Section -->
+  <section class="hero">
+    <h1>Culinary Art &amp;<br><em>Absolute Stillness.</em></h1>
+    <p>Aetheris dining is an exercise in restraint. From the private cellar to the starlit conservatory, every ingredient is sourced from the estate's own heritage soil or the deep Atlantic shelf.</p>
+  </section>
+
+  <!-- Menu Section (Accordion) -->
+  <section class="menu-section">
+    <div class="section-label">EPICUREAN SELECTIONS</div>
+
+    @if (menuLoading()) {
+      <div class="spinner-container">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    } @else if (menuError()) {
+      <p class="error">{{ menuError() }}</p>
+    } @else {
+      @for (group of menuGroups(); track group.category; let i = $index) {
+        <div class="menu-row" [class.active]="expandedCategory() === group.category">
+          <div class="menu-row-header" (click)="toggleCategory(group.category)">
+            <h2>{{ group.category }}</h2>
+            <span class="category-number">[ {{ (i + 1).toString().padStart(2, '0') }} ]</span>
+            <span class="expand-icon material-symbols-outlined">{{ expandedCategory() === group.category ? 'expand_less' : 'expand_more' }}</span>
+          </div>
+          <div class="menu-content">
+            @for (item of group.items; track item.id) {
+              <div class="menu-item">
+                <span class="item-name">{{ item.name }}</span>
+                <span class="dotted-line"></span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    }
+  </section>
+
+  <!-- Amenities Section (Bento Grid with Pagination) -->
+  <section class="amenities-section">
+    <div class="section-label">PRIVATE AMENITIES</div>
+
+    @if (amenitiesLoading()) {
+      <div class="spinner-container">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    } @else if (amenitiesError()) {
+      <p class="error">{{ amenitiesError() }}</p>
+    } @else {
+      <div
+        class="amenities-grid-container"
+        [class.transitioning]="amenityIsTransitioning()"
+        (touchstart)="onTouchStart($event)"
+        (touchend)="onTouchEnd($event)"
+      >
+        <!-- Desktop Chevron Navigation -->
+        <button class="nav-chevron left" (click)="prevAmenityPage()" [disabled]="amenityPageIndex() === 0">
+          <span class="material-symbols-outlined">chevron_left</span>
+        </button>
+        <button class="nav-chevron right" (click)="nextAmenityPage()" [disabled]="amenityPageIndex() === totalAmenityPages() - 1">
+          <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+
+        <!-- Bento Grid -->
+        <div class="bento-grid">
+          @for (amenity of displayAmenities(); track amenity.id; let i = $index) {
+            <div class="amenity-card" [ngClass]="'card-' + i">
+              <div class="amenity-image" [style.background-image]="'url(' + getAmenityImage(amenity) + ')'">
+                <div class="image-overlay"></div>
+                <div class="card-number">{{ getAmenityNumber(i) }}</div>
+                <!-- Hover overlay -->
+                <div class="hover-overlay">
+                  <h3>{{ amenity.name }}</h3>
+                  <p>{{ amenity.description || 'Indulge in quiet luxury.' }}</p>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Pagination Indicator Container (Visible on Mobile) -->
+        <div class="pagination-container">
+          <button class="small-nav-arrow left" (click)="prevAmenityPage()" [disabled]="amenityPageIndex() === 0">
+            <span class="material-symbols-outlined">chevron_left</span>
+          </button>
+          <div class="group-indicator">
+            {{ amenityPageIndex() + 1 }} / {{ totalAmenityPages() }}
+          </div>
+          <button class="small-nav-arrow right" (click)="nextAmenityPage()" [disabled]="amenityPageIndex() === totalAmenityPages() - 1">
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
+        </div>
+      </div>
+    }
+  </section>
+
+  <!-- Archive / Philosophy Section -->
+  <section class="archive-section">
+    <div class="archive-image" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBcsrNli-Okq5zfPIxKgYeYhE_LK_uzemUGThdLc6zjw4pLEyJoDD5vOPjJLUF5LaK3qhIWcf59hlxQyDJ24Si6HYUpBvsfVOZYN4eNrJl-PGygA4awKDqaKCKzq_HnljgeiOdsWoUY6qrDR76iNBnoV_QoatCSBws27OYJZFTkUdJqLQYpS4-QXL_SkDrTNybanRN0yPZRPcboei3Wa-m5mhIEpHV6Kwi6Y-Zfqdqa5wuVDCkoYZCJtgew-BJlAUhr7x85SimSrV2x')"></div>
+    <div class="archive-content">
+      <h2>The Philosophy of <br><em>Permanent Quality.</em></h2>
+      <ul>
+        <li>
+          <span class="label">ORIGIN</span>
+          <p>Every harvest is cataloged and preserved in our subterranean vault, accessible only to resident guests.</p>
+        </li>
+        <li>
+          <span class="label">RITUAL</span>
+          <p>Dining is a timed performance, lasting precisely four hours from sunset to stellar zenith.</p>
+        </li>
+        <li>
+          <span class="label">SILENCE</span>
+          <p>The Dining Room maintains a zero-decibel acoustic standard outside of orchestrated service.</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+</div>

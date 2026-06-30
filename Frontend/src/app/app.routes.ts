@@ -214,15 +214,12 @@ export const routes: Routes = [
           .then(m => m.RoomDetailComponent)
       },
       {
-        path: 'menu',
-        loadComponent: () => import('./features/public/pages/menu.component')
-          .then(m => m.MenuComponent)
+        path: 'experiences',
+        loadComponent: () => import('./features/public/pages/experiences.component')
+          .then(m => m.ExperiencesComponent)
       },
-      {
-        path: 'amenities',
-        loadComponent: () => import('./features/public/pages/amenities.component')
-          .then(m => m.AmenitiesComponent)
-      },
+      { path: 'menu', redirectTo: 'experiences', pathMatch: 'full' },
+      { path: 'amenities', redirectTo: 'experiences', pathMatch: 'full' },
       {
         path: 'availability',
         loadComponent: () => import('./features/public/pages/availability.component')

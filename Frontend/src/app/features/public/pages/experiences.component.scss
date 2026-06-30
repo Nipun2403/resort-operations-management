@@ -1,0 +1,365 @@
+@import '../../../../styles/theme/index';
+
+.experiences-page {
+  overflow-x: hidden;
+}
+
+// ── Hero ────────────────────────────────────────
+.hero {
+  max-width: var(--container-max);
+  margin: 0 auto 6rem;
+  padding: 10rem var(--margin-desktop) 0;
+  @media (max-width: 768px) {
+    padding: 6rem var(--margin-mobile) 0;
+    margin-bottom: 3rem;
+  }
+  h1 {
+    @include font-display-lg;
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    color: var(--color-on-surface);
+    margin-bottom: 1rem;
+    em { font-style: italic; color: var(--color-secondary); }
+  }
+  p {
+    @include font-body-lg;
+    color: rgba(228, 226, 221, 0.7);
+    max-width: 600px;
+  }
+}
+
+.section-label {
+  @include font-label-caps;
+  color: var(--color-secondary);
+  margin-bottom: 2rem;
+  letter-spacing: 0.2em;
+}
+
+// ── Menu Accordion ──────────────────────────────
+.menu-section {
+  max-width: var(--container-max);
+  margin: 0 auto 6rem;
+  padding: 0 var(--margin-desktop);
+  @media (max-width: 768px) {
+    padding: 0 var(--margin-mobile);
+    margin-bottom: 3rem;
+  }
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem 0;
+}
+
+.menu-row {
+  border-bottom: 1px solid rgba(228, 194, 133, 0.2);
+  transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  &.active { padding-bottom: 2.5rem; }
+}
+
+.menu-row-header {
+  display: flex;
+  align-items: flex-end;
+  padding: 2rem 0;
+  cursor: pointer;
+  transition: color 0.3s;
+  &:hover h2 { color: var(--color-secondary); }
+  h2 {
+    @include font-display-lg;
+    font-size: clamp(1.5rem, 5vw, 2.5rem);
+    color: var(--color-on-surface);
+    text-transform: uppercase;
+    margin: 0;
+    transition: color 0.5s;
+  }
+  .category-number {
+    @include font-label-caps;
+    color: rgba(228, 226, 221, 0.4);
+    margin-left: auto;
+    margin-right: 1rem;
+  }
+  .expand-icon {
+    color: var(--color-on-surface-variant);
+    transition: transform 0.3s;
+  }
+}
+
+.menu-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.8s ease;
+  max-width: 800px;
+}
+.menu-row.active .menu-content {
+  max-height: 2000px; // large enough
+  margin-top: 1rem;
+}
+
+.menu-item {
+  display: flex;
+  align-items: flex-end;
+  padding: 0.5rem 0;
+  .item-name {
+    @include font-headline-sm;
+    color: var(--color-on-surface);
+  }
+  .dotted-line {
+    flex-grow: 1;
+    border-bottom: 1px dotted rgba(228, 194, 133, 0.4);
+    margin: 0 1rem 0.3rem;
+  }
+}
+
+// ── Amenities Bento Grid ─────────────────────────
+.amenities-section {
+  max-width: var(--container-max);
+  margin: 0 auto 6rem;
+  padding: 0 var(--margin-desktop);
+  @media (max-width: 768px) {
+    padding: 0 var(--margin-mobile);
+    margin-bottom: 3rem;
+  }
+}
+
+.amenities-grid-container {
+  position: relative;
+  &.transitioning .amenity-image::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 40%, rgba(228, 194, 133, 0.3), transparent 60%);
+    animation: goldSweep 0.6s ease forwards;
+    z-index: 5;
+  }
+}
+
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 2rem;
+  height: 800px;
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    height: auto;
+  }
+}
+
+.amenity-card {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  &:hover .hover-overlay { transform: translateY(0); }
+  &.card-0 {
+    grid-column: span 7;
+    grid-row: span 2;
+    @media (max-width: 768px) { grid-column: span 1; grid-row: auto; height: 500px; }
+  }
+  &.card-1 {
+    grid-column: span 5;
+    grid-row: span 1;
+    @media (max-width: 768px) { grid-column: span 1; grid-row: auto; height: 400px; }
+  }
+  &.card-2 {
+    grid-column: span 5;
+    grid-row: span 1;
+    @media (max-width: 768px) { grid-column: span 1; grid-row: auto; height: 400px; }
+  }
+}
+
+.amenity-image {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: grayscale(30%) brightness(0.7);
+  transition: transform 1s, filter 0.7s;
+  .amenity-card:hover & { transform: scale(1.05); filter: grayscale(0%) brightness(1); }
+}
+
+.image-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, var(--color-background) 0%, transparent 50%);
+}
+
+.card-number {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  @include font-label-caps;
+  color: var(--color-secondary);
+  transition: color 0.3s;
+}
+
+.hover-overlay {
+  position: absolute;
+  inset: 0;
+  @include glass-panel;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 2rem;
+  transform: translateY(100%);
+  transition: transform 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+  h3 {
+    @include font-headline-md;
+    color: var(--color-secondary);
+    margin-bottom: 0.5rem;
+  }
+  p {
+    @include font-body-md;
+    color: var(--color-on-surface);
+  }
+}
+
+// Chevron Navigation (Desktop side controls)
+.nav-chevron {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  background: rgba(26, 26, 26, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(228, 194, 133, 0.3);
+  color: var(--color-on-surface);
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s, border-color 0.3s, color 0.3s;
+  &:hover:not(:disabled) { border-color: var(--color-secondary); color: var(--color-secondary); }
+  &:disabled {
+    cursor: not-allowed;
+  }
+  &.left { left: -1rem; }
+  &.right { right: -1rem; }
+}
+.amenities-grid-container:hover .nav-chevron {
+  opacity: 1;
+  &:disabled {
+    opacity: 0.15;
+  }
+}
+@media (max-width: 768px) {
+  .nav-chevron { display: none; }
+}
+
+// ── Pagination Container (Mobile controls) ─────────
+.pagination-container {
+  display: none;
+  @media (max-width: 768px) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+}
+
+.small-nav-arrow {
+  display: none;
+  @media (max-width: 768px) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: rgba(26, 26, 26, 0.7);
+    border: 1px solid rgba(228, 194, 133, 0.3);
+    border-radius: 50%;
+    color: var(--color-on-surface);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    .material-symbols-outlined {
+      font-size: 18px;
+    }
+    &:hover:not(:disabled),
+    &:active:not(:disabled) {
+      border-color: var(--color-secondary);
+      color: var(--color-secondary);
+    }
+    &:disabled {
+      opacity: 0.15;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.group-indicator, .page-indicator {
+  text-align: center;
+  @include font-label-caps;
+  color: var(--color-outline);
+  letter-spacing: 0.3em;
+}
+
+.page-indicator {
+  margin-top: 1.5rem;
+  @media (max-width: 768px) {
+    display: none; // hidden in favor of pagination-container
+  }
+}
+
+@keyframes goldSweep {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+// ── Archive Section ──────────────────────────────
+.archive-section {
+  display: grid;
+  grid-template-columns: 4fr 6fr;
+  gap: 2rem;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--margin-desktop);
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    padding: 0 var(--margin-mobile);
+  }
+}
+.archive-image {
+  height: 600px;
+  background-size: cover;
+  background-position: center;
+  filter: grayscale(1);
+  @media (max-width: 768px) { height: 400px; }
+}
+.archive-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  h2 {
+    @include font-headline-md;
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    color: var(--color-on-surface);
+    margin-bottom: 2rem;
+    em { color: var(--color-secondary); }
+  }
+  ul {
+    list-style: none;
+    li {
+      display: flex;
+      gap: 1rem;
+      padding: 1.5rem 0;
+      border-bottom: 1px solid rgba(228, 226, 221, 0.1);
+      .label {
+        @include font-label-caps;
+        color: var(--color-secondary);
+        min-width: 80px;
+      }
+      p { @include font-body-md; color: rgba(228, 226, 221, 0.7); }
+    }
+  }
+}
+
+// Error
+.error {
+  @include font-body-lg;
+  color: var(--color-error);
+}

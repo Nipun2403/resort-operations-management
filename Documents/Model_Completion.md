@@ -4934,6 +4934,73 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: experience.md
+Date: June 30, 2026
+================================================================================
+
+FILES CREATED
+-------------
+✓ Frontend/src/app/features/public/pages/experiences.component.ts — created public Dining & Amenities experiences page component
+✓ Frontend/src/app/features/public/pages/experiences.component.html — created experiences template with accordions, paginated bento grids, and philosophy lists
+✓ Frontend/src/app/features/public/pages/experiences.component.scss — created experiences styles with theme rules, grid span templates, and page indicator chevrons
+
+FILES MODIFIED (existing files updated per spec)
+-------------------------------------------------
+✓ Frontend/src/app/app.routes.ts — registered experiences route and mapped legacy menu/amenities redirects
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Dining & Amenities Page
+  ✓ Dedicated standalone public route at /experiences replacing legacy menu/amenities pages
+  ✓ Categories list grouped dynamically by API data and rendered via single-item open accordion states
+  ✓ Bento card grid displaying amenities in page slices of 3 items (desktop) and 1 item (mobile)
+  ✓ Large margins side overlays (desktop) and bottom page chevrons centered flanking the page count (mobile) to cycle indices
+  ✓ Gold wash transition overlays during page switches with custom sweep animations
+  ✓ Image grayscale hover adjustments and glass card overlay description reveals
+  ✓ Touch swipe direction listeners triggering next/prev index updates on mobile viewports
+  ✓ Philosophy archive segment displaying estate archive details
+
+API INTEGRATION
+---------------
+✓ MenuItem Api: MenuItemApiService.getAll — queried with available parameters to populate accordion lists
+✓ Amenity Api: AmenityApiService.getAll — queried with available parameters to populate bento grids
+
+LOGIC TRACES
+------------
+Flow: Dynamic Mobile Pagination
+  Entry: User views amenities section on desktop vs mobile viewports
+  Path: BreakpointObserver matches (max-width: 768px) -> scales itemsPerPageComputed() to 1 (mobile) or 3 (desktop) -> dynamically updates totalAmenityPages -> clamps page indexes -> slices and presents active lists.
+  Result: ✓ Matches spec
+
+Flow: Mobile Chevron Pagination Control
+  Entry: User clicks a small chevron flanking the page count on mobile viewport
+  Path: click next chevron -> triggers nextAmenityPage() -> increments index -> slides card slice.
+  Result: ✓ Matches spec
+
+KNOWN DEVIATIONS
+----------------
+None.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+✓ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+✓ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+✓ I confirm that all API calls match the spec contracts exactly.
+✓ I confirm that all regex validators are character-for-character matches
+  to the spec.
+✓ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
 
 
 
