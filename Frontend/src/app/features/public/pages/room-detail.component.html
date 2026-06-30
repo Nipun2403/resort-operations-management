@@ -1,52 +1,115 @@
-<div class="room-detail">
+<div class="detail-page">
   @if (loading()) {
-    <mat-spinner diameter="40"></mat-spinner>
-  } @else if (error()) {
-    <p class="error">{{ error() }}</p>
-    <button mat-button routerLink="/rooms">Back to Rooms</button>
-  } @else if (room()) {
-    <!-- Image Gallery -->
-    <div class="image-gallery">
-      @for (imgUrl of room()!.imageUrls; track imgUrl) {
-        <img [src]="imgUrl" alt="{{ room()!.name }}" class="gallery-image" />
-      }
+    <div class="loading-spinner">
+      <mat-spinner diameter="40"></mat-spinner>
     </div>
-
-    <!-- Room Info -->
-    <div class="room-info">
-      <h1>{{ room()!.name }}</h1>
-      <p class="description">{{ room()!.description || 'No description available.' }}</p>
-      <div class="details-grid">
-        <div class="detail-item">
-          <mat-icon>attach_money</mat-icon>
-          <span><strong>Price:</strong> {{ room()!.basePrice | currency }}/night</span>
+  } @else if (error()) {
+    <div class="error-state">
+      <p>{{ error() }}</p>
+      <a routerLink="/rooms" class="back-link">← Back to Villas</a>
+    </div>
+  } @else if (room()) {
+    <!-- Image Gallery Section -->
+    <section class="gallery-section">
+      <div class="gallery-scroll" #galleryContainer>
+        <!-- Design images (static, shown first) -->
+        <div class="gallery-item">
+          <img
+            class="gallery-image"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4LaZWIfgwL2Qyr-FRyKY7s3ZeBGdcJ16QgAMFvM14nKYRywPkhIaU2IWn24HPjp6FabFMVsRVkSlYZgbPwza5q8S8FKjd3LW1NJ1WvliItKWNfFcjLufO14MorWS5QFvR-huAFxK8aQWwI6XLxUojdGW1ka_1KnjpW2IlR3xTfYX00SJljqN2J0yEzYcHqY9oZgtdpPSwUT_FBdy8eskDso2wqiH8Pdncrvu4MQEDm1mQgpqxdNm5n2X6kLCDzsWeaHvrR4Si-wt7"
+            alt="{{ room()!.name }}"
+          />
+          <div class="image-overlay-gallery"></div>
         </div>
-        <div class="detail-item">
-          <mat-icon>people</mat-icon>
-          <span><strong>Max Occupancy:</strong> {{ room()!.maxOccupancy }} guests</span>
+        <div class="gallery-item parallax-img" data-speed="0.15">
+          <img
+            class="gallery-image"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7BpuMqO3vUONIUaw5w7liiaHIjRBVk5uM3wMsr1SJSlC-y30i-GvGNqosr8gunZDJjTQX3N2e44Pm_25lOPjb_jxPxaeBcin63o8VaFITR-OCYBj1N5eusmPOzg50z8cObybGuAeKATQD9nOTX0owuSacbbcWycidCo5IcC4CCvlps17fvnqa-oHeFMgBX8940Rqk9iBqib83dQzq8MOzfJG1qYi4xQGYVV1Ky2lZLPgu14peo7JlDKH6A414AbvPV-16NSN1vwnZ"
+            alt="{{ room()!.name }}"
+          />
+          <div class="image-overlay-gallery"></div>
         </div>
-        <div class="detail-item">
-          <mat-icon>square_foot</mat-icon>
-          <span><strong>Square Footage:</strong> {{ room()!.squareFootage || 'N/A' }} sq ft</span>
+        <div class="gallery-item">
+          <img
+            class="gallery-image"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvXqkGL5KS6CGCmVgFcRdnC4k2mB07aJG91FFP664rBxYXjtsLZpD_qXdyGMwn4yX8HqMWXb8nc7wqjRSy0ssglhwB6mnoVscAlxXLPGU54uwGSJbQ6o_DCe4PVPwBgHqsQwu-CpTEGYt_vpt9BOCet9ptZWuogIxNj7LYWPtLK_qf6bUuMRv8FCnewP5TDk-y1qxAmfCV8BWM6WxqK31BHExQYqN5NZdVeRQOAVsStLFtyZLClvyfkilL2FeN2HAn7LSt0RMuEmHi"
+            alt="{{ room()!.name }}"
+          />
+          <div class="image-overlay-gallery"></div>
         </div>
+        <div class="gallery-item parallax-img" data-speed="-0.1">
+          <img
+            class="gallery-image"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBT07wf-yfThimt-RyGEG4UoP6X4fPA3lsiVxRhhLS_DQHFrxspAnNt2a_RSA16Xaws4_P45R-mVRavRKdMpqEI5IXLcjY20Vlr4b3qgWCZShh7ktDXh_DzZeY6ahQgCe0OumlVj1NMU-Bn_Io4q2ZAI0ne_eFlfYMraQ3tOKlY7Z7n331cQhKm2auuwpoKdKfH1ib45hR6eVHexYS7I4CO7cH189s3Rm-eaGHmVDIOo_uj_DL04rESW_57Md2Y8LslN1VOd1mo4seb"
+            alt="{{ room()!.name }}"
+          />
+          <div class="image-overlay-gallery"></div>
+        </div>
+        <!-- API images (dynamic) -->
+        @for (imgUrl of room()!.imageUrls; track imgUrl) {
+          <div class="gallery-item">
+            <img class="gallery-image" [src]="imgUrl" alt="{{ room()!.name }}" />
+            <div class="image-overlay-gallery"></div>
+          </div>
+        }
       </div>
 
-      <!-- Bed Configuration -->
-      @if (room()!.bedConfiguration && getBedEntries().length > 0) {
-        <div class="bed-config">
-          <h3>Bed Configuration</h3>
-          <ul>
+      <!-- Glass Overlay Info Panel -->
+      <div class="glass-info-panel">
+        <h1 class="room-title">{{ room()!.name }}</h1>
+        <p class="room-description">{{ room()!.description || 'No description available.' }}</p>
+        <div class="divider-line"></div>
+      </div>
+    </section>
+
+    <!-- Metrics & Configuration Section -->
+    <section class="details-section">
+      <div class="details-grid">
+        <!-- Metrics -->
+        <div class="metrics-column">
+          <div class="metric-item">
+            <span class="metric-value">{{ room()!.basePrice | currency }}</span>
+            <div class="metric-divider"></div>
+            <span class="metric-label">Per Night</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-value">{{ room()!.squareFootage || '—' }}</span>
+            <div class="metric-divider"></div>
+            <span class="metric-label">Sq. Ft.</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-value">{{ room()!.maxOccupancy }}</span>
+            <div class="metric-divider"></div>
+            <span class="metric-label">Max Guests</span>
+          </div>
+        </div>
+        <!-- Bed Configuration -->
+        <div class="config-column">
+          <h3 class="config-title">Configuration</h3>
+          <ul class="config-list">
             @for (entry of getBedEntries(); track entry[0]) {
-              <li>{{ entry[0] }} x {{ entry[1] }}</li>
+              <li class="config-item">
+                <span class="config-icon material-symbols-outlined">{{ getBedIcon(entry[0]) }}</span>
+                <span class="config-text">{{ entry[1] }} {{ entry[0] }} Bed{{ entry[1] > 1 ? 's' : '' }}</span>
+              </li>
+            }
+            @empty {
+              <li class="config-item">
+                <span class="config-icon material-symbols-outlined">bed</span>
+                <span class="config-text">Ask for details</span>
+              </li>
             }
           </ul>
         </div>
-      }
+      </div>
 
-      <!-- Check Availability CTA -->
-      <button mat-raised-button color="accent" (click)="checkAvailability()">
-        Check Availability
-      </button>
-    </div>
+      <!-- Full‑width CTA -->
+      <div class="cta-section">
+        <button class="cta-button" (click)="checkAvailability()">
+          <span class="cta-text">Check Availability</span>
+          <div class="cta-hover-fill"></div>
+        </button>
+      </div>
+    </section>
   }
 </div>

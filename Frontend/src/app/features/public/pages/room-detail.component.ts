@@ -1,9 +1,6 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, AfterViewInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
@@ -15,13 +12,12 @@ import { RoomType } from '../../admin/models/room-type.model';
   selector: 'app-room-detail',
   standalone: true,
   imports: [
-    CommonModule, RouterModule,
-    MatCardModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule
+    CommonModule, RouterModule, MatProgressSpinnerModule
   ],
   templateUrl: './room-detail.component.html',
   styleUrls: ['./room-detail.component.scss']
 })
-export class RoomDetailComponent implements OnInit {
+export class RoomDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private roomTypeApi = inject(RoomTypeApiService);
   private router = inject(Router);
@@ -31,12 +27,29 @@ export class RoomDetailComponent implements OnInit {
   loading = signal(false);
   error = signal<string | null>(null);
 
+  // Parallax
+  @ViewChild('galleryContainer') galleryRef!: ElementRef<HTMLElement>;
+
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     if (id) {
       this.fetchRoom(id);
     } else {
       this.error.set('Room not found.');
+    }
+  }
+
+  ngAfterViewInit(): void {
+    // Bind scroll listener for parallax after view init
+    const gallery = this.galleryRef?.nativeElement;
+    if (gallery) {
+      gallery.addEventListener('scroll', this.onGalleryScroll);
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.galleryRef?.nativeElement) {
+      this.galleryRef.nativeElement.removeEventListener('scroll', this.onGalleryScroll);
     }
   }
 
@@ -57,6 +70,16 @@ export class RoomDetailComponent implements OnInit {
     return Object.entries(config).filter(([, v]) => v > 0);
   }
 
+  getBedIcon(bedType: string): string {
+    const icons: Record<string, string> = {
+      'King': 'king_bed',
+      'Queen': 'bed',
+      'Twin': 'single_bed',
+      'Double': 'bed',
+    };
+    return icons[bedType] || 'bed';
+  }
+
   checkAvailability(): void {
     const roomId = this.room()?.id;
     if (roomId) {
@@ -65,6 +88,20 @@ export class RoomDetailComponent implements OnInit {
       this.router.navigate(['/availability'], { queryParams: { roomTypeId: roomId } });
     }
   }
+
+  private onGalleryScroll = (): void => {
+    const gallery = this.galleryRef?.nativeElement;
+    if (!gallery) return;
+    const scrollLeft = gallery.scrollLeft;
+    const parallaxImages = gallery.querySelectorAll('.parallax-img') as NodeListOf<HTMLElement>;
+    parallaxImages.forEach((img) => {
+      const speed = parseFloat(img.getAttribute('data-speed') || '0');
+      const imgTag = img.querySelector('img') as HTMLImageElement;
+      if (imgTag) {
+        imgTag.style.transform = `translateX(${scrollLeft * speed}px) scale(1.1)`;
+      }
+    });
+  };
 
   private extractErrorMessage(err: any): string {
     if (typeof err === 'string') return err;

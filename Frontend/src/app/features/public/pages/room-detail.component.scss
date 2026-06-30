@@ -1,38 +1,239 @@
-.room-detail {
-  .image-gallery {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    gap: 8px;
-    padding: 16px 0;
-    .gallery-image {
-      flex: 0 0 80%;
-      max-height: 400px;
-      object-fit: cover;
-      scroll-snap-align: start;
-    }
+@import '../../../../styles/theme/index';
+
+.detail-page {
+  overflow-x: hidden;
+}
+
+// ── Loading / Error ──────────────────────────────
+.loading-spinner, .error-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+}
+.error-state {
+  flex-direction: column;
+  gap: 1rem;
+  p { @include font-body-lg; color: var(--color-error); }
+  .back-link { @include font-body-md; color: var(--color-secondary); text-decoration: none; }
+}
+
+// ── Gallery Section ──────────────────────────────
+.gallery-section {
+  position: relative;
+  height: 100vh;
+  min-height: 700px;
+  overflow: hidden;
+  @media (max-width: 768px) {
+    height: 75vh;
+    min-height: 500px;
   }
-  .room-info {
-    padding: 0 16px;
-    h1 { font-size: 2rem; margin: 24px 0 8px; }
-    .description { font-size: 1.1rem; color: #555; margin-bottom: 16px; }
-    .details-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 12px;
-      margin: 16px 0;
-      .detail-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        mat-icon { color: #1976d2; }
-      }
-    }
-    .bed-config {
-      margin: 24px 0;
-      ul { list-style: none; padding: 0; }
-      li { padding: 4px 0; }
-    }
-    button { margin-top: 16px; }
+}
+
+.gallery-scroll {
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  height: 100%;
+  cursor: grab;
+  &:active { cursor: grabbing; }
+  &::-webkit-scrollbar { display: none; }
+}
+
+.gallery-item {
+  flex: 0 0 85vw;
+  scroll-snap-align: center;
+  position: relative;
+  margin: 0 0.5rem;
+  @media (min-width: 768px) {
+    flex: 0 0 70vw;
+    margin: 0 1rem;
   }
+}
+
+.gallery-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(30%) brightness(0.75);
+  transition: filter 0.7s, transform 0.1s linear; // transform will be set by parallax JS
+  &:hover { filter: brightness(1); }
+}
+
+// Parallax initial scale
+.parallax-img .gallery-image {
+  transform: scale(1.1);
+}
+
+.image-overlay-gallery {
+  position: absolute;
+  inset: 0;
+  background: rgba(19, 20, 17, 0.2); // subtle dark overlay
+  pointer-events: none;
+}
+
+// Glass info panel (overlapping bottom‑left)
+.glass-info-panel {
+  position: absolute;
+  bottom: 3rem;
+  left: var(--margin-mobile);
+  width: calc(100% - 2 * var(--margin-mobile));
+  max-width: 500px;
+  @include glass-panel;
+  padding: 2rem;
+  animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+  @media (min-width: 768px) {
+    left: var(--margin-desktop);
+    width: 500px;
+    padding: 3rem;
+  }
+  .room-title {
+    @include font-display-lg-mobile;
+    font-size: clamp(2rem, 6vw, 4rem);
+    color: var(--color-secondary);
+    line-height: 1;
+    margin-bottom: 1rem;
+  }
+  .room-description {
+    @include font-body-md;
+    color: var(--color-on-surface-variant);
+    margin-bottom: 1.5rem;
+  }
+  .divider-line {
+    height: 1px;
+    width: 100%;
+    background: rgba(228, 226, 221, 0.3);
+  }
+}
+
+// ── Details Section ──────────────────────────────
+.details-section {
+  max-width: var(--container-max);
+  margin: var(--section-gap) auto;
+  padding: 0 var(--margin-desktop);
+  @media (max-width: 768px) {
+    padding: 0 var(--margin-mobile);
+    margin: 4rem auto;
+  }
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: 2rem;
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Metrics
+.metrics-column {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+.metric-item {
+  .metric-value {
+    @include font-headline-md;
+    color: var(--color-secondary);
+  }
+  .metric-divider {
+    width: 3rem;
+    height: 1px;
+    background: rgba(228, 194, 133, 0.5);
+    margin: 0.5rem 0;
+  }
+  .metric-label {
+    @include font-label-caps;
+    color: var(--color-on-surface-variant);
+  }
+}
+
+// Bed Configuration
+.config-column {
+  margin-top: 0;
+  @media (min-width: 768px) {
+    margin-top: 0; // align with metrics
+  }
+}
+.config-title {
+  @include font-label-caps;
+  color: var(--color-secondary);
+  letter-spacing: 0.3em;
+  margin-bottom: 2rem;
+  text-transform: uppercase;
+}
+.config-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.config-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  @include font-body-md;
+  color: var(--color-on-surface);
+  transition: color 0.3s;
+  &:hover { color: var(--color-secondary); }
+  .config-icon {
+    font-size: 1.5rem;
+    color: var(--color-secondary);
+    transition: transform 0.2s;
+  }
+  &:hover .config-icon { transform: scale(1.1); }
+}
+
+// ── Navigation Arrow Hover Reset ─────────────────
+// We no longer have desktop nav-arrow overlay styling
+
+// ── CTA Section ──────────────────────────────────
+.cta-section {
+  margin-top: var(--section-gap);
+  width: 100%;
+}
+.cta-button {
+  width: 100%;
+  padding: 3rem 1rem;
+  border: 1px solid var(--color-secondary);
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .cta-text {
+    @include font-display-lg-mobile;
+    font-size: clamp(1.5rem, 5vw, 2.5rem);
+    color: var(--color-secondary);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    position: relative;
+    z-index: 10;
+    transition: color 0.5s;
+  }
+  .cta-hover-fill {
+    position: absolute;
+    inset: 0;
+    background: var(--color-secondary);
+    transform: translateY(100%);
+    transition: transform 0.7s ease;
+  }
+  &:hover {
+    .cta-text { color: var(--color-background); }
+    .cta-hover-fill { transform: translateY(0); }
+  }
+}
+
+// Fade‑up animation for glass panel
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(2rem); }
+  to { opacity: 1; transform: translateY(0); }
 }
