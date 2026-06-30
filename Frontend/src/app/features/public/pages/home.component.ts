@@ -36,12 +36,32 @@ export class HomeComponent implements OnInit {
   roomsLoading = signal(false);
   roomsError = signal<string | null>(null);
 
+  minDate = new Date();
+
   checkIn = new FormControl<Date | null>(null, Validators.required);
   checkOut = new FormControl<Date | null>(null, Validators.required);
   guests = new FormControl(1, [Validators.required, Validators.min(1), Validators.max(20)]);
 
   ngOnInit(): void {
     this.fetchFeaturedRooms();
+    
+    // Automatically reset check-out if check-in changes to a date at or after check-out
+    this.checkIn.valueChanges.subscribe(val => {
+      if (val && this.checkOut.value && this.checkOut.value <= val) {
+        this.checkOut.setValue(null);
+      }
+    });
+  }
+
+  getMinCheckOutDate(): Date {
+    if (this.checkIn.value) {
+      const checkInDate = new Date(this.checkIn.value);
+      checkInDate.setDate(checkInDate.getDate() + 1);
+      return checkInDate;
+    }
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow;
   }
 
   private fetchFeaturedRooms(): void {

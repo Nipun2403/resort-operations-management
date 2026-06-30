@@ -21,6 +21,7 @@
           placeholder="Select date"
           [matDatepicker]="cinPicker"
           (click)="cinPicker.open()"
+          [min]="minDate"
           readonly
         />
         <mat-datepicker #cinPicker></mat-datepicker>
@@ -34,6 +35,7 @@
           placeholder="Select date"
           [matDatepicker]="coutPicker"
           (click)="coutPicker.open()"
+          [min]="getMinCheckOutDate()"
           readonly
         />
         <mat-datepicker #coutPicker></mat-datepicker>

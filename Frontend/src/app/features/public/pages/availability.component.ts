@@ -38,6 +38,8 @@ export class AvailabilityComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private snackBar = inject(MatSnackBar);
 
+  minDate = new Date();
+
   checkIn = new FormControl<Date | null>(null, Validators.required);
   checkOut = new FormControl<Date | null>(null, Validators.required);
   guests = new FormControl(1, [Validators.required, Validators.min(1), Validators.max(20)]);
@@ -49,6 +51,13 @@ export class AvailabilityComponent implements OnInit {
   preSelectedRoomTypeId = signal<number | null>(null);
 
   ngOnInit(): void {
+    // Automatically reset check-out if check-in changes to a date at or after check-out
+    this.checkIn.valueChanges.subscribe(val => {
+      if (val && this.checkOut.value && this.checkOut.value <= val) {
+        this.checkOut.setValue(null);
+      }
+    });
+
     // Pre‑fill form from query params
     this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
       if (params['checkIn']) this.checkIn.setValue(new Date(params['checkIn']), { emitEvent: false });
@@ -113,6 +122,17 @@ export class AvailabilityComponent implements OnInit {
 
   getFirstImage(room: AvailableRoomType): string {
     return room.imageUrls && room.imageUrls.length > 0 ? room.imageUrls[0] : 'assets/placeholder-room.jpg';
+  }
+
+  getMinCheckOutDate(): Date {
+    if (this.checkIn.value) {
+      const checkInDate = new Date(this.checkIn.value);
+      checkInDate.setDate(checkInDate.getDate() + 1);
+      return checkInDate;
+    }
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow;
   }
 
   bookNow(room: AvailableRoomType): void {

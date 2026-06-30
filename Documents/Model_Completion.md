@@ -5170,6 +5170,63 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: homepage-booking-date-validation.md
+Date: June 30, 2026
+================================================================================
+
+FILES CREATED
+-------------
+None.
+
+FILES MODIFIED (existing files updated per spec)
+-------------------------------------------------
+✓ Frontend/src/app/features/public/pages/home.component.ts — added min date restrictions and check-out reset triggers
+✓ Frontend/src/app/features/public/pages/home.component.html — bound inputs to check-in/out min constraints
+✓ Frontend/src/app/features/public/pages/availability.component.ts — added min date restrictions and check-out reset triggers to Search Availability form controls
+✓ Frontend/src/app/features/public/pages/availability.component.html — bound input form-fields to min constraints
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Homepage Booking Date Validation
+  ✓ Check-in cannot be set to a date in the past (minimum is today)
+  ✓ Check-out must be set to a date strictly after the selected check-in date
+  ✓ Form value changes automatically clear check-out dates if they fall at or before the newly selected check-in date
+
+API INTEGRATION
+---------------
+None.
+
+LOGIC TRACES
+------------
+Flow: Check-Out Date Reset
+  Entry: User selects Check-in date that is after the currently selected Check-out date
+  Path: checkIn.valueChanges fires -> detects checkOut.value <= checkIn.value -> calls checkOut.setValue(null) -> resets Check-out form control and clears selected date from picker.
+  Result: ✓ Matches spec
+
+KNOWN DEVIATIONS
+----------------
+None.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+✓ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+✓ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+✓ I confirm that all API calls match the spec contracts exactly.
+✓ I confirm that all regex validators are character-for-character matches
+  to the spec.
+✓ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
 
 
 

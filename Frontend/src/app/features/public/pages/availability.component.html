@@ -10,14 +10,14 @@
       <mat-card-content>
         <div class="search-form">
           <mat-form-field appearance="outline">
-            <mat-label>Check‑in</mat-label>
-            <input matInput [matDatepicker]="cinPicker" [formControl]="checkIn" />
+            <mat-label>Check-in</mat-label>
+            <input matInput [matDatepicker]="cinPicker" [formControl]="checkIn" [min]="minDate" />
             <mat-datepicker-toggle matSuffix [for]="cinPicker"></mat-datepicker-toggle>
             <mat-datepicker #cinPicker></mat-datepicker>
           </mat-form-field>
           <mat-form-field appearance="outline">
-            <mat-label>Check‑out</mat-label>
-            <input matInput [matDatepicker]="coutPicker" [formControl]="checkOut" />
+            <mat-label>Check-out</mat-label>
+            <input matInput [matDatepicker]="coutPicker" [formControl]="checkOut" [min]="getMinCheckOutDate()" />
             <mat-datepicker-toggle matSuffix [for]="coutPicker"></mat-datepicker-toggle>
             <mat-datepicker #coutPicker></mat-datepicker>
           </mat-form-field>
