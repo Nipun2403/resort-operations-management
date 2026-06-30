@@ -1,9 +1,7 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
@@ -15,8 +13,8 @@ import { RoomType } from '../../admin/models/room-type.model';
   selector: 'app-room-catalogue',
   standalone: true,
   imports: [
-    CommonModule, RouterModule,
-    MatCardModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule
+    CommonModule, RouterModule, ReactiveFormsModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './room-catalogue.component.html',
   styleUrls: ['./room-catalogue.component.scss']
@@ -29,6 +27,9 @@ export class RoomCatalogueComponent implements OnInit {
   rooms = signal<RoomType[]>([]);
   loading = signal(false);
   error = signal<string | null>(null);
+
+  emailControl = new FormControl('', { nonNullable: true });
+  subscribed = signal(false);
 
   ngOnInit(): void {
     this.fetchRooms();
@@ -51,6 +52,13 @@ export class RoomCatalogueComponent implements OnInit {
 
   viewRoom(roomId: number): void {
     this.router.navigate(['/rooms', roomId]);
+  }
+
+  subscribe(): void {
+    if (!this.emailControl.value || this.subscribed()) return;
+    this.emailControl.setValue('');
+    this.subscribed.set(true);
+    // TODO: wire up newsletter subscription to backend
   }
 
   private extractErrorMessage(err: any): string {

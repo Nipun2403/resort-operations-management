@@ -4451,6 +4451,74 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: room-catalogue-UI.md
+Date: June 30, 2026
+================================================================================
+
+FILES CREATED
+-------------
+None.
+
+FILES MODIFIED (existing files updated per spec)
+-------------------------------------------------
+✓ Frontend/src/app/features/public/pages/room-catalogue.component.ts — added emailControl, subscribed signal, and subscribe() method
+✓ Frontend/src/app/features/public/pages/room-catalogue.component.html — replaced layout with collection scroll grid and static newsletter form template
+✓ Frontend/src/app/features/public/pages/room-catalogue.component.scss — added scroll snapping, asymmetric aspect ratios, and animations
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Room Catalogue Refactoring
+  ✓ Hero header with custom title, private sanctuary label, and description
+  ✓ Asymmetric layout cards snap-scrolling horizontally with hidden scrollbar
+  ✓ Aspect ratios defined (16/9 for first card, 4/3 for other cards)
+  ✓ Overlay text containing dynamic index values (e.g. "01 / VILLA")
+  ✓ VIEW DETAILS links navigating to dynamic room ID routes (/rooms/:id)
+  ✓ Material spinner loading placeholder and retry action on error
+✓ Newsletter Section
+  ✓ Inline input bound to emailControl with Subscribe button
+  ✓ Front-end subscription logic clearing input and setting success state
+  ✓ Animated fadeInSuccess confirmation message
+
+API INTEGRATION
+---------------
+None.
+
+LOGIC TRACES
+------------
+Flow: Room Catalogue Load
+  Entry: User navigates to /rooms
+  Path: ngOnInit() calls fetchRooms() -> API resolves successfully -> rooms signal populated -> list rendered dynamically.
+  Result: ✓ Matches spec
+
+Flow: Simulated Newsletter Subscription
+  Entry: User fills email address, clicks Subscribe or presses Enter
+  Path: subscribe() validates value -> clears input -> sets subscribed signal to true -> template hides input/button and triggers success message animation.
+  Result: ✓ Matches spec
+
+KNOWN DEVIATIONS
+----------------
+None. All requirements implemented exactly as specified.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+✓ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+✓ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+✓ I confirm that all API calls match the spec contracts exactly.
+✓ I confirm that all regex validators are character-for-character matches
+  to the spec.
+✓ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
 
 
 

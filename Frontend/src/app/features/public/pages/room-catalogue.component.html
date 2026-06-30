@@ -1,25 +1,71 @@
-<div class="room-catalogue">
-  <h1>Our Rooms</h1>
+<div class="catalogue-page">
+  <!-- Hero Header -->
+  <header class="hero-header">
+    <span class="section-label">PRIVATE SANCTUARIES</span>
+    <h1>The Villa Collection</h1>
+    <p class="hero-description">
+      A curated selection of architectural masterpieces nestled within the ancient slopes. Each villa is a private world, designed for silence, reflection, and the quiet pursuit of excellence.
+    </p>
+  </header>
 
-  @if (loading()) {
-    <mat-spinner diameter="40"></mat-spinner>
-  } @else if (error()) {
-    <p class="error">{{ error() }}</p>
-    <button mat-button (click)="fetchRooms()">Retry</button>
-  } @else {
-    <div class="rooms-grid">
-      @for (room of rooms(); track room.id) {
-        <mat-card class="room-card" (click)="viewRoom(room.id)">
-          <img [src]="getFirstImage(room)" alt="{{ room.name }}" class="room-image" />
-          <mat-card-header>
-            <mat-card-title>{{ room.name }}</mat-card-title>
-            <mat-card-subtitle>{{ room.basePrice | currency }}/night – Up to {{ room.maxOccupancy }} guests</mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-actions>
-            <button mat-raised-button color="primary" (click)="viewRoom(room.id); $event.stopPropagation()">View Details</button>
-          </mat-card-actions>
-        </mat-card>
+  <!-- Room Cards – Horizontally Scrollable -->
+  <section class="rooms-section">
+    @if (loading()) {
+      <div class="loading-state">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    } @else if (error()) {
+      <div class="error-state">
+        <p>{{ error() }}</p>
+        <button class="retry-btn" (click)="fetchRooms()">Retry</button>
+      </div>
+    } @else {
+      <div class="scroll-container">
+        @for (room of rooms(); track room.id; let i = $index) {
+          <article
+            class="room-card"
+            [class.first-card]="i === 0"
+          >
+            <div class="card-image" [style.background-image]="'url(' + getFirstImage(room) + ')'">
+              <div class="image-overlay"></div>
+              <div class="card-number">
+                {{ (i + 1).toString().padStart(2, '0') }} / VILLA
+              </div>
+            </div>
+            <div class="card-body">
+              <h2 class="room-name">{{ room.name }}</h2>
+              <div class="room-meta">
+                <span>Max. {{ room.maxOccupancy }} Guests</span>
+                <span class="separator">·</span>
+                <span>{{ room.squareFootage || '—' }} sqm</span>
+              </div>
+              <a [routerLink]="['/rooms', room.id]" class="view-link">
+                VIEW DETAILS <span class="arrow">→</span>
+              </a>
+            </div>
+          </article>
+        }
+      </div>
+    }
+  </section>
+
+  <!-- Newsletter Section -->
+  <section class="newsletter">
+    <h2 class="newsletter-title">Stay Informed</h2>
+    <div class="newsletter-form">
+      <input
+        type="email"
+        class="newsletter-input"
+        placeholder="YOUR EMAIL ADDRESS"
+        [formControl]="emailControl"
+        (keyup.enter)="subscribe()"
+      />
+      @if (!subscribed()) {
+        <button class="subscribe-btn" (click)="subscribe()">Subscribe</button>
+      } @else {
+        <span class="success-message">Thank you for your interest.</span>
       }
     </div>
-  }
+    <!-- TODO: wire up newsletter subscription to backend -->
+  </section>
 </div>
