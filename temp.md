@@ -289,3 +289,4 @@ To build this ultra-luxurious, mysterious, and highly interactive experience in 
 3. **Typography Preference:** Do you prefer a classical, high-contrast serif (like Didot or Bodoni) for a fashion-magazine wealth vibe, or a softer, wider serif (like Cormorant) for a modern, quiet-luxury vibe?
 4. **Custom Cursor Details:** Do you want the custom cursor to interact differently with text vs. images? (e.g., turning into a reading icon over text, and a viewfinder over images).
 5. **Micro-animations:** Are you comfortable with heavy CSS animations (like text masking, image reveals on scroll) or do you want to keep interactions strictly to hover/click for performance reasons?
+

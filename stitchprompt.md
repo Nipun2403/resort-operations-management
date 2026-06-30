@@ -1,11 +1,3 @@
-Here are the highly refined, ready-to-paste prompts for Stitch AI, incorporating your exact aesthetic choices: the Obsidian/Gold palette, dark and moody imagery, Cormorant typography, the velocity-based square cursor, and heavy scroll-triggered micro-animations.
-
-### How to use these in Stitch AI:
-
-Start a new project. Feed the **Master Shell** prompt first to establish the global design system, then create new screens/pages for the subsequent prompts, ensuring Stitch AI links them to the main shell.
-
----
-
 ### 1. Master Shell & Global Design System
 
 **Prompt for Stitch AI:**
