@@ -1,4 +1,4 @@
-<div class="audit-logs-page">
+<div class="audit-logs-page oversight-page">
   <!-- Search & Controls -->
   <div class="controls">
     <mat-form-field
@@ -70,6 +70,7 @@
   <div class="desktop-view">
     <table
       mat-table
+      class="ledger-table"
       [dataSource]="entries()"
       matSort
       matSortDisableClear

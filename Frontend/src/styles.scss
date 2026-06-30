@@ -206,3 +206,12 @@ svg {
 .mat-sort-header-arrow {
   color: var(--color-secondary) !important;
 }
+
+// ── Global Form Field Minimal Design Overrides ───────
+.mat-mdc-text-field-wrapper {
+  background: transparent !important;
+  border-radius: 0 !important;
+  border-bottom: 1px solid rgba(228, 194, 133, 0.4) !important;
+}
+.mat-mdc-form-field-focus-overlay { display: none !important; }
+.mdc-line-ripple { display: none !important; }
