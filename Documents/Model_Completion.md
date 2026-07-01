@@ -6289,3 +6289,85 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
   to the spec.
 ✓ I confirm that all role-to-route mappings match the spec exactly.
 ================================================================================
+
+
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: front-desk-shell.md & cohesive-ui-refactor (Aetheris Overhaul)
+Date: 2026-07-02
+================================================================================
+
+FILES CREATED
+-------------
+✓ src/app/features/front-desk/components/active-tickets-dialog/active-tickets-dialog.component.scss
+✓ src/app/shared/components/alert/alert.component.scss
+
+FILES MODIFIED (existing files updated per spec)
+-------------------------------------------------
+✓ src/app/features/front-desk/front-desk-shell.component.scss — Applied Aetheris styles to sidenav, navigation links, and content area (flattened padding).
+✓ src/app/features/front-desk/components/active-tickets-dialog/active-tickets-dialog.component.ts — Linked style sheet and formatted modal min-width/padding.
+✓ src/app/features/front-desk/pages/dashboard.component.scss — Removed host background-color and min-height, removed max-width/margins.
+✓ src/app/features/front-desk/pages/guest-details.component.scss — Rethemed details view and action buttons.
+✓ src/app/features/front-desk/pages/new-booking.component.scss — Rethemed booking stepper, forms, and checkboxes, removed max-width constraint.
+✓ src/app/features/front-desk/components/booking-action-modal/booking-action-modal.component.scss — Rethemed room cards and status badges.
+✓ src/app/features/front-desk/components/booking-action-modal/checkout-dialog/checkout-dialog.component.scss — Updated green confirmation states to gold.
+✓ src/app/features/front-desk/components/guest-billing/guest-billing.component.scss — Rethemed folio card and old folio tables.
+✓ src/app/features/front-desk/components/ticket-list/ticket-list.component.html/.scss — Styled ticket lists and wrapped status in status-chip.
+✓ src/app/shared/components/alert/alert.component.ts — Commented out inline styles, added styleUrl link.
+✓ src/app/shared/components/confirm-dialog/confirm-dialog.component.scss — Rethemed overlay surface, buttons, and backdrop.
+✓ src/app/shared/components/notification-snackbar/notification-snackbar.component.scss — Rethemed toast notifications.
+✓ src/styles.scss — Global Material overrides for cards, selects, menus, expansion panels, tabs, and steppers.
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Sidenav Shell Refactor:
+  ✓ Sidenav background set to var(--color-surface).
+  ✓ Right border styled as gold glass-border.
+  ✓ Sidenav link color states updated to gold active/hover.
+  ✓ Sidenav toolbar styled with dark surface and gold headlines.
+✓ Active Tickets Modal:
+  ✓ Styled container backdrop blur.
+  ✓ Formatted tabs, ink bars, and dialog buttons.
+✓ Shared Priority 1 Components:
+  ✓ Notification toast snackbars styled using glassmorphic surfaces and type-aware colors.
+  ✓ Alerts styled to support success/error glassmorphic banners.
+  ✓ Confirm Dialog fully themed with Aetheris ghost/filled buttons.
+✓ App-Wide Cohesive Styling:
+  ✓ Added global overrides in styles.scss to align mat-card, mat-menu, mat-select, mat-option, mat-expansion-panel, and mat-stepper.
+  ✓ Introduced standard .status-chip utility badge classes.
+  ✓ Expanded dashboard, profile, and booking pages to use full viewport width.
+✓ TypeScript Preservation:
+  ✓ All redundant styles commented out in TS files rather than deleted.
+
+API INTEGRATION
+---------------
+None. All existing bindings, events, and services completely preserved and untouched.
+
+LOGIC TRACES
+------------
+Flow: Active Tickets Dialog Open
+  - Entry: Click "Active Tickets" pulse card on Front Desk Dashboard.
+  - Path: DashboardComponent opens ActiveTicketsDialogComponent -> renders Aetheris-styled tabs -> displays respective housekeeping/maintenance/foodOrder ticket lists in native tables.
+  - Result: ✓ Matches spec
+
+KNOWN DEVIATIONS
+----------------
+None.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+✓ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+✓ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+✓ I confirm that all API calls match the spec contracts exactly.
+✓ I confirm that all regex validators are character-for-character matches
+  to the spec.
+✓ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
