@@ -6433,3 +6433,86 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: Front Desk Booking Wizard Mobile & Highlights Patch
+Date: 2026-07-02
+================================================================================
+
+FILES CREATED
+-------------
+None.
+
+FILES MODIFIED (existing files updated per spec)
+-------------------------------------------------
+✓ Frontend/src/app/features/front-desk/pages/new-booking.component.html — Updated stepper steps to bind dynamic class `step-covered` inside custom step labels template.
+✓ Frontend/src/app/features/front-desk/pages/new-booking.component.scss — Refactored media query scoping for horizontal and vertical steppers, removed height transition blocking paddings, and styled covered steps using class and `:has` selectors.
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Mobile Stepper Visibility Fix:
+  ✓ Isolated vertical stepper overrides under the `max-width: 599px` media query.
+  ✓ Removed `padding: 0 !important` from `.mat-vertical-content-container` which was breaking the height animation calculation on mobile.
+✓ Stepper Progress Highlights:
+  ✓ Replaced plain label attributes with `ng-template matStepLabel` labels.
+  ✓ Added `[class.step-covered]="stepper.selectedIndex >= index"` to label spans.
+  ✓ Styled `.step-covered` to gold and used `:has(.step-covered)` to highlight icons.
+  ✓ Backward navigation correctly reverts completed styles back to unfocused states for future steps.
+
+API INTEGRATION
+---------------
+None.
+
+LOGIC TRACES
+------------
+Flow: Stepper Progress Highlights
+  - Entry: User is on Step 3 (selectedIndex = 2).
+  - Path: Steps 1, 2, 3 receive `.step-covered` class. Step 4 and 5 do not. Label styling applies gold color to steps 1, 2, 3. CSS `:has(.step-covered)` highlights icons for steps 1, 2, 3.
+  - Result: ✓ Matches spec
+
+KNOWN DEVIATIONS
+----------------
+None.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+✓ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+✓ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+✓ I confirm that all API calls match the spec contracts exactly.
+✓ I confirm that all regex validators are character-for-character matches
+  to the spec.
+✓ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT (PATCH UPDATE)
+Spec: Front Desk Booking Wizard Mobile Stepper Lines Restoration
+Date: 2026-07-02
+================================================================================
+
+FILES CREATED
+-------------
+None.
+
+FILES MODIFIED (existing files updated per spec)
+-------------------------------------------------
+✓ Frontend/src/app/features/front-desk/pages/new-booking.component.scss — Restored the vertical stepper Connecting Line (`.mat-stepper-vertical-line::after`) in mobile viewports, aligned step headers left, and verified all step-covered highlights functionality.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+✓ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+================================================================================
+
+
+
+

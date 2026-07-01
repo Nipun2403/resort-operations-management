@@ -7,7 +7,10 @@
 
   <mat-stepper linear #stepper [orientation]="isMobile() ? 'vertical' : 'horizontal'" (selectionChange)="onStepChange($event)">
     <!-- Step 1: Guest Details -->
-    <mat-step [stepControl]="guestForm" label="01 Guest Details">
+    <mat-step [stepControl]="guestForm">
+      <ng-template matStepLabel>
+        <span [class.step-covered]="stepper.selectedIndex >= 0">01 Guest Details</span>
+      </ng-template>
       <form [formGroup]="guestForm" class="glass-panel step-container">
         <div class="step-header-desc">
           <h3 class="step-title">The Principals</h3>
@@ -43,7 +46,10 @@
     </mat-step>
 
     <!-- Step 2: Dates & Guests -->
-    <mat-step [stepControl]="datesForm" label="02 Dates & Guests">
+    <mat-step [stepControl]="datesForm">
+      <ng-template matStepLabel>
+        <span [class.step-covered]="stepper.selectedIndex >= 1">02 Dates & Guests</span>
+      </ng-template>
       <form [formGroup]="datesForm" class="glass-panel step-container">
         <div class="step-header-desc">
           <h3 class="step-title">Temporal Alignment</h3>
@@ -93,7 +99,10 @@
     </mat-step>
 
     <!-- Step 3: Room Selection -->
-    <mat-step [stepControl]="roomsForm" label="03 Select Rooms">
+    <mat-step [stepControl]="roomsForm">
+      <ng-template matStepLabel>
+        <span [class.step-covered]="stepper.selectedIndex >= 2">03 Select Rooms</span>
+      </ng-template>
       <form [formGroup]="roomsForm" class="glass-panel step-container">
         <div class="step-header-desc">
           <h3 class="step-title">Sanctuary Selection</h3>
@@ -169,7 +178,10 @@
     </mat-step>
 
     <!-- Step 4: Amenities -->
-    <mat-step [stepControl]="amenitiesForm" label="04 Add Amenities">
+    <mat-step [stepControl]="amenitiesForm">
+      <ng-template matStepLabel>
+        <span [class.step-covered]="stepper.selectedIndex >= 3">04 Add Amenities</span>
+      </ng-template>
       <form [formGroup]="amenitiesForm" class="glass-panel step-container">
         <div class="step-header-desc">
           <h3 class="step-title">Enhance The Stay</h3>
@@ -206,7 +218,10 @@
     </mat-step>
 
     <!-- Step 5: Review & Confirm -->
-    <mat-step label="05 Review & Confirm">
+    <mat-step>
+      <ng-template matStepLabel>
+        <span [class.step-covered]="stepper.selectedIndex >= 4">05 Review & Confirm</span>
+      </ng-template>
       <div class="glass-panel step-container border-gold-glow">
         <div class="step-header-desc border-b-dim">
           <h3 class="step-title font-serif italic">Contract of Hospitality</h3>
