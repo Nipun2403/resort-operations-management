@@ -108,7 +108,6 @@ public class BillingController : ControllerBase
 
     [HttpPost("{bookingId}/pay")]
     [Authorize(Roles = "FrontDesk,Admin")]
-    [ServiceFilter(typeof(HotelManagement.API.Filters.IdempotentAttribute))]
     public async Task<IActionResult> ProcessPayment(int bookingId, [FromBody] PaymentRequestDTO request)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);

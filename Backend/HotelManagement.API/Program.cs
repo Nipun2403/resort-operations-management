@@ -77,6 +77,7 @@ builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 
 #region Core Infrastructure & SignalR
 builder.Services.AddScoped<INotificationService, HotelManagement.API.Services.SignalRNotificationService>();
+builder.Services.AddHostedService<HotelManagement.API.Services.IdempotencyCleanupService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserService, HotelManagement.API.Services.CurrentUserService>();
 builder.Services.AddScoped<IAuditUserProvider>(sp => (IAuditUserProvider)sp.GetRequiredService<ICurrentUserService>());
@@ -108,6 +109,7 @@ builder.Services.AddRateLimiter(options =>
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddControllers(options =>
 {
+    options.Filters.Add<HotelManagement.API.Filters.IdempotentAttribute>();
     options.ModelBinderProviders.Insert(0, new CustomDateTimeModelBinderProvider());
 }).AddJsonOptions(options =>
 {
