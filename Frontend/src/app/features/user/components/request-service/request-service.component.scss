@@ -1,54 +1,236 @@
+:host {
+  --color-secondary: #e4c285;
+  --color-background: #131411;
+  --color-surface: #131411;
+  --color-on-surface: #e4e2dd;
+  --color-on-surface-variant: #c4c7c7;
+  --color-surface-container-lowest: #0e0e0c;
+
+  display: block;
+}
+
 .request-service {
   padding: 16px 0;
-  max-width: 600px;
+  max-width: 680px;
   margin: 0 auto;
 
   .request-card {
-    padding: 16px;
+    padding: 32px;
+    border-radius: 4px;
+  }
+
+  .form-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: var(--color-secondary);
+    margin: 0 0 24px 0;
+    font-weight: 400;
   }
 
   .form-container {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    margin-top: 16px;
+    gap: 24px;
   }
 
-  .type-toggle-group {
+  .form-row {
     width: 100%;
-    display: flex;
+  }
 
-    mat-button-toggle {
+  // Custom Toggle Group for Housekeeping/Maintenance
+  .type-toggle-container {
+    display: flex;
+    width: 100%;
+    border: 1px solid rgba(228, 194, 133, 0.2);
+    border-radius: 2px;
+    overflow: hidden;
+
+    .type-toggle-btn {
       flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--color-on-surface-variant);
+      font-family: 'Manrope', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 16px 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
       text-align: center;
+
+      &:hover:not(.active) {
+        color: var(--color-on-surface);
+        background: rgba(228, 194, 133, 0.05);
+      }
+
+      &.active {
+        color: var(--color-secondary);
+        background: rgba(228, 194, 133, 0.08);
+        font-weight: 600;
+        box-shadow: inset 0 0 10px rgba(228, 194, 133, 0.05);
+      }
     }
   }
 
-  .full-width {
+  // Styled Description Textarea with animated underline
+  .description-group {
+    position: relative;
+    display: flex;
+    flex-direction: column;
     width: 100%;
+
+    .desc-label {
+      font-family: 'Manrope', sans-serif;
+      font-size: 0.75rem;
+      color: var(--color-on-surface-variant);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+      transition: color 0.3s;
+
+      &.focused {
+        color: var(--color-secondary);
+      }
+    }
+
+    .desc-textarea {
+      width: 100%;
+      background: var(--color-surface-container-lowest);
+      border: none;
+      border-bottom: 1px solid rgba(228, 226, 221, 0.2);
+      color: var(--color-on-surface);
+      font-family: 'Manrope', sans-serif;
+      font-size: 0.875rem;
+      padding: 12px 16px;
+      outline: none;
+      resize: vertical;
+      box-sizing: border-box;
+      transition: border-color 0.3s;
+
+      &:focus {
+        border-bottom-color: transparent;
+      }
+
+      &::placeholder {
+        color: rgba(228, 226, 221, 0.25);
+        font-style: italic;
+      }
+    }
+
+    .focus-line {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 0;
+      height: 1px;
+      background: var(--color-secondary);
+      transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+
+      &.focused,
+      .desc-textarea:focus ~ & {
+        left: 0;
+        width: 100%;
+      }
+    }
+
+    .desc-error {
+      color: #ffb4ab; // error color from Stitch theme
+      font-family: 'Manrope', sans-serif;
+      font-size: 0.7rem;
+      margin-top: 6px;
+      letter-spacing: 0.02em;
+    }
   }
 
-  mat-card-actions {
+  // Presets Grid Section
+  .presets-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 8px;
+
+    .preset-card {
+      padding: 16px;
+      border: 1px solid rgba(228, 194, 133, 0.1);
+      background: rgba(14, 14, 12, 0.3);
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+
+      &:hover {
+        border-color: rgba(228, 194, 133, 0.4);
+        background: rgba(228, 194, 133, 0.03);
+      }
+
+      .preset-badge {
+        font-family: 'Manrope', sans-serif;
+        font-size: 0.6rem;
+        color: rgba(228, 226, 221, 0.4);
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        display: block;
+        margin-bottom: 6px;
+      }
+
+      .preset-text {
+        font-family: 'Manrope', sans-serif;
+        font-size: 0.8rem;
+        color: var(--color-on-surface);
+        margin: 0;
+        line-height: 1.4;
+      }
+    }
+  }
+
+  // Form actions
+  .actions-row {
+    margin-top: 32px;
+    display: flex;
     justify-content: flex-end;
-    padding: 8px 16px 16px 16px;
+  }
+
+  .submit-btn.btn-gold-filled {
+    border: none;
+    background-color: var(--color-secondary);
+    color: #1c1b1b;
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 16px 32px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border-radius: 2px;
+    width: 100%;
+
+    @media (min-width: 600px) {
+      width: auto;
+    }
+
+    &:hover:not(:disabled) {
+      background-color: #ffdea4;
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
   }
 }
 
 @media (max-width: 599px) {
   .request-service {
-    mat-card {
-      margin: 8px;
-      padding: 12px;
+    padding: 8px;
+    .request-card {
+      padding: 20px;
     }
-    mat-form-field {
-      width: 100%;
-    }
-    mat-button-toggle-group {
-      width: 100%;
-      display: flex;
-      mat-button-toggle {
-        flex: 1 1 50%;
-      }
+    .presets-grid {
+      grid-template-columns: 1fr;
+      gap: 12px;
     }
   }
 }
+

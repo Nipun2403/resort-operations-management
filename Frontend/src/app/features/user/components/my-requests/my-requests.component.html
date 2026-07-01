@@ -19,7 +19,7 @@
   }
 
   @if (requests().length > 0) {
-    <div class="table-container">
+    <div class="table-container glass-panel">
       <table
         mat-table
         [dataSource]="requests()"
@@ -31,14 +31,19 @@
           <th
             mat-header-cell
             *matHeaderCellDef
+            class="header-cell"
           >
             Type
           </th>
           <td
             mat-cell
             *matCellDef="let r"
+            class="type-cell"
           >
-            {{ r.type }}
+            <span class="material-symbols-outlined icon-type">
+              {{ r.type === 'Food Order' ? 'restaurant' : (r.type === 'Housekeeping' ? 'cleaning_services' : 'build') }}
+            </span>
+            <span class="type-text">{{ r.type }}</span>
           </td>
         </ng-container>
 
@@ -47,12 +52,14 @@
           <th
             mat-header-cell
             *matHeaderCellDef
+            class="header-cell"
           >
             Room
           </th>
           <td
             mat-cell
             *matCellDef="let r"
+            class="room-cell"
           >
             {{ r.roomNumber }}
           </td>
@@ -63,12 +70,14 @@
           <th
             mat-header-cell
             *matHeaderCellDef
+            class="header-cell"
           >
             Description
           </th>
           <td
             mat-cell
             *matCellDef="let r"
+            class="desc-cell"
           >
             {{ r.description }}
           </td>
@@ -79,14 +88,16 @@
           <th
             mat-header-cell
             *matHeaderCellDef
+            class="header-cell"
           >
             Status
           </th>
           <td
             mat-cell
             *matCellDef="let r"
+            class="status-cell"
           >
-            <span class="status-badge" [class]="r.status.toLowerCase()">
+            <span class="status-badge status-pill" [class]="r.status.toLowerCase()">
               {{ r.status }}
             </span>
           </td>
@@ -97,12 +108,14 @@
           <th
             mat-header-cell
             *matHeaderCellDef
+            class="header-cell"
           >
             Created
           </th>
           <td
             mat-cell
             *matCellDef="let r"
+            class="created-cell"
           >
             {{ r.createdAt | date:'short' }}
           </td>
@@ -111,10 +124,12 @@
         <tr
           mat-header-row
           *matHeaderRowDef="displayedColumns"
+          class="header-row"
         ></tr>
         <tr
           mat-row
           *matRowDef="let row; columns: displayedColumns"
+          class="data-row"
         ></tr>
       </table>
     </div>
@@ -122,3 +137,4 @@
     <p class="no-requests">No housekeeping, maintenance, or food order requests found.</p>
   }
 </div>
+

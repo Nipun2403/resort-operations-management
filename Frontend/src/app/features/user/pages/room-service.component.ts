@@ -42,6 +42,7 @@ export class RoomServiceComponent implements OnInit {
   loadingActiveBooking = signal(false);
   activeBookingError = signal<string | null>(null);
   refreshRequests = signal(0);
+  activeTab = signal<'food' | 'service' | 'requests'>('food');
 
   roomIds = computed(() => {
     const booking = this.activeBooking();
@@ -71,6 +72,10 @@ export class RoomServiceComponent implements OnInit {
 
   onRequestCreated(): void {
     this.refreshRequests.update(n => n + 1);
+  }
+
+  selectTab(tab: 'food' | 'service' | 'requests'): void {
+    this.activeTab.set(tab);
   }
 
   private extractErrorMessage(err: any): string {

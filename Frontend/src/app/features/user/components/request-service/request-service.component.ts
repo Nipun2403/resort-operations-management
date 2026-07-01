@@ -102,6 +102,12 @@ export class RequestServiceComponent implements OnInit {
     });
   }
 
+  applyPreset(text: string): void {
+    this.description.setValue(text);
+    this.description.markAsDirty();
+    this.description.markAsTouched();
+  }
+
   private performSubmit(roomId: number): void {
     this.submitting.set(true);
     const type = this.requestType.value;

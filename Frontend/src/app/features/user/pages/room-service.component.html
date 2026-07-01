@@ -1,6 +1,6 @@
-<div class="room-service">
+<div class="room-service-container">
   @if (loadingActiveBooking()) {
-    <div style="display: flex; justify-content: center; padding: 32px;">
+    <div style="display: flex; justify-content: center; padding: 64px;">
       <mat-spinner diameter="40"></mat-spinner>
     </div>
   } @else if (activeBookingError()) {
@@ -17,35 +17,76 @@
       </button>
     </app-alert>
   } @else if (activeBooking(); as booking) {
-    <mat-tab-group>
-      <mat-tab label="Food Order">
+    <!-- The Butler's Pantry Header -->
+    <div class="header-section">
+      <h2>The Butler's Pantry</h2>
+      <div class="subtitle">Guest Room Service</div>
+    </div>
+
+    <!-- The Compass of Service (Tab Navigation) -->
+    <nav class="compass-of-service">
+      <div class="tabs-wrapper">
+        <button
+          type="button"
+          class="tab-btn"
+          [class.active]="activeTab() === 'food'"
+          (click)="selectTab('food')"
+        >
+          Food Order
+        </button>
+        <button
+          type="button"
+          class="tab-btn"
+          [class.active]="activeTab() === 'service'"
+          (click)="selectTab('service')"
+        >
+          Request Service
+        </button>
+        <button
+          type="button"
+          class="tab-btn"
+          [class.active]="activeTab() === 'requests'"
+          (click)="selectTab('requests')"
+        >
+          My Requests
+        </button>
+        <div
+          class="tab-indicator"
+          [style.width.%]="33.33"
+          [style.left.%]="activeTab() === 'food' ? 0 : (activeTab() === 'service' ? 33.33 : 66.66)"
+        ></div>
+      </div>
+    </nav>
+
+    <!-- Content Area -->
+    <div class="tab-content-area">
+      @if (activeTab() === 'food') {
         <app-food-order
           [activeBookingId]="booking.id"
           [rooms]="booking.rooms"
           (orderPlaced)="onOrderPlaced()"
         />
-      </mat-tab>
-      <mat-tab label="Request Service">
+      } @else if (activeTab() === 'service') {
         <app-request-service
           [activeBooking]="booking"
           (requestCreated)="onRequestCreated()"
         />
-      </mat-tab>
-      <mat-tab label="My Requests">
+      } @else if (activeTab() === 'requests') {
         <app-my-requests
           [roomIds]="roomIds()"
           [bookingId]="booking.id"
           [refresh]="refreshRequests()"
         />
-      </mat-tab>
-    </mat-tab-group>
+      }
+    </div>
   } @else {
-    <mat-card class="no-booking-card">
-      <mat-card-content class="no-booking-content">
+    <div class="glass-panel no-booking-card">
+      <div class="no-booking-content">
         <mat-icon class="info-icon">info</mat-icon>
         <p>You need an active stay (Checked In) to use room service.</p>
         <p>Please visit <a routerLink="/user/bookings">My Bookings</a>.</p>
-      </mat-card-content>
-    </mat-card>
+      </div>
+    </div>
   }
 </div>
+

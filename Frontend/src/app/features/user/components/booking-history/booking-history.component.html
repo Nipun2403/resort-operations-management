@@ -2,10 +2,7 @@
   <div class="controls">
     <mat-form-field class="custom-form-field">
       <mat-label>Status</mat-label>
-      <mat-select
-        [formControl]="statusFilter"
-        (selectionChange)="onFilterChange()"
-      >
+      <mat-select [formControl]="statusFilter" (selectionChange)="onFilterChange()">
         <mat-option value="">All</mat-option>
         <mat-option value="Booked">Booked</mat-option>
         <mat-option value="CheckedIn">Checked In</mat-option>
@@ -14,220 +11,124 @@
       </mat-select>
     </mat-form-field>
     @if (statusFilter.value) {
-      <button
-        class="ghost-btn clear-btn"
-        (click)="clearFilter()"
-        type="button"
-      >
-        Clear Filter
-      </button>
+    <button class="ghost-btn clear-btn" (click)="clearFilter()" type="button">
+      Clear Filter
+    </button>
     }
   </div>
 
   @if (loading() && bookings().length === 0) {
-    <div class="loading-container">
-      <mat-spinner diameter="40"></mat-spinner>
-    </div>
+  <div class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
   } @else if (error()) {
-    <div class="error-container">
-      <app-alert
-        type="error"
-        [message]="error()!"
-        (closed)="error.set(null)"
-      >
-        <button
-          mat-button
-          (click)="fetchData()"
-          class="retry-btn"
-        >
-          Retry
-        </button>
-      </app-alert>
-    </div>
+  <div class="error-container">
+    <app-alert type="error" [message]="error()!" (closed)="error.set(null)">
+      <button mat-button (click)="fetchData()" class="retry-btn">
+        Retry
+      </button>
+    </app-alert>
+  </div>
   }
 
   @if (bookings().length > 0 || loading()) {
-    @if (loading()) {
-      <mat-progress-bar mode="indeterminate" class="custom-progress-bar"></mat-progress-bar>
-    }
-    <div class="table-wrapper">
-      <table
-        mat-table
-        [dataSource]="bookings()"
-        matSort
-        matSortDisableClear
-        (matSortChange)="onSortChange($event)"
-        class="custom-table"
-      >
-        <!-- ID Column -->
-        <ng-container matColumnDef="id">
-          <th
-            mat-header-cell
-            *matHeaderCellDef
-            mat-sort-header="id"
-          >
-            REF ID
-          </th>
-          <td
-            mat-cell
-            *matCellDef="let b"
-            class="id-cell"
-          >
-            #AE-{{ b.id }}
-          </td>
-        </ng-container>
+  @if (loading()) {
+  <mat-progress-bar mode="indeterminate" class="custom-progress-bar"></mat-progress-bar>
+  }
+  <div class="table-wrapper">
+    <table mat-table [dataSource]="bookings()" matSort matSortDisableClear (matSortChange)="onSortChange($event)"
+      class="custom-table">
+      <!-- ID Column -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="id">
+          REF ID
+        </th>
+        <td mat-cell *matCellDef="let b" class="id-cell">
+          #AE-{{ b.id }}
+        </td>
+      </ng-container>
 
-        <!-- Check-in Column -->
-        <ng-container matColumnDef="checkIn">
-          <th
-            mat-header-cell
-            *matHeaderCellDef
-          >
-            CHECK-IN
-          </th>
-          <td
-            mat-cell
-            *matCellDef="let b"
-          >
-            {{ b.checkInDate }}
-          </td>
-        </ng-container>
+      <!-- Check-in Column -->
+      <ng-container matColumnDef="checkIn">
+        <th mat-header-cell *matHeaderCellDef>
+          CHECK-IN
+        </th>
+        <td mat-cell *matCellDef="let b">
+          {{ b.checkInDate }}
+        </td>
+      </ng-container>
 
-        <!-- Check-out Column -->
-        <ng-container matColumnDef="checkOut">
-          <th
-            mat-header-cell
-            *matHeaderCellDef
-          >
-            CHECK-OUT
-          </th>
-          <td
-            mat-cell
-            *matCellDef="let b"
-          >
-            {{ b.checkOutDate }}
-          </td>
-        </ng-container>
+      <!-- Check-out Column -->
+      <ng-container matColumnDef="checkOut">
+        <th mat-header-cell *matHeaderCellDef>
+          CHECK-OUT
+        </th>
+        <td mat-cell *matCellDef="let b">
+          {{ b.checkOutDate }}
+        </td>
+      </ng-container>
 
-        <!-- Status Column -->
-        <ng-container matColumnDef="status">
-          <th
-            mat-header-cell
-            *matHeaderCellDef
-            mat-sort-header="bookingStatus"
-          >
-            STATUS
-          </th>
-          <td
-            mat-cell
-            *matCellDef="let b"
-          >
-            <span class="status-badge" [class]="'status-' + b.bookingStatus.toLowerCase()">
-              {{ b.bookingStatus }}
-            </span>
-          </td>
-        </ng-container>
+      <!-- Status Column -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="bookingStatus">
+          STATUS
+        </th>
+        <td mat-cell *matCellDef="let b">
+          <span class="status-badge" [class]="'status-' + b.bookingStatus.toLowerCase()">
+            {{ b.bookingStatus }}
+          </span>
+        </td>
+      </ng-container>
 
-        <!-- Rooms Column -->
-        <ng-container matColumnDef="rooms">
-          <th
-            mat-header-cell
-            *matHeaderCellDef
-          >
-            ROOMS
-          </th>
-          <td
-            mat-cell
-            *matCellDef="let b"
-          >
-            {{ getRoomsSummary(b) }}
-          </td>
-        </ng-container>
+      <!-- Rooms Column -->
+      <ng-container matColumnDef="rooms">
+        <th mat-header-cell *matHeaderCellDef>
+          ROOMS
+        </th>
+        <td mat-cell *matCellDef="let b">
+          {{ getRoomsSummary(b) }}
+        </td>
+      </ng-container>
 
-        <!-- Actions Column -->
-        <ng-container matColumnDef="actions">
-          <th
-            mat-header-cell
-            *matHeaderCellDef
-            class="actions-header"
-          >
-            ACTIONS
-          </th>
-          <td
-            mat-cell
-            *matCellDef="let b"
-            class="actions-cell"
-          >
-            <button
-              mat-icon-button
-              (click)="openDetail(b)"
-              aria-label="View"
-              matTooltip="View Details"
-              class="action-btn"
-            >
-              <mat-icon>visibility</mat-icon>
-            </button>
-            @if (b.bookingStatus === 'Booked') {
-              <button
-                mat-icon-button
-                (click)="cancelBooking(b)"
-                aria-label="Cancel"
-                matTooltip="Cancel Booking"
-                class="action-btn"
-              >
-                <mat-icon>cancel</mat-icon>
-              </button>
-            }
-            @if (b.bookingStatus === 'CheckedOut') {
-              <button
-                mat-icon-button
-                (click)="openFeedback(b)"
-                aria-label="Feedback"
-                matTooltip="Leave Feedback"
-                class="action-btn animate-feedback"
-              >
-                <mat-icon>edit_note</mat-icon>
-              </button>
-            }
-            <button
-              mat-icon-button
-              (click)="openBilling(b)"
-              aria-label="Billing"
-              matTooltip="View Billing"
-              class="action-btn"
-            >
-              <mat-icon>receipt_long</mat-icon>
-            </button>
-          </td>
-        </ng-container>
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef class="actions-header">
+          ACTIONS
+        </th>
+        <td mat-cell *matCellDef="let b" class="actions-cell">
+          <button mat-icon-button (click)="openDetail(b)" aria-label="View" matTooltip="View Details"
+            class="action-btn">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          @if (b.bookingStatus === 'Booked') {
+          <button mat-icon-button (click)="cancelBooking(b)" aria-label="Cancel" matTooltip="Cancel Booking"
+            class="action-btn">
+            <mat-icon>cancel</mat-icon>
+          </button>
+          }
+          @if (b.bookingStatus === 'CheckedOut') {
+          <button mat-icon-button (click)="openFeedback(b)" aria-label="Feedback" matTooltip="Leave Feedback"
+            class="action-btn animate-feedback">
+            <mat-icon>edit_note</mat-icon>
+          </button>
+          }
+          <button mat-icon-button (click)="openBilling(b)" aria-label="Billing" matTooltip="View Billing"
+            class="action-btn">
+            <mat-icon>receipt_long</mat-icon>
+          </button>
+        </td>
+      </ng-container>
 
-        <tr
-          mat-header-row
-          *matHeaderRowDef="displayedColumns"
-        ></tr>
-        <tr
-          mat-row
-          *matRowDef="let row; columns: displayedColumns"
-          [class.highlight]="highlightRowId() === row.id"
-        ></tr>
-      </table>
-    </div>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns" [class.highlight]="highlightRowId() === row.id"></tr>
+    </table>
+  </div>
 
-    <mat-paginator
-      [length]="totalCount()"
-      [pageSize]="pageSize"
-      [pageIndex]="pageIndex"
-      [pageSizeOptions]="[5, 10, 20]"
-      (page)="onPageChange($event)"
-      aria-label="Select page of bookings"
-      class="custom-paginator"
-    ></mat-paginator>
+  <mat-paginator [length]="totalCount()" [pageSize]="pageSize" [pageIndex]="pageIndex" [pageSizeOptions]="[5, 10, 20]"
+    (page)="onPageChange($event)" aria-label="Select page of bookings" class="custom-paginator"></mat-paginator>
 
-    <div class="ledger-footer">
-      <button class="dossier-btn" type="button">Request Full Dossier</button>
-    </div>
+
   } @else if (!loading()) {
-    <p class="no-bookings">No bookings found.</p>
+  <p class="no-bookings">No bookings found.</p>
   }
 </div>
-

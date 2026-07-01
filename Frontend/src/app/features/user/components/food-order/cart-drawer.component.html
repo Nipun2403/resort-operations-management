@@ -1,61 +1,86 @@
-<div
-  class="cart-drawer"
-  [class.open]="isOpen()"
->
+<div class="cart-drawer-container" [class.open]="isOpen()">
+  <!-- Mobile Toggle Button (only visible on mobile) -->
   <button
-    mat-raised-button
-    class="cart-toggle-btn"
+    type="button"
+    class="cart-toggle-btn mobile-only btn-gold-outline"
     (click)="cartToggle.emit()"
-    aria-label="Toggle shopping cart"
+    aria-label="Toggle selection panel"
   >
-    <mat-icon>shopping_cart</mat-icon>
-    Cart ({{ itemCount() }}) – {{ subtotal() | currency }}
+    <span class="material-symbols-outlined">shopping_cart</span>
+    Selection ({{ itemCount() }}) – {{ subtotal() | currency }}
   </button>
 
-  @if (isOpen()) {
-    <div class="cart-panel">
-      <div class="cart-header">
-        <h3>Shopping Cart</h3>
-        <button mat-icon-button (click)="cartToggle.emit()" aria-label="Close cart">
-          <mat-icon>close</mat-icon>
-        </button>
-      </div>
+  <div class="cart-panel glass-panel">
+    <div class="cart-header">
+      <h3>Your Selection</h3>
+      <button
+        type="button"
+        class="mobile-only close-btn"
+        (click)="cartToggle.emit()"
+        aria-label="Close cart"
+      >
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
 
-      <div class="cart-items-list">
-        @for (item of cartItems(); track item.menuItemId) {
-          <div class="cart-item">
+    <div class="cart-items-list">
+      @for (item of cartItems(); track item.menuItemId) {
+        <div class="cart-item">
+          <div class="item-details">
             <span class="item-name">{{ item.name }}</span>
-            <div class="qty-controls">
-              <button type="button" mat-icon-button (click)="decrementQty(item.menuItemId)" aria-label="Decrease quantity">
-                <mat-icon>remove</mat-icon>
-              </button>
-              <span class="qty">{{ item.quantity }}</span>
-              <button type="button" mat-icon-button (click)="incrementQty(item.menuItemId)" aria-label="Increase quantity">
-                <mat-icon>add</mat-icon>
-              </button>
-            </div>
             <span class="item-price">{{ item.price * item.quantity | currency }}</span>
           </div>
-        } @empty {
-          <p class="empty-cart">Your cart is empty.</p>
-        }
-      </div>
-
-      <div class="cart-footer">
-        <div class="total-row">
-          <span>Total:</span>
-          <span class="total-price">{{ subtotal() | currency }}</span>
+          <div class="qty-controls">
+            <button
+              type="button"
+              class="qty-btn"
+              (click)="decrementQty(item.menuItemId)"
+              aria-label="Decrease quantity"
+            >
+              -
+            </button>
+            <span class="qty">{{ item.quantity }}</span>
+            <button
+              type="button"
+              class="qty-btn"
+              (click)="incrementQty(item.menuItemId)"
+              aria-label="Increase quantity"
+            >
+              +
+            </button>
+          </div>
         </div>
-        <button
-          mat-raised-button
-          color="primary"
-          class="checkout-btn"
-          (click)="checkout.emit()"
-          [disabled]="cartItems().length === 0"
-        >
-          Place Order
-        </button>
-      </div>
+      } @empty {
+        <p class="empty-cart">No items selected</p>
+      }
     </div>
-  }
+
+    <div class="cart-footer">
+      <div class="cost-breakdown">
+        <div class="cost-row">
+          <span>Subtotal</span>
+          <span>{{ subtotal() | currency }}</span>
+        </div>
+        <div class="cost-row">
+          <span>Service Fee (15%)</span>
+          <span>{{ (subtotal() * 0.15) | currency }}</span>
+        </div>
+        <div class="cost-row total-row">
+          <span>Total</span>
+          <span class="total-price">{{ (subtotal() * 1.15) | currency }}</span>
+        </div>
+      </div>
+      
+      <button
+        type="button"
+        class="checkout-btn btn-gold-filled"
+        (click)="checkout.emit()"
+        [disabled]="cartItems().length === 0"
+      >
+        Place Order
+      </button>
+      <p class="est-delivery">Estimated delivery: 25-30 minutes</p>
+    </div>
+  </div>
 </div>
+

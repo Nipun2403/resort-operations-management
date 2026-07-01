@@ -1,37 +1,34 @@
 <div class="request-service">
-  <mat-card class="request-card">
-    <mat-card-header>
-      <mat-card-title>Request Housekeeping or Maintenance</mat-card-title>
-    </mat-card-header>
-    <mat-card-content class="form-container">
+  <div class="request-card glass-panel">
+    <h3 class="form-title">How may we assist you?</h3>
+    
+    <div class="form-container">
+      <!-- Service Type Toggle Row -->
       <div class="form-row">
-        @if (isMobile()) {
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Service Type</mat-label>
-            <mat-select [formControl]="requestType">
-              <mat-option value="housekeeping">Housekeeping</mat-option>
-              <mat-option value="maintenance">Maintenance</mat-option>
-            </mat-select>
-          </mat-form-field>
-        } @else {
-          <mat-button-toggle-group
-            [formControl]="requestType"
-            aria-label="Service type"
-            class="type-toggle-group"
+        <div class="type-toggle-container">
+          <button
+            type="button"
+            class="type-toggle-btn"
+            [class.active]="requestType.value === 'housekeeping'"
+            (click)="requestType.setValue('housekeeping')"
           >
-            <mat-button-toggle value="housekeeping">
-              <mat-icon>cleaning_services</mat-icon> Housekeeping
-            </mat-button-toggle>
-            <mat-button-toggle value="maintenance">
-              <mat-icon>build</mat-icon> Maintenance
-            </mat-button-toggle>
-          </mat-button-toggle-group>
-        }
+            Housekeeping
+          </button>
+          <button
+            type="button"
+            class="type-toggle-btn"
+            [class.active]="requestType.value === 'maintenance'"
+            (click)="requestType.setValue('maintenance')"
+          >
+            Maintenance
+          </button>
+        </div>
       </div>
 
+      <!-- Room Selection Dropdown -->
       <div class="form-row">
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Room</mat-label>
+          <mat-label>Select Room</mat-label>
           <mat-select [formControl]="selectedRoomId">
             @for (room of activeBooking().rooms; track room.roomId) {
               <mat-option [value]="room.roomId">
@@ -42,25 +39,65 @@
         </mat-form-field>
       </div>
 
+      <!-- Description Input Area -->
       <div class="form-row">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Description</mat-label>
+        <div class="description-group">
+          <label class="desc-label" [class.focused]="description.dirty">Details of request</label>
           <textarea
-            matInput
             [formControl]="description"
-            rows="3"
-            placeholder="Please detail your request..."
+            class="desc-textarea"
+            placeholder="Please describe your requirements..."
+            rows="5"
           ></textarea>
+          <div class="focus-line" [class.focused]="description.dirty"></div>
           @if (description.invalid && description.touched) {
-            <mat-error>Description is required (minimum 5 characters).</mat-error>
+            <span class="desc-error">Description is required (minimum 5 characters).</span>
           }
-        </mat-form-field>
+        </div>
       </div>
-    </mat-card-content>
-    <mat-card-actions>
+
+      <!-- Preset Suggestions -->
+      <div class="form-row">
+        <div class="presets-grid">
+          @if (requestType.value === 'housekeeping') {
+            <div
+              class="preset-card"
+              (click)="applyPreset('Fresh linens and turndown service')"
+            >
+              <span class="preset-badge">Preset</span>
+              <p class="preset-text">Fresh linens and turndown service</p>
+            </div>
+            <div
+              class="preset-card"
+              (click)="applyPreset('Replenish mini-bar amenities')"
+            >
+              <span class="preset-badge">Preset</span>
+              <p class="preset-text">Replenish mini-bar amenities</p>
+            </div>
+          } @else {
+            <div
+              class="preset-card"
+              (click)="applyPreset('Air conditioning / heating maintenance')"
+            >
+              <span class="preset-badge">Preset</span>
+              <p class="preset-text">AC / heating check</p>
+            </div>
+            <div
+              class="preset-card"
+              (click)="applyPreset('In-room safe battery replacement')"
+            >
+              <span class="preset-badge">Preset</span>
+              <p class="preset-text">In-room safe issue</p>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="actions-row">
       <button
-        mat-raised-button
-        color="primary"
+        type="button"
+        class="submit-btn btn-gold-filled"
         (click)="submitRequest()"
         [disabled]="description.invalid || submitting()"
       >
@@ -69,6 +106,7 @@
         }
         Submit Request
       </button>
-    </mat-card-actions>
-  </mat-card>
+    </div>
+  </div>
 </div>
+

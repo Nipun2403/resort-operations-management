@@ -1,41 +1,277 @@
-.room-service {
-  padding: 24px;
+:host {
+  --color-secondary: #e4c285;
+  --color-background: #131411;
+  --color-surface: #131411;
+  --color-on-surface: #e4e2dd;
+  --color-on-surface-variant: #c4c7c7;
+  --color-surface-container: #1f201d;
+  --color-surface-container-low: #1b1c19;
+  --color-surface-container-lowest: #0e0e0c;
+  --color-surface-container-high: #2a2a27;
+  --color-outline: #8e9192;
+  --color-outline-variant: #444748;
 
-  .no-booking-card {
-    max-width: 480px;
-    margin: 40px auto;
-    text-align: center;
-    padding: 24px;
-    border-radius: 8px;
-    border: 1px solid rgba(0, 0, 0, 0.12);
+  display: block;
+  min-h: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-on-surface);
+  font-family: 'Manrope', sans-serif;
+}
+
+.room-service-container {
+  padding: 24px 24px 80px 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  @media (min-width: 768px) {
+    padding: 40px 80px 100px 80px;
+  }
+}
+
+.header-section {
+  margin-bottom: 24px;
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--color-secondary);
+    margin: 0;
+    font-weight: 400;
+
+    @media (min-width: 768px) {
+      font-size: 2.5rem;
+    }
   }
 
-  .no-booking-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
+  .subtitle {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    color: var(--color-on-surface-variant);
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+}
 
-    .info-icon {
-      font-size: 40px;
-      width: 40px;
-      height: 40px;
-      color: #3f51b5;
+// Compass of Service: Custom Tab Navigation
+.compass-of-service {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: rgba(26, 26, 26, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(228, 194, 133, 0.1);
+  margin-bottom: 32px;
+
+  .tabs-wrapper {
+    display: flex;
+    justify-content: space-around;
+    position: relative;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .tab-btn {
+    background: none;
+    border: none;
+    padding: 16px 8px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    color: var(--color-on-surface-variant);
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    position: relative;
+    flex: 1;
+    text-align: center;
+
+    &:hover {
+      color: var(--color-on-surface);
     }
 
-    p {
-      margin: 0;
-      font-size: 1.1rem;
-      color: rgba(0, 0, 0, 0.87);
+    &.active {
+      color: var(--color-secondary);
+    }
+  }
 
-      a {
-        color: #3f51b5;
-        text-decoration: none;
-        font-weight: 500;
-        &:hover {
-          text-decoration: underline;
+  .tab-indicator {
+    position: absolute;
+    bottom: 0;
+    height: 2px;
+    background-color: var(--color-secondary);
+    transition: all 0.3s cubic-bezier(0.33, 1, 0.68, 1);
+  }
+}
+
+// Custom Glass Panel Style
+.glass-panel {
+  background: rgba(26, 26, 26, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(228, 194, 133, 0.1);
+  border-radius: 4px;
+}
+
+// Button Gold Outline
+.btn-gold-outline {
+  border: 1px solid var(--color-secondary);
+  background: transparent;
+  color: var(--color-secondary);
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 12px 24px;
+  cursor: pointer;
+  transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  text-align: center;
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #5d4514 0%, #261900 100%);
+    box-shadow: 0 10px 30px -10px rgba(228, 194, 133, 0.2);
+    color: var(--color-on-surface);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+// Card Lift Effect
+.card-lift {
+  transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.6s ease;
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+  }
+}
+
+// No Stay UI
+.no-booking-card {
+  max-width: 480px;
+  margin: 60px auto;
+  padding: 40px 24px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.no-booking-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+
+  .info-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: var(--color-secondary);
+  }
+
+  p {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--color-on-surface-variant);
+
+    a {
+      color: var(--color-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      border-bottom: 1px dotted var(--color-secondary);
+      transition: opacity 0.2s;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+}
+
+// Global Override for mat-select, mat-form-field across all room service pages
+::ng-deep {
+  .room-service-container,
+  .food-order-container,
+  .request-service,
+  .my-requests {
+    .mat-mdc-form-field {
+      width: 100%;
+
+      .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__leading,
+      .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__notch,
+      .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__trailing {
+        border-color: rgba(228, 194, 133, 0.2) !important;
+        border-width: 1px !important;
+        border-radius: 0 !important;
+      }
+
+      .mdc-text-field--outlined:not(.mdc-text-field--disabled):hover .mdc-notched-outline__leading,
+      .mdc-text-field--outlined:not(.mdc-text-field--disabled):hover .mdc-notched-outline__notch,
+      .mdc-text-field--outlined:not(.mdc-text-field--disabled):hover .mdc-notched-outline__trailing {
+        border-color: var(--color-secondary) !important;
+      }
+
+      &.mat-focused:not(.mat-form-field-disabled) {
+        .mdc-notched-outline__leading,
+        .mdc-notched-outline__notch,
+        .mdc-notched-outline__trailing {
+          border-color: var(--color-secondary) !important;
+          border-width: 1px !important;
+        }
+      }
+
+      .mat-mdc-form-field-label {
+        color: var(--color-on-surface-variant) !important;
+        font-family: 'Manrope', sans-serif !important;
+        font-size: 0.75rem !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.1em !important;
+      }
+
+      .mat-mdc-select-value {
+        color: var(--color-on-surface) !important;
+        font-family: 'Manrope', sans-serif !important;
+        font-size: 0.875rem !important;
+      }
+
+      .mat-mdc-select-arrow {
+        color: var(--color-secondary) !important;
+      }
+    }
+  }
+
+  // Options Dropdown Panel styling (outside component scope)
+  .mat-mdc-select-panel {
+    background-color: #0e0e0c !important;
+    border: 1px solid rgba(228, 194, 133, 0.2) !important;
+    border-radius: 0 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6) !important;
+
+    .mat-mdc-option {
+      background-color: transparent !important;
+      color: var(--color-on-surface-variant) !important;
+      font-family: 'Manrope', sans-serif !important;
+      font-size: 0.875rem !important;
+      padding: 12px 16px !important;
+      min-height: 48px !important;
+
+      &:hover:not(.mdc-list-item--disabled),
+      &.mat-mdc-option-active {
+        background-color: rgba(228, 194, 133, 0.08) !important;
+        color: var(--color-on-surface) !important;
+      }
+
+      &.mdc-list-item--selected:not(.mdc-list-item--disabled) {
+        .mdc-list-item__primary-text {
+          color: var(--color-secondary) !important;
         }
       }
     }
   }
 }
+

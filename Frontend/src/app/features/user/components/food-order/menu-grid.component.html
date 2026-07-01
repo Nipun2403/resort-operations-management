@@ -3,7 +3,7 @@
     <mat-form-field appearance="outline" class="category-select">
       <mat-label>Category</mat-label>
       <mat-select [formControl]="categoryFilter">
-        <mat-option value="All">All</mat-option>
+        <mat-option value="All">All Delicacies</mat-option>
         @for (cat of categories(); track cat) {
           <mat-option [value]="cat">{{ cat }}</mat-option>
         }
@@ -16,53 +16,62 @@
       <h3 class="category-title">{{ group.category }}</h3>
       <div class="menu-grid">
         @for (item of group.items; track item.id) {
-          <mat-card class="menu-item-card">
-            <mat-card-header>
-              <mat-card-title>{{ item.name }}</mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-              <div class="price-row">
+          <div class="menu-item-card glass-panel card-lift">
+            <div class="item-image-wrapper">
+              <img
+                [src]="getImageUrl(item.name)"
+                [alt]="item.name"
+                class="item-image"
+              />
+              <div class="image-overlay"></div>
+            </div>
+            
+            <div class="item-info">
+              <div class="title-price-row">
+                <h4 class="item-name">{{ item.name }}</h4>
                 <span class="price">{{ item.price | currency }}</span>
               </div>
-            </mat-card-content>
-            <mat-card-actions>
+              <p class="description">{{ getDescription(item.name) }}</p>
+            </div>
+
+            <div class="action-row">
               @if (getQuantity(item.id) === 0) {
                 <button
-                  mat-raised-button
-                  color="primary"
+                  type="button"
+                  class="btn-gold-outline add-btn"
                   (click)="increment(item)"
                   aria-label="Add to cart"
-                  class="action-btn"
                 >
-                  <mat-icon>add_shopping_cart</mat-icon> Add to Cart
+                  Add to Cart
                 </button>
               } @else {
                 <div class="inline-qty-controls">
                   <button
                     type="button"
-                    mat-icon-button
+                    class="qty-btn"
                     (click)="decrement(item)"
                     aria-label="Decrease quantity"
                   >
-                    <mat-icon>remove</mat-icon>
+                    -
                   </button>
                   <span class="qty-display">{{ getQuantity(item.id) }}</span>
                   <button
                     type="button"
-                    mat-icon-button
+                    class="qty-btn"
                     (click)="increment(item)"
                     aria-label="Increase quantity"
                   >
-                    <mat-icon>add</mat-icon>
+                    +
                   </button>
                 </div>
               }
-            </mat-card-actions>
-          </mat-card>
+            </div>
+          </div>
         }
       </div>
     </div>
   } @empty {
-    <p class="no-items">No menu items available at the moment.</p>
+    <p class="no-items">No delicacies available at the moment.</p>
   }
 </div>
+
