@@ -1,41 +1,53 @@
-<div class="internal-ticket-panel">
-  <h3>Create Internal Ticket</h3>
-  <form (ngSubmit)="submit()">
-    <mat-button-toggle-group [formControl]="ticketType" style="margin-bottom: 16px;">
-      <mat-button-toggle value="housekeeping">Housekeeping</mat-button-toggle>
-      <mat-button-toggle value="maintenance">Maintenance</mat-button-toggle>
-    </mat-button-toggle-group>
-    <mat-form-field appearance="outline" style="width: 100%;">
+<h2 mat-dialog-title>Create Internal Ticket</h2>
+<button mat-icon-button mat-dialog-close class="close-btn" aria-label="Close dialog">
+  <mat-icon>close</mat-icon>
+</button>
+
+<mat-dialog-content>
+  @if (errorMessage()) {
+  <div class="dialog-error">{{ errorMessage() }}</div>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <div class="field-group">
+      <label class="field-label">Ticket Type</label>
+      <mat-radio-group formControlName="type" class="radio-group">
+        <mat-radio-button value="housekeeping">Housekeeping</mat-radio-button>
+        <mat-radio-button value="maintenance">Maintenance</mat-radio-button>
+      </mat-radio-group>
+    </div>
+
+    <mat-form-field appearance="outline" class="full-width">
       <mat-label>Location</mat-label>
-      <input
-        matInput
-        [formControl]="location"
-      />
-      @if (location.invalid && location.touched) {
-        <mat-error>Location is required</mat-error>
+      <input matInput formControlName="location" placeholder="e.g. Room 101, Lobby" />
+      @if (form.get('location')?.hasError('required') && form.get('location')?.touched) {
+      <mat-error>Location is required.</mat-error>
+      }
+      @if (form.get('location')?.hasError('maxlength')) {
+      <mat-error>Location must not exceed 200 characters.</mat-error>
       }
     </mat-form-field>
-    <mat-form-field appearance="outline" style="width: 100%;">
+
+    <mat-form-field appearance="outline" class="full-width">
       <mat-label>Description</mat-label>
-      <textarea
-        matInput
-        [formControl]="description"
-        rows="2"
-      ></textarea>
-      @if (description.invalid && description.touched) {
-        <mat-error>Min 5 characters required</mat-error>
+      <textarea matInput formControlName="description" rows="4" placeholder="Describe the issue..."></textarea>
+      @if (form.get('description')?.hasError('required') && form.get('description')?.touched) {
+      <mat-error>Description is required.</mat-error>
+      }
+      @if (form.get('description')?.hasError('minlength')) {
+      <mat-error>Description must be at least 5 characters.</mat-error>
       }
     </mat-form-field>
-    <button
-      mat-raised-button
-      color="primary"
-      type="submit"
-      [disabled]="location.invalid || description.invalid || submitting()"
-    >
-      @if (submitting()) {
-        <mat-spinner diameter="20" style="display: inline-block; margin-right: 8px; vertical-align: middle;"></mat-spinner>
-      }
-      Create Ticket
-    </button>
   </form>
-</div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-raised-button color="primary" [disabled]="form.invalid || loading()" (click)="submit()">
+    @if (loading()) {
+    <mat-spinner diameter="20"></mat-spinner>
+    } @else {
+    Submit
+    }
+  </button>
+</mat-dialog-actions>
