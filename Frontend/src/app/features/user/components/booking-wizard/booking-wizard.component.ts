@@ -82,7 +82,12 @@ export class BookingWizardComponent implements OnInit, AfterViewInit {
         this.restoredState = JSON.parse(savedStateStr);
         sessionStorage.removeItem('bookingWizardState');
         if (this.restoredState.dates) {
-          this.datesForm.patchValue(this.restoredState.dates);
+          const restoredDates = {
+            checkInDate: this.restoredState.dates.checkInDate ? new Date(this.restoredState.dates.checkInDate) : null,
+            checkOutDate: this.restoredState.dates.checkOutDate ? new Date(this.restoredState.dates.checkOutDate) : null,
+            guestCount: this.restoredState.dates.guestCount
+          };
+          this.datesForm.patchValue(restoredDates);
           this.loadRooms();
         }
       } catch (e) {
