@@ -1,36 +1,60 @@
 <div class="billing-receipts">
+  <!-- Header -->
+  <header class="page-header mb-8">
+    <h1 class="font-display-lg italic">Estate Accounts</h1>
+    <p class="font-body-md subtitle">Overseeing the fiscal heritage of the Aetheris Collection.</p>
+  </header>
+
   <!-- Toggle -->
-  <div class="toggle-row">
-    <mat-button-toggle-group
-      [formControl]="activeView"
-      (change)="onViewToggle()"
-      aria-label="View"
-    >
-      <mat-button-toggle value="bookings">Bookings</mat-button-toggle>
-      <mat-button-toggle value="receipts">Receipts</mat-button-toggle>
-    </mat-button-toggle-group>
+  <div class="toggle-row mb-8">
+    <div class="glass-panel p-1 flex gap-1 h-12 toggle-wrapper">
+      <button 
+        class="px-6 h-full font-label-caps uppercase transition-all tab-btn"
+        [class.tab-active]="activeView.value === 'bookings'"
+        (click)="activeView.setValue('bookings'); onViewToggle()"
+      >
+        Bookings
+      </button>
+      <button 
+        class="px-6 h-full font-label-caps uppercase transition-all tab-btn"
+        [class.tab-active]="activeView.value === 'receipts'"
+        (click)="activeView.setValue('receipts'); onViewToggle()"
+      >
+        Receipts
+      </button>
+    </div>
   </div>
 
   <!-- Bookings View -->
   @if (activeView.value === 'bookings') {
   <div class="bookings-view">
     <!-- Search & Filters -->
-    <div class="controls">
-      <mat-form-field
-        appearance="outline"
-        class="search"
-      >
-        <mat-label>Search guest name or email</mat-label>
+    <div class="controls border-b border-secondary/10 pb-6 mb-6">
+      <mat-form-field appearance="outline" class="aetheris-search-field">
+        <mat-label>Search guest name or email...</mat-label>
         <input
           matInput
           [formControl]="bookingSearch"
           (keyup)="onBookingSearchDebounced()"
+          class="search-input"
         />
-        <mat-icon matSuffix>search</mat-icon>
+        <mat-icon matSuffix class="search-icon">search</mat-icon>
+        @if (bookingSearch.value) {
+          <button
+            matSuffix
+            mat-icon-button
+            aria-label="Clear"
+            (click)="bookingSearch.setValue(''); onBookingSearchDebounced()"
+            class="clear-btn"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        }
       </mat-form-field>
-      <mat-form-field appearance="outline">
+
+      <mat-form-field appearance="outline" class="aetheris-select-field">
         <mat-label>Status</mat-label>
-        <mat-select [formControl]="bookingStatus">
+        <mat-select [formControl]="bookingStatus" panelClass="aetheris-select-panel">
           <mat-option value="">All</mat-option>
           <mat-option value="Booked">Booked</mat-option>
           <mat-option value="CheckedIn">Checked In</mat-option>
@@ -38,10 +62,12 @@
           <mat-option value="Cancelled">Cancelled</mat-option>
         </mat-select>
       </mat-form-field>
+
       @if (bookingStatus.value || bookingSearch.value) {
       <button
         mat-button
         (click)="clearBookingFilters()"
+        class="aetheris-clear-btn"
       >
         Clear Filters
       </button>
@@ -50,7 +76,7 @@
 
     <!-- Loading / Error / Content -->
     @if (bookingsLoading() && bookings().length === 0) {
-    <div class="loading"><mat-spinner diameter="40"></mat-spinner></div>
+    <div class="loading"><mat-progress-spinner diameter="40" mode="indeterminate"></mat-progress-spinner></div>
     } @else if (bookingsError()) {
     <app-alert
       type="error"
@@ -60,171 +86,190 @@
       <button
         mat-button
         (click)="fetchBookings()"
+        class="aetheris-clear-btn"
       >
         Retry
       </button>
     </app-alert>
     } @if (bookings().length > 0 || bookingsLoading()) { @if (bookingsLoading())
     {
-    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <mat-progress-bar mode="indeterminate" class="aetheris-progress-bar"></mat-progress-bar>
     }
     @if (isMobile()) {
     <div class="mobile-card-view">
       @for (b of bookings(); track b.id) {
-      <mat-card (click)="openBookingDetail(b)" class="booking-card">
-        <mat-card-header>
-          <mat-card-title>{{ b.guestName }}</mat-card-title>
-          <mat-card-subtitle
-            >{{ b.checkInDate }} – {{ b.checkOutDate }}</mat-card-subtitle
-          >
-        </mat-card-header>
-        <mat-card-content>
-          <p>
-            Status: <span class="status-chip" [class]="b.bookingStatus">{{ b.bookingStatus }}</span>
-            <span class="divider">|</span> Rooms: {{ getRoomsSummary(b) }}
-          </p>
-        </mat-card-content>
-      </mat-card>
+      <div (click)="openBookingDetail(b)" class="mobile-audit-card status-card" [ngClass]="'status-' + b.bookingStatus.toLowerCase().replace(' ', '-')">
+        <div class="flex justify-between items-start mb-4 card-top">
+          <div>
+            <h3 class="font-headline-sm text-[18px] text-on-surface">{{ b.guestName }}</h3>
+            <p class="font-label-caps text-[10px] text-on-surface-variant/60 mt-1 uppercase">
+              Rooms: {{ getRoomsSummary(b) }}
+            </p>
+          </div>
+          <span class="font-label-caps text-[10px] text-secondary tracking-widest uppercase">{{ b.bookingStatus }}</span>
+        </div>
+        <div class="grid grid-cols-2 gap-4 mt-6 card-bottom">
+          <div>
+            <p class="font-label-caps text-[9px] text-on-surface-variant/40 uppercase">Arrival</p>
+            <p class="text-on-surface text-[14px]">{{ b.checkInDate }}</p>
+          </div>
+          <div>
+            <p class="font-label-caps text-[9px] text-on-surface-variant/40 uppercase">Departure</p>
+            <p class="text-on-surface text-[14px]">{{ b.checkOutDate }}</p>
+          </div>
+        </div>
+      </div>
       }
     </div>
     } @else {
-    <table
-      mat-table
-      [dataSource]="bookings()"
-      matSort
-      matSortDisableClear
-      (matSortChange)="onBookingSort($event)"
-      aria-label="Bookings"
-    >
-      <ng-container matColumnDef="id"
-        ><th
-          mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header="id"
-        >
-          ID
-        </th>
-        <td
-          mat-cell
-          *matCellDef="let b"
-        >
-          {{ b.id }}
-        </td></ng-container
+    <div class="table-container">
+      <table
+        mat-table
+        [dataSource]="bookings()"
+        matSort
+        matSortDisableClear
+        (matSortChange)="onBookingSort($event)"
+        aria-label="Bookings"
+        class="aetheris-table"
       >
-      <ng-container matColumnDef="guestName"
-        ><th
-          mat-header-cell
-          *matHeaderCellDef
-        >
-          Guest
-        </th>
-        <td
-          mat-cell
-          *matCellDef="let b"
-        >
-          {{ b.guestName }}
-        </td></ng-container
-      >
-      <ng-container matColumnDef="checkIn"
-        ><th
-          mat-header-cell
-          *matHeaderCellDef
-        >
-          Check-In
-        </th>
-        <td
-          mat-cell
-          *matCellDef="let b"
-        >
-          {{ b.checkInDate }}
-        </td></ng-container
-      >
-      <ng-container matColumnDef="checkOut"
-        ><th
-          mat-header-cell
-          *matHeaderCellDef
-        >
-          Check-Out
-        </th>
-        <td
-          mat-cell
-          *matCellDef="let b"
-        >
-          {{ b.checkOutDate }}
-        </td></ng-container
-      >
-      <ng-container matColumnDef="status"
-        ><th
-          mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header="bookingStatus"
-        >
-          Status
-        </th>
-        <td
-          mat-cell
-          *matCellDef="let b"
-        >
-          <span
-            class="status-chip"
-            [class]="b.bookingStatus"
-            >{{ b.bookingStatus }}</span
+        <ng-container matColumnDef="id"
+          ><th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header="id"
           >
-        </td></ng-container
-      >
-      <ng-container matColumnDef="rooms"
-        ><th
-          mat-header-cell
-          *matHeaderCellDef
-        >
-          Rooms
-        </th>
-        <td
-          mat-cell
-          *matCellDef="let b"
-        >
-          {{ getRoomsSummary(b) }}
-        </td></ng-container
-      >
-      <ng-container matColumnDef="actions"
-        ><th
-          mat-header-cell
-          *matHeaderCellDef
-        >
-          Actions
-        </th>
-        <td
-          mat-cell
-          *matCellDef="let b"
-        >
-          <button
-            mat-icon-button
-            (click)="openBookingDetail(b); $event.stopPropagation()"
-            aria-label="View booking"
+            ID
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let b"
+            class="font-label-caps"
           >
-            <mat-icon>visibility</mat-icon>
-          </button>
-        </td></ng-container
-      >
-      <tr
-        mat-header-row
-        *matHeaderRowDef="['id','guestName','checkIn','checkOut','status','rooms','actions']"
-      ></tr>
-      <tr
-        mat-row
-        *matRowDef="let row; columns: ['id','guestName','checkIn','checkOut','status','rooms','actions']"
-        (click)="openBookingDetail(row)"
-        class="clickable-row"
-      ></tr>
-    </table>
+            #BK-{{ b.id }}
+          </td></ng-container
+        >
+        <ng-container matColumnDef="guestName"
+          ><th
+            mat-header-cell
+            *matHeaderCellDef
+          >
+            Guest
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let b"
+          >
+            <div class="font-display-lg text-headline-sm">{{ b.guestName }}</div>
+          </td></ng-container
+        >
+        <ng-container matColumnDef="checkIn"
+          ><th
+            mat-header-cell
+            *matHeaderCellDef
+          >
+            Check-In
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let b"
+            class="font-body-md"
+          >
+            {{ b.checkInDate }}
+          </td></ng-container
+        >
+        <ng-container matColumnDef="checkOut"
+          ><th
+            mat-header-cell
+            *matHeaderCellDef
+          >
+            Check-Out
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let b"
+            class="font-body-md"
+          >
+            {{ b.checkOutDate }}
+          </td></ng-container
+        >
+        <ng-container matColumnDef="status"
+          ><th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header="bookingStatus"
+          >
+            Status
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let b"
+          >
+            <span
+              class="px-3 py-1 bg-secondary/10 border border-secondary/30 text-secondary text-[10px] font-label-caps uppercase status-badge"
+              [class]="b.bookingStatus"
+              >{{ b.bookingStatus }}</span
+            >
+          </td></ng-container
+        >
+        <ng-container matColumnDef="rooms"
+          ><th
+            mat-header-cell
+            *matHeaderCellDef
+          >
+            Rooms
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let b"
+            class="font-body-md"
+          >
+            {{ getRoomsSummary(b) }}
+          </td></ng-container
+        >
+        <ng-container matColumnDef="actions"
+          ><th
+            mat-header-cell
+            *matHeaderCellDef
+          >
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let b"
+            class="text-right"
+          >
+            <button
+              mat-icon-button
+              (click)="openBookingDetail(b); $event.stopPropagation()"
+              aria-label="View booking"
+              class="action-icon-btn"
+            >
+              <mat-icon>arrow_forward_ios</mat-icon>
+            </button>
+          </td></ng-container
+        >
+        <tr
+          mat-header-row
+          *matHeaderRowDef="['id','guestName','checkIn','checkOut','status','rooms','actions']"
+        ></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: ['id','guestName','checkIn','checkOut','status','rooms','actions']"
+          (click)="openBookingDetail(row)"
+          class="row-hover clickable-row"
+        ></tr>
+      </table>
+    </div>
     }
-    <mat-paginator
-      [length]="bookingsTotal()"
-      [pageIndex]="bookingPage()"
-      [pageSize]="bookingPageSize()"
-      [pageSizeOptions]="[10,25,50]"
-      (page)="onBookingPage($event)"
-    ></mat-paginator>
+    <div class="paginator-container">
+      <mat-paginator
+        [length]="bookingsTotal()"
+        [pageIndex]="bookingPage()"
+        [pageSize]="bookingPageSize()"
+        [pageSizeOptions]="[10,25,50]"
+        (page)="onBookingPage($event)"
+        class="aetheris-paginator"
+      ></mat-paginator>
+    </div>
     } @else {
     <div class="empty-state"><p>No bookings found.</p></div>
     }
@@ -235,8 +280,8 @@
   @if (activeView.value === 'receipts') {
   <div class="receipts-view">
     <!-- Date Filters -->
-    <div class="controls">
-      <mat-form-field appearance="outline">
+    <div class="controls border-b border-secondary/10 pb-6 mb-6">
+      <mat-form-field appearance="outline" class="aetheris-date-field">
         <mat-label>Start date</mat-label>
         <input
           matInput
@@ -249,7 +294,8 @@
         ></mat-datepicker-toggle>
         <mat-datepicker #recStartPicker></mat-datepicker>
       </mat-form-field>
-      <mat-form-field appearance="outline">
+
+      <mat-form-field appearance="outline" class="aetheris-date-field">
         <mat-label>End date</mat-label>
         <input
           matInput
@@ -262,23 +308,28 @@
         ></mat-datepicker-toggle>
         <mat-datepicker #recEndPicker></mat-datepicker>
       </mat-form-field>
+
       <button
-        mat-raised-button
-        color="primary"
+        mat-button
         (click)="applyReceiptDateFilter()"
+        class="aetheris-apply-btn"
       >
         Apply
       </button>
+      
+      @if (receiptStartDate.value || receiptEndDate.value) {
       <button
         mat-button
         (click)="clearReceiptDateFilter()"
+        class="aetheris-clear-btn"
       >
         Clear
       </button>
+      }
     </div>
 
     @if (receiptsLoading() && receipts().length === 0) {
-    <div class="loading"><mat-spinner diameter="40"></mat-spinner></div>
+    <div class="loading"><mat-progress-spinner diameter="40" mode="indeterminate"></mat-progress-spinner></div>
     } @else if (receiptsError()) {
     <app-alert
       type="error"
@@ -288,154 +339,173 @@
       <button
         mat-button
         (click)="fetchReceipts()"
+        class="aetheris-clear-btn"
       >
         Retry
       </button>
     </app-alert>
     } @if (receipts().length > 0 || receiptsLoading()) { @if (receiptsLoading())
     {
-    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <mat-progress-bar mode="indeterminate" class="aetheris-progress-bar"></mat-progress-bar>
     }
     @if (isMobile()) {
     <div class="mobile-card-view">
       @for (r of receipts(); track r.id) {
-      <mat-card (click)="openReceiptDetail(r)" class="receipt-card">
-        <mat-card-header>
-          <mat-card-title>Receipt #{{ r.id }} – Booking #{{ r.bookingId }}</mat-card-title>
-          <mat-card-subtitle
-            >{{ r.paidAt | date:'medium' }}</mat-card-subtitle
-          >
-        </mat-card-header>
-        <mat-card-content>
-          <p>
-            Amount: {{ r.amountPaid | currency }}
-            <span class="divider">|</span> Method: {{ r.paymentMethod }}
-          </p>
-        </mat-card-content>
-      </mat-card>
+      <div (click)="openReceiptDetail(r)" class="mobile-audit-card receipt-card">
+        <div class="flex justify-between items-start mb-4 card-top">
+          <div>
+            <p class="font-label-caps text-[9px] text-on-surface-variant/40 uppercase">Receipt ID</p>
+            <h3 class="font-label-caps text-[14px] text-on-surface tracking-widest mt-1">#RCP-{{ r.id }}</h3>
+          </div>
+          <div class="text-right">
+            <p class="font-label-caps text-[9px] text-on-surface-variant/40 uppercase">{{ r.paidAt | date:'mediumDate' }}</p>
+          </div>
+        </div>
+        <div class="flex justify-between items-end mt-8 card-bottom">
+          <div>
+            <p class="font-label-caps text-[10px] text-on-surface-variant/60 uppercase">Booking #{{ r.bookingId }}</p>
+            <p class="text-on-surface-variant/40 text-[12px] mt-1 italic">{{ r.paymentMethod }}</p>
+          </div>
+          <div class="text-right">
+            <p class="font-headline-sm text-[24px] text-secondary">{{ r.amountPaid | currency }}</p>
+          </div>
+        </div>
+      </div>
       }
     </div>
     } @else {
-    <table
-      mat-table
-      [dataSource]="receipts()"
-      matSort
-      matSortDisableClear
-      (matSortChange)="onReceiptSort($event)"
-      aria-label="Receipts"
-    >
-      <ng-container matColumnDef="id"
-        ><th
-          mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header="id"
-        >
-          ID
-        </th>
-        <td
-          mat-cell
-          *matCellDef="let r"
-        >
-          {{ r.id }}
-        </td></ng-container
+    <div class="table-container">
+      <table
+        mat-table
+        [dataSource]="receipts()"
+        matSort
+        matSortDisableClear
+        (matSortChange)="onReceiptSort($event)"
+        aria-label="Receipts"
+        class="aetheris-table"
       >
-      <ng-container matColumnDef="bookingId"
-        ><th
-          mat-header-cell
-          *matHeaderCellDef
-        >
-          Booking ID
-        </th>
-        <td
-          mat-cell
-          *matCellDef="let r"
-        >
-          {{ r.bookingId }}
-        </td></ng-container
-      >
-      <ng-container matColumnDef="amountPaid"
-        ><th
-          mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header="amountPaid"
-        >
-          Amount
-        </th>
-        <td
-          mat-cell
-          *matCellDef="let r"
-        >
-          {{ r.amountPaid | currency }}
-        </td></ng-container
-      >
-      <ng-container matColumnDef="paymentMethod"
-        ><th
-          mat-header-cell
-          *matHeaderCellDef
-        >
-          Payment Method
-        </th>
-        <td
-          mat-cell
-          *matCellDef="let r"
-        >
-          {{ r.paymentMethod }}
-        </td></ng-container
-      >
-      <ng-container matColumnDef="paidAt"
-        ><th
-          mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header="paidAt"
-        >
-          Paid At
-        </th>
-        <td
-          mat-cell
-          *matCellDef="let r"
-        >
-          {{ r.paidAt | date:'medium' }}
-        </td></ng-container
-      >
-      <ng-container matColumnDef="actions"
-        ><th
-          mat-header-cell
-          *matHeaderCellDef
-        >
-          Actions
-        </th>
-        <td
-          mat-cell
-          *matCellDef="let r"
-        >
-          <button
-            mat-icon-button
-            (click)="openReceiptDetail(r); $event.stopPropagation()"
-            aria-label="View receipt"
+        <ng-container matColumnDef="id"
+          ><th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header="id"
           >
-            <mat-icon>visibility</mat-icon>
-          </button>
-        </td></ng-container
-      >
-      <tr
-        mat-header-row
-        *matHeaderRowDef="['id','bookingId','amountPaid','paymentMethod','paidAt','actions']"
-      ></tr>
-      <tr
-        mat-row
-        *matRowDef="let row; columns: ['id','bookingId','amountPaid','paymentMethod','paidAt','actions']"
-        (click)="openReceiptDetail(row)"
-        class="clickable-row"
-      ></tr>
-    </table>
+            Receipt ID
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let r"
+            class="font-label-caps"
+          >
+            #RCP-{{ r.id }}
+          </td></ng-container
+        >
+        <ng-container matColumnDef="bookingId"
+          ><th
+            mat-header-cell
+            *matHeaderCellDef
+          >
+            Booking ID
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let r"
+            class="font-label-caps text-on-surface-variant"
+          >
+            #BK-{{ r.bookingId }}
+          </td></ng-container
+        >
+        <ng-container matColumnDef="amountPaid"
+          ><th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header="amountPaid"
+          >
+            Amount
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let r"
+            class="font-display-lg text-secondary text-headline-sm"
+          >
+            {{ r.amountPaid | currency }}
+          </td></ng-container
+        >
+        <ng-container matColumnDef="paymentMethod"
+          ><th
+            mat-header-cell
+            *matHeaderCellDef
+          >
+            Method
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let r"
+            class="font-label-caps"
+          >
+            {{ r.paymentMethod }}
+          </td></ng-container
+        >
+        <ng-container matColumnDef="paidAt"
+          ><th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header="paidAt"
+          >
+            Settled At
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let r"
+            class="font-body-md"
+          >
+            {{ r.paidAt | date:'medium' }}
+          </td></ng-container
+        >
+        <ng-container matColumnDef="actions"
+          ><th
+            mat-header-cell
+            *matHeaderCellDef
+          >
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let r"
+            class="text-right"
+          >
+            <button
+              mat-icon-button
+              (click)="openReceiptDetail(r); $event.stopPropagation()"
+              aria-label="View receipt"
+              class="action-icon-btn"
+            >
+              <mat-icon>download</mat-icon>
+            </button>
+          </td></ng-container
+        >
+        <tr
+          mat-header-row
+          *matHeaderRowDef="['id','bookingId','amountPaid','paymentMethod','paidAt','actions']"
+        ></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: ['id','bookingId','amountPaid','paymentMethod','paidAt','actions']"
+          (click)="openReceiptDetail(row)"
+          class="row-hover clickable-row"
+        ></tr>
+      </table>
+    </div>
     }
-    <mat-paginator
-      [length]="receiptsTotal()"
-      [pageIndex]="receiptPage()"
-      [pageSize]="receiptPageSize()"
-      [pageSizeOptions]="[10,25,50]"
-      (page)="onReceiptPage($event)"
-    ></mat-paginator>
+    <div class="paginator-container">
+      <mat-paginator
+        [length]="receiptsTotal()"
+        [pageIndex]="receiptPage()"
+        [pageSize]="receiptPageSize()"
+        [pageSizeOptions]="[10,25,50]"
+        (page)="onReceiptPage($event)"
+        class="aetheris-paginator"
+      ></mat-paginator>
+    </div>
     } @else {
     <div class="empty-state"><p>No receipts found.</p></div>
     }

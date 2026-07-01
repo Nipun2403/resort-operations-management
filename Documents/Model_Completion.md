@@ -6038,5 +6038,67 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
   to the spec.
 ✓ I confirm that all role-to-route mappings match the spec exactly.
 ================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: Billings & Receipts (Financial Atelier)
+Date: 2026-07-01
+================================================================================
+
+FILES CREATED
+-------------
+None.
+
+FILES MODIFIED (existing files updated per spec)
+-------------------------------------------------
+✓ Frontend/src/app/features/admin/pages/oversight/billing-receipts.component.html — Rethemed parent layout with custom Aetheris toggle buttons and styled data tables / mobile cards.
+✓ Frontend/src/app/features/admin/pages/oversight/billing-receipts.component.scss — Added glass-panel rules, row hovers, custom paginator styling, and overrides for calendar overlays.
+✓ Frontend/src/app/features/admin/pages/oversight/booking-detail-dialog.component.html — Rethemed booking details modal layout.
+✓ Frontend/src/app/features/admin/pages/oversight/booking-detail-dialog.component.ts — Dynamic input checks, overrode Material dialog surfaces to match dark mode.
+✓ Frontend/src/app/features/admin/pages/oversight/receipt-detail-dialog.component.html — Rethemed receipt details modal layout.
+✓ Frontend/src/app/features/admin/pages/oversight/receipt-detail-dialog.component.ts — Dynamic input checks, overrode Material dialog surfaces to match dark mode.
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Billings & Receipts UI Overhaul
+  ✓ Page header displays "Estate Accounts" (Desktop) / "Financial Atelier" (Mobile) with Aetheris subtext.
+  ✓ Toggle button group refactored into custom Aetheris glassmorphic buttons (Bookings/Receipts).
+  ✓ Customized search, select, and datepicker fields using Aetheris input classes.
+  ✓ Custom table wrapper with row translate hovers, removing borders and applying glass-panels.
+  ✓ Action icons mapped to `arrow_forward_ios` (Bookings) and `download` (Receipts) while preserving dialog bindings.
+  ✓ Mobile cards-view updated with colored status-based left borders and left-padding.
+  ✓ Material Paginator and dialog overlays overridden to ensure no black text shows on select dropdowns.
+
+API INTEGRATION
+---------------
+None (Logic and API connections preserved 100%).
+
+LOGIC TRACES
+------------
+Flow: Tab Switch
+  Entry: Click "Receipts" toggle button.
+  Path: setView('receipts') triggers -> template conditional compiles receipts table -> sets separate filters.
+  Result: ✓ Matches spec
+
+KNOWN DEVIATIONS
+----------------
+✓ Omit export button and estate type filters as they do not map to backend data.
+✓ Omit guest tier and status detail columns in table.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+✓ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+✓ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+✓ I confirm that all API calls match the spec contracts exactly.
+✓ I confirm that all regex validators are character-for-character matches
+  to the spec.
+✓ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
 
 
