@@ -17,9 +17,9 @@
       </button>
     </app-alert>
   } @else if (activeBooking(); as booking) {
-    <!-- The Butler's Pantry Header -->
+    <!-- Dynamic Header -->
     <div class="header-section">
-      <h2>The Butler's Pantry</h2>
+      <h2>{{ pageTitle() }}</h2>
       <div class="subtitle">Guest Room Service</div>
     </div>
 

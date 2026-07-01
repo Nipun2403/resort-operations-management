@@ -44,6 +44,13 @@ export class RoomServiceComponent implements OnInit {
   refreshRequests = signal(0);
   activeTab = signal<'food' | 'service' | 'requests'>('food');
 
+  pageTitle = computed(() => {
+    const tab = this.activeTab();
+    if (tab === 'food') return "The Butler's Pantry";
+    if (tab === 'service') return 'The Summoning of Service';
+    return 'The Ledger of Requests';
+  });
+
   roomIds = computed(() => {
     const booking = this.activeBooking();
     return booking ? booking.rooms.map(r => r.roomId).filter(id => id != null) as number[] : [];

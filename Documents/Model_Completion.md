@@ -5647,8 +5647,8 @@ None.
 FILES MODIFIED (existing files updated per spec)
 -------------------------------------------------
 ✓ src/app/features/user/pages/room-service.component.scss — Configured variables, fonts, glass effects, custom tab rules, and deep overrides for mat-select dropdown options.
-✓ src/app/features/user/pages/room-service.component.html — Integrated header, custom Compass of Service tab bar, and conditional components loading.
-✓ src/app/features/user/pages/room-service.component.ts — Implemented activeTab signal and selectTab helper.
+✓ src/app/features/user/pages/room-service.component.html — Integrated dynamic header, custom Compass of Service tab bar, and conditional components loading.
+✓ src/app/features/user/pages/room-service.component.ts — Implemented activeTab signal, selectTab helper, and pageTitle computed signal for dynamic headers.
 ✓ src/app/features/user/components/food-order/food-order.component.scss — Configured flex layout for menu grid & persistent desktop cart sidebar.
 ✓ src/app/features/user/components/food-order/food-order.component.html — Configured structured delivery select field row.
 ✓ src/app/features/user/components/food-order/menu-grid.component.ts — Integrated dynamic descriptions and Unsplash images mappings.
@@ -5664,8 +5664,9 @@ FILES MODIFIED (existing files updated per spec)
 
 REQUIREMENTS IMPLEMENTED
 ------------------------
-✓ "Compass of Service" Tab Bar
+✓ "Compass of Service" Tab Bar & Dynamic Headers
   ✓ Replaced MatTabGroup with custom styled tab buttons and sliding golden line underline indicator.
+  ✓ Added dynamic page title bound to activeTab computed signal ("The Butler's Pantry", "The Summoning of Service", "The Ledger of Requests").
   ✓ Custom glass panels for stay check fallback.
 ✓ "Chamber One: The Art of Dining" (Food Order)
   ✓ Flex layout with persistent cart sidebar on desktop and bottom sheet on mobile.
