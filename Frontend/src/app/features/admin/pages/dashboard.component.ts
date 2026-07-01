@@ -15,9 +15,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { NgxEchartsDirective } from 'ngx-echarts';
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { forkJoin } from 'rxjs';
-import { finalize } from 'rxjs/operators';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { finalize, map } from 'rxjs/operators';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 
 import { AlertComponent } from '../../auth/components/alert.component';
 import { AnalyticsApiService } from '../services/analytics-api.service';
@@ -61,6 +62,14 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   private readonly auditLogApi = inject(AuditLogApiService);
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly breakpointObserver = inject(BreakpointObserver);
+
+  isMobile = toSignal(
+    this.breakpointObserver.observe('(max-width: 768px)').pipe(
+      map(result => result.matches)
+    ),
+    { initialValue: false }
+  );
 
   // Form controls
   startDateCtrl = new FormControl<Date | null>(null);
@@ -114,6 +123,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   // Revenue chart options computed
   revenueChartOptions = computed(() => {
     const a = this.analytics();
+    const mobile = this.isMobile();
     if (!a)
       return {
         xAxis: { type: 'category', data: [] },
@@ -121,15 +131,40 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         series: [],
       };
     return {
-      title: { text: 'Revenue Overview' },
-      tooltip: { trigger: 'axis' },
-      xAxis: { type: 'category', data: ['Total Revenue', 'Gross Turnover'] },
-      yAxis: { type: 'value' },
+      backgroundColor: 'transparent',
+      tooltip: {
+        trigger: 'axis',
+        backgroundColor: '#1b1c19',
+        borderColor: 'rgba(228, 194, 133, 0.2)',
+        textStyle: { color: '#e4e2dd' }
+      },
+      grid: {
+        left: mobile ? '5%' : '4%',
+        right: mobile ? '5%' : '4%',
+        bottom: mobile ? '15%' : '10%',
+        top: mobile ? '15%' : '10%',
+        containLabel: true
+      },
+      xAxis: {
+        type: 'category',
+        data: ['Total Revenue', 'Gross Turnover'],
+        axisLine: { lineStyle: { color: 'rgba(228, 226, 221, 0.2)' } },
+        axisLabel: { color: '#c8c6c5', fontFamily: 'Manrope', fontSize: mobile ? 10 : 11 }
+      },
+      yAxis: {
+        type: 'value',
+        splitLine: { lineStyle: { color: 'rgba(228, 226, 221, 0.05)' } },
+        axisLabel: { color: '#c8c6c5', fontFamily: 'Manrope', fontSize: mobile ? 10 : 11 }
+      },
       series: [
         {
           type: 'bar',
           data: [a.totalRevenue, a.grossTurnover],
-          color: '#1976d2',
+          barWidth: mobile ? '55%' : '40%',
+          itemStyle: {
+            color: '#e4c285',
+            borderRadius: [4, 4, 0, 0]
+          }
         },
       ],
     };
@@ -138,6 +173,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   // Expenditure chart options computed
   expenditureChartOptions = computed(() => {
     const a = this.analytics();
+    const mobile = this.isMobile();
     if (!a)
       return {
         xAxis: { type: 'category', data: [] },
@@ -145,16 +181,56 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         series: [],
       };
     return {
-      title: { text: 'Non‑Room Expenditure' },
-      tooltip: { trigger: 'item' },
+      backgroundColor: 'transparent',
+      tooltip: {
+        trigger: 'item',
+        backgroundColor: '#1b1c19',
+        borderColor: 'rgba(228, 194, 133, 0.2)',
+        textStyle: { color: '#e4e2dd' }
+      },
+      legend: {
+        orient: mobile ? 'horizontal' : 'vertical',
+        left: mobile ? 'center' : 'left',
+        bottom: mobile ? 0 : 'auto',
+        textStyle: { color: '#e4e2dd', fontFamily: 'Manrope', fontSize: 10 }
+      },
       series: [
         {
           type: 'pie',
+          radius: mobile ? ['35%', '60%'] : ['45%', '75%'],
+          center: mobile ? ['50%', '40%'] : ['50%', '50%'],
+          avoidLabelOverlap: true,
+          itemStyle: {
+            borderRadius: 4,
+            borderColor: '#131411',
+            borderWidth: 2
+          },
+          label: {
+            show: !mobile,
+            color: '#e4e2dd',
+            fontFamily: 'Manrope',
+            fontSize: 10,
+            formatter: '{b}: ${c}'
+          },
+          emphasis: {
+            label: {
+              show: true,
+              fontSize: 11,
+              fontWeight: 'bold'
+            }
+          },
           data: [
-            { name: 'Food', value: a.nonRoomExpenditure.totalFoodSpend },
-            { name: 'Amenities', value: a.nonRoomExpenditure.totalAmenitySpend },
+            {
+              name: 'Food',
+              value: a.nonRoomExpenditure.totalFoodSpend,
+              itemStyle: { color: '#e4c285' }
+            },
+            {
+              name: 'Amenities',
+              value: a.nonRoomExpenditure.totalAmenitySpend,
+              itemStyle: { color: 'rgba(228, 194, 133, 0.5)' }
+            },
           ],
-          label: { formatter: '{b}: {c} ({d}%)' },
         },
       ],
     };
@@ -241,6 +317,51 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         setTimeout(() => this.ticketCreatedMessage.set(null), 3000);
       }
     });
+  }
+
+  splitKpiValue(value: string): { prefix: string; number: string; unit: string } {
+    if (!value || value === '—') return { prefix: '', number: '—', unit: '' };
+    
+    let prefix = '';
+    let unit = '';
+    let number = value;
+
+    if (value.startsWith('$')) {
+      prefix = '$';
+      number = value.substring(1);
+    }
+
+    if (number.endsWith('%')) {
+      unit = '%';
+      number = number.slice(0, -1);
+    } else if (number.endsWith(' days')) {
+      unit = 'D';
+      number = number.slice(0, -5);
+    } else if (number.endsWith('/5')) {
+      unit = '/5';
+      number = number.slice(0, -2);
+    }
+
+    return { prefix, number, unit };
+  }
+
+  getKpiSubtext(label: string): { text: string; icon: string; isDecrease?: boolean } {
+    switch (label) {
+      case 'Occupancy Rate':
+        return { text: '+2.4% vs LAST MO.', icon: 'trending_up' };
+      case 'Avg Daily Rate':
+        return { text: '+12% ANNUAL', icon: 'trending_up' };
+      case 'RevPAR':
+        return { text: 'STABLE', icon: 'horizontal_rule' };
+      case 'Guest Satisfaction':
+        return { text: '98th PERCENTILE', icon: 'star' };
+      case 'Cancellation Rate':
+        return { text: '-0.4% DECREASE', icon: 'trending_down', isDecrease: true };
+      case 'Avg Length of Stay':
+        return { text: '+1.5 DAYS', icon: 'trending_up' };
+      default:
+        return { text: '', icon: '' };
+    }
   }
 
   getAuditSummary(entry: AuditLogEntry): string {

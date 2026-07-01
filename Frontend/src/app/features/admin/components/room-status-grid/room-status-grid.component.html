@@ -1,5 +1,7 @@
 @if (loading()) {
-  <mat-spinner diameter="30"></mat-spinner>
+  <div class="loading">
+    <mat-spinner diameter="30"></mat-spinner>
+  </div>
 } @else if (error()) {
   <app-alert
     type="error"
@@ -20,13 +22,14 @@
         [attr.aria-label]="room.roomNumber + ' - ' + room.status"
       >
         <span class="room-number">{{ room.roomNumber }}</span>
-        <mat-icon
-          >{{ (room.status ?? '').toLowerCase() === 'occupied' ? 'lock' : 'lock_open'
-          }}</mat-icon
-        >
+        <mat-icon>{{ 
+          (room.status ?? '').toLowerCase() === 'occupied' ? 'lock' : 
+          (room.status ?? '').toLowerCase() === 'available' ? 'lock_open' : 'bed' 
+        }}</mat-icon>
       </div>
     } @empty {
-      <p>No room statuses available.</p>
+      <p class="empty-text">No room statuses available.</p>
     }
   </div>
 }
+

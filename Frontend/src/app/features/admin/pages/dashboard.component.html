@@ -1,4 +1,4 @@
-<div class="dashboard">
+<div class="dashboard-container">
 
   <!-- Toast notification -->
   @if (ticketCreatedMessage()) {
@@ -8,185 +8,233 @@
     </div>
   }
 
-  <!-- Top bar -->
-  <div class="top-bar">
-    <div class="date-filter">
-      <mat-form-field appearance="outline">
-        <mat-label>Start date</mat-label>
+  <!-- Briefing Bar (Date Filter & Create Ticket) -->
+  <section class="briefing-bar">
+    <div class="date-filter-group">
+      <div class="date-input-container group" (click)="startPicker.open()">
+        <label class="date-label">START DATE</label>
         <input
-          matInput
+          class="date-input"
           [matDatepicker]="startPicker"
           [formControl]="startDateCtrl"
+          readonly
+          placeholder="SELECT START"
         />
-        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
         <mat-datepicker #startPicker></mat-datepicker>
-      </mat-form-field>
+      </div>
 
-      <mat-form-field appearance="outline">
-        <mat-label>End date</mat-label>
+      <div class="date-input-container group" (click)="endPicker.open()">
+        <label class="date-label">END DATE</label>
         <input
-          matInput
+          class="date-input"
           [matDatepicker]="endPicker"
           [formControl]="endDateCtrl"
+          readonly
+          placeholder="SELECT END"
         />
-        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
         <mat-datepicker #endPicker></mat-datepicker>
-      </mat-form-field>
+      </div>
 
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="applyDateFilter()"
-      >
-        Apply
-      </button>
-
-      <button
-        mat-button
-        (click)="clearDateFilter()"
-      >
-        Clear
-      </button>
+      <div class="filter-actions">
+        <button class="btn-primary" (click)="applyDateFilter()">APPLY</button>
+        <button class="btn-secondary" (click)="clearDateFilter()">CLEAR</button>
+      </div>
     </div>
 
-    <button
-      mat-raised-button
-      color="accent"
-      (click)="openCreateTicketDialog()"
-    >
-      <mat-icon>add_task</mat-icon> Create Internal Ticket
+    <button class="btn-gold" (click)="openCreateTicketDialog()">
+      CREATE INTERNAL TICKET
     </button>
-  </div>
+  </section>
 
-  <!-- KPI Cards (6) -->
-  <div class="kpi-row">
+  <!-- Pillars of Performance (KPI Cards) -->
+  <section class="pillars-section">
     @for (kpi of kpiCards(); track kpi.label) {
-      <mat-card class="kpi-card">
-        <mat-card-title>{{ kpi.label }}</mat-card-title>
-        <mat-card-content>
-          <span class="value">{{ kpi.value }}</span>
-        </mat-card-content>
-      </mat-card>
+      <div class="kpi-glass-card">
+        <p class="kpi-label">{{ kpi.label }}</p>
+        <div class="kpi-value-row">
+          @let split = splitKpiValue(kpi.value);
+          @if (split.prefix) {
+            <span class="kpi-prefix">{{ split.prefix }}</span>
+          }
+          <h3 class="kpi-number">{{ split.number }}</h3>
+          @if (split.unit) {
+            <span class="kpi-unit">{{ split.unit }}</span>
+          }
+        </div>
+        @let sub = getKpiSubtext(kpi.label);
+        @if (sub.text) {
+          <div class="kpi-subtext" [class.decrease]="sub.isDecrease">
+            <mat-icon class="sub-icon">{{ sub.icon }}</mat-icon>
+            <span>{{ sub.text }}</span>
+          </div>
+        }
+      </div>
     }
-  </div>
+  </section>
 
-  <!-- Middle row: Charts + Department Health -->
-  <div class="middle-row">
-    <div class="charts">
-      <div class="chart-container" aria-label="Revenue chart">
-        @if (analyticsLoading()) {
-          <mat-spinner diameter="40"></mat-spinner>
-        } @else if (analyticsError()) {
+  <!-- Middle Section: Charts & Health Cards -->
+  <section class="middle-section">
+    <!-- Charts (60%) -->
+    <div class="charts-column">
+      <!-- Revenue Card -->
+      <div class="chart-glass-card">
+        <div class="card-header">
+          <div>
+            <h4 class="card-label">REVENUE OVERVIEW</h4>
+            <p class="card-title">Estate Performance Ledger</p>
+          </div>
+          <mat-icon class="gold-icon">fullscreen</mat-icon>
+        </div>
+        <div class="chart-wrapper">
+          @if (analyticsLoading()) {
+            <div class="spinner-container">
+              <mat-spinner diameter="40"></mat-spinner>
+            </div>
+          } @else if (analyticsError()) {
+            <app-alert
+              type="error"
+              [message]="analyticsError()!"
+              (closed)="analyticsError.set(null)"
+            >
+              <button mat-button (click)="loadAnalytics()">Retry</button>
+            </app-alert>
+          }
+          <div
+            echarts
+            [options]="revenueChartOptions()"
+            #chartRef
+            class="chart"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Expenditure Card -->
+      <div class="chart-glass-card">
+        <div class="card-header">
+          <div>
+            <h4 class="card-label">EXPENDITURE DISTRIBUTION</h4>
+            <p class="card-title">Non-Room Services</p>
+          </div>
+        </div>
+        <div class="chart-wrapper">
+          @if (analyticsLoading()) {
+            <div class="spinner-container">
+              <mat-spinner diameter="40"></mat-spinner>
+            </div>
+          }
+          <div
+            echarts
+            [options]="expenditureChartOptions()"
+            #chartRef
+            class="chart"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Health Cards (40%) -->
+    <div class="health-column">
+      <!-- Housekeeping -->
+      <div class="health-glass-card">
+        <div class="card-header-simple">
+          <mat-icon class="gold-icon">cleaning_services</mat-icon>
+          <span class="card-label">PENDING ATTENTION</span>
+        </div>
+        <div class="card-body">
+          @if (pendingLoading()) {
+            <div class="spinner-container">
+              <mat-spinner diameter="30"></mat-spinner>
+            </div>
+          } @else {
+            <h5 class="health-count">{{ housekeepingPendingCount() }}</h5>
+          }
+          <p class="health-title">HOUSEKEEPING PENDING</p>
+        </div>
+        <a routerLink="/operations/admin/oversight/auditlogs" class="card-action">VIEW ASSIGNMENTS</a>
+      </div>
+
+      <!-- Maintenance -->
+      <div class="health-glass-card">
+        <div class="card-header-simple">
+          <mat-icon class="gold-icon">construction</mat-icon>
+          <span class="card-label">URGENT RESOLUTION</span>
+        </div>
+        <div class="card-body">
+          @if (pendingLoading()) {
+            <div class="spinner-container">
+              <mat-spinner diameter="30"></mat-spinner>
+            </div>
+          } @else {
+            <h5 class="health-count">{{ maintenancePendingCount() }}</h5>
+          }
+          <p class="health-title">MAINTENANCE PENDING</p>
+        </div>
+        <a routerLink="/operations/admin/oversight/auditlogs" class="card-action">VIEW TICKETS</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ledger of Movement Table -->
+  <section class="movement-section">
+    <div class="movement-glass-card">
+      <div class="gold-progress"></div>
+      <div class="card-header">
+        <div>
+          <h4 class="card-label">REAL-TIME OPERATIONS</h4>
+          <p class="card-title">Today's Movement</p>
+        </div>
+        <div class="action-buttons">
+          <button mat-icon-button class="action-btn"><mat-icon>filter_list</mat-icon></button>
+          <button mat-icon-button class="action-btn"><mat-icon>download</mat-icon></button>
+        </div>
+      </div>
+
+      <div class="table-container">
+        @if (auditLoading()) {
+          <div class="spinner-container">
+            <mat-spinner diameter="30"></mat-spinner>
+          </div>
+        } @else if (auditError()) {
           <app-alert
             type="error"
-            [message]="analyticsError()!"
-            (closed)="analyticsError.set(null)"
+            [message]="auditError()!"
+            (closed)="auditError.set(null)"
           >
-            <button mat-button (click)="loadAnalytics()">Retry</button>
+            <button mat-button (click)="loadAuditLogs()">Retry</button>
           </app-alert>
+        } @else {
+          <table class="movement-table">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Entity</th>
+                <th>Action</th>
+                <th>Changed By</th>
+                <th>Summary</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (entry of auditEntries(); track entry.id || entry.timestamp) {
+                <tr class="table-row">
+                  <td class="time-col">{{ entry.timestamp | date:'shortTime' }}</td>
+                  <td>{{ entry.entityName }}</td>
+                  <td>
+                    <span class="action-badge" [class.error-badge]="entry.action === 'MAINTENANCE' || entry.action.includes('ERROR')">
+                      {{ entry.action }}
+                    </span>
+                  </td>
+                  <td>{{ entry.changedByName }}</td>
+                  <td class="summary-col">{{ getAuditSummary(entry) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+          @if (auditEntries().length === 0 && !auditLoading()) {
+            <p class="empty-state">No recent activity.</p>
+          }
         }
-        <div
-          echarts
-          [options]="revenueChartOptions()"
-          #chartRef
-          class="chart"
-        ></div>
-      </div>
-
-      <div class="chart-container" aria-label="Expenditure chart">
-        <div
-          echarts
-          [options]="expenditureChartOptions()"
-          #chartRef
-          class="chart"
-        ></div>
       </div>
     </div>
+  </section>
 
-    <div class="health-cards">
-      @if (pendingError()) {
-        <app-alert
-          type="error"
-          [message]="pendingError()!"
-          (closed)="pendingError.set(null)"
-        >
-          <button mat-button (click)="loadPendingCounts()">Retry</button>
-        </app-alert>
-      }
-      <mat-card>
-        <mat-card-title>Housekeeping Pending</mat-card-title>
-        <mat-card-content class="count">
-          @if (pendingLoading()) {
-            <mat-spinner diameter="30"></mat-spinner>
-          } @else {
-            {{ housekeepingPendingCount() }}
-          }
-        </mat-card-content>
-      </mat-card>
-
-      <mat-card>
-        <mat-card-title>Maintenance Pending</mat-card-title>
-        <mat-card-content class="count">
-          @if (pendingLoading()) {
-            <mat-spinner diameter="30"></mat-spinner>
-          } @else {
-            {{ maintenancePendingCount() }}
-          }
-        </mat-card-content>
-      </mat-card>
-    </div>
-  </div>
-
-  <!-- Today's Movement Table -->
-  <div class="movement-table">
-    <h2>Today's Movement</h2>
-    @if (auditLoading()) {
-      <mat-spinner diameter="30"></mat-spinner>
-    } @else if (auditError()) {
-      <app-alert
-        type="error"
-        [message]="auditError()!"
-        (closed)="auditError.set(null)"
-      >
-        <button mat-button (click)="loadAuditLogs()">Retry</button>
-      </app-alert>
-    } @else {
-      <table
-        mat-table
-        [dataSource]="auditEntries()"
-        aria-label="Recent audit logs"
-      >
-        <ng-container matColumnDef="timestamp">
-          <th mat-header-cell *matHeaderCellDef>Time</th>
-          <td mat-cell *matCellDef="let entry">{{ entry.timestamp | date:'shortTime' }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="entity">
-          <th mat-header-cell *matHeaderCellDef>Entity</th>
-          <td mat-cell *matCellDef="let entry">{{ entry.entityName }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="action">
-          <th mat-header-cell *matHeaderCellDef>Action</th>
-          <td mat-cell *matCellDef="let entry">{{ entry.action }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="changedBy">
-          <th mat-header-cell *matHeaderCellDef>Changed By</th>
-          <td mat-cell *matCellDef="let entry">{{ entry.changedByName }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="summary">
-          <th mat-header-cell *matHeaderCellDef>Summary</th>
-          <td mat-cell *matCellDef="let entry">{{ getAuditSummary(entry) }}</td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-      </table>
-      @if (auditEntries().length === 0 && !auditLoading()) {
-        <p class="empty-state">No recent activity.</p>
-      }
-    }
-  </div>
 </div>
