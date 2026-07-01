@@ -1,120 +1,465 @@
 @import '../../../../styles/theme/index';
 
-.guest-details {
-  padding: 0 0 48px 0;
+.guest-details-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 48px 80px;
 
-  .header {
-    display: flex;
-    align-items: center;
-    gap: 16px;
+  @media (max-width: 1024px) {
+    padding: 24px 24px;
+  }
+}
+
+// ── Back Button ──────────────────────────────────────
+.back-button-container {
+  margin-bottom: 48px;
+
+  @media (max-width: 768px) {
     margin-bottom: 24px;
+  }
+}
 
-    button {
-      color: var(--color-secondary) !important;
-    }
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  text-decoration: none !important;
+  color: var(--color-secondary) !important;
+  transition: opacity 0.3s ease;
 
-    h1 {
-      @include font-headline-md;
-      color: var(--color-secondary);
-      margin: 0;
+  &:hover {
+    opacity: 0.8;
+
+    .back-icon {
+      transform: translateX(-4px);
     }
   }
 
-  .tab-content {
-    padding-top: 24px;
-    color: var(--color-on-surface);
+  .back-icon {
+    color: var(--color-secondary);
+    transition: transform 0.3s ease;
   }
 
-  .profile-info {
-    @include glass-panel;
-    padding: 24px;
-    border-radius: 4px;
-    margin-bottom: 24px;
-    max-width: 600px;
+  .back-text {
+    @include font-label-caps;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--color-secondary);
+  }
+}
 
-    h3 {
-      @include font-headline-sm;
-      color: var(--color-secondary);
-      margin-top: 0;
+// ── Global Bento Utilities ──────────────────────────
+.glass-obsidian {
+  background: rgba(26, 26, 26, 0.6) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(228, 194, 133, 0.2) !important;
+}
+
+.lift-card {
+  transition: transform 0.4s cubic-bezier(0.2, 0, 0, 1), border-color 0.4s;
+  
+  &:hover {
+    transform: translateY(-8px);
+    border-color: rgba(228, 194, 133, 0.5) !important;
+  }
+}
+
+// ── Bento Box Grid ──────────────────────────────────
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 32px;
+  margin-bottom: 48px;
+
+  @media (max-width: 991px) {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+.identity-card {
+  grid-column: span 8;
+  min-height: 400px;
+  position: relative;
+  overflow: hidden;
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  border-radius: 4px;
+
+  @media (max-width: 991px) {
+    grid-column: span 12;
+    min-height: 300px;
+    padding: 32px 24px;
+  }
+
+  .card-background-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    opacity: 0.3;
+
+    .background-img {
+      width: 100%;
+      height: 100%;
+      object-cover: cover;
+    }
+  }
+
+  .status-badge-container {
+    position: absolute;
+    top: 48px;
+    right: 48px;
+
+    @media (max-width: 768px) {
+      top: 32px;
+      right: 24px;
+    }
+  }
+
+  .status-badge {
+    padding: 6px 16px;
+    border: 1px solid rgba(228, 194, 133, 0.4);
+    border-radius: 20px;
+    @include font-label-caps;
+    font-size: 10px;
+    color: var(--color-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    background: rgba(19, 20, 17, 0.6);
+  }
+
+  .identity-info {
+    .guest-name {
+      font-family: var(--font-headline) !important;
+      @include font-display-lg;
+      color: var(--color-on-background);
       margin-bottom: 16px;
-    }
+      font-weight: 400;
 
-    p {
-      @include font-body-md;
-      margin-bottom: 12px;
-      line-height: 1.6;
-      strong {
-        color: var(--color-secondary);
-        font-weight: 500;
-      }
-    }
-  }
-
-  .booking-item {
-    @include glass-panel;
-    border-radius: 4px;
-    padding: 20px;
-    margin-bottom: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-
-    p {
-      @include font-body-md;
-      margin: 0;
-      strong {
-        color: var(--color-secondary);
-        font-weight: 500;
+      @media (max-width: 768px) {
+        font-size: 28px;
       }
     }
 
-    .actions {
+    .meta-row {
       display: flex;
-      gap: 12px;
       flex-wrap: wrap;
+      gap: 32px;
+      align-items: center;
 
-      button {
-        @include font-label-caps;
-        border-radius: 4px !important;
-        height: 38px;
-        font-weight: 600;
+      @media (max-width: 576px) {
+        gap: 16px;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
 
-        &[color="primary"] {
-          background-color: var(--color-secondary) !important;
-          color: var(--color-on-secondary) !important;
-          &:hover {
-            background-color: #ffdea4 !important;
-          }
-        }
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
 
-        &[color="warn"] {
-          background-color: var(--color-error-container) !important;
-          color: var(--color-on-error-container) !important;
-          &:hover {
-            background-color: #ffdad6 !important;
-          }
-        }
+      .meta-icon {
+        color: var(--color-secondary);
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
 
-        &[color="accent"] {
-          background-color: var(--color-surface-bright) !important;
-          color: var(--color-secondary) !important;
-          border: 1px solid var(--color-secondary) !important;
-          &:hover {
-            background-color: rgba(228, 194, 133, 0.1) !important;
-          }
-        }
-
-        &:not([color]) {
-          background-color: transparent !important;
-          color: var(--color-on-surface) !important;
-          border: 1px solid var(--glass-border) !important;
-          &:hover {
-            background-color: rgba(228, 194, 133, 0.05) !important;
-            color: var(--color-secondary) !important;
-          }
-        }
+      .meta-text {
+        @include font-body-md;
+        opacity: 0.7;
+        color: var(--color-on-background);
       }
     }
   }
 }
 
+.stats-grid {
+  grid-column: span 4;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+
+  @media (max-width: 991px) {
+    grid-column: span 12;
+    flex-direction: row;
+  }
+
+  @media (max-width: 576px) {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .stat-card {
+    flex: 1;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-radius: 4px;
+
+    @media (max-width: 991px) {
+      padding: 24px;
+    }
+
+    .stat-label {
+      @include font-label-caps;
+      font-size: 11px;
+      color: var(--color-secondary);
+      margin-bottom: 12px;
+      letter-spacing: 0.2em;
+    }
+
+    .stat-value {
+      font-family: var(--font-headline) !important;
+      @include font-display-lg;
+      font-size: 40px;
+      color: var(--color-on-background);
+
+      &.date {
+        font-size: 20px;
+        font-family: var(--font-body) !important;
+        font-weight: 500;
+      }
+    }
+
+    .stat-sub {
+      font-size: 9px;
+      color: var(--color-on-surface-variant);
+      opacity: 0.4;
+      margin-top: 12px;
+      letter-spacing: 0.15em;
+      font-weight: 600;
+    }
+  }
+}
+
+// ── Tab Layout & Styles ──────────────────────────────
+.tab-content {
+  padding-top: 32px;
+  color: var(--color-on-surface);
+}
+
+.empty-state-text {
+  @include font-body-md;
+  color: var(--color-on-surface-variant);
+  opacity: 0.6;
+}
+
+// ── Profile Card (Overview) ──────────────────────────
+.profile-card {
+  padding: 32px;
+  border-radius: 4px;
+  max-width: 650px;
+
+  .panel-title {
+    font-family: var(--font-headline) !important;
+    @include font-headline-sm;
+    color: var(--color-secondary);
+    margin-top: 0;
+    margin-bottom: 24px;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+  }
+
+  .profile-details-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 12px;
+
+    .detail-label {
+      @include font-label-caps;
+      font-size: 10px;
+      color: var(--color-on-surface-variant);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .detail-value {
+      @include font-body-md;
+      color: var(--color-on-background);
+    }
+  }
+}
+
+// ── Bookings Tab ─────────────────────────────────────
+.bookings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.booking-card {
+  padding: 32px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 24px;
+  }
+
+  &.inactive {
+    opacity: 0.5;
+    filter: grayscale(1);
+    transition: all 0.3s ease;
+
+    &:hover {
+      opacity: 0.8;
+      filter: grayscale(0);
+    }
+  }
+
+  .booking-header-group {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+
+    @media (max-width: 576px) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+  }
+
+  .booking-icon-box {
+    width: 56px;
+    height: 56px;
+    border: 1px solid rgba(228, 194, 133, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(19, 20, 17, 0.4);
+
+    .booking-icon {
+      color: var(--color-secondary);
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+    }
+  }
+
+  .booking-title-info {
+    .booking-id-title {
+      font-family: var(--font-headline) !important;
+      @include font-headline-sm;
+      font-size: 18px;
+      color: var(--color-on-background);
+      margin: 0 0 6px 0;
+      font-weight: 400;
+    }
+
+    .booking-date-range {
+      @include font-body-md;
+      font-size: 13px;
+      color: var(--color-on-surface-variant);
+      opacity: 0.7;
+      margin: 0;
+    }
+  }
+
+  .booking-actions-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+
+    @media (max-width: 768px) {
+      width: 100%;
+      justify-content: flex-end;
+    }
+  }
+
+  .booking-status-chip {
+    padding: 6px 12px;
+    background: rgba(228, 194, 133, 0.1);
+    color: var(--color-secondary);
+    border: 1px solid rgba(228, 194, 133, 0.2);
+    @include font-label-caps;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-radius: 2px;
+  }
+}
+
+// ── Action Buttons ───────────────────────────────────
+.btn-aetheris-action {
+  @include font-label-caps;
+  border-radius: 4px !important;
+  height: 38px;
+  padding: 0 20px !important;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+
+  &.primary {
+    background-color: var(--color-secondary) !important;
+    color: var(--color-on-secondary) !important;
+    border: none !important;
+
+    &:hover {
+      background-color: #ffdea4 !important;
+    }
+  }
+
+  &.outline {
+    background-color: transparent !important;
+    color: var(--color-on-surface) !important;
+    border: 1px solid var(--glass-border) !important;
+
+    &:hover {
+      background-color: rgba(228, 194, 133, 0.05) !important;
+      color: var(--color-secondary) !important;
+    }
+  }
+
+  &.accent {
+    background-color: var(--color-surface-bright) !important;
+    color: var(--color-secondary) !important;
+    border: 1px solid var(--color-secondary) !important;
+
+    &:hover {
+      background-color: rgba(228, 194, 133, 0.1) !important;
+    }
+  }
+
+  &.warn {
+    background-color: var(--color-error-container) !important;
+    color: var(--color-on-error-container) !important;
+    border: none !important;
+
+    &:hover {
+      background-color: #ffdad6 !important;
+    }
+  }
+}
+
+// Spinner container for loading state
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  padding: 48px 0;
+}

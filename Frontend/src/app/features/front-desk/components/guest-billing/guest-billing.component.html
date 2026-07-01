@@ -1,76 +1,85 @@
-<div class="guest-billing">
+<div class="guest-billing-container">
   @if (loading()) {
-    <div style="display: flex; justify-content: center; padding: 16px;">
+    <div class="spinner-container">
       <mat-spinner diameter="30"></mat-spinner>
     </div>
   } @else if (error()) {
     <app-alert type="error" [message]="error()!" (closed)="error.set(null)"></app-alert>
   } @else {
-    <!-- Latest Folio -->
-    @if (latestBilling()) {
-      <mat-card class="latest-folio-card" style="margin-bottom: 24px;">
-        <mat-card-header>
-          <mat-card-title>Latest Folio (Booking #{{ latestBilling()!.bookingId }})</mat-card-title>
-        </mat-card-header>
-        <mat-card-content style="padding-top: 16px;">
-          <div class="bill-summary">
-            <p><strong>Guest:</strong> {{ latestBilling()!.guestName }}</p>
-            <p><strong>Nights Stayed:</strong> {{ latestBilling()!.nightsStayed }}</p>
-            <p><strong>Room Total:</strong> {{ latestBilling()!.roomTotal | currency }} ({{ latestBilling()!.roomBasePrice | currency }}/night)</p>
-            <p><strong>Food Total:</strong> {{ latestBilling()!.foodTotal | currency }}</p>
-            <p><strong>Amenity Total:</strong> {{ latestBilling()!.amenityTotal | currency }}</p>
-            <mat-divider style="margin: 12px 0;"></mat-divider>
-            <p style="font-size: 1.2rem; font-weight: 500;">
-              <strong>Total Bill:</strong> {{ latestBilling()!.totalBill | currency }}
-            </p>
-            <p>
-              <strong>Payment Status:</strong>
-              <span [class]="latestBilling()!.paymentStatus" style="margin-left: 8px; font-weight: 500;">
-                {{ latestBilling()!.paymentStatus }}
-              </span>
-            </p>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    } @else {
-      <p>No billing information available.</p>
-    }
-
-    <!-- Old Folios (collapsible) -->
-    @if (oldBilling().length > 0) {
-      <mat-accordion>
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <mat-panel-title>Old Folios ({{ oldBilling().length }})</mat-panel-title>
-          </mat-expansion-panel-header>
-          
-          <table mat-table [dataSource]="oldBilling()" class="mat-elevation-z0" style="width: 100%;">
-            <ng-container matColumnDef="bookingId">
-              <th mat-header-cell *matHeaderCellDef>Booking ID</th>
-              <td mat-cell *matCellDef="let b">#{{ b.bookingId }}</td>
-            </ng-container>
-            <ng-container matColumnDef="checkOutDate">
-              <th mat-header-cell *matHeaderCellDef>Check‑Out Date</th>
-              <td mat-cell *matCellDef="let b">{{ b.checkOutDate | date:'mediumDate' }}</td>
-            </ng-container>
-            <ng-container matColumnDef="totalBill">
-              <th mat-header-cell *matHeaderCellDef>Total</th>
-              <td mat-cell *matCellDef="let b">{{ b.totalBill | currency }}</td>
-            </ng-container>
-            <ng-container matColumnDef="actions">
-              <th mat-header-cell *matHeaderCellDef>Details</th>
-              <td mat-cell *matCellDef="let b">
-                <button mat-icon-button (click)="openFolioDetail(b)" aria-label="View folio">
-                  <mat-icon>visibility</mat-icon>
-                </button>
-              </td>
-            </ng-container>
+    <div class="billing-grid">
+      <!-- Latest Folio Status -->
+      <div class="latest-folio-section">
+        @if (latestBilling()) {
+          <div class="latest-folio-card glass-obsidian">
+            <div class="card-icon-overlay">
+              <mat-icon class="payments-large-icon">payments</mat-icon>
+            </div>
             
-            <tr mat-header-row *matHeaderRowDef="['bookingId','checkOutDate','totalBill','actions']"></tr>
-            <tr mat-row *matRowDef="let row; columns: ['bookingId','checkOutDate','totalBill','actions']"></tr>
-          </table>
-        </mat-expansion-panel>
-      </mat-accordion>
-    }
+            <h4 class="card-title-label">Latest Folio (Booking #{{ latestBilling()!.bookingId }})</h4>
+            
+            <div class="folio-stats-list">
+              <div class="stat-row">
+                <span class="stat-label">Outstanding / Total Bill</span>
+                <span class="stat-value font-headline-md">{{ latestBilling()!.totalBill | currency }}</span>
+              </div>
+              <div class="stat-row">
+                <span class="stat-label">Incidentals (Food & Amenities)</span>
+                <span class="stat-value font-body-md">{{ (latestBilling()!.foodTotal + latestBilling()!.amenityTotal) | currency }}</span>
+              </div>
+              <div class="stat-row">
+                <span class="stat-label">Room Charges</span>
+                <span class="stat-value font-body-md">{{ latestBilling()!.roomTotal | currency }}</span>
+              </div>
+              <div class="stat-row">
+                <span class="stat-label">Status</span>
+                <span class="stat-status-chip" [class]="latestBilling()!.paymentStatus">{{ latestBilling()!.paymentStatus }}</span>
+              </div>
+            </div>
+            
+            <button class="action-btn-invoice" (click)="openFolioDetail(latestBilling()!)">
+              View Invoice Details
+            </button>
+          </div>
+        } @else {
+          <p class="empty-state-text">No active billing folio found.</p>
+        }
+      </div>
+
+      <!-- Archive Folios -->
+      <div class="archive-folios-section">
+        <h4 class="section-title-label">Archive Folios</h4>
+        
+        @if (oldBilling().length > 0) {
+          <div class="table-responsive no-scrollbar">
+            <table class="archive-table">
+              <thead>
+                <tr>
+                  <th>Folio ID</th>
+                  <th>Check‑Out Date</th>
+                  <th class="text-right">Total Amount</th>
+                  <th class="text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (b of oldBilling(); track b.bookingId) {
+                  <tr class="table-row">
+                    <td>#{{ b.bookingId }}</td>
+                    <td class="checkout-date-cell">{{ b.checkOutDate | date:'mediumDate' }}</td>
+                    <td class="text-right total-amount-cell">{{ b.totalBill | currency }}</td>
+                    <td class="text-right action-cell">
+                      <button class="view-pdf-btn" (click)="openFolioDetail(b)">
+                        View Details
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else {
+          <p class="empty-state-text">No archived billing records found.</p>
+        }
+      </div>
+    </div>
   }
 </div>

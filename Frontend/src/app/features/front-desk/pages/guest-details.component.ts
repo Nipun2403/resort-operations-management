@@ -23,7 +23,9 @@ import { AlertComponent } from '../../auth/components/alert.component';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { ExtendStayDialogComponent } from '../components/extend-stay-dialog/extend-stay-dialog.component';
 import { CheckoutDialogComponent } from '../components/booking-action-modal/checkout-dialog/checkout-dialog.component';
-import { RoomServiceTabComponent } from '../components/booking-action-modal/room-service-tab/room-service-tab.component';
+import { FoodOrderPanelComponent } from '../components/booking-action-modal/food-order-panel/food-order-panel.component';
+import { HousekeepingRequestPanelComponent } from '../components/booking-action-modal/housekeeping-request-panel/housekeeping-request-panel.component';
+import { MaintenanceRequestPanelComponent } from '../components/booking-action-modal/maintenance-request-panel/maintenance-request-panel.component';
 import { GuestBillingComponent } from '../components/guest-billing/guest-billing.component';
 
 @Component({
@@ -43,7 +45,9 @@ import { GuestBillingComponent } from '../components/guest-billing/guest-billing
     MatSnackBarModule,
     MatDialogModule,
     AlertComponent,
-    RoomServiceTabComponent,
+    FoodOrderPanelComponent,
+    HousekeepingRequestPanelComponent,
+    MaintenanceRequestPanelComponent,
     GuestBillingComponent,
   ],
   templateUrl: './guest-details.component.html',

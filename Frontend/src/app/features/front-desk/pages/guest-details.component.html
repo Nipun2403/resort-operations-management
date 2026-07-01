@@ -1,117 +1,210 @@
-<div class="guest-details">
-  <!-- Header with back button -->
-  <div class="header">
-    <button
-      mat-icon-button
-      routerLink="/operations/front-desk/dashboard"
-      aria-label="Back to Dashboard"
-    >
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-    <h1>Guest: {{ email() }}</h1>
+<div class="guest-details-container">
+  <!-- Back Button -->
+  <div class="back-button-container">
+    <a class="back-link" routerLink="/operations/front-desk/dashboard">
+      <mat-icon class="back-icon">arrow_back</mat-icon>
+      <span class="back-text">Back to Dashboard</span>
+    </a>
   </div>
 
   @if (loading()) {
-  <mat-spinner diameter="40"></mat-spinner>
+    <div class="spinner-container">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
   } @else if (error()) {
-  <app-alert
-    type="error"
-    [message]="error()!"
-    (closed)="error.set(null)"
-  >
-    <button
-      mat-button
-      (click)="fetchBookings()"
+    <app-alert
+      type="error"
+      [message]="error()!"
+      (closed)="error.set(null)"
     >
-      Retry
-    </button>
-  </app-alert>
+      <button
+        mat-button
+        (click)="fetchBookings()"
+      >
+        Retry
+      </button>
+    </app-alert>
   } @else {
-  <mat-tab-group>
-    <mat-tab label="Overview">
-      <div class="tab-content">
-        @if (guestProfile()) {
-        <div class="profile-info">
-          <h3>{{ guestProfile()!.guestName }}</h3>
-          <p><strong>Email:</strong> {{ guestProfile()!.guestEmail }}</p>
-          <p><strong>Total Stays:</strong> {{ guestProfile()!.totalStays }}</p>
-          <p>
-            <strong>Last Check-In:</strong> {{ guestProfile()!.lastCheckInDate }}
-          </p>
-          <p><strong>Current Status:</strong> {{ getOverallStatus() }}</p>
+    <!-- Profile Cover Card (Bento Style) -->
+    <div class="bento-grid">
+      <!-- Main Identity Card -->
+      <div class="identity-card glass-obsidian">
+        <div class="card-background-overlay">
+          <img class="background-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKszYjdODT4mvdtAS5XTKfsMHQzMr-hyxFQP0J-mNiWZqbIDzB-iDnv3w6owJ8604UYhAsdP5nR8elfVL0c1nqUNMZtCtif6hxwlJH6ZG_GxsVX8w8DBhmjEuG2TWWu3d-QPfMYlkhdpx1Hd6BYEdcg_cndE-xzpTs9vVIQV9RZuUCOyc3EDAo8dX2ijNhNwo0cRxBPNoMP2IPmAoviqy3kXtB0brzrF4an07wDZpT8vFDruTD4fPwW-iQpo8yaeCdOVAOJ9ZLGccT" alt="Dark marble texture" />
         </div>
-        } @else {
-        <p>Loading guest profile...</p>
-        }
-      </div>
-    </mat-tab>
-
-    <mat-tab label="Bookings">
-      <div class="tab-content">
-        @for (b of bookings(); track b.id) {
-        <div class="booking-item">
-          <p>
-            <strong>ID:</strong> {{ b.id }} | <strong>Status:</strong> {{
-            b.bookingStatus }} | <strong>Rooms:</strong> {{ getRoomNumbers(b) }}
-          </p>
-          <div class="actions">
-            @if (b.bookingStatus === 'Booked') {
-            <button
-              mat-raised-button
-              color="primary"
-              (click)="checkIn(b)"
-            >
-              Check-In
-            </button>
-            <button
-              mat-raised-button
-              color="warn"
-              (click)="cancelBooking(b)"
-            >
-              Cancel
-            </button>
-            } @if (b.bookingStatus === 'CheckedIn') {
-            <button
-              mat-raised-button
-              (click)="extendStay(b)"
-            >
-              Extend Stay
-            </button>
-            <button
-              mat-raised-button
-              color="accent"
-              (click)="checkOut(b)"
-            >
-              Check-Out
-            </button>
-            }
+        <div class="status-badge-container">
+          <span class="status-badge">
+            {{ getOverallStatus() === 'CheckedIn' ? 'Checked In' : getOverallStatus() }}
+          </span>
+        </div>
+        <div class="identity-info">
+          <h2 class="guest-name">
+            {{ guestProfile()?.guestName || email() }}
+          </h2>
+          <div class="meta-row">
+            <div class="meta-item">
+              <mat-icon class="meta-icon">mail</mat-icon>
+              <span class="meta-text">{{ guestProfile()?.guestEmail || email() }}</span>
+            </div>
+            <div class="meta-item">
+              <mat-icon class="meta-icon">verified_user</mat-icon>
+              <span class="meta-text">Guest</span>
+            </div>
           </div>
         </div>
-        }
       </div>
-    </mat-tab>
+      
+      <!-- Stats Grid (Sub-Bento) -->
+      <div class="stats-grid">
+        <div class="stat-card glass-obsidian lift-card">
+          <span class="stat-label">Total Stays</span>
+          <span class="stat-value">{{ guestProfile()?.totalStays ?? 0 }}</span>
+          <span class="stat-sub">LOYALTY ESTABLISHED</span>
+        </div>
+        <div class="stat-card glass-obsidian lift-card">
+          <span class="stat-label">Last Check-In</span>
+          <span class="stat-value date">
+            {{ guestProfile()?.lastCheckInDate ? (guestProfile()!.lastCheckInDate | date:'mediumDate') : '—' }}
+          </span>
+          <span class="stat-sub">AETHERIS RESORT</span>
+        </div>
+      </div>
+    </div>
 
-    <mat-tab
-      label="Room Service"
-      [disabled]="!activeBooking()"
-    >
-      <div class="tab-content">
-        @if (activeBooking()) {
-        <app-room-service-tab [booking]="activeBooking()!" />
-        } @else {
-        <p>No active booking for room service.</p>
-        }
-      </div>
-    </mat-tab>
+    <!-- Tabbed Navigation -->
+    <mat-tab-group class="custom-details-tabs">
+      <mat-tab label="Overview">
+        <div class="tab-content">
+          @if (guestProfile()) {
+            <div class="profile-card glass-obsidian">
+              <h3 class="panel-title">Guest Profile</h3>
+              <div class="profile-details-list">
+                <div class="detail-row">
+                  <span class="detail-label">Name</span>
+                  <span class="detail-value">{{ guestProfile()!.guestName }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Email</span>
+                  <span class="detail-value">{{ guestProfile()!.guestEmail }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Total Stays</span>
+                  <span class="detail-value">{{ guestProfile()!.totalStays }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Last Check-In</span>
+                  <span class="detail-value">{{ guestProfile()!.lastCheckInDate | date:'mediumDate' }}</span>
+                </div>
+              </div>
+            </div>
+          } @else {
+            <p class="empty-state-text">Loading guest profile...</p>
+          }
+        </div>
+      </mat-tab>
 
-    <mat-tab
-      label="Billing"
-      [disabled]="!activeBooking()"
-    >
-      <div class="tab-content">
-        <app-guest-billing [bookings]="bookings()" />
-      </div>
-    </mat-tab>
-  </mat-tab-group>
+      <mat-tab label="Bookings">
+        <div class="tab-content bookings-list">
+          @for (b of bookings(); track b.id) {
+            <!-- Booking Card -->
+            <div [class]="'booking-card glass-obsidian lift-card ' + (b.bookingStatus === 'CheckedOut' || b.bookingStatus === 'Cancelled' ? 'inactive' : '')">
+              <div class="booking-header-group">
+                <div class="booking-icon-box">
+                  <mat-icon class="booking-icon">
+                    {{ (b.bookingStatus === 'CheckedOut' || b.bookingStatus === 'Cancelled') ? 'history' : 'key' }}
+                  </mat-icon>
+                </div>
+                <div class="booking-title-info">
+                  <h4 class="booking-id-title">Booking #{{ b.id }}</h4>
+                  <p class="booking-date-range">
+                    {{ b.checkInDate | date:'mediumDate' }} — {{ b.checkOutDate | date:'mediumDate' }} | Rooms: {{ getRoomNumbers(b) }}
+                  </p>
+                </div>
+              </div>
+              
+              <div class="booking-actions-group">
+                <span class="booking-status-chip">
+                  {{ b.bookingStatus }}
+                </span>
+                
+                @if (b.bookingStatus === 'Booked') {
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    class="btn-aetheris-action primary"
+                    (click)="checkIn(b)"
+                  >
+                    Check-In
+                  </button>
+                  <button
+                    mat-raised-button
+                    color="warn"
+                    class="btn-aetheris-action warn"
+                    (click)="cancelBooking(b)"
+                  >
+                    Cancel
+                  </button>
+                }
+                @if (b.bookingStatus === 'CheckedIn') {
+                  <button
+                    mat-raised-button
+                    class="btn-aetheris-action outline"
+                    (click)="extendStay(b)"
+                  >
+                    Extend Stay
+                  </button>
+                  <button
+                    mat-raised-button
+                    color="accent"
+                    class="btn-aetheris-action accent"
+                    (click)="checkOut(b)"
+                  >
+                    Check-Out
+                  </button>
+                }
+              </div>
+            </div>
+          } @empty {
+            <p class="empty-state-text">No bookings found for this guest.</p>
+          }
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Food Orders" [disabled]="!activeBooking()">
+        <div class="tab-content">
+          @if (activeBooking()) {
+            <app-food-order-panel [bookingId]="activeBooking()!.id" [rooms]="activeBooking()!.rooms" />
+          } @else {
+            <p class="empty-state-text">No active booking for food orders.</p>
+          }
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Housekeeping" [disabled]="!activeBooking()">
+        <div class="tab-content">
+          @if (activeBooking()) {
+            <app-housekeeping-request-panel [rooms]="activeBooking()!.rooms" />
+          } @else {
+            <p class="empty-state-text">No active booking for housekeeping requests.</p>
+          }
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Maintenance" [disabled]="!activeBooking()">
+        <div class="tab-content">
+          @if (activeBooking()) {
+            <app-maintenance-request-panel [rooms]="activeBooking()!.rooms" />
+          } @else {
+            <p class="empty-state-text">No active booking for maintenance requests.</p>
+          }
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Billing" [disabled]="!activeBooking()">
+        <div class="tab-content">
+          <app-guest-billing [bookings]="bookings()" />
+        </div>
+      </mat-tab>
+    </mat-tab-group>
   }
 </div>

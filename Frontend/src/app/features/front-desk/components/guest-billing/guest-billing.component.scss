@@ -1,91 +1,256 @@
 @import '../../../../../styles/theme/index';
 
-.guest-billing {
-  .latest-folio-card {
-    @include glass-panel;
-    margin-bottom: 24px;
-    border-radius: 4px;
-    
-    mat-card-title {
-      @include font-headline-sm;
-      color: var(--color-secondary);
+.guest-billing-container {
+  color: var(--color-on-surface);
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  padding: 32px 0;
+}
+
+.empty-state-text {
+  @include font-body-md;
+  color: var(--color-on-surface-variant);
+  opacity: 0.6;
+}
+
+// ── Bento Billing Grid Layout ────────────────────────
+.billing-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 32px;
+
+  @media (max-width: 991px) {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}
+
+.latest-folio-section {
+  grid-column: span 4;
+
+  @media (max-width: 991px) {
+    grid-column: span 12;
+  }
+}
+
+.archive-folios-section {
+  grid-column: span 8;
+
+  @media (max-width: 991px) {
+    grid-column: span 12;
+  }
+}
+
+// ── Latest Folio Card ───────────────────────────────
+.latest-folio-card {
+  padding: 40px;
+  border-top: 2px solid var(--color-secondary) !important;
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 400px;
+
+  .card-icon-overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 16px;
+    opacity: 0.05;
+    pointer-events: none;
+
+    .payments-large-icon {
+      font-size: 96px;
+      width: 96px;
+      height: 96px;
+      color: var(--color-on-surface);
     }
   }
 
-  .bill-summary {
-    p {
-      margin: 12px 0;
+  .card-title-label {
+    @include font-label-caps;
+    font-size: 11px;
+    color: var(--color-secondary);
+    margin-top: 0;
+    margin-bottom: 32px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .folio-stats-list {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    padding-bottom: 12px;
+
+    .stat-label {
+      font-size: 10px;
+      color: rgba(196, 199, 199, 0.6);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      font-weight: 500;
+    }
+
+    .stat-value {
+      color: var(--color-on-background);
+
+      &.font-headline-md {
+        font-family: var(--font-headline) !important;
+        @include font-headline-md;
+        font-size: 24px;
+      }
+
+      &.font-body-md {
+        @include font-body-md;
+        font-size: 14px;
+      }
+    }
+
+    .stat-status-chip {
+      padding: 4px 10px;
+      border-radius: 12px;
+      @include font-label-caps;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+
+      &.Paid {
+        background-color: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        color: #10b981;
+      }
+
+      &.Pending {
+        background-color: rgba(245, 158, 11, 0.1);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        color: #f59e0b;
+      }
+    }
+  }
+
+  .action-btn-invoice {
+    width: 100%;
+    padding: 16px;
+    background: transparent;
+    border: 1px solid var(--color-secondary);
+    color: var(--color-secondary);
+    @include font-label-caps;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    font-weight: 600;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 4px;
+
+    &:hover {
+      background-color: var(--color-secondary);
+      color: var(--color-on-secondary);
+    }
+  }
+}
+
+// ── Archive Folios ──────────────────────────────────
+.section-title-label {
+  @include font-label-caps;
+  font-size: 12px;
+  color: var(--color-on-surface-variant);
+  margin-top: 0;
+  margin-bottom: 24px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.archive-table {
+  width: 100%;
+  text-align: left;
+  border-collapse: collapse;
+
+  thead {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+    th {
+      padding: 16px 0;
+      @include font-label-caps;
+      font-size: 10px;
+      color: var(--color-secondary);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+  }
+
+  tbody {
+    .table-row {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.02);
+
+        .view-pdf-btn {
+          opacity: 1;
+        }
+      }
+    }
+
+    td {
+      padding: 24px 0;
       @include font-body-md;
-      color: var(--color-on-surface);
-      
-      strong {
-        color: var(--color-secondary);
+      font-size: 14px;
+      color: var(--color-on-background);
+
+      &.checkout-date-cell {
+        color: rgba(196, 199, 199, 0.6);
+      }
+
+      &.total-amount-cell {
         font-weight: 500;
       }
     }
   }
 
-  .Paid {
-    background-color: rgba(16, 185, 129, 0.1);
-    border: 1px solid rgba(16, 185, 129, 0.3);
-    color: #10b981;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-family: var(--font-body);
-    @include font-label-caps;
-    font-size: 10px;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
+  .text-right {
+    text-align: right;
   }
 
-  .Pending {
-    background-color: rgba(239, 68, 68, 0.1);
-    border: 1px solid rgba(239, 68, 68, 0.3);
-    color: #ef4444;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-family: var(--font-body);
-    @include font-label-caps;
-    font-size: 10px;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-  }
-
-  table {
-    margin-top: 16px;
+  .view-pdf-btn {
     background: transparent;
-    border-collapse: collapse;
-    width: 100%;
-    
-    tr {
-      background: transparent !important;
-      border-bottom: 1px solid var(--glass-border);
-      
-      &:hover {
-        background: rgba(228, 194, 133, 0.03) !important;
-      }
-    }
-    
-    th.mat-mdc-header-cell {
-      @include font-label-caps;
-      color: var(--color-on-surface-variant) !important;
-      border-bottom: 1px solid var(--glass-border) !important;
-      font-weight: 600;
-      padding: 12px 16px;
-    }
-    
-    td.mat-mdc-cell {
-      @include font-body-md;
-      color: var(--color-on-surface) !important;
-      border-bottom: none !important;
-      padding: 12px 16px;
-    }
-  }
+    border: none;
+    color: var(--color-secondary);
+    text-decoration: underline;
+    @include font-label-caps;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 
-  mat-divider {
-    border-top-color: var(--glass-border) !important;
+    &:hover {
+      color: #ffdea4;
+    }
+
+    @media (max-width: 768px) {
+      opacity: 1;
+    }
   }
 }
-
