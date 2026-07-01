@@ -1,42 +1,323 @@
+@import '../../../../../styles/theme/index';
+
 .history-view {
+  color: var(--color-on-surface);
+
+  * {
+    color: inherit;
+  }
+
   .controls {
     display: flex;
-    gap: 16px;
+    gap: 24px;
     align-items: center;
-    margin-bottom: 16px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+
+    .clear-btn {
+      padding: 12px 24px;
+      height: fit-content;
+      margin-top: 8px;
+    }
   }
 
-  .table-container {
+  .table-wrapper {
+    @include glass-panel;
+    border-radius: 4px;
     overflow-x: auto;
     width: 100%;
-    margin-bottom: 16px;
-    border: 1px solid rgba(0, 0, 0, 0.12);
-    border-radius: 4px;
+    margin-bottom: 24px;
   }
 
-  table {
+  .custom-table {
     width: 100%;
+    background: transparent !important;
     border-collapse: collapse;
 
-    tr.highlight {
-      background-color: #e8eaf6 !important;
-      animation: flash-highlight 2s ease-out;
+    th.mat-mdc-header-cell {
+      @include font-label-caps;
+      font-size: 10px;
+      color: var(--color-secondary) !important;
+      letter-spacing: 0.15em;
+      border-bottom: 1px solid rgba(228, 194, 133, 0.2) !important;
+      padding: 16px 24px !important;
+      background: transparent !important;
+    }
+
+    tr.mat-mdc-row {
+      background: transparent !important;
+      transition: background 0.4s ease;
+
+      &:hover {
+        background: linear-gradient(90deg, transparent, rgba(228, 194, 133, 0.03), transparent) !important;
+      }
+
+      &.highlight {
+        background: rgba(228, 194, 133, 0.1) !important;
+        animation: flash-highlight 2s ease-out;
+      }
+    }
+
+    td.mat-mdc-cell {
+      @include font-body-md;
+      font-size: 14px;
+      color: var(--color-on-surface) !important;
+      border-bottom: 1px solid rgba(228, 194, 133, 0.05) !important;
+      padding: 24px !important;
+      background: transparent !important;
+    }
+
+    .id-cell {
+      @include font-label-caps;
+      font-size: 12px;
+      color: var(--color-on-surface-variant) !important;
+    }
+
+    .actions-header {
+      text-align: right;
+    }
+
+    .actions-cell {
+      text-align: right;
+      white-space: nowrap;
+      
+      .action-btn {
+        color: rgba(228, 194, 133, 0.6) !important;
+        transition: color 0.3s ease, transform 0.3s ease;
+
+        &:hover {
+          color: var(--color-secondary) !important;
+          transform: scale(1.05);
+        }
+
+        mat-icon {
+          font-size: 20px;
+        }
+      }
+
+      .animate-feedback:hover {
+        animation: pulse-glow 1.5s infinite;
+      }
     }
   }
 
   .no-bookings {
-    padding: 24px;
+    padding: 48px;
     text-align: center;
-    color: rgba(0, 0, 0, 0.54);
-    font-size: 1.1rem;
+    @include font-body-md;
+    color: var(--color-on-surface-variant);
+    font-style: italic;
   }
+}
+
+// Custom Status Badges
+.status-badge {
+  padding: 6px 16px;
+  @include font-label-caps;
+  font-size: 10px;
+  border-radius: 20px;
+  display: inline-block;
+  letter-spacing: 0.05em;
+
+  &.status-booked, &.status-checkedin, &.status-completed {
+    background: rgba(228, 194, 133, 0.1);
+    border: 1px solid rgba(228, 194, 133, 0.3);
+    color: var(--color-secondary);
+    box-shadow: 0 0 10px rgba(228, 194, 133, 0.1);
+  }
+
+  &.status-cancelled {
+    background: rgba(255, 180, 171, 0.1);
+    border: 1px solid rgba(255, 180, 171, 0.3);
+    color: var(--color-error);
+  }
+
+  &.status-checkedout {
+    background: rgba(201, 198, 197, 0.1);
+    border: 1px solid rgba(201, 198, 197, 0.3);
+    color: var(--color-primary);
+  }
+}
+
+// Custom Form Fields Overrides
+.custom-form-field {
+  width: 240px;
+
+  ::ng-deep {
+    .mat-mdc-text-field-wrapper {
+      background-color: transparent !important;
+      border-bottom: 1px solid rgba(228, 194, 133, 0.2) !important;
+      border-radius: 0 !important;
+      padding: 0 !important;
+      transition: border-color 0.3s ease;
+
+      &:hover {
+        border-bottom-color: rgba(228, 194, 133, 0.4) !important;
+      }
+    }
+
+    .mdc-notched-outline {
+      display: none !important;
+    }
+
+    .mat-mdc-form-field-flex {
+      padding: 0 !important;
+    }
+
+    .mat-mdc-form-field-infix {
+      padding: 16px 0 !important;
+      min-height: unset !important;
+    }
+
+    .mdc-text-field--focused:not(.mdc-text-field--disabled) .mat-mdc-text-field-wrapper {
+      border-bottom-color: var(--color-secondary) !important;
+    }
+
+    .mdc-floating-label {
+      color: var(--color-on-surface-variant) !important;
+      @include font-label-caps;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      transform: translateY(-8px) scale(0.9);
+    }
+
+    .mdc-floating-label--float-above {
+      transform: translateY(-24px) scale(0.85) !important;
+      color: var(--color-secondary) !important;
+    }
+
+    .mat-mdc-select-value-text {
+      color: var(--color-on-surface) !important;
+      @include font-body-md;
+      font-size: 15px;
+    }
+
+    .mat-mdc-select-arrow {
+      color: var(--color-secondary) !important;
+    }
+  }
+}
+
+// Custom Paginator Override
+.custom-paginator {
+  background: transparent !important;
+  color: var(--color-on-surface-variant) !important;
+  border-top: 1px solid rgba(228, 194, 133, 0.05);
+
+  ::ng-deep {
+    .mat-mdc-paginator-container {
+      @include font-body-md;
+      font-size: 13px;
+    }
+
+    .mat-mdc-paginator-range-label {
+      color: var(--color-on-surface-variant);
+    }
+
+    .mat-mdc-icon-button {
+      color: var(--color-secondary) !important;
+
+      &:disabled {
+        color: rgba(228, 194, 133, 0.2) !important;
+      }
+    }
+  }
+}
+
+.ledger-footer {
+  margin-top: 32px;
+  text-align: center;
+
+  .dossier-btn {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(228, 194, 133, 0.4);
+    color: var(--color-secondary);
+    padding-bottom: 4px;
+    @include font-label-caps;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      border-bottom-color: var(--color-secondary);
+      text-shadow: 0 0 10px rgba(228, 194, 133, 0.3);
+    }
+  }
+}
+
+.ghost-btn {
+  background: transparent;
+  border: 1px solid rgba(228, 194, 133, 0.4);
+  color: var(--color-on-surface);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover:not(:disabled) {
+    border-color: var(--color-secondary);
+    color: var(--color-secondary);
+    background: rgba(228, 194, 133, 0.05);
+  }
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 48px;
+
+  ::ng-deep .mat-mdc-progress-spinner {
+    circle {
+      stroke: var(--color-secondary) !important;
+    }
+  }
+}
+
+.error-container {
+  margin-top: 24px;
+  
+  ::ng-deep .app-alert {
+    background: rgba(147, 0, 10, 0.2) !important;
+    border: 1px solid var(--color-error) !important;
+    color: var(--color-on-error-container) !important;
+    border-radius: 4px;
+    
+    .retry-btn {
+      color: var(--color-error) !important;
+      border: 1px solid var(--color-error) !important;
+      background: none !important;
+      padding: 8px 16px;
+      @include font-label-caps;
+      border-radius: 2px;
+      
+      &:hover {
+        background: rgba(255, 180, 171, 0.1) !important;
+      }
+    }
+  }
+}
+
+.custom-progress-bar {
+  --mdc-linear-progress-active-indicator-color: var(--color-secondary);
+  --mdc-linear-progress-track-color: rgba(228, 194, 133, 0.1);
 }
 
 @keyframes flash-highlight {
   0% {
-    background-color: #c5cae9;
+    background-color: rgba(228, 194, 133, 0.3) !important;
   }
   100% {
-    background-color: transparent;
+    background-color: transparent !important;
   }
 }
+
+@keyframes pulse-glow {
+  0%, 100% {
+    text-shadow: 0 0 5px rgba(228, 194, 133, 0.2);
+  }
+  50% {
+    text-shadow: 0 0 15px rgba(228, 194, 133, 0.6);
+  }
+}
+

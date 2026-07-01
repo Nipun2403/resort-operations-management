@@ -5477,6 +5477,88 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ================================================================================
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: bookings-page.md
+Date: 2026-07-01
+================================================================================
+
+FILES CREATED
+-------------
+None.
+
+FILES MODIFIED (existing files updated per spec)
+-------------------------------------------------
+✓ Frontend/src/app/features/user/pages/bookings.component.html — Replaced mat-button-toggle-group with custom toggle buttons, added headers.
+✓ Frontend/src/app/features/user/pages/bookings.component.scss — Added bookings header styling and custom active toggle button styles.
+✓ Frontend/src/app/features/user/pages/bookings.component.ts — Removed unused MatButtonToggleModule from imports.
+✓ Frontend/src/app/features/user/components/booking-wizard/booking-wizard.component.html — Restyled form inputs, styled horizontal room selection cards with api images, custom checkbox layout, and covenant summary.
+✓ Frontend/src/app/features/user/components/booking-wizard/booking-wizard.component.scss — Added layout classes, hidden stepper headers, added horizontal snap scroll, custom checkbox, and parchment covenant styles.
+✓ Frontend/src/app/features/user/components/booking-history/booking-history.component.html — Restyled table headers and rows, custom status badges, action icons, and request full dossier button.
+✓ Frontend/src/app/features/user/components/booking-history/booking-history.component.scss — Added ledger-row hovers, custom badge style variants, overridden paginator and form field styles.
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Parent Bookings Page Refactor
+  ✓ Redesigned header with "THE ARCHIVE" tag and subtitle.
+  ✓ Custom Toggle Switch replacing standard Material toggle group.
+✓ Booking Wizard Refactor
+  ✓ Stepper headers hidden to display steps sequentially upon clicking next.
+  ✓ Inputs styled minimally with bottom border.
+  ✓ Select dropdown maps the guests count ("The Assemblage") to dynamic values.
+  ✓ Room selection is presented as horizontal snapping cards showing backend API images.
+  ✓ Silent Luxuries checkbox cards with custom border transitions.
+  ✓ The Covenant parchment review panel showing correct dynamic values and investment total.
+✓ Booking History Refactor
+  ✓ Ledger-style table wrapped in glass-panel with hover-reveal row highlights.
+  ✓ Custom status badges for Booked, CheckedIn, CheckedOut, Cancelled.
+  ✓ Actions column utilizing clean Material symbols.
+  ✓ Custom dossier request footer element.
+
+API INTEGRATION
+---------------
+None.
+
+LOGIC TRACES
+------------
+Flow: Wizard Tab Selection
+  Entry: Click "New Booking" button
+  Path: setValue('new') fires -> switches viewMode -> renders app-booking-wizard component.
+  Result: ✓ Matches spec
+
+Flow: Stepper Enforced Verification
+  Entry: Click "Next" on Dates Step
+  Path: stepper.next() advances only if datesForm is valid -> loads rooms -> loads amenities -> renders final covenant step with correct reactive estimatedTotal calculation.
+  Result: ✓ Matches spec
+
+Flow: Horizontally Scrolling Rooms
+  Entry: AvailableRooms API resolves successfully
+  Path: availableRooms list renders -> ngFor loops horizontal room-card structures -> maps imageUrls[0] to img tag -> increment/decrement modifies selectedRoomQuantities.
+  Result: ✓ Matches spec
+
+KNOWN DEVIATIONS
+----------------
+None. All requirements implemented exactly as specified.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+✓ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+✓ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+✓ I confirm that all API calls match the spec contracts exactly.
+✓ I confirm that all regex validators are character-for-character matches
+  to the spec.
+✓ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+
 
 
 

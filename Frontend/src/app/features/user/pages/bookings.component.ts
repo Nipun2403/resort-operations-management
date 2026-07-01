@@ -2,7 +2,6 @@ import { Component, inject, signal, OnInit, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthApiService } from '../../../core/services/auth-api.service';
@@ -15,7 +14,6 @@ import { BookingWizardComponent } from '../components/booking-wizard/booking-wiz
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatButtonToggleModule,
     MatProgressSpinnerModule,
     BookingHistoryComponent,
     BookingWizardComponent,

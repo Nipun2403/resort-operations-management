@@ -1,209 +1,696 @@
-.stepper-form {
-  padding: 8px 0;
-  max-width: 600px;
-}
+@import '../../../../../styles/theme/index';
 
-.full-width {
-  width: 100%;
-}
-
-.form-error {
-  color: #f44336;
-  font-size: 0.85rem;
-  margin-bottom: 16px;
-  p {
-    margin: 4px 0;
+.custom-stepper {
+  background: transparent !important;
+  
+  ::ng-deep {
+    .mat-horizontal-stepper-header-container,
+    .mat-vertical-stepper-header {
+      display: none !important;
+    }
+    .mat-horizontal-content-container {
+      padding: 0 !important;
+    }
+    .mat-stepper-horizontal-line {
+      display: none !important;
+    }
   }
 }
 
-.room-list {
+.stepper-form {
+  padding: 16px 0;
+  color: var(--color-on-surface);
+}
+
+.step-header {
+  margin-bottom: 48px;
+
+  &.flex-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .step-title {
+    @include font-headline-sm;
+    color: var(--color-on-background);
+    margin: 0 0 8px 0;
+  }
+
+  .step-subtitle {
+    @include font-body-md;
+    color: var(--color-on-surface-variant);
+    margin: 0;
+    font-style: italic;
+  }
+
+  .scroll-tag {
+    @include font-label-caps;
+    font-size: 10px;
+    color: var(--color-on-surface-variant);
+    letter-spacing: 0.15em;
+  }
+}
+
+.dates-inputs-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  margin-bottom: 48px;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+// Minimalistic Custom Form Fields Styling
+.custom-form-field {
+  width: 100%;
+
+  ::ng-deep {
+    .mat-mdc-text-field-wrapper {
+      background-color: transparent !important;
+      border-bottom: 1px solid rgba(228, 194, 133, 0.2) !important;
+      border-radius: 0 !important;
+      padding: 0 !important;
+      transition: border-color 0.3s ease;
+
+      &:hover {
+        border-bottom-color: rgba(228, 194, 133, 0.4) !important;
+      }
+    }
+
+    .mdc-notched-outline {
+      display: none !important; // Hide Material outline
+    }
+
+    .mat-mdc-form-field-flex {
+      padding: 0 !important;
+      align-items: center;
+    }
+
+    .mat-mdc-form-field-infix {
+      padding: 16px 0 !important;
+      min-height: unset !important;
+    }
+
+    .mdc-text-field--focused:not(.mdc-text-field--disabled) .mat-mdc-text-field-wrapper {
+      border-bottom-color: var(--color-secondary) !important;
+    }
+
+    .mat-mdc-form-field-label-wrapper {
+      top: 0;
+      padding-top: 16px;
+    }
+
+    .mat-mdc-form-field-focus-indicator {
+      display: none !important;
+    }
+
+    // Colors
+    .mdc-floating-label {
+      color: var(--color-on-surface-variant) !important;
+      @include font-label-caps;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      transform: translateY(-8px) scale(0.9);
+    }
+
+    .mdc-floating-label--float-above {
+      transform: translateY(-24px) scale(0.85) !important;
+      color: var(--color-secondary) !important;
+    }
+
+    input.mat-mdc-input-element {
+      color: var(--color-on-surface) !important;
+      @include font-body-md;
+      font-size: 15px;
+    }
+
+    // Toggle button custom styling
+    .mat-mdc-icon-button {
+      --mdc-icon-button-state-layer-size: 36px;
+      width: 36px;
+      height: 36px;
+      padding: 6px;
+      color: var(--color-secondary) !important;
+
+      &:hover {
+        background-color: rgba(228, 194, 133, 0.05) !important;
+      }
+    }
+  }
+}
+
+// Custom Select Dropdown
+.custom-input-group {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  margin-bottom: 16px;
-}
+  position: relative;
 
-.room-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 8px;
-  background-color: #fafafa;
-}
-
-.room-info {
-  flex-grow: 1;
-  padding-right: 16px;
-
-  h3 {
-    margin: 0 0 4px 0;
-    font-size: 1.1rem;
-    font-weight: 500;
+  .custom-label {
+    @include font-label-caps;
+    font-size: 10px;
+    color: var(--color-secondary);
+    margin-bottom: 8px;
+    letter-spacing: 0.1em;
   }
 
-  p {
-    margin: 0 0 8px 0;
-    font-size: 0.875rem;
-    color: rgba(0, 0, 0, 0.54);
+  .custom-select-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(228, 194, 133, 0.2);
+    color: var(--color-on-surface);
+    padding: 14px 0;
+    @include font-body-md;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.3s ease;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+
+    &:focus {
+      border-bottom-color: var(--color-secondary);
+    }
+
+    &:hover {
+      border-bottom-color: rgba(228, 194, 133, 0.4);
+    }
+
+    option {
+      background-color: var(--color-surface-container-high);
+      color: var(--color-on-surface);
+      padding: 8px;
+    }
+  }
+
+  .custom-error {
+    color: var(--color-error);
+    font-size: 11px;
+    margin-top: 4px;
+  }
+}
+
+// Room Selection Scroll Grid
+.horizontal-scroll-container {
+  display: flex;
+  gap: 32px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 24px;
+  margin-bottom: 32px;
+
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-secondary);
+  }
+}
+
+.room-card {
+  @include glass-panel;
+  min-width: 320px;
+  max-width: 380px;
+  flex: 0 0 auto;
+  scroll-snap-align: center;
+  border-radius: 4px;
+  overflow: hidden;
+  transition: all 0.5s ease;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    border-color: rgba(228, 194, 133, 0.5);
+
+    .room-image {
+      transform: scale(1.05);
+    }
+  }
+
+  &.selected {
+    border-color: var(--color-secondary);
+    border-width: 2px;
+  }
+}
+
+.room-image-wrapper {
+  height: 200px;
+  overflow: hidden;
+  position: relative;
+
+  .room-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1.2s cubic-bezier(0.2, 0, 0.2, 1);
+  }
+
+  .image-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+  }
+
+  .selected-badge {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: var(--color-secondary);
+    color: var(--color-on-secondary);
+    padding: 6px 12px;
+    @include font-label-caps;
+    font-size: 9px;
+    letter-spacing: 0.05em;
+    border-radius: 2px;
+  }
+}
+
+.room-card-content {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+
+  .room-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 12px;
+
+    .room-card-title {
+      @include font-headline-sm;
+      font-size: 20px;
+      margin: 0;
+      color: var(--color-on-background);
+    }
+
+    .room-card-price {
+      @include font-label-caps;
+      color: var(--color-secondary);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+  }
+
+  .room-card-description {
+    @include font-body-md;
+    font-size: 13px;
+    color: var(--color-on-surface-variant);
+    margin: 0 0 16px 0;
+    line-height: 1.5;
+    flex-grow: 1;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-}
 
-.room-meta {
-  display: flex;
-  align-items: center;
-  font-size: 0.85rem;
-  color: rgba(0, 0, 0, 0.6);
+  .room-card-meta {
+    display: flex;
+    align-items: center;
+    @include font-label-caps;
+    font-size: 10px;
+    color: var(--color-on-surface-variant);
+    margin-bottom: 24px;
 
-  .divider {
-    margin: 0 8px;
-    color: rgba(0, 0, 0, 0.2);
+    .meta-divider {
+      margin: 0 8px;
+      opacity: 0.3;
+    }
   }
 }
 
-.quantity-selector {
+.card-quantity-selector {
   display: flex;
   align-items: center;
-  gap: 8px;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 20px;
-  padding: 2px;
-  background: white;
+  justify-content: space-between;
+  border: 1px solid rgba(228, 194, 133, 0.3);
+  border-radius: 4px;
+  padding: 4px;
+  background: rgba(228, 194, 133, 0.02);
+
+  .qty-btn {
+    background: transparent;
+    border: none;
+    color: var(--color-secondary);
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2px;
+    transition: background 0.3s ease;
+
+    &:hover:not(:disabled) {
+      background: rgba(228, 194, 133, 0.08);
+    }
+
+    &:disabled {
+      color: rgba(228, 194, 133, 0.2);
+      cursor: not-allowed;
+    }
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
 
   .qty-display {
-    font-weight: 600;
-    min-width: 24px;
-    text-align: center;
+    @include font-body-md;
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--color-on-surface);
   }
 }
 
-.warning-text {
-  color: #ff9800;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.9rem;
-  margin-top: 12px;
+// Amenities Checkbox List Styling
+.amenities-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  margin-bottom: 48px;
 
-  mat-icon {
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
-.amenity-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+.amenity-card {
+  @include glass-panel;
+  padding: 24px;
+  border-radius: 4px;
+  transition: border-color 0.4s ease;
 
-.amenity-item {
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 6px;
-  padding: 12px;
-  background-color: #fafafa;
+  &:hover {
+    border-color: rgba(228, 194, 133, 0.4);
+  }
 
-  mat-checkbox {
+  .custom-checkbox {
     width: 100%;
+
+    ::ng-deep {
+      .mdc-form-field {
+        align-items: flex-start;
+      }
+      .mdc-checkbox {
+        padding: 4px;
+        margin-right: 12px;
+        
+        .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background {
+          background-color: var(--color-secondary) !important;
+          border-color: var(--color-secondary) !important;
+        }
+        .mdc-checkbox__native-control:enabled:not(:checked) ~ .mdc-checkbox__background {
+          border-color: rgba(228, 194, 133, 0.4) !important;
+          background-color: transparent !important;
+        }
+        .mdc-checkbox__background {
+          border-radius: 2px !important;
+        }
+        .mdc-checkbox__checkmark-path {
+          stroke: var(--color-on-secondary) !important;
+        }
+      }
+    }
   }
 
   .amenity-info {
     display: flex;
     flex-direction: column;
-    margin-left: 8px;
+    width: 100%;
+  }
+
+  .amenity-header-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    @include font-label-caps;
+    font-size: 13px;
+
+    .amenity-title {
+      color: var(--color-on-surface);
+    }
+
+    .amenity-price {
+      color: var(--color-secondary);
+    }
   }
 
   .amenity-desc {
-    margin: 4px 0 0 0;
-    font-size: 0.8rem;
-    color: rgba(0, 0, 0, 0.54);
+    @include font-body-md;
+    font-size: 13px;
+    color: var(--color-on-surface-variant);
+    margin: 0;
+    line-height: 1.5;
   }
 }
 
-.summary-container {
-  max-width: 600px;
-  padding: 16px;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 8px;
+// Covenant Parchment Summary Card
+.covenant-card {
+  @include glass-panel;
+  padding: 48px;
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+  max-width: 680px;
+  margin: 0 auto 32px auto;
+  box-sizing: border-box;
 
-  h3 {
-    margin: 16px 0 12px 0;
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: #3f51b5;
+  .covenant-texture {
+    position: absolute;
+    inset: 0;
+    opacity: 0.03;
+    pointer-events: none;
+    background-image: radial-gradient(circle at 2px 2px, var(--color-secondary) 1px, transparent 0);
+    background-size: 40px 40px;
+  }
 
-    &:first-of-type {
-      margin-top: 0;
+  .covenant-header {
+    text-align: center;
+    margin-bottom: 40px;
+
+    .covenant-title {
+      @include font-headline-md;
+      color: var(--color-secondary);
+      margin: 0 0 16px 0;
+      font-style: italic;
+    }
+
+    .covenant-divider {
+      width: 96px;
+      height: 1px;
+      background: rgba(228, 194, 133, 0.3);
+      margin: 0 auto;
     }
   }
 
-  .overview-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 16px;
-    font-size: 0.9rem;
-  }
-
-  .summary-list {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 16px 0;
-
-    li {
-      padding: 8px 0;
-      font-size: 0.95rem;
-    }
-  }
-
-  .list-item-content {
+  .covenant-details {
     display: flex;
-    justify-content: space-between;
-  }
-
-  .empty-text {
-    font-style: italic;
-    color: rgba(0,0,0,0.54);
-    margin-bottom: 16px;
-  }
-
-  .estimated-total-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 1.15rem;
-    font-weight: 600;
-    margin-top: 16px;
-
-    .total-price {
-      font-size: 1.3rem;
-      color: #3f51b5;
-    }
-  }
-}
-
-@media (max-width: 767px) {
-  .room-item {
     flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
+    gap: 24px;
   }
 
-  .room-info {
-    padding-right: 0;
+  .covenant-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid rgba(228, 194, 133, 0.1);
+    padding-bottom: 16px;
+    gap: 16px;
+
+    .row-label {
+      @include font-label-caps;
+      font-size: 10px;
+      color: var(--color-on-surface-variant);
+      letter-spacing: 0.15em;
+      white-space: nowrap;
+    }
+
+    .row-value {
+      @include font-body-md;
+      font-size: 15px;
+      color: var(--color-on-surface);
+      text-align: right;
+
+      &.text-glow {
+        text-shadow: 0 0 8px rgba(228, 194, 133, 0.1);
+      }
+    }
   }
 
-  .quantity-selector {
-    align-self: flex-end;
-  }
+  .covenant-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 32px;
+    padding-top: 24px;
 
-  .summary-container .overview-grid {
-    grid-template-columns: 1fr;
+    .investment-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      .investment-label {
+        @include font-label-caps;
+        font-size: 10px;
+        color: var(--color-on-surface-variant);
+      }
+
+      .investment-value {
+        @include font-headline-md;
+        font-size: 36px;
+        color: var(--color-secondary);
+        line-height: 1;
+        text-shadow: 0 0 15px rgba(228, 194, 133, 0.2);
+      }
+    }
+
+    .covenant-actions {
+      display: flex;
+      gap: 16px;
+      flex-grow: 1;
+      justify-content: flex-end;
+
+      button {
+        padding: 16px 28px;
+        @include font-label-caps;
+      }
+    }
   }
 }
+
+// Shared Buttons
+.gold-btn {
+  background: var(--color-secondary);
+  color: var(--color-on-secondary);
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover:not(:disabled) {
+    filter: brightness(1.1);
+    box-shadow: 0 0 20px rgba(228, 194, 133, 0.4);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.ghost-btn {
+  background: transparent;
+  border: 1px solid rgba(228, 194, 133, 0.4);
+  color: var(--color-on-surface);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover:not(:disabled) {
+    border-color: var(--color-secondary);
+    color: var(--color-secondary);
+    background: rgba(228, 194, 133, 0.05);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 32px;
+  
+  button {
+    padding: 16px 36px;
+    @include font-label-caps;
+  }
+}
+
+// Errors & Alerts
+.form-error {
+  color: var(--color-error);
+  @include font-body-md;
+  font-size: 14px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 24px;
+  border-color: rgba(255, 180, 171, 0.2);
+
+  p {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .err-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: var(--color-error);
+  }
+}
+
+.error-container {
+  margin-top: 24px;
+  
+  ::ng-deep .app-alert {
+    background: rgba(147, 0, 10, 0.2) !important;
+    border: 1px solid var(--color-error) !important;
+    color: var(--color-on-error-container) !important;
+    border-radius: 4px;
+    
+    .retry-btn {
+      color: var(--color-error) !important;
+      border: 1px solid var(--color-error) !important;
+      background: none !important;
+      padding: 8px 16px;
+      @include font-label-caps;
+      border-radius: 2px;
+      
+      &:hover {
+        background: rgba(255, 180, 171, 0.1) !important;
+      }
+    }
+  }
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 48px;
+
+  ::ng-deep .mat-mdc-progress-spinner {
+    circle {
+      stroke: var(--color-secondary) !important;
+    }
+  }
+}
+
+.btn-spinner {
+  ::ng-deep circle {
+    stroke: var(--color-on-secondary) !important;
+  }
+}
+

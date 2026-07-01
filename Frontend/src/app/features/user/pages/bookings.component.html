@@ -1,13 +1,31 @@
 <div class="bookings-page">
-  <div class="toggle-row">
-    <mat-button-toggle-group
-      [formControl]="viewMode"
-      aria-label="View"
-    >
-      <mat-button-toggle value="new">New Booking</mat-button-toggle>
-      <mat-button-toggle value="history">My Bookings</mat-button-toggle>
-    </mat-button-toggle-group>
-  </div>
+  <!-- Header Section -->
+  <header class="bookings-header">
+    <span class="header-tag">THE ARCHIVE</span>
+    <h2 class="header-title">Curating Your Eternal Sanctuary</h2>
+  </header>
+
+  <!-- The Compass of View (Toggle) -->
+  <section class="toggle-section">
+    <div class="toggle-container glass-panel">
+      <button 
+        class="toggle-btn" 
+        [class.active]="viewMode.value === 'new'"
+        (click)="viewMode.setValue('new')"
+        type="button"
+      >
+        New Booking
+      </button>
+      <button 
+        class="toggle-btn" 
+        [class.active]="viewMode.value === 'history'"
+        (click)="viewMode.setValue('history')"
+        type="button"
+      >
+        My Bookings
+      </button>
+    </div>
+  </section>
 
   @if (userProfile()) {
     @if (viewMode.value === 'history') {
@@ -27,8 +45,9 @@
       />
     }
   } @else {
-    <div style="display: flex; justify-content: center; padding: 24px;">
+    <div class="loading-container">
       <mat-spinner diameter="40"></mat-spinner>
     </div>
   }
 </div>
+
