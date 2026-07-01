@@ -54,16 +54,18 @@
             <label class="input-label">Arrival</label>
             <input class="custom-input cursor-pointer" [matDatepicker]="cinPicker" formControlName="checkInDate" readonly placeholder="SELECT DATE" />
             <mat-datepicker #cinPicker></mat-datepicker>
-            <span class="input-error" *ngIf="datesForm.get('checkInDate')?.invalid && datesForm.get('checkInDate')?.touched">
-              Check-in date is required and must be today or later.
+            <span class="input-error" *ngIf="datesForm.get('checkInDate')?.touched && datesForm.get('checkInDate')?.invalid">
+              <span *ngIf="datesForm.get('checkInDate')?.hasError('required')">Check-in date is required.</span>
+              <span *ngIf="datesForm.get('checkInDate')?.hasError('checkInInPast')">Check in date cannot be in past.</span>
             </span>
           </div>
           <div class="input-group" (click)="coutPicker.open()">
             <label class="input-label">Departure</label>
             <input class="custom-input cursor-pointer" [matDatepicker]="coutPicker" formControlName="checkOutDate" readonly placeholder="SELECT DATE" />
             <mat-datepicker #coutPicker></mat-datepicker>
-            <span class="input-error" *ngIf="datesForm.get('checkOutDate')?.invalid && datesForm.get('checkOutDate')?.touched">
-              Check-out date is required and must be after check-in.
+            <span class="input-error" *ngIf="datesForm.get('checkOutDate')?.touched && (datesForm.get('checkOutDate')?.invalid || datesForm.hasError('checkOutBeforeCheckIn'))">
+              <span *ngIf="datesForm.get('checkOutDate')?.hasError('required')">Check-out date is required.</span>
+              <span *ngIf="datesForm.hasError('checkOutBeforeCheckIn')">Checkout date cannot be before checkin date.</span>
             </span>
           </div>
           <div class="input-group full-width">

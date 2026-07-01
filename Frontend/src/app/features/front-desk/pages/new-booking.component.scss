@@ -12,7 +12,7 @@
   .hero-subtitle {
     font-family: var(--font-body);
     @include font-label-caps;
-    font-size: 11px;
+    font-size: 15px;
     letter-spacing: 0.3em;
     color: var(--color-secondary);
     display: block;
@@ -23,7 +23,7 @@
   .hero-title {
     font-family: var(--font-headline);
     @include font-display-lg;
-    font-size: 40px;
+    font-size: 50px;
     margin: 0 0 16px;
     font-style: italic;
     color: var(--color-on-surface);
@@ -42,7 +42,7 @@
     background-color: transparent !important;
     
     .mat-horizontal-stepper-header-container {
-      max-width: 900px;
+      max-width: 1600px;
       margin: 0 auto 40px !important;
       border-bottom: 1px solid rgba(228, 194, 133, 0.1) !important;
       
@@ -64,14 +64,25 @@
       .mat-step-label {
         font-family: var(--font-body) !important;
         @include font-label-caps;
-        font-size: 11px;
+        font-size: 15px;
         letter-spacing: 0.15em;
         color: rgba(196, 199, 199, 0.4) !important;
         transition: color 0.3s ease;
-        
-        &.mat-step-label-active, &.mat-step-label-selected {
+      }
+
+      &[aria-selected="true"] {
+        .mat-step-label {
           color: var(--color-secondary) !important;
           font-weight: 500 !important;
+        }
+      }
+
+      &[aria-selected="false"] {
+        .mat-step-label {
+          &.mat-step-label-active, &.mat-step-label-selected {
+            color: rgba(196, 199, 199, 0.4) !important;
+            font-weight: normal !important;
+          }
         }
       }
     }
@@ -107,25 +118,43 @@
         span, mat-icon {
           display: none !important;
         }
-        
-        &.mat-step-icon-selected, &.mat-step-icon-state-edit {
-          border-color: var(--color-secondary) !important;
-          &::after {
-            background-color: var(--color-secondary);
-          }
-        }
       }
       
       .mat-step-label {
         font-family: var(--font-body) !important;
         @include font-label-caps;
-        font-size: 11px;
+        font-size: 15px;
         letter-spacing: 0.15em;
         color: rgba(196, 199, 199, 0.4) !important;
-        
-        &.mat-step-label-active, &.mat-step-label-selected {
+      }
+
+      &[aria-selected="true"] {
+        .mat-step-icon {
+          border-color: var(--color-secondary) !important;
+          &::after {
+            background-color: var(--color-secondary) !important;
+          }
+        }
+        .mat-step-label {
           color: var(--color-secondary) !important;
           font-weight: 600 !important;
+        }
+      }
+
+      &[aria-selected="false"] {
+        .mat-step-icon {
+          &.mat-step-icon-selected, &.mat-step-icon-state-edit {
+            border-color: rgba(228, 194, 133, 0.2) !important;
+            &::after {
+              background-color: rgba(228, 194, 133, 0.2) !important;
+            }
+          }
+        }
+        .mat-step-label {
+          &.mat-step-label-active, &.mat-step-label-selected {
+            color: rgba(196, 199, 199, 0.4) !important;
+            font-weight: normal !important;
+          }
         }
       }
     }
@@ -138,14 +167,84 @@
       padding: 8px 0 24px 36px !important;
     }
   }
+
+  /* Material Datepicker overlay overrides */
+  .mat-datepicker-content {
+    background-color: rgba(27, 28, 25, 0.98) !important;
+    border: 1px solid rgba(228, 194, 133, 0.2) !important;
+    border-radius: 0px !important;
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.8) !important;
+    color: var(--color-on-surface) !important;
+    font-family: var(--font-body, "Manrope"), sans-serif !important;
+
+    .mat-calendar-body-cell-content {
+      color: var(--color-on-surface) !important;
+      border-radius: 0px !important;
+      font-family: var(--font-body, "Manrope"), sans-serif !important;
+      
+      &.mat-calendar-body-selected {
+        background-color: var(--color-secondary) !important;
+        color: var(--color-background) !important;
+      }
+
+      &:hover {
+        background-color: rgba(228, 194, 133, 0.15) !important;
+      }
+    }
+
+    .mat-calendar-body-today {
+      border-color: rgba(228, 194, 133, 0.4) !important;
+    }
+
+    .mat-calendar-body-disabled {
+      color: rgba(196, 199, 199, 0.25) !important;
+      .mat-calendar-body-cell-content {
+        color: rgba(196, 199, 199, 0.25) !important;
+      }
+    }
+
+    .mat-calendar-table-header-divider::after {
+      background-color: rgba(228, 194, 133, 0.1) !important;
+    }
+
+    .mat-calendar-table-header {
+      color: rgba(196, 199, 199, 0.4) !important;
+      font-family: var(--font-body, "Manrope"), sans-serif !important;
+      font-size: 11px !important;
+      letter-spacing: 0.1em !important;
+      text-transform: uppercase !important;
+    }
+
+    .mat-calendar-header {
+      color: var(--color-on-surface) !important;
+      
+      button {
+        color: var(--color-on-surface) !important;
+      }
+
+      .mat-calendar-controls {
+        button {
+          color: var(--color-secondary) !important;
+        }
+      }
+    }
+
+    .mat-calendar-arrow {
+      fill: var(--color-secondary) !important;
+    }
+
+    .mat-calendar-next-button, .mat-calendar-previous-button {
+      color: var(--color-secondary) !important;
+    }
+  }
 }
 
 // ── Inner Page Containers ──────────────────────────
 .step-container {
   @include glass-panel;
-  padding: 48px;
+  padding: 48px 32px;
   box-sizing: border-box;
-  max-width: 900px;
+  max-width: 1600px;
   margin: 0 auto;
   border-top: 1px solid rgba(228, 194, 133, 0.2);
 }
@@ -156,7 +255,7 @@
   .step-title {
     font-family: var(--font-headline);
     @include font-headline-md;
-    font-size: 24px;
+    font-size: 34px;
     font-style: italic;
     color: var(--color-on-surface);
     margin: 0 0 8px;
@@ -165,7 +264,7 @@
   .step-desc {
     font-family: var(--font-body);
     @include font-body-md;
-    font-size: 14px;
+    font-size: 18px;
     color: rgba(196, 199, 199, 0.6);
     margin: 0;
   }
@@ -190,7 +289,7 @@
   .input-label {
     font-family: var(--font-body);
     @include font-label-caps;
-    font-size: 10px;
+    font-size: 14px;
     letter-spacing: 0.2em;
     color: var(--color-secondary);
     text-transform: uppercase;
@@ -204,7 +303,7 @@
     color: var(--color-on-surface);
     font-family: var(--font-body);
     @include font-body-lg;
-    font-size: 16px;
+    font-size: 20px;
     outline: none;
     transition: border-bottom-color 0.3s ease;
     
@@ -219,7 +318,7 @@
   
   .input-error {
     font-family: var(--font-body);
-    font-size: 12px;
+    font-size: 15px;
     color: var(--color-error);
     margin-top: 4px;
   }
@@ -250,13 +349,13 @@
     }
     
     span {
-      font-size: 20px;
+      font-size: 22px;
     }
   }
   
   .counter-value {
     font-family: var(--font-headline);
-    font-size: 32px;
+    font-size: 34px;
     color: var(--color-on-surface);
     min-width: 40px;
     text-align: center;
@@ -265,7 +364,7 @@
   .counter-helper {
     font-family: var(--font-body);
     @include font-body-md;
-    font-size: 14px;
+    font-size: 16px;
     color: rgba(196, 199, 199, 0.4);
     font-style: italic;
     margin: 0;
@@ -274,11 +373,11 @@
 
 // ── Room Cards ─────────────────────────────────────
 .room-cards-list {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 24px;
   margin-bottom: 32px;
-  max-height: 500px;
+  max-height: 600px;
   overflow-y: auto;
   padding-right: 12px;
   
@@ -295,18 +394,25 @@
 
 .room-card {
   display: flex;
-  gap: 32px;
-  padding: 24px 0;
-  border-bottom: 1px solid rgba(196, 199, 199, 0.1);
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px;
+  border: 1px solid rgba(196, 199, 199, 0.15);
+  background-color: rgba(19, 20, 17, 0.35);
   transition: all 0.3s ease;
   
-  &:last-child {
-    border-bottom: none;
+  &:hover {
+    border-color: rgba(228, 194, 133, 0.3);
+  }
+  
+  &.selected {
+    border-color: var(--color-secondary);
+    box-shadow: 0 0 15px rgba(228, 194, 133, 0.1);
   }
   
   .room-image-box {
-    width: 200px;
-    height: 150px;
+    width: 100%;
+    height: 180px;
     flex-shrink: 0;
     position: relative;
     overflow: hidden;
@@ -344,10 +450,10 @@
       right: 12px;
       background-color: rgba(19, 20, 17, 0.85);
       backdrop-filter: blur(4px);
-      padding: 4px 8px;
+      padding: 6px 12px;
       font-family: var(--font-body);
       @include font-label-caps;
-      font-size: 9px;
+      font-size: 11px;
       color: var(--color-secondary);
       border: 1px solid rgba(228, 194, 133, 0.3);
     }
@@ -368,7 +474,7 @@
     .room-title {
       font-family: var(--font-headline);
       @include font-headline-sm;
-      font-size: 20px;
+      font-size: 26px;
       color: var(--color-on-surface);
       margin: 0;
     }
@@ -376,12 +482,13 @@
     .room-price {
       font-family: var(--font-body);
       @include font-body-lg;
+      font-size: 20px;
       font-weight: 500;
       color: var(--color-secondary);
       margin: 0;
       
       .price-suffix {
-        font-size: 11px;
+        font-size: 14px;
         color: rgba(196, 199, 199, 0.4);
         letter-spacing: 0.1em;
       }
@@ -391,12 +498,12 @@
   .room-desc {
     font-family: var(--font-body);
     @include font-body-md;
-    font-size: 13px;
+    font-size: 16px;
     color: rgba(196, 199, 199, 0.6);
     margin: 8px 0 16px;
     line-height: 1.6;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
@@ -414,7 +521,7 @@
     color: rgba(196, 199, 199, 0.4);
     font-family: var(--font-body);
     @include font-label-caps;
-    font-size: 9px;
+    font-size: 12px;
     letter-spacing: 0.1em;
     
     .spec-item {
@@ -423,7 +530,7 @@
       gap: 6px;
       
       span {
-        font-size: 14px;
+        font-size: 16px;
       }
     }
   }
@@ -462,7 +569,7 @@
     
     .counter-value-sm {
       font-family: var(--font-headline);
-      font-size: 20px;
+      font-size: 22px;
       color: var(--color-on-surface);
       min-width: 24px;
       text-align: center;
@@ -473,7 +580,7 @@
 // ── Amenities ──────────────────────────────────────
 .amenities-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(4, 1fr);
   gap: 24px;
   margin-bottom: 32px;
 }
@@ -502,7 +609,7 @@
     .amenity-title {
       font-family: var(--font-body);
       @include font-label-caps;
-      font-size: 12px;
+      font-size: 15px;
       letter-spacing: 0.15em;
       color: var(--color-on-surface);
       margin: 0 0 6px 0;
@@ -512,7 +619,7 @@
     .amenity-desc {
       font-family: var(--font-body);
       @include font-body-md;
-      font-size: 13px;
+      font-size: 16px;
       color: rgba(196, 199, 199, 0.5);
       margin: 0 0 8px 0;
       line-height: 1.5;
@@ -521,7 +628,7 @@
     .amenity-price {
       font-family: var(--font-body);
       @include font-body-md;
-      font-size: 13px;
+      font-size: 16px;
       font-weight: 600;
       color: var(--color-secondary);
       margin: 0;
@@ -539,7 +646,7 @@
     transition: all 0.3s ease;
     
     .check-icon {
-      font-size: 16px;
+      font-size: 18px;
       color: var(--color-on-secondary);
       opacity: 0;
       transition: opacity 0.2s ease;
@@ -585,7 +692,7 @@
   .contract-label {
     font-family: var(--font-body);
     @include font-label-caps;
-    font-size: 10px;
+    font-size: 14px;
     letter-spacing: 0.2em;
     color: var(--color-secondary);
     text-transform: uppercase;
@@ -595,7 +702,7 @@
   .contract-value {
     font-family: var(--font-body);
     @include font-body-lg;
-    font-size: 16px;
+    font-size: 20px;
     color: var(--color-on-surface);
     
     p {
@@ -603,7 +710,7 @@
     }
     
     .guest-email, .stay-details {
-      font-size: 13px;
+      font-size: 16px;
       color: rgba(196, 199, 199, 0.5);
       font-style: italic;
       margin-top: 4px;
@@ -623,7 +730,7 @@
       align-items: center;
       font-family: var(--font-body);
       @include font-body-md;
-      font-size: 14px;
+      font-size: 18px;
       color: var(--color-on-surface);
       
       .ledger-price {
@@ -634,7 +741,7 @@
     .ledger-empty {
       font-family: var(--font-body);
       @include font-body-md;
-      font-size: 14px;
+      font-size: 18px;
       color: rgba(196, 199, 199, 0.4);
       font-style: italic;
       margin: 0;
@@ -653,7 +760,7 @@
   .total-label {
     font-family: var(--font-body);
     @include font-label-caps;
-    font-size: 12px;
+    font-size: 16px;
     letter-spacing: 0.2em;
     color: var(--color-secondary);
     text-transform: uppercase;
@@ -662,7 +769,7 @@
   .total-value {
     font-family: var(--font-headline);
     @include font-display-lg;
-    font-size: 40px;
+    font-size: 50px;
     color: var(--color-secondary);
   }
 }
@@ -682,13 +789,13 @@
 .btn-gold-outline {
   font-family: var(--font-body);
   @include font-label-caps;
-  font-size: 11px;
+  font-size: 15px;
   letter-spacing: 0.15em;
   color: var(--color-on-surface);
   text-transform: uppercase;
   border: 1px solid var(--color-secondary);
   background: transparent;
-  padding: 16px 32px;
+  padding: 20px 40px;
   cursor: pointer;
   transition: all 0.3s ease;
   
@@ -706,13 +813,13 @@
 .btn-gold-fill {
   font-family: var(--font-body);
   @include font-label-caps;
-  font-size: 11px;
+  font-size: 15px;
   letter-spacing: 0.15em;
   color: var(--color-on-secondary);
   text-transform: uppercase;
   background-color: var(--color-secondary);
   border: none;
-  padding: 16px 32px;
+  padding: 20px 40px;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
@@ -738,7 +845,7 @@
 .btn-underline {
   font-family: var(--font-body);
   @include font-label-caps;
-  font-size: 11px;
+  font-size: 15px;
   letter-spacing: 0.15em;
   color: rgba(196, 199, 199, 0.6);
   text-transform: uppercase;
@@ -764,11 +871,11 @@
   color: #ef4444;
   font-family: var(--font-body);
   @include font-body-md;
-  font-size: 14px;
+  font-size: 16px;
   margin-bottom: 32px;
   
   span {
-    font-size: 20px;
+    font-size: 22px;
   }
 }
 
@@ -784,13 +891,39 @@
     padding: 24px 0 16px;
     
     .hero-title {
-      font-size: 28px;
+      font-size: 34px;
+    }
+  }
+  
+  ::ng-deep {
+    .mat-stepper-vertical-line::after,
+    .mat-stepper-vertical-line {
+      display: none !important;
+      border: none !important;
+      background: none !important;
+    }
+    
+    .mat-vertical-content-container {
+      margin-left: 0 !important;
+      padding: 0 !important;
+    }
+    
+    .mat-vertical-content {
+      padding: 8px 0 24px 0 !important;
+    }
+    
+    .mat-step-header {
+      padding: 12px 16px !important;
+      justify-content: center !important;
     }
   }
   
   .step-container {
-    padding: 24px;
+    padding: 24px 16px;
     border-top: none;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
   }
   
   .form-grid {
@@ -810,10 +943,16 @@
     }
   }
   
+  .room-cards-list {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    max-height: none;
+  }
+  
   .room-card {
     flex-direction: column;
     gap: 16px;
-    padding-bottom: 24px;
+    padding: 16px;
     
     .room-image-box {
       width: 100%;

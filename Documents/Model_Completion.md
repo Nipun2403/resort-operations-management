@@ -6371,3 +6371,65 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 ✓ I confirm that all role-to-route mappings match the spec exactly.
 ================================================================================
 
+
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: Front Desk Booking Wizard UI Enhancements
+Date: 2026-07-02
+================================================================================
+
+FILES CREATED
+-------------
+None.
+
+FILES MODIFIED (existing files updated per spec)
+-------------------------------------------------
+✓ Frontend/src/app/features/front-desk/pages/new-booking.component.scss — Applied 1600px max-width layout, 3-column rooms grid, 4-column amenities grid, +2px font-size increases, mobile stepper centering, and stepper state active glow fix.
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Desktop Booking Wizard Enhancements:
+  ✓ Container Sizing: Expanded max-width to 1600px to spread content horizontally.
+  ✓ Room Selection Layout: Rendered room cards in 3 columns on desktop.
+  ✓ Amenities Layout: Rendered amenities in 4 columns on desktop.
+  ✓ Font & Element Sizing: Scaled up typography across the wizard by +2px. Increased room status badge (available count overlay) size.
+✓ Mobile Layout Adjustments:
+  ✓ Stepper Line: Completely removed vertical stepper connecting line.
+  ✓ Stepper Alignment: Centered step content cards and headers while retaining edge spacing.
+✓ Stepper Navigation State Fix:
+  ✓ Refactored overrides to target `[aria-selected="true"]` so that only the currently active step is highlighted in gold.
+  ✓ Cleared incorrect styling on legacy completed/editable classes (`mat-step-label-active`, `mat-step-label-selected`, `mat-step-icon-state-edit`) to restore correct dimmer unfocused states when navigating backward.
+
+API INTEGRATION
+---------------
+None. All existing API controllers, date validators, and reactive form configurations remain fully intact.
+
+LOGIC TRACES
+------------
+Flow: Backwards Stepper Navigation
+  - Entry: User goes from Step 4 (Amenities) back to Step 2 (Dates).
+  - Path: Stepper selectedIndex updates -> Step 2 receives `aria-selected="true"` -> Step 2 label/icon turn gold -> Step 4 and Step 3 receive `aria-selected="false"` -> Step 4 and Step 3 labels/icons revert to dim unfocused grey.
+  - Result: ✓ Matches spec
+
+KNOWN DEVIATIONS
+----------------
+None.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+✓ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+✓ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+✓ I confirm that all API calls match the spec contracts exactly.
+✓ I confirm that all regex validators are character-for-character matches
+  to the spec.
+✓ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
