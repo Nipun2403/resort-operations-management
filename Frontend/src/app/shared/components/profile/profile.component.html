@@ -1,162 +1,192 @@
 <div class="profile-page">
   @if (loading()) {
-    <div class="flex justify-center items-center py-20">
-      <mat-spinner diameter="40"></mat-spinner>
-    </div>
+  <div class="flex justify-center items-center py-20">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
   } @else if (error()) {
-    <app-alert type="error" [message]="error()!" (closed)="error.set(null)">
-      <button mat-button (click)="fetchProfile()">Retry</button>
-    </app-alert>
+  <app-alert type="error" [message]="error()!" (closed)="error.set(null)">
+    <button mat-button (click)="fetchProfile()">Retry</button>
+  </app-alert>
   } @else if (profile()) {
-    <section class="w-full max-w-[600px] glass-panel relative p-6 md:p-12 transition-all duration-1000 ease-in-out mx-auto" id="profile-card">
-      
-      <!-- Card Header -->
-      <div class="flex justify-between items-baseline mb-12 md:mb-16">
-        <h1 class="font-headline-md text-secondary italic">My Profile</h1>
-        @if (canEditProfile() && !editMode()) {
-          <button class="group flex items-center gap-2 text-on-surface-variant hover:text-secondary transition-colors" id="edit-toggle-btn" (click)="toggleEditMode()">
-            <span class="font-label-caps text-[10px]">EDIT PROFILE</span>
-            <span class="material-symbols-outlined text-sm group-hover:scale-110 transition-transform">edit</span>
-          </button>
-        }
-      </div>
+  <section
+    class="w-full max-w-[600px] glass-panel relative p-6 md:p-12 transition-all duration-1000 ease-in-out mx-auto"
+    id="profile-card">
 
-      <!-- Access Status Card (Mobile Only) -->
-      <div class="mobile-access-card glass-panel p-6 flex items-center justify-between mb-8 md:hidden">
-        <div class="space-y-1">
-          <p class="font-label-caps text-[10px] text-on-surface-variant/60 uppercase">Access Privilege</p>
-          <p class="font-body-lg text-secondary font-medium tracking-widest">{{ profile()!.role | uppercase }}</p>
-        </div>
-        <div class="w-12 h-12 flex items-center justify-center border border-secondary/20 bg-secondary/5">
-          <span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">shield</span>
-        </div>
-      </div>
-
-      <!-- View Mode Content -->
-      @if (!editMode()) {
-        <div class="space-y-12" id="view-mode">
-          <div class="grid grid-cols-2 gap-x-gutter gap-y-10">
-            <div class="space-y-1 col-span-2 md:col-span-1">
-              <p class="font-label-caps text-[10px] text-on-surface-variant/60">FIRST NAME</p>
-              <p class="font-body-lg text-on-surface border-b border-on-surface/10 pb-2">{{ profile()!.firstName }}</p>
-            </div>
-            <div class="space-y-1 col-span-2 md:col-span-1">
-              <p class="font-label-caps text-[10px] text-on-surface-variant/60">LAST NAME</p>
-              <p class="font-body-lg text-on-surface border-b border-on-surface/10 pb-2">{{ profile()!.lastName }}</p>
-            </div>
-            <div class="col-span-2 space-y-1">
-              <p class="font-label-caps text-[10px] text-on-surface-variant/60">EMAIL ADDRESS</p>
-              <p class="font-body-lg text-on-surface border-b border-on-surface/10 pb-2">{{ profile()!.email }}</p>
-            </div>
-            <div class="col-span-2 space-y-3 hidden md:block">
-              <p class="font-label-caps text-[10px] text-on-surface-variant/60">ACCESS PRIVILEGE</p>
-              <div class="inline-flex items-center gap-3 px-4 py-2 role-chip-admin">
-                <span class="material-symbols-outlined text-secondary text-sm" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
-                <span class="font-label-caps text-secondary text-[11px] tracking-[0.2em]">{{ profile()!.role | uppercase }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      } @else {
-        <!-- Edit Mode Content -->
-        <div class="space-y-10 animate-in fade-in duration-700" id="edit-mode">
-          <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="flex flex-col gap-8">
-            <div class="relative pt-4">
-              <label class="font-label-caps text-[10px] text-secondary absolute top-0 left-0">FIRST NAME</label>
-              <input class="w-full bg-transparent border-t-0 border-x-0 border-b border-on-surface/20 py-3 font-body-lg text-on-surface gold-border-glow transition-all" type="text" formControlName="firstName"/>
-              @if (profileForm.get('firstName')?.invalid && (profileForm.get('firstName')?.touched || profileForm.get('firstName')?.dirty)) {
-                <span class="validation-error text-xs text-error mt-1 block">Required, min 2 letters.</span>
-              }
-            </div>
-            <div class="relative pt-4">
-              <label class="font-label-caps text-[10px] text-secondary absolute top-0 left-0">LAST NAME</label>
-              <input class="w-full bg-transparent border-t-0 border-x-0 border-b border-on-surface/20 py-3 font-body-lg text-on-surface gold-border-glow transition-all" type="text" formControlName="lastName"/>
-              @if (profileForm.get('lastName')?.invalid && (profileForm.get('lastName')?.touched || profileForm.get('lastName')?.dirty)) {
-                <span class="validation-error text-xs text-error mt-1 block">Required, min 2 letters.</span>
-              }
-            </div>
-            <div class="relative pt-4">
-              <label class="font-label-caps text-[10px] text-secondary absolute top-0 left-0">EMAIL ADDRESS</label>
-              <input class="w-full bg-transparent border-t-0 border-x-0 border-b border-on-surface/20 py-3 font-body-lg text-on-surface gold-border-glow transition-all" type="email" formControlName="email"/>
-              @if (profileForm.get('email')?.invalid && (profileForm.get('email')?.touched || profileForm.get('email')?.dirty)) {
-                <span class="validation-error text-xs text-error mt-1 block">Valid email required.</span>
-              }
-            </div>
-
-            @if (profileError()) {
-              <app-alert type="error" [message]="profileError()!" (closed)="profileError.set(null)"></app-alert>
-            }
-
-            <div class="flex gap-6 pt-4">
-              <button class="flex-1 py-4 border border-on-surface/20 text-on-surface font-label-caps text-[11px] hover:border-secondary hover:text-secondary transition-all duration-300" type="button" (click)="toggleEditMode()">CANCEL</button>
-              <button class="flex-1 py-4 bg-secondary text-surface font-label-caps text-[11px] hover:bg-secondary-fixed transition-all duration-300 flex items-center justify-center gap-2" type="submit" [disabled]="profileForm.invalid || profileSubmitting()">
-                @if (profileSubmitting()) {
-                  <mat-spinner diameter="16"></mat-spinner>
-                }
-                SAVE CHANGES
-              </button>
-            </div>
-          </form>
-        </div>
+    <!-- Card Header -->
+    <div class="flex justify-between items-baseline mb-12 md:mb-16">
+      <h1 class="font-headline-md text-secondary italic">My Profile</h1>
+      @if (canEditProfile() && !editMode()) {
+      <button class="group flex items-center gap-2 text-on-surface-variant hover:text-secondary transition-colors"
+        id="edit-toggle-btn" (click)="toggleEditMode()">
+        <span class="font-label-caps text-[10px]">EDIT PROFILE</span>
+        <span class="material-symbols-outlined text-sm group-hover:scale-110 transition-transform">edit</span>
+      </button>
       }
+    </div>
 
-      <!-- The Vault of Security -->
-      <div class="mt-20 pt-10 border-t border-secondary/10">
-        <div class="flex items-center gap-3 mb-8">
-          <span class="material-symbols-outlined text-secondary text-lg">enhanced_encryption</span>
-          <h3 class="font-label-caps text-secondary text-[11px] tracking-[0.3em]">THE VAULT OF SECURITY</h3>
+    <!-- Access Status Card (Mobile Only) -->
+    <div class="mobile-access-card glass-panel p-6 flex items-center justify-between mb-8 md:hidden">
+      <div class="space-y-1">
+        <p class="font-label-caps text-[10px] text-on-surface-variant/60 uppercase">Access Privilege</p>
+        <p class="font-body-lg text-secondary font-medium tracking-widest">{{ profile()!.role | uppercase }}</p>
+      </div>
+      <div class="w-12 h-12 flex items-center justify-center border border-secondary/20 bg-secondary/5">
+        <span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">shield</span>
+      </div>
+    </div>
+
+    <!-- View Mode Content -->
+    @if (!editMode()) {
+    <div class="space-y-12" id="view-mode">
+      <div class="grid grid-cols-2 gap-x-gutter gap-y-10">
+        <div class="space-y-1 col-span-2 md:col-span-1">
+          <p class="font-label-caps text-[10px] text-on-surface-variant/60">FIRST NAME</p>
+          <p class="font-body-lg text-on-surface border-b border-on-surface/10 pb-2">{{ profile()!.firstName }}</p>
         </div>
-        <form [formGroup]="passwordForm" (ngSubmit)="changePassword()" class="space-y-8">
-          <div class="space-y-6">
-            <div class="relative pt-4">
-              <label class="font-label-caps text-[10px] text-secondary absolute top-0 left-0">CURRENT PASSWORD</label>
-              <input class="w-full bg-transparent border-t-0 border-x-0 border-b border-on-surface/10 py-3 font-body-md text-on-surface gold-border-glow transition-all" type="password" formControlName="currentPassword"/>
-              @if (passwordForm.get('currentPassword')?.invalid && (passwordForm.get('currentPassword')?.touched || passwordForm.get('currentPassword')?.dirty)) {
-                <span class="validation-error text-xs text-error mt-1 block">Required.</span>
-              }
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div class="relative pt-4">
-                <label class="font-label-caps text-[10px] text-secondary absolute top-0 left-0">NEW PASSWORD</label>
-                <input class="w-full bg-transparent border-t-0 border-x-0 border-b border-on-surface/10 py-3 font-body-md text-on-surface gold-border-glow transition-all" type="password" formControlName="newPassword"/>
-                @if (passwordForm.get('newPassword')?.invalid && (passwordForm.get('newPassword')?.touched || passwordForm.get('newPassword')?.dirty)) {
-                  <span class="validation-error text-xs text-error mt-1 block">Min 8 characters, at least 1 letter and 1 digit.</span>
-                }
-              </div>
-              <div class="relative pt-4">
-                <label class="font-label-caps text-[10px] text-secondary absolute top-0 left-0">CONFIRM PASSWORD</label>
-                <input class="w-full bg-transparent border-t-0 border-x-0 border-b border-on-surface/10 py-3 font-body-md text-on-surface gold-border-glow transition-all" type="password" formControlName="confirmNewPassword"/>
-                @if (passwordForm.get('confirmNewPassword')?.invalid && (passwordForm.get('confirmNewPassword')?.touched || passwordForm.get('confirmNewPassword')?.dirty)) {
-                  <span class="validation-error text-xs text-error mt-1 block">Required.</span>
-                }
-                @if (passwordForm.hasError('passwordsMismatch') && passwordForm.get('confirmNewPassword')?.touched) {
-                  <span class="validation-error text-xs text-error mt-1 block">Passwords do not match.</span>
-                }
-              </div>
-            </div>
+        <div class="space-y-1 col-span-2 md:col-span-1">
+          <p class="font-label-caps text-[10px] text-on-surface-variant/60">LAST NAME</p>
+          <p class="font-body-lg text-on-surface border-b border-on-surface/10 pb-2">{{ profile()!.lastName }}</p>
+        </div>
+        <div class="col-span-2 space-y-1">
+          <p class="font-label-caps text-[10px] text-on-surface-variant/60">EMAIL ADDRESS</p>
+          <p class="font-body-lg text-on-surface border-b border-on-surface/10 pb-2">{{ profile()!.email }}</p>
+        </div>
+        <div class="col-span-2 space-y-3 hidden md:block">
+          <p class="font-label-caps text-[10px] text-on-surface-variant/60">ACCESS PRIVILEGE</p>
+          <div class="inline-flex items-center gap-3 px-4 py-2 role-chip-admin">
+            <span class="material-symbols-outlined text-secondary text-sm"
+              style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+            <span class="font-label-caps text-secondary text-[11px] tracking-[0.2em]">{{ profile()!.role | uppercase
+              }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    } @else {
+    <!-- Edit Mode Content -->
+    <div class="space-y-10 animate-in fade-in duration-700" id="edit-mode">
+      <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="flex flex-col gap-8">
+        <div class="relative pt-4">
+          <label class="font-label-caps text-[10px] text-secondary absolute top-0 left-0">FIRST NAME</label>
+          <input
+            class="w-full bg-transparent border-t-0 border-x-0 border-b border-on-surface/20 py-3 font-body-lg text-on-surface gold-border-glow transition-all"
+            type="text" formControlName="firstName" />
+          @if (profileForm.get('firstName')?.invalid && (profileForm.get('firstName')?.touched ||
+          profileForm.get('firstName')?.dirty)) {
+          <span class="validation-error text-xs text-error mt-1 block">Required, min 2 letters.</span>
+          }
+        </div>
+        <div class="relative pt-4">
+          <label class="font-label-caps text-[10px] text-secondary absolute top-0 left-0">LAST NAME</label>
+          <input
+            class="w-full bg-transparent border-t-0 border-x-0 border-b border-on-surface/20 py-3 font-body-lg text-on-surface gold-border-glow transition-all"
+            type="text" formControlName="lastName" />
+          @if (profileForm.get('lastName')?.invalid && (profileForm.get('lastName')?.touched ||
+          profileForm.get('lastName')?.dirty)) {
+          <span class="validation-error text-xs text-error mt-1 block">Required, min 2 letters.</span>
+          }
+        </div>
+        <div class="relative pt-4">
+          <label class="font-label-caps text-[10px] text-secondary absolute top-0 left-0">EMAIL ADDRESS</label>
+          <input
+            class="w-full bg-transparent border-t-0 border-x-0 border-b border-on-surface/20 py-3 font-body-lg text-on-surface gold-border-glow transition-all"
+            type="email" formControlName="email" />
+          @if (profileForm.get('email')?.invalid && (profileForm.get('email')?.touched ||
+          profileForm.get('email')?.dirty)) {
+          <span class="validation-error text-xs text-error mt-1 block">Valid email required.</span>
+          }
+        </div>
+
+        @if (profileError()) {
+        <app-alert type="error" [message]="profileError()!" (closed)="profileError.set(null)"></app-alert>
+        }
+
+        <div class="flex gap-6 pt-4">
+          <button
+            class="flex-1 py-4 border border-on-surface/20 text-on-surface font-label-caps text-[11px] hover:border-secondary hover:text-secondary transition-all duration-300"
+            type="button" (click)="toggleEditMode()">CANCEL</button>
+          <button
+            class="flex-1 py-4 bg-secondary text-surface font-label-caps text-[11px] hover:bg-secondary-fixed transition-all duration-300 flex items-center justify-center gap-2"
+            type="submit" [disabled]="profileForm.invalid || profileSubmitting()">
+            @if (profileSubmitting()) {
+            <mat-spinner diameter="16"></mat-spinner>
+            }
+            SAVE CHANGES
+          </button>
+        </div>
+      </form>
+    </div>
+    }
+
+    <!-- The Vault of Security -->
+    <div class="mt-20 pt-10 border-t border-secondary/10">
+      <div class="flex items-center gap-3 mb-8">
+        <span class="material-symbols-outlined text-secondary text-lg">enhanced_encryption</span>
+        <h3 class="font-label-caps text-secondary text-[11px] tracking-[0.3em]">THE VAULT OF SECURITY</h3>
+      </div>
+      <form [formGroup]="passwordForm" (ngSubmit)="changePassword()" class="space-y-8">
+        <div class="space-y-6">
+          <div class="relative pt-4">
+            <label class="font-label-caps text-[10px] text-secondary absolute top-0 left-0">CURRENT PASSWORD</label>
+            <input
+              class="w-full bg-transparent border-t-0 border-x-0 border-b border-on-surface/10 py-3 font-body-md text-on-surface gold-border-glow transition-all"
+              type="password" formControlName="currentPassword" />
+            @if (passwordForm.get('currentPassword')?.invalid && (passwordForm.get('currentPassword')?.touched ||
+            passwordForm.get('currentPassword')?.dirty)) {
+            <span class="validation-error text-xs text-error mt-1 block">Required.</span>
+            }
           </div>
 
-          @if (passwordError()) {
-            <app-alert type="error" [message]="passwordError()!" (closed)="passwordError.set(null)"></app-alert>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="relative pt-4">
+              <label class="font-label-caps text-[10px] text-secondary absolute top-0 left-0">NEW PASSWORD</label>
+              <input
+                class="w-full bg-transparent border-t-0 border-x-0 border-b border-on-surface/10 py-3 font-body-md text-on-surface gold-border-glow transition-all"
+                type="password" formControlName="newPassword" />
+              @if (passwordForm.get('newPassword')?.invalid && (passwordForm.get('newPassword')?.touched ||
+              passwordForm.get('newPassword')?.dirty)) {
+              <span class="validation-error text-xs text-error mt-1 block">Min 8 characters, at least 1 letter and 1
+                digit.</span>
+              }
+            </div>
+            <div class="relative pt-4">
+              <label class="font-label-caps text-[10px] text-secondary absolute top-0 left-0">CONFIRM PASSWORD</label>
+              <input
+                class="w-full bg-transparent border-t-0 border-x-0 border-b border-on-surface/10 py-3 font-body-md text-on-surface gold-border-glow transition-all"
+                type="password" formControlName="confirmNewPassword" />
+              @if (passwordForm.get('confirmNewPassword')?.invalid && (passwordForm.get('confirmNewPassword')?.touched
+              || passwordForm.get('confirmNewPassword')?.dirty)) {
+              <span class="validation-error text-xs text-error mt-1 block">Required.</span>
+              }
+              @if (passwordForm.hasError('passwordsMismatch') && passwordForm.get('confirmNewPassword')?.touched) {
+              <span class="validation-error text-xs text-error mt-1 block">Passwords do not match.</span>
+              }
+            </div>
+          </div>
+        </div>
+
+        @if (passwordError()) {
+        <app-alert type="error" [message]="passwordError()!" (closed)="passwordError.set(null)"></app-alert>
+        }
+
+        <button
+          class="w-full py-4 bg-secondary text-surface font-label-caps text-[11px] tracking-[0.2em] hover:bg-secondary-fixed transition-all duration-500 flex items-center justify-center gap-2"
+          type="submit" [disabled]="passwordForm.invalid || passwordSubmitting()">
+          @if (passwordSubmitting()) {
+          <mat-spinner diameter="16"></mat-spinner>
           }
+          CHANGE PASSWORD
+        </button>
+      </form>
+    </div>
 
-          <button class="w-full py-4 bg-secondary text-surface font-label-caps text-[11px] tracking-[0.2em] hover:bg-secondary-fixed transition-all duration-500 flex items-center justify-center gap-2" type="submit" [disabled]="passwordForm.invalid || passwordSubmitting()">
-            @if (passwordSubmitting()) {
-              <mat-spinner diameter="16"></mat-spinner>
-            }
-            CHANGE PASSWORD
-          </button>
-        </form>
-      </div>
-
-      <!-- Absolute Decorative Corners -->
-      <div class="absolute -bottom-1 -right-1 w-24 h-24 pointer-events-none opacity-10">
-        <div class="w-full h-full border-r border-b border-secondary"></div>
-      </div>
-      <div class="absolute -top-1 -left-1 w-24 h-24 pointer-events-none opacity-10">
-        <div class="w-full h-full border-l border-t border-secondary"></div>
-      </div>
-    </section>
+    <!-- Absolute Decorative Corners -->
+    <div class="absolute -bottom-1 -right-1 w-24 h-24 pointer-events-none opacity-10">
+      <div class="w-full h-full border-r border-b border-secondary"></div>
+    </div>
+    <div class="absolute -top-1 -left-1 w-24 h-24 pointer-events-none opacity-10">
+      <div class="w-full h-full border-l border-t border-secondary"></div>
+    </div>
+  </section>
   }
 </div>

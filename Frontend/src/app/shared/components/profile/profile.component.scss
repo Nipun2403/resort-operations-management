@@ -9,24 +9,27 @@
 :host {
   display: block;
   min-height: 100vh;
-  background-color: #0e0e0c;
+  background-color: transparent;
   color: #e4e2dd;
   font-family: var(--font-body, "Manrope"), sans-serif;
   box-sizing: border-box;
 }
 
-.profile-page {
-  padding: 40px 20px 80px 20px;
-  box-sizing: border-box;
+// .profile-page {
+//   padding: 40px 20px 80px 20px;
+//   box-sizing: border-box;
 
-  @media (min-width: 768px) {
-    padding: 80px 80px 160px 80px;
-  }
-}
+//   @media (min-width: 768px) {
+//     padding: 80px 80px 160px 80px;
+//   }
+// }
+
+
 
 .glass-panel {
   @include glass-panel;
-  border-radius: 0px !important; /* Sharp Aetheris edges */
+  border-radius: 0px !important;
+  /* Sharp Aetheris edges */
 }
 
 /* Typography & Layout */
@@ -76,12 +79,12 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  
+
   .font-label-caps {
     color: rgba(228, 194, 133, 0.6);
     transition: color 0.3s ease;
   }
-  
+
   .material-symbols-outlined {
     color: rgba(228, 194, 133, 0.6);
     transition: transform 0.3s ease, color 0.3s ease;
@@ -91,6 +94,7 @@
     .font-label-caps {
       color: #e4c285;
     }
+
     .material-symbols-outlined {
       color: #e4c285;
       transform: scale(1.1);
@@ -238,27 +242,27 @@ button[type="button"] {
 }
 
 /* Spacers & Utilities */
-.space-y-1 > * + * {
+.space-y-1>*+* {
   margin-top: 4px;
 }
 
-.space-y-3 > * + * {
+.space-y-3>*+* {
   margin-top: 12px;
 }
 
-.space-y-6 > * + * {
+.space-y-6>*+* {
   margin-top: 24px;
 }
 
-.space-y-8 > * + * {
+.space-y-8>*+* {
   margin-top: 32px;
 }
 
-.space-y-10 > * + * {
+.space-y-10>*+* {
   margin-top: 40px;
 }
 
-.space-y-12 > * + * {
+.space-y-12>*+* {
   margin-top: 48px;
 }
 
@@ -267,3 +271,14 @@ button[type="button"] {
   grid-template-columns: 1fr;
   gap: 24px;
 }
+
+#profile-card {
+  width: 100%;
+  // max-width: 1000px;
+  margin: 0 auto;
+  padding: 48px;
+}
+
+// .mat-drawer-container {
+//   background: transparent !important;
+// }
