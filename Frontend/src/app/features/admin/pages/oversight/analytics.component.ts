@@ -56,7 +56,7 @@ export class AnalyticsComponent implements OnInit {
   error = signal<string | null>(null);
 
   // Date controls
-  presetControl = new FormControl<'last7' | 'last30' | 'thisMonth' | 'custom'>(
+  presetControl = new FormControl<'last7' | 'last30' | 'quarterly' | 'custom'>(
     'last7',
     { nonNullable: true },
   );
@@ -101,11 +101,36 @@ export class AnalyticsComponent implements OnInit {
         break;
     }
     return {
-      title: { text: 'Overview' },
-      tooltip: { trigger: 'axis' },
-      xAxis: { type: 'category', data: xData },
-      yAxis: { type: 'value' },
-      series: [{ type: 'bar', data: yData, color: '#1976d2' }],
+      backgroundColor: 'transparent',
+      tooltip: {
+        trigger: 'axis',
+        backgroundColor: '#1f201d',
+        borderColor: 'rgba(228, 194, 133, 0.2)',
+        borderWidth: 1,
+        textStyle: { color: '#e4e2dd', fontFamily: 'Manrope' }
+      },
+      xAxis: {
+        type: 'category',
+        data: xData,
+        axisLine: { lineStyle: { color: 'rgba(228, 194, 133, 0.15)' } },
+        axisLabel: { color: '#c4c7c7', fontFamily: 'Manrope', fontSize: 10 }
+      },
+      yAxis: {
+        type: 'value',
+        splitLine: { lineStyle: { color: 'rgba(228, 194, 133, 0.05)' } },
+        axisLabel: { color: '#c4c7c7', fontFamily: 'Manrope', fontSize: 10 }
+      },
+      series: [{
+        type: 'bar',
+        data: yData,
+        color: '#e4c285',
+        barWidth: '40%',
+        itemStyle: {
+          color: 'rgba(228, 194, 133, 0.1)',
+          borderColor: 'rgba(228, 194, 133, 0.4)',
+          borderWidth: 1
+        }
+      }],
     };
   });
 
@@ -140,11 +165,51 @@ export class AnalyticsComponent implements OnInit {
         break;
     }
     return {
-      title: { text: 'Trend' },
-      tooltip: { trigger: 'axis' },
-      xAxis: { type: 'category', data: xData },
-      yAxis: { type: 'value' },
-      series: [{ type: 'line', data: yData, color: '#388e3c' }],
+      backgroundColor: 'transparent',
+      tooltip: {
+        trigger: 'axis',
+        backgroundColor: '#1f201d',
+        borderColor: 'rgba(228, 194, 133, 0.2)',
+        borderWidth: 1,
+        textStyle: { color: '#e4e2dd', fontFamily: 'Manrope' }
+      },
+      xAxis: {
+        type: 'category',
+        data: xData,
+        axisLine: { lineStyle: { color: 'rgba(228, 194, 133, 0.15)' } },
+        axisLabel: { color: '#c4c7c7', fontFamily: 'Manrope', fontSize: 10 }
+      },
+      yAxis: {
+        type: 'value',
+        splitLine: { lineStyle: { color: 'rgba(228, 194, 133, 0.05)' } },
+        axisLabel: { color: '#c4c7c7', fontFamily: 'Manrope', fontSize: 10 }
+      },
+      series: [{
+        type: 'line',
+        data: yData,
+        color: '#e4c285',
+        smooth: true,
+        symbol: 'circle',
+        symbolSize: 6,
+        lineStyle: {
+          width: 2,
+          color: '#e4c285'
+        },
+        areaStyle: {
+          color: {
+            type: 'linear',
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [{
+              offset: 0, color: 'rgba(228, 194, 133, 0.2)'
+            }, {
+              offset: 1, color: 'rgba(228, 194, 133, 0)'
+            }]
+          }
+        }
+      }],
     };
   });
 
@@ -206,9 +271,47 @@ export class AnalyticsComponent implements OnInit {
         break;
     }
     return {
-      title: { text: 'Radar Overview' },
-      radar: { indicator },
-      series: [{ type: 'radar', data: [{ value, name: 'Current' }] }],
+      backgroundColor: 'transparent',
+      tooltip: {
+        trigger: 'item',
+        backgroundColor: '#1f201d',
+        borderColor: 'rgba(228, 194, 133, 0.2)',
+        borderWidth: 1,
+        textStyle: { color: '#e4e2dd', fontFamily: 'Manrope' }
+      },
+      radar: {
+        indicator,
+        shape: 'polygon',
+        splitNumber: 3,
+        axisName: {
+          color: '#c4c7c7',
+          fontFamily: 'Manrope',
+          fontSize: 9
+        },
+        splitLine: {
+          lineStyle: {
+            color: 'rgba(228, 194, 133, 0.1)'
+          }
+        },
+        splitArea: {
+          show: false
+        },
+        axisLine: {
+          lineStyle: {
+            color: 'rgba(228, 194, 133, 0.1)'
+          }
+        }
+      },
+      series: [{
+        type: 'radar',
+        data: [{
+          value,
+          name: 'Current',
+          itemStyle: { color: '#e4c285' },
+          lineStyle: { color: '#e4c285', width: 1.5 },
+          areaStyle: { color: 'rgba(228, 194, 133, 0.05)' }
+        }]
+      }],
     };
   });
 
@@ -220,16 +323,51 @@ export class AnalyticsComponent implements OnInit {
       return {}; // hidden (no data)
     }
     return {
-      title: { text: 'Expenditure Breakdown' },
-      tooltip: { trigger: 'item' },
+      backgroundColor: 'transparent',
+      tooltip: {
+        trigger: 'item',
+        backgroundColor: '#1f201d',
+        borderColor: 'rgba(228, 194, 133, 0.2)',
+        borderWidth: 1,
+        textStyle: { color: '#e4e2dd', fontFamily: 'Manrope' }
+      },
+      legend: {
+        orient: 'horizontal',
+        bottom: '0',
+        textStyle: { color: '#c4c7c7', fontFamily: 'Manrope', fontSize: 10 },
+        icon: 'circle'
+      },
       series: [
         {
           type: 'pie',
+          radius: ['45%', '70%'],
+          center: ['50%', '45%'],
+          avoidLabelOverlap: false,
+          itemStyle: {
+            borderRadius: 0,
+            borderColor: '#131411',
+            borderWidth: 2
+          },
+          label: {
+            show: false,
+            position: 'center'
+          },
+          emphasis: {
+            label: {
+              show: true,
+              fontSize: 14,
+              fontWeight: 'bold',
+              color: '#e4c285',
+              fontFamily: 'Manrope'
+            }
+          },
+          labelLine: {
+            show: false
+          },
           data: [
-            { name: 'Food', value: d.nonRoomExpenditure.totalFoodSpend },
-            { name: 'Amenities', value: d.nonRoomExpenditure.totalAmenitySpend },
+            { name: 'Food', value: d.nonRoomExpenditure.totalFoodSpend, itemStyle: { color: '#e4c285' } },
+            { name: 'Amenities', value: d.nonRoomExpenditure.totalAmenitySpend, itemStyle: { color: '#d5b478' } },
           ],
-          label: { formatter: '{b}: {c} ({d}%)' },
         },
       ],
     };
@@ -295,8 +433,9 @@ export class AnalyticsComponent implements OnInit {
       case 'last30':
         start = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
         break;
-      case 'thisMonth':
-        start = new Date(now.getFullYear(), now.getMonth(), 1);
+      case 'quarterly':
+        const currentQuarterMonth = Math.floor(now.getMonth() / 3) * 3;
+        start = new Date(now.getFullYear(), currentQuarterMonth, 1);
         break;
       default:
         return null;

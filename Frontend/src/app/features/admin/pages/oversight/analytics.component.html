@@ -1,146 +1,184 @@
-<div class="analytics-page">
-  <!-- Controls: Presets + Custom Date + Category Dropdown -->
-  <div class="controls">
-    <div class="date-controls">
-      <mat-button-toggle-group
-        [formControl]="presetControl"
-        (change)="onPresetChange()"
-      >
-        <mat-button-toggle value="last7">Last 7 days</mat-button-toggle>
-        <mat-button-toggle value="last30">Last 30 days</mat-button-toggle>
-        <mat-button-toggle value="thisMonth">This month</mat-button-toggle>
-        <mat-button-toggle value="custom">Custom</mat-button-toggle>
-      </mat-button-toggle-group>
-      @if (presetControl.value === 'custom') {
-      <mat-form-field appearance="outline">
-        <mat-label>Start date</mat-label>
-        <input
-          matInput
-          [matDatepicker]="startPicker"
-          [formControl]="startDateCtrl"
-        />
-        <mat-datepicker-toggle
-          matSuffix
-          [for]="startPicker"
-        ></mat-datepicker-toggle>
-        <mat-datepicker #startPicker></mat-datepicker>
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>End date</mat-label>
-        <input
-          matInput
-          [matDatepicker]="endPicker"
-          [formControl]="endDateCtrl"
-        />
-        <mat-datepicker-toggle
-          matSuffix
-          [for]="endPicker"
-        ></mat-datepicker-toggle>
-        <mat-datepicker #endPicker></mat-datepicker>
-      </mat-form-field>
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="applyCustomRange()"
-      >
-        Apply
-      </button>
-      }
+<main class="analytics-main pt-6 pb-margin-desktop px-margin-desktop min-h-screen relative z-10">
+  
+  <!-- TEMPORAL COMPASS (Controls) -->
+  <section class="mb-12 controls-section">
+    <div class="glass-panel p-6 flex justify-between items-center controls-container">
+      <div class="flex gap-8 toggle-group-container">
+        <mat-button-toggle-group
+          [formControl]="presetControl"
+          (change)="onPresetChange()"
+          class="aetheris-toggle-group"
+        >
+          <mat-button-toggle value="last7">LAST 7 DAYS</mat-button-toggle>
+          <mat-button-toggle value="last30">LAST 30 DAYS</mat-button-toggle>
+          <mat-button-toggle value="quarterly">QUARTERLY</mat-button-toggle>
+          <mat-button-toggle value="custom">CUSTOM</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+      <div class="flex items-center gap-4 category-select-container">
+        <mat-form-field appearance="outline" class="aetheris-select-field">
+          <mat-label>Category</mat-label>
+          <mat-select
+            [formControl]="categoryControl"
+            (selectionChange)="onCategoryChange()"
+            panelClass="aetheris-select-panel"
+          >
+            <mat-option value="all">All</mat-option>
+            <mat-option value="revenue">Revenue</mat-option>
+            <mat-option value="operations">Operations</mat-option>
+            <mat-option value="guests">Guests</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
     </div>
-    <mat-form-field
-      appearance="outline"
-      class="category-select"
-    >
-      <mat-label>Category</mat-label>
-      <mat-select
-        [formControl]="categoryControl"
-        (selectionChange)="onCategoryChange()"
-      >
-        <mat-option value="all">All</mat-option>
-        <mat-option value="revenue">Revenue</mat-option>
-        <mat-option value="operations">Operations</mat-option>
-        <mat-option value="guests">Guests</mat-option>
-      </mat-select>
+  </section>
+
+  <!-- Custom Date Pickers when Custom is selected -->
+  @if (presetControl.value === 'custom') {
+  <section class="mb-8 flex items-center gap-4 custom-date-picker-row">
+    <mat-form-field appearance="outline" class="aetheris-date-field">
+      <mat-label>Start date</mat-label>
+      <input
+        matInput
+        [matDatepicker]="startPicker"
+        [formControl]="startDateCtrl"
+      />
+      <mat-datepicker-toggle
+        matSuffix
+        [for]="startPicker"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #startPicker></mat-datepicker>
     </mat-form-field>
-  </div>
+    <mat-form-field appearance="outline" class="aetheris-date-field">
+      <mat-label>End date</mat-label>
+      <input
+        matInput
+        [matDatepicker]="endPicker"
+        [formControl]="endDateCtrl"
+      />
+      <mat-datepicker-toggle
+        matSuffix
+        [for]="endPicker"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #endPicker></mat-datepicker>
+    </mat-form-field>
+    <button
+      mat-raised-button
+      class="aetheris-btn"
+      (click)="applyCustomRange()"
+    >
+      Apply Range
+    </button>
+  </section>
+  }
 
   <!-- Loading / Error -->
   @if (loading() && !analytics()) {
-  <div class="loading"><mat-spinner diameter="40"></mat-spinner></div>
+  <div class="loading-spinner"><mat-spinner diameter="40"></mat-spinner></div>
   } @else if (error()) {
-  <app-alert
-    type="error"
-    [message]="error()!"
-    (closed)="error.set(null)"
-  >
-    <button
-      mat-button
-      (click)="fetchData()"
+  <div class="error-alert-container">
+    <app-alert
+      type="error"
+      [message]="error()!"
+      (closed)="error.set(null)"
     >
-      Retry
-    </button>
-  </app-alert>
-  } @else {
-  <!-- KPI Summary Cards (top row) -->
-  <div class="kpi-row">
-    <mat-card
-      ><mat-card-title>Total Revenue</mat-card-title
-      ><mat-card-content
-        >{{ analytics()?.totalRevenue | currency }}</mat-card-content
-      ></mat-card
-    >
-    <mat-card
-      ><mat-card-title>Occupancy Rate</mat-card-title
-      ><mat-card-content
-        >{{ analytics()?.occupancyRate }}%</mat-card-content
-      ></mat-card
-    >
-    <mat-card
-      ><mat-card-title>Guest Satisfaction</mat-card-title
-      ><mat-card-content
-        >{{ analytics()?.guestSatisfactionScore }}%</mat-card-content
-      ></mat-card
-    >
-    <mat-card
-      ><mat-card-title>Avg Daily Rate</mat-card-title
-      ><mat-card-content
-        >{{ analytics()?.averageDailyRate | currency }}</mat-card-content
-      ></mat-card
-    >
+      <button
+        mat-button
+        class="retry-btn"
+        (click)="fetchData()"
+      >
+        Retry
+      </button>
+    </app-alert>
   </div>
+  } @else {
+  <!-- PILLARS OF PERFORMANCE (KPIs) -->
+  <section class="grid grid-cols-4 gap-6 mb-12 kpi-grid">
+    <!-- KPI 1 -->
+    <div class="glass-panel p-8 kpi-card">
+      <p class="font-label-caps text-[10px] text-on-surface-variant tracking-[0.25em] mb-4">TOTAL REVENUE</p>
+      <div class="flex items-baseline gap-2">
+        <span class="font-display-lg text-[42px] leading-tight text-secondary-fixed-dim">
+          {{ analytics()?.totalRevenue | currency:'USD':'symbol':'1.0-0' }}
+        </span>
+        <span class="text-xs text-secondary/60 font-medium">+2.4%</span>
+      </div>
+    </div>
+    <!-- KPI 2 -->
+    <div class="glass-panel p-8 kpi-card">
+      <p class="font-label-caps text-[10px] text-on-surface-variant tracking-[0.25em] mb-4">OCCUPANCY RATE</p>
+      <div class="flex items-baseline gap-2">
+        <span class="font-display-lg text-[42px] leading-tight text-secondary-fixed-dim">
+          {{ analytics()?.occupancyRate }}%
+        </span>
+        <span class="text-xs text-secondary/60 font-medium">OPTIMAL</span>
+      </div>
+    </div>
+    <!-- KPI 3 -->
+    <div class="glass-panel p-8 kpi-card">
+      <p class="font-label-caps text-[10px] text-on-surface-variant tracking-[0.25em] mb-4">GUEST SATISFACTION</p>
+      <div class="flex items-baseline gap-2">
+        <span class="font-display-lg text-[42px] leading-tight text-secondary-fixed-dim">
+          {{ (analytics()?.guestSatisfactionScore || 0) / 20 | number:'1.1-1' }}
+        </span>
+        <span class="text-xs text-secondary/60 font-medium">STABLE</span>
+      </div>
+    </div>
+    <!-- KPI 4 -->
+    <div class="glass-panel p-8 kpi-card">
+      <p class="font-label-caps text-[10px] text-on-surface-variant tracking-[0.25em] mb-4">ADR (AVERAGE DAILY)</p>
+      <div class="flex items-baseline gap-2">
+        <span class="font-display-lg text-[42px] leading-tight text-secondary-fixed-dim">
+          {{ analytics()?.averageDailyRate | currency:'USD':'symbol':'1.0-0' }}
+        </span>
+        <span class="text-xs text-secondary/60 font-medium">+4.2%</span>
+      </div>
+    </div>
+  </section>
 
-  <!-- Fixed Chart Grid -->
-  <div class="charts-grid">
-    <div class="chart-container">
-      <div
-        echarts
-        [options]="barChartOptions()"
-        class="chart"
-      ></div>
+  <!-- THE GRAND TAPESTRY (Charts) -->
+  <section class="grid grid-cols-2 gap-gutter charts-grid">
+    <!-- Panel 1: Revenue Architecture -->
+    <div class="glass-panel p-8 min-h-[420px] flex flex-col chart-card">
+      <div class="flex justify-between items-center mb-8 chart-header">
+        <h3 class="font-label-caps text-[12px] tracking-[0.3em] text-on-surface">Revenue Architecture</h3>
+      </div>
+      <div class="flex-1 chart-wrapper">
+        <div echarts [options]="barChartOptions()" class="chart-content"></div>
+      </div>
     </div>
-    <div class="chart-container">
-      <div
-        echarts
-        [options]="lineChartOptions()"
-        class="chart"
-      ></div>
+
+    <!-- Panel 2: Yield Trajectory -->
+    <div class="glass-panel p-8 min-h-[420px] flex flex-col chart-card">
+      <div class="flex justify-between items-center mb-8 chart-header">
+        <h3 class="font-label-caps text-[12px] tracking-[0.3em] text-on-surface">Yield Trajectory</h3>
+      </div>
+      <div class="flex-1 chart-wrapper">
+        <div echarts [options]="lineChartOptions()" class="chart-content"></div>
+      </div>
     </div>
-    <div class="chart-container">
-      <div
-        echarts
-        [options]="radarChartOptions()"
-        class="chart"
-      ></div>
+
+    <!-- Panel 3: Service Equilibrium -->
+    <div class="glass-panel p-8 min-h-[420px] flex flex-col chart-card">
+      <div class="flex justify-between items-center mb-8 chart-header">
+        <h3 class="font-label-caps text-[12px] tracking-[0.3em] text-on-surface">Service Equilibrium</h3>
+      </div>
+      <div class="flex-1 chart-wrapper">
+        <div echarts [options]="radarChartOptions()" class="chart-content"></div>
+      </div>
     </div>
+
+    <!-- Panel 4: Expenditure Portfolio -->
     @if (categoryControl.value !== 'revenue' && categoryControl.value !== 'operations') {
-    <div class="chart-container">
-      <div
-        echarts
-        [options]="pieChartOptions()"
-        class="chart"
-      ></div>
+    <div class="glass-panel p-8 min-h-[420px] flex flex-col chart-card">
+      <div class="flex justify-between items-center mb-8 chart-header">
+        <h3 class="font-label-caps text-[12px] tracking-[0.3em] text-on-surface">Expenditure Portfolio</h3>
+      </div>
+      <div class="flex-1 chart-wrapper">
+        <div echarts [options]="pieChartOptions()" class="chart-content"></div>
+      </div>
     </div>
     }
-  </div>
+  </section>
   }
-</div>
+</main>

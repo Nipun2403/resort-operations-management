@@ -1,137 +1,478 @@
-.analytics-page {
-  padding: 24px;
+@import '../../../../../styles/theme/index';
+
+:host {
+  display: block;
+  position: relative;
+  min-height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-on-background);
+  font-family: var(--font-body);
+  
+  &::before {
+    content: '';
+    position: fixed;
+    top: -10%;
+    right: -10%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(228, 194, 133, 0.05) 0%, transparent 70%);
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  
+  &::after {
+    content: '';
+    position: fixed;
+    bottom: -20%;
+    left: -10%;
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, rgba(228, 194, 133, 0.04) 0%, transparent 70%);
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+  }
+}
+
+.analytics-main {
+  position: relative;
+  z-index: 10;
+}
+
+.glass-panel {
+  @include glass-panel;
+  background: rgba(26, 26, 26, 0.7);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(228, 194, 133, 0.1);
+  transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  border-radius: 0;
+
+  &:hover {
+    border: 1px solid rgba(228, 194, 133, 0.3);
+    transform: translateY(-4px);
+    box-shadow: 0 0 40px rgba(228, 194, 133, 0.05);
+  }
+}
+
+/* Material Toggle Group Overrides */
+::ng-deep .aetheris-toggle-group {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  
+  .mat-button-toggle-button {
+    background: transparent !important;
+  }
+  
+  .mat-button-toggle {
+    background: transparent !important;
+    border-left: none !important;
+    color: var(--color-on-surface-variant) !important;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    font-family: var(--font-body) !important;
+    
+    .mat-button-toggle-label-content {
+      padding: 0 16px !important;
+      line-height: 24px !important;
+    }
+    
+    &.mat-button-toggle-checked {
+      color: var(--color-secondary) !important;
+      
+      .mat-button-toggle-label-content {
+        position: relative;
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: -4px;
+          left: 16px;
+          right: 16px;
+          height: 1px;
+          background-color: var(--color-secondary);
+        }
+      }
+    }
+  }
+}
+
+/* Material Dropdown Select Overrides */
+::ng-deep .aetheris-select-field {
+  width: auto !important;
+  min-width: 180px;
+  
+  .mdc-text-field--outlined {
+    background: var(--color-surface-container) !important;
+    border-bottom: 1px solid var(--color-outline-variant) !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-radius: 0 !important;
+    padding: 0 16px !important;
+  }
+  
+  .mdc-notched-outline {
+    display: none !important;
+  }
+  
+  .mat-mdc-select {
+    font-size: 13px;
+    font-family: var(--font-body) !important;
+    color: var(--color-on-surface) !important;
+  }
+
+  .mat-mdc-select-value-text {
+    color: var(--color-on-background) !important;
+  }
+  
+  .mat-mdc-select-arrow {
+    color: var(--color-secondary) !important;
+  }
+  
+  .mat-mdc-form-field-label {
+    color: var(--color-on-surface-variant) !important;
+    font-family: var(--font-body) !important;
+  }
+  
+  .mat-mdc-form-field-flex {
+    padding: 0 !important;
+  }
+}
+
+/* Dropdown Panel styling */
+::ng-deep .aetheris-select-panel {
+  background-color: var(--color-surface-container) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: 0 !important;
+  
+  .mat-mdc-option {
+    font-family: var(--font-body) !important;
+    font-size: 11px !important;
+    letter-spacing: 0.1em !important;
+    color: var(--color-on-surface-variant) !important;
+    text-transform: uppercase;
+
+    .mdc-list-item__primary-text {
+      color: var(--color-on-surface-variant) !important;
+    }
+    
+    &:hover:not(.mdc-list-item--disabled),
+    &.mdc-list-item--selected:not(.mdc-list-item--disabled) {
+      background-color: rgba(228, 194, 133, 0.08) !important;
+      
+      .mdc-list-item__primary-text {
+        color: var(--color-secondary) !important;
+      }
+    }
+  }
+}
+
+/* Custom Datepicker Fields */
+::ng-deep .aetheris-date-field {
+  margin-bottom: 0 !important;
+
+  .mdc-text-field--outlined {
+    background: var(--color-surface-container) !important;
+    border-bottom: 1px solid var(--color-outline-variant) !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-radius: 0 !important;
+  }
+  
+  .mdc-notched-outline {
+    display: none !important;
+  }
+  
+  input {
+    color: var(--color-on-surface) !important;
+    font-family: var(--font-body) !important;
+    font-size: 13px !important;
+  }
+  
+  .mat-mdc-form-field-label {
+    color: var(--color-on-surface-variant) !important;
+    font-family: var(--font-body) !important;
+  }
+  
+  .mat-datepicker-toggle {
+    color: var(--color-secondary) !important;
+  }
+}
+
+.aetheris-btn {
+  background-color: rgba(228, 194, 133, 0.1) !important;
+  color: var(--color-secondary) !important;
+  border: 1px solid var(--glass-border) !important;
+  font-family: var(--font-body) !important;
+  font-size: 10px !important;
+  letter-spacing: 0.2em !important;
+  text-transform: uppercase !important;
+  border-radius: 0 !important;
+  height: 48px;
+  padding: 0 24px !important;
+  transition: all 0.3s ease !important;
+
+  &:hover {
+    background-color: rgba(228, 194, 133, 0.2) !important;
+  }
+}
+
+/* Loading state */
+.loading-spinner {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 120px 0;
+  
+  ::ng-deep mat-spinner circle {
+    stroke: var(--color-secondary) !important;
+  }
+}
+
+/* KPI Pillars */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 24px;
+  margin-bottom: 48px;
+}
 
-  .controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 16px;
+.kpi-card {
+  height: auto;
+  padding: 32px !important;
+  
+  p {
+    @include font-label-caps;
+    color: var(--color-on-surface-variant);
+    letter-spacing: 0.25em;
+    margin-bottom: 16px;
+  }
+  
+  span.font-display-lg {
+    font-family: var(--font-headline);
+    font-size: 42px;
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--color-secondary);
+    font-style: italic;
+  }
+  
+  span.text-xs {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(228, 194, 133, 0.6);
+  }
+}
 
-    .date-controls {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
+/* The Grand Tapestry (Charts) */
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--gutter);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  
+  .chart-card {
+    min-height: 420px;
+    padding: 32px !important;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    
+    .chart-header {
+      margin-bottom: 32px;
 
-      mat-form-field {
-        width: 160px;
-        margin-bottom: -1.25em; /* alignment fix for inline display */
-      }
-
-      button {
-        height: 48px;
-        align-self: center;
+      h3 {
+        @include font-label-caps;
+        font-size: 12px;
+        letter-spacing: 0.3em;
+        color: var(--color-on-surface);
+        text-transform: uppercase;
       }
     }
-
-    .category-select {
-      width: 200px;
-      margin-bottom: -1.25em;
-    }
-  }
-
-  .loading {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 100px 0;
-  }
-
-  .kpi-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px;
-
-    mat-card {
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      border: 1px solid rgba(0, 0, 0, 0.05);
-
-      mat-card-title {
-        font-size: 14px;
-        font-weight: 500;
-        color: #757575;
-        margin-bottom: 8px;
-      }
-
-      mat-card-content {
-        font-size: 28px;
-        font-weight: 700;
-        color: #212121;
-      }
-    }
-  }
-
-  .charts-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 24px;
-
-    .chart-container {
-      background: #ffffff;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      border: 1px solid rgba(0, 0, 0, 0.05);
-      min-height: 440px;
-
-      .chart {
-        width: 100%;
-        height: 400px;
+    
+    .chart-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 100%;
+      height: 320px;
+      overflow: hidden;
+      
+      .chart-content {
+        width: 100% !important;
+        height: 100% !important;
+        max-width: 100%;
+        filter: drop-shadow(0 0 8px rgba(228, 194, 133, 0.15));
+        animation: breathe 6s infinite alternate ease-in-out;
       }
     }
   }
+}
+
+@keyframes breathe {
+  0% { opacity: 0.95; filter: drop-shadow(0 0 4px rgba(228, 194, 133, 0.1)); }
+  100% { opacity: 1; filter: drop-shadow(0 0 12px rgba(228, 194, 133, 0.3)); }
+}
+
+/* Custom Scrollbars */
+::selection {
+  background: rgba(228, 194, 133, 0.3);
+  color: var(--color-secondary);
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: #131411;
+}
+::-webkit-scrollbar-thumb {
+  background: #2a2a27;
+  border-radius: 0;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-secondary);
 }
 
 /* Responsive Overrides */
 @media (max-width: 1024px) {
-  .analytics-page {
-    .charts-grid {
-      grid-template-columns: 1fr;
-    }
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+  
+  .charts-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
   }
 }
 
 @media (max-width: 768px) {
-  .analytics-page {
-    padding: 16px;
-
-    .controls {
+  .analytics-main {
+    padding: 16px !important;
+  }
+  
+  .controls-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 24px !important;
+    
+    .controls-container {
+      width: 100%;
       flex-direction: column;
-      align-items: stretch;
-
-      .date-controls {
-        flex-direction: column;
-        align-items: stretch;
-
-        mat-button-toggle-group {
-          align-self: center;
-        }
-
-        mat-form-field {
-          width: 100%;
-        }
-      }
-
-      .category-select {
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px !important;
+      
+      .toggle-group-container {
+        border-right: none;
+        padding-right: 0;
+        margin-right: 0;
         width: 100%;
+        overflow-x: auto;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+        
+        &::-webkit-scrollbar {
+          display: none;
+        }
+        
+        ::ng-deep .aetheris-toggle-group {
+          display: flex !important;
+          flex-direction: row !important;
+          flex-wrap: nowrap !important;
+          min-width: max-content !important;
+          
+          .mat-button-toggle {
+            flex: 0 0 auto !important;
+            
+            .mat-button-toggle-label-content {
+              padding: 0 8px !important;
+              font-size: 8px;
+            }
+          }
+        }
       }
-    }
-
-    .charts-grid {
-      .chart-container {
-        min-height: 340px;
-        padding: 12px;
-
-        .chart {
-          height: 300px;
+      
+      .category-select-container {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        
+        ::ng-deep .aetheris-select-field {
+          width: auto !important;
+          min-width: unset !important;
         }
       }
     }
   }
+
+  .custom-date-picker-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    margin-bottom: 16px !important;
+    
+    ::ng-deep .aetheris-date-field {
+      width: 100% !important;
+    }
+    
+    .aetheris-btn {
+      width: 100%;
+    }
+  }
+  
+  .kpi-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+  
+  .kpi-card {
+    height: auto;
+    padding: 24px !important;
+    
+    h3 {
+      font-size: 32px !important;
+    }
+  }
+  
+  .charts-grid {
+    grid-template-columns: 1fr !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+
+    .chart-card {
+      min-height: 380px;
+      padding: 24px !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+      overflow: hidden !important;
+      
+      .chart-header {
+        margin-bottom: 24px !important;
+      }
+      
+      .chart-wrapper {
+        height: 280px;
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow: hidden !important;
+      }
+    }
+  }
 }
+
+
