@@ -1,131 +1,272 @@
 <div class="new-booking-page">
-  <h1>New Booking</h1>
+  <div class="hero-branding">
+    <span class="hero-subtitle">Registration & Curation</span>
+    <h2 class="hero-title">The Art of the Stay</h2>
+    <div class="hero-divider"></div>
+  </div>
 
   <mat-stepper linear #stepper [orientation]="isMobile() ? 'vertical' : 'horizontal'" (selectionChange)="onStepChange($event)">
     <!-- Step 1: Guest Details -->
-    <mat-step [stepControl]="guestForm" label="Guest Details">
-      <form [formGroup]="guestForm">
-        <mat-form-field appearance="outline">
-          <mat-label>First Name</mat-label>
-          <input matInput formControlName="firstName" />
-          <mat-error *ngIf="guestForm.get('firstName')?.invalid && guestForm.get('firstName')?.touched">First name is required (min 2 characters).</mat-error>
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>Last Name</mat-label>
-          <input matInput formControlName="lastName" />
-          <mat-error *ngIf="guestForm.get('lastName')?.invalid && guestForm.get('lastName')?.touched">Last name is required (min 2 characters).</mat-error>
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>Email</mat-label>
-          <input matInput formControlName="email" type="email" />
-          <mat-error *ngIf="guestForm.get('email')?.invalid && guestForm.get('email')?.touched">A valid email is required.</mat-error>
-        </mat-form-field>
-        <div class="step-actions">
-          <button mat-button matStepperNext>Next</button>
+    <mat-step [stepControl]="guestForm" label="01 Guest Details">
+      <form [formGroup]="guestForm" class="glass-panel step-container">
+        <div class="step-header-desc">
+          <h3 class="step-title">The Principals</h3>
+          <p class="step-desc">Identify the primary occupants for the curated registry.</p>
+        </div>
+        <div class="form-grid">
+          <div class="input-group">
+            <label class="input-label">Given Name</label>
+            <input class="custom-input" placeholder="e.g. Julian" formControlName="firstName" />
+            <span class="input-error" *ngIf="guestForm.get('firstName')?.invalid && guestForm.get('firstName')?.touched">
+              First name is required (min 2 characters).
+            </span>
+          </div>
+          <div class="input-group">
+            <label class="input-label">Surname</label>
+            <input class="custom-input" placeholder="e.g. Thorne" formControlName="lastName" />
+            <span class="input-error" *ngIf="guestForm.get('lastName')?.invalid && guestForm.get('lastName')?.touched">
+              Last name is required (min 2 characters).
+            </span>
+          </div>
+          <div class="input-group full-width">
+            <label class="input-label">Secure Correspondence</label>
+            <input class="custom-input" placeholder="j.thorne@aetheris-encrypted.com" type="email" formControlName="email" />
+            <span class="input-error" *ngIf="guestForm.get('email')?.invalid && guestForm.get('email')?.touched">
+              A valid email is required.
+            </span>
+          </div>
+        </div>
+        <div class="step-actions justify-end">
+          <button class="btn-gold-outline" matStepperNext>Proceed to Logistics</button>
         </div>
       </form>
     </mat-step>
 
     <!-- Step 2: Dates & Guests -->
-    <mat-step [stepControl]="datesForm" label="Dates & Guests">
-      <form [formGroup]="datesForm">
-        <mat-form-field appearance="outline">
-          <mat-label>Check-in Date</mat-label>
-          <input matInput [matDatepicker]="cinPicker" formControlName="checkInDate" />
-          <mat-datepicker-toggle matSuffix [for]="cinPicker"></mat-datepicker-toggle>
-          <mat-datepicker #cinPicker></mat-datepicker>
-          <mat-error *ngIf="datesForm.get('checkInDate')?.invalid && datesForm.get('checkInDate')?.touched">Check-in date is required and must be today or later.</mat-error>
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>Check-out Date</mat-label>
-          <input matInput [matDatepicker]="coutPicker" formControlName="checkOutDate" />
-          <mat-datepicker-toggle matSuffix [for]="coutPicker"></mat-datepicker-toggle>
-          <mat-datepicker #coutPicker></mat-datepicker>
-          <mat-error *ngIf="datesForm.get('checkOutDate')?.invalid && datesForm.get('checkOutDate')?.touched">Check-out date is required and must be after check-in.</mat-error>
-        </mat-form-field>
-        <mat-form-field appearance="outline">
-          <mat-label>Number of Guests</mat-label>
-          <input matInput type="number" formControlName="guestCount" min="1" max="20" />
-          <mat-error *ngIf="datesForm.get('guestCount')?.invalid && datesForm.get('guestCount')?.touched">Guests must be between 1 and 20.</mat-error>
-        </mat-form-field>
+    <mat-step [stepControl]="datesForm" label="02 Dates & Guests">
+      <form [formGroup]="datesForm" class="glass-panel step-container">
+        <div class="step-header-desc">
+          <h3 class="step-title">Temporal Alignment</h3>
+          <p class="step-desc">Designate the window of occupation and entourage size.</p>
+        </div>
+        <div class="form-grid">
+          <div class="input-group" (click)="cinPicker.open()">
+            <label class="input-label">Arrival</label>
+            <input class="custom-input cursor-pointer" [matDatepicker]="cinPicker" formControlName="checkInDate" readonly placeholder="SELECT DATE" />
+            <mat-datepicker #cinPicker></mat-datepicker>
+            <span class="input-error" *ngIf="datesForm.get('checkInDate')?.invalid && datesForm.get('checkInDate')?.touched">
+              Check-in date is required and must be today or later.
+            </span>
+          </div>
+          <div class="input-group" (click)="coutPicker.open()">
+            <label class="input-label">Departure</label>
+            <input class="custom-input cursor-pointer" [matDatepicker]="coutPicker" formControlName="checkOutDate" readonly placeholder="SELECT DATE" />
+            <mat-datepicker #coutPicker></mat-datepicker>
+            <span class="input-error" *ngIf="datesForm.get('checkOutDate')?.invalid && datesForm.get('checkOutDate')?.touched">
+              Check-out date is required and must be after check-in.
+            </span>
+          </div>
+          <div class="input-group full-width">
+            <label class="input-label">Party Size</label>
+            <div class="party-size-counter">
+              <button type="button" class="counter-btn" (click)="decrementGuests()">
+                <span class="material-symbols-outlined">remove</span>
+              </button>
+              <span class="counter-value">{{ datesForm.get('guestCount')?.value | number:'2.0-0' }}</span>
+              <button type="button" class="counter-btn" (click)="incrementGuests()">
+                <span class="material-symbols-outlined">add</span>
+              </button>
+              <p class="counter-helper">Including security and private staff.</p>
+            </div>
+            <span class="input-error" *ngIf="datesForm.get('guestCount')?.invalid && datesForm.get('guestCount')?.touched">
+              Guests must be between 1 and 20.
+            </span>
+          </div>
+        </div>
         <div class="step-actions">
-          <button mat-button matStepperPrevious>Back</button>
-          <button mat-button matStepperNext>Next</button>
+          <button type="button" class="btn-underline" matStepperPrevious>Previous</button>
+          <button class="btn-gold-outline" matStepperNext>Select Quarters</button>
         </div>
       </form>
     </mat-step>
 
     <!-- Step 3: Room Selection -->
-    <mat-step [stepControl]="roomsForm" label="Select Rooms">
-      <form [formGroup]="roomsForm">
+    <mat-step [stepControl]="roomsForm" label="03 Select Rooms">
+      <form [formGroup]="roomsForm" class="glass-panel step-container">
+        <div class="step-header-desc">
+          <h3 class="step-title">Sanctuary Selection</h3>
+          <p class="step-desc">Choose from our curated collection of architectural masterpieces.</p>
+        </div>
+
         @if (roomsLoading()) {
-          <mat-spinner diameter="30"></mat-spinner>
+          <div class="loading-container">
+            <mat-spinner diameter="30"></mat-spinner>
+          </div>
         } @else if (roomsError()) {
           <app-alert type="error" [message]="roomsError()!" (closed)="roomsError.set(null)"></app-alert>
         } @else {
-          <div class="room-list">
+          <div class="room-cards-list">
             @for (room of availableRooms(); track room.roomTypeId) {
-              <div class="room-item">
-                <p>{{ room.name }} – {{ room.basePrice | currency }}/night – Max occupancy: {{ room.maxOccupancy }} – Available: {{ room.availableCount }}</p>
-                <div class="qty-controls">
-                  <button type="button" mat-icon-button (click)="decrementRoom(room.roomTypeId)" [disabled]="getRoomQuantity(room.roomTypeId) <= 0">
-                    <mat-icon>remove</mat-icon>
-                  </button>
-                  <span>{{ getRoomQuantity(room.roomTypeId) }}</span>
-                  <button type="button" mat-icon-button (click)="incrementRoom(room.roomTypeId)" [disabled]="getRoomQuantity(room.roomTypeId) >= room.availableCount">
-                    <mat-icon>add</mat-icon>
-                  </button>
+              <div class="room-card" [class.selected]="getRoomQuantity(room.roomTypeId) > 0">
+                <div class="room-image-box">
+                  @if (room.imageUrls && room.imageUrls.length > 0) {
+                    <img [src]="room.imageUrls[0]" class="room-img" [alt]="room.name" />
+                  } @else {
+                    <div class="room-placeholder">
+                      <span class="material-symbols-outlined">king_bed</span>
+                    </div>
+                  }
+                  <div class="room-status-badge">AVAILABLE ({{ room.availableCount }})</div>
+                </div>
+                <div class="room-details">
+                  <div class="room-header-row">
+                    <h4 class="room-title">{{ room.name }}</h4>
+                    <p class="room-price">{{ room.basePrice | currency }} <span class="price-suffix">/ NIGHT</span></p>
+                  </div>
+                  <p class="room-desc">{{ room.description || 'A curated luxury experience with premium Aetheris amenities.' }}</p>
+
+                  <div class="room-footer-row">
+                    <div class="room-specs">
+                      <span class="spec-item" *ngIf="room.squareFootage">
+                        <span class="material-symbols-outlined">square_foot</span>
+                        {{ room.squareFootage }} SQ FT
+                      </span>
+                      <span class="spec-item">
+                        <span class="material-symbols-outlined">group</span>
+                        MAX {{ room.maxOccupancy }} GUESTS
+                      </span>
+                    </div>
+                    <div class="room-counter">
+                      <button type="button" class="counter-btn-sm" (click)="decrementRoom(room.roomTypeId)" [disabled]="getRoomQuantity(room.roomTypeId) <= 0">
+                        <span class="material-symbols-outlined">remove</span>
+                      </button>
+                      <span class="counter-value-sm">{{ getRoomQuantity(room.roomTypeId) | number:'2.0-0' }}</span>
+                      <button type="button" class="counter-btn-sm" (click)="incrementRoom(room.roomTypeId)" [disabled]="getRoomQuantity(room.roomTypeId) >= room.availableCount">
+                        <span class="material-symbols-outlined">add</span>
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             }
           </div>
+
           @if (capacityWarning()) {
-            <p class="warning">{{ capacityWarning() }}</p>
+            <p class="warning-alert">
+              <span class="material-symbols-outlined">warning</span>
+              {{ capacityWarning() }}
+            </p>
           }
-          <button mat-button matStepperNext [disabled]="totalSelectedQuantity() === 0 || capacityWarning()">Next</button>
+
+          <div class="step-actions">
+            <button type="button" class="btn-underline" matStepperPrevious>Previous</button>
+            <button class="btn-gold-outline" matStepperNext [disabled]="totalSelectedQuantity() === 0 || capacityWarning()">Select Amenities</button>
+          </div>
         }
       </form>
     </mat-step>
 
     <!-- Step 4: Amenities -->
-    <mat-step [stepControl]="amenitiesForm" label="Add Amenities">
-      <form [formGroup]="amenitiesForm">
+    <mat-step [stepControl]="amenitiesForm" label="04 Add Amenities">
+      <form [formGroup]="amenitiesForm" class="glass-panel step-container">
+        <div class="step-header-desc">
+          <h3 class="step-title">Enhance The Stay</h3>
+          <p class="step-desc">Tailor the residency with our exclusive bespoke service options.</p>
+        </div>
+
         @if (amenitiesLoading()) {
-          <mat-spinner diameter="30"></mat-spinner>
+          <div class="loading-container">
+            <mat-spinner diameter="30"></mat-spinner>
+          </div>
         } @else {
-          <div class="amenity-list">
+          <div class="amenities-grid">
             @for (amenity of availableAmenities(); track amenity.id; let i = $index) {
-              <mat-checkbox [formControl]="getAmenityControl(i)">{{ amenity.name }} – {{ amenity.price | currency }}</mat-checkbox>
+              <label class="amenity-card-label">
+                <input class="hidden-checkbox peer" type="checkbox" [formControl]="getAmenityControl(i)" />
+                <div class="amenity-content">
+                  <h5 class="amenity-title">{{ amenity.name }}</h5>
+                  <p class="amenity-desc">{{ amenity.description || 'Exclusive service curated for Aetheris guests.' }}</p>
+                  <p class="amenity-price">+{{ amenity.price | currency }}</p>
+                </div>
+                <div class="custom-checkbox">
+                  <span class="material-symbols-outlined check-icon">check</span>
+                </div>
+              </label>
             }
           </div>
-          <button mat-button matStepperNext>Next</button>
+
+          <div class="step-actions">
+            <button type="button" class="btn-underline" matStepperPrevious>Previous</button>
+            <button class="btn-gold-outline" matStepperNext>Review Registry</button>
+          </div>
         }
       </form>
     </mat-step>
 
     <!-- Step 5: Review & Confirm -->
-    <mat-step label="Review & Confirm">
-      <div class="summary">
-        <h3>Guest: {{ guestForm.value.firstName }} {{ guestForm.value.lastName }} ({{ guestForm.value.email }})</h3>
-        <p>Check-in: {{ datesForm.value.checkInDate | date }}</p>
-        <p>Check-out: {{ datesForm.value.checkOutDate | date }}</p>
-        <p>Nights: {{ nights() }}</p>
-        <p>Guests: {{ datesForm.value.guestCount }}</p>
-        <h4>Rooms:</h4>
-        <ul>
-          @for (item of selectedRoomEntries(); track item.roomTypeId) {
-            <li>{{ item.name }} x{{ item.quantity }} – {{ item.basePrice | currency }}/night – Subtotal: {{ item.quantity * item.basePrice * nights() | currency }}</li>
-          }
-        </ul>
-        <h4>Amenities:</h4>
-        <ul>
-          @for (item of selectedAmenityEntries(); track item.id) {
-            <li>{{ item.name }} – {{ item.price | currency }}</li>
-          }
-        </ul>
-        <p><strong>Total Estimated: {{ estimatedTotal() | currency }}</strong></p>
+    <mat-step label="05 Review & Confirm">
+      <div class="glass-panel step-container border-gold-glow">
+        <div class="step-header-desc border-b-dim">
+          <h3 class="step-title font-serif italic">Contract of Hospitality</h3>
+          <p class="step-desc">Registry verification for the curated stay.</p>
+        </div>
+
+        <div class="contract-grid">
+          <div class="contract-section">
+            <h6 class="contract-label">Guest Identity</h6>
+            <div class="contract-value">
+              <p class="guest-name">{{ guestForm.value.firstName }} {{ guestForm.value.lastName }}</p>
+              <p class="guest-email">{{ guestForm.value.email }}</p>
+            </div>
+          </div>
+
+          <div class="contract-section">
+            <h6 class="contract-label">Stay Duration</h6>
+            <div class="contract-value">
+              <p class="stay-dates">{{ datesForm.value.checkInDate | date:'mediumDate' }} — {{ datesForm.value.checkOutDate | date:'mediumDate' }}</p>
+              <p class="stay-details">{{ nights() }} Nights | {{ datesForm.value.guestCount }} Guests</p>
+            </div>
+          </div>
+
+          <div class="contract-section full-width">
+            <h6 class="contract-label">Selected Quarters & Services</h6>
+            <div class="contract-ledger">
+              @for (item of selectedRoomEntries(); track item.roomTypeId) {
+                <div class="ledger-row">
+                  <span class="ledger-item">{{ item.name }} (x{{ item.quantity }})</span>
+                  <span class="ledger-price">{{ item.quantity * item.basePrice * nights() | currency }}</span>
+                </div>
+              }
+              @for (item of selectedAmenityEntries(); track item.id) {
+                <div class="ledger-row">
+                  <span class="ledger-item">{{ item.name }}</span>
+                  <span class="ledger-price">{{ item.price | currency }}</span>
+                </div>
+              }
+              @if (selectedRoomEntries().length === 0 && selectedAmenityEntries().length === 0) {
+                <p class="ledger-empty">No quarters or services selected.</p>
+              }
+            </div>
+          </div>
+
+          <div class="contract-total-row">
+            <span class="total-label">Estimated Total</span>
+            <span class="total-value">{{ estimatedTotal() | currency }}</span>
+          </div>
+        </div>
+
+        <div class="step-actions">
+          <button type="button" class="btn-underline" matStepperPrevious>Previous</button>
+          <button class="btn-gold-fill" [disabled]="submitting()" (click)="confirmBooking()">
+            @if (submitting()) {
+              <mat-spinner diameter="20" class="btn-spinner"></mat-spinner>
+              CURATING...
+            } @else {
+              CONFIRM REGISTRY
+            }
+          </button>
+        </div>
       </div>
-      <button mat-raised-button color="primary" (click)="confirmBooking()">Confirm Booking</button>
     </mat-step>
   </mat-stepper>
 </div>

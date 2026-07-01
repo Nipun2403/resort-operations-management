@@ -257,6 +257,20 @@ export class FrontDeskBookingWizardComponent {
     }
   }
 
+  incrementGuests(): void {
+    const current = this.datesForm.controls.guestCount.value || 1;
+    if (current < 20) {
+      this.datesForm.controls.guestCount.setValue(current + 1);
+    }
+  }
+
+  decrementGuests(): void {
+    const current = this.datesForm.controls.guestCount.value || 1;
+    if (current > 1) {
+      this.datesForm.controls.guestCount.setValue(current - 1);
+    }
+  }
+
   getRoomQuantity(roomTypeId: number): number {
     return this.selectedRoomQuantities()[roomTypeId] || 0;
   }
