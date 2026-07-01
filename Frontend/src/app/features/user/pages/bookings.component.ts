@@ -43,7 +43,8 @@ export class BookingsComponent implements OnInit {
   ngOnInit(): void {
     this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       if (params['new'] === 'true') {
-        this.viewMode.setValue('new');
+        this.viewMode.setValue('new'); // switch to new booking view
+        // Set pre‑fill values
         this.initialCheckIn = params['checkIn'] ? new Date(params['checkIn']) : null;
         this.initialCheckOut = params['checkOut'] ? new Date(params['checkOut']) : null;
         this.initialGuests = params['guests'] ? +params['guests'] : null;
@@ -54,20 +55,21 @@ export class BookingsComponent implements OnInit {
     this.authApi
       .getMe()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (me: any) => {
-          // ✅ Use top-level properties directly – exactly like ProfileComponent
-          const email = me.email ?? '';
-          const given = me.firstName ?? '';
-          const surname = me.lastName ?? '';
-
-          this.userEmail.set(email);
-          this.userProfile.set({ firstName: given, lastName: surname, email });
-        },
-        error: (err) => {
-          console.error('Failed to load user profile:', err);
-          this.userProfile.set(null);
-        },
+      .subscribe((me) => {
+        const given =
+          me.claims?.find(
+            (c) => c.type === 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname',
+          )?.value ?? '';
+        const surname =
+          me.claims?.find(
+            (c) => c.type === 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname',
+          )?.value ?? '';
+        const email =
+          me.claims?.find(
+            (c) => c.type === 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name',
+          )?.value ?? '';
+        this.userEmail.set(email);
+        this.userProfile.set({ firstName: given, lastName: surname, email });
       });
   }
 

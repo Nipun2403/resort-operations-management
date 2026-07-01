@@ -1,9 +1,6 @@
 <mat-sidenav-container>
   <!-- SIDEBAR -->
-  <mat-sidenav
-    #sidenav
-    [mode]="isMobile() ? 'over' : 'side'"
-    [opened]="isMobile() ? sidebarOpen() : true"
+  <mat-sidenav #sidenav [mode]="isMobile() ? 'over' : 'side'" [opened]="isMobile() ? sidebarOpen() : true"
     aria-label="Customer navigation">
     <mat-toolbar color="primary">Hotel</mat-toolbar>
     <mat-nav-list>
@@ -26,9 +23,9 @@
   <mat-sidenav-content>
     <mat-toolbar color="primary">
       @if (isMobile()) {
-        <button mat-icon-button (click)="sidebarOpen.set(!sidebarOpen())">
-          <mat-icon aria-hidden="true">menu</mat-icon>
-        </button>
+      <button mat-icon-button (click)="sidebarOpen.set(!sidebarOpen())">
+        <mat-icon aria-hidden="true">menu</mat-icon>
+      </button>
       }
       <span>Hotel</span>
       <span class="spacer"></span>
@@ -48,7 +45,7 @@
     <!-- ROUTER OUTLET -->
     <div class="content">
       <router-outlet></router-outlet>
-      
+
       <footer class="site-footer">
         <div class="footer-links">
           <a href="#">Privacy Policy</a>
