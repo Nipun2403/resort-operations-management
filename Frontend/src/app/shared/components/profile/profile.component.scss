@@ -20,7 +20,7 @@ $bp-mobile: 767px;
 // --------------- HOST ---------------
 :host {
   display: block;
-  background-color: #0e0e0c;
+  // background-color: #0e0e0c;
   min-height: 100vh;
   color: $on-surface;
   font-family: $font-body;
@@ -28,15 +28,13 @@ $bp-mobile: 767px;
 
 // --------------- PAGE WRAPPER ---------------
 .profile-page {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 48px 20px 80px;
+  display: block;
+  padding: 32px 20px 80px;
   box-sizing: border-box;
   min-height: 100vh;
 
   @media (min-width: #{$bp-mobile + 1}) {
-    padding: 80px 40px 160px;
+    padding: 48px 80px 120px;
   }
 }
 
@@ -56,22 +54,20 @@ $bp-mobile: 767px;
 }
 
 // ============================================================
-// PROFILE CARD (glass panel)
+// PROFILE CARD
 // ============================================================
 .profile-card {
   position: relative;
   width: 100%;
-  max-width: 620px;
-  padding: 32px 24px;
+  max-width: 860px;
+  padding: 24px 0;
   box-sizing: border-box;
-  background: rgba(26, 26, 26, 0.75);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid $gold-dim;
-  box-shadow: 0 8px 40px 0 rgba(0, 0, 0, 0.4);
+  // No floating background — sits directly on the page's dark surface
+  background: transparent;
+  border: none;
 
   @media (min-width: #{$bp-mobile + 1}) {
-    padding: 48px;
+    padding: 40px 0;
   }
 }
 
@@ -83,6 +79,8 @@ $bp-mobile: 767px;
   justify-content: space-between;
   align-items: baseline;
   margin-bottom: 40px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(228, 194, 133, 0.15);
 
   @media (min-width: #{$bp-mobile + 1}) {
     margin-bottom: 56px;
@@ -146,9 +144,10 @@ $bp-mobile: 767px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px;
+  gap: 16px;
+  padding: 18px 20px;
   margin-bottom: 32px;
-  background: rgba(30, 30, 28, 0.8);
+  background: rgba(30, 30, 28, 0.85);
   border: 1px solid $gold-dim;
 
   @media (min-width: #{$bp-mobile + 1}) {
@@ -158,12 +157,15 @@ $bp-mobile: 767px;
   &__info {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 4px;
+    min-width: 0; // allow text to shrink and not overflow
+    flex: 1;
   }
 
   &__icon-wrap {
-    width: 48px;
-    height: 48px;
+    flex-shrink: 0; // prevent icon box from being squished
+    width: 44px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -172,7 +174,8 @@ $bp-mobile: 767px;
 
     .material-symbols-outlined {
       color: $gold;
-      font-size: 24px;
+      font-size: 22px;
+      line-height: 1;
     }
   }
 }
@@ -331,7 +334,7 @@ $bp-mobile: 767px;
       box-shadow: 0 4px 12px -6px $gold-glow;
 
       // Highlight the sibling label when input is focused
-      & ~ .form-field__label {
+      &~.form-field__label {
         color: $gold;
       }
     }
@@ -504,6 +507,7 @@ $bp-mobile: 767px;
     opacity: 0;
     transform: translateY(6px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
