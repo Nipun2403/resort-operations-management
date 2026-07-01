@@ -10,7 +10,7 @@
     </p>
     <p><strong>Timestamp:</strong> {{ data.timestamp | date:'medium' }}</p>
   </div>
-  <mat-divider></mat-divider>
+  <mat-divider class="aetheris-divider"></mat-divider>
   <div class="values-row">
     <div class="values-column">
       <h3>Old Values</h3>
@@ -24,7 +24,7 @@
         }
       </div>
       } @else {
-      <p><em>None (created)</em></p>
+      <p class="empty-val"><em>None (created)</em></p>
       }
     </div>
     <div class="values-column">
@@ -39,7 +39,7 @@
         }
       </div>
       } @else {
-      <p><em>None</em></p>
+      <p class="empty-val"><em>None</em></p>
       }
     </div>
   </div>
@@ -48,6 +48,7 @@
   <button
     mat-button
     mat-dialog-close
+    class="close-btn"
   >
     Close
   </button>
