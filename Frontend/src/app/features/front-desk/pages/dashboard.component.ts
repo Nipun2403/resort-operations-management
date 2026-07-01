@@ -2,16 +2,8 @@ import { Component, inject, signal, OnInit, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatTableModule } from '@angular/material/table';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize, forkJoin, of, debounceTime, distinctUntilChanged } from 'rxjs';
@@ -39,16 +31,8 @@ interface SearchResult {
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
     MatDialogModule,
     MatProgressSpinnerModule,
-    MatSnackBarModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatTableModule,
-    MatButtonToggleModule,
     MatPaginatorModule,
     AlertComponent,
   ],
@@ -94,7 +78,6 @@ export class PlaceholderDashboardComponent implements OnInit {
   private readonly maintenanceApi = inject(MaintenanceApiService);
   private readonly orderApi = inject(OrderApiService);
   private readonly dialog = inject(MatDialog);
-  private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
   private readonly router = inject(Router);
 

@@ -1,81 +1,530 @@
-.dashboard {
-  padding: 16px;
+// ============================================================
+// Aetheris Front Desk Dashboard — SCSS
+// ============================================================
+
+// --------------- TOKENS ---------------
+$gold: #e4c285;
+$gold-dim: rgba(228, 194, 133, 0.2);
+$gold-glow: rgba(228, 194, 133, 0.4);
+$secondary: #e4c285;
+$secondary-container: #5d4514;
+$secondary-fixed: #ffdea4;
+$surface: #131411;
+$surface-container: #1f201d;
+$surface-container-low: #1b1c19;
+$on-surface: #e4e2dd;
+$on-surface-variant: #c4c7c7;
+$error: #ffb4ab;
+$font-display: 'Playfair Display', serif;
+$font-body: 'Manrope', sans-serif;
+$bp-mobile: 767px;
+
+// --------------- HOST ---------------
+:host {
+  display: block;
+  background-color: #0e0e0c;
+  min-height: 100vh;
+  color: $on-surface;
+  font-family: $font-body;
 }
 
-.summary-row {
+// --------------- PAGE WRAPPER ---------------
+.dashboard-page {
+  display: block;
+  padding: 32px 20px 80px;
+  box-sizing: border-box;
+  max-width: 1440px;
+  margin: 0 auto;
+
+  @media (min-width: #{$bp-mobile + 1}) {
+    padding: 48px 80px 120px;
+  }
+}
+
+// --------------- SEARCH SECTION ---------------
+.search-section {
+  margin-bottom: 40px;
+}
+
+.search-bar {
   display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 16px;
-}
+  align-items: center;
+  background-color: $surface-container-low;
+  border-bottom: 1px solid rgba(228, 194, 133, 0.2);
+  padding: 10px 16px;
+  box-sizing: border-box;
+  transition: border-bottom-color 0.3s ease;
+  max-width: 400px;
 
-.summary-card {
-  flex: 1 1 250px;
-  cursor: pointer; // for the active tickets card
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  border-radius: 8px;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  transition: transform 0.2s, box-shadow 0.2s;
-
-  &.clickable:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  &:focus-within {
+    border-bottom-color: $gold;
   }
 
-  mat-card-header {
-    margin-bottom: 12px;
+  &__icon {
+    color: $gold;
+    margin-right: 12px;
+    font-size: 20px;
   }
 
-  mat-card-title {
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: rgba(0, 0, 0, 0.6);
-  }
+  &__input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: $on-surface;
+    font-size: 16px;
+    font-family: $font-body;
+    font-weight: 300;
+    width: 100%;
+    padding: 0;
 
-  .count {
-    font-size: 3rem;
-    font-weight: bold;
-    color: #3f51b5;
-  }
-
-  .ticket-breakdown {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-
-    span {
-      font-size: 0.95rem;
-      font-weight: 500;
-      color: rgba(0, 0, 0, 0.7);
+    &::placeholder {
+      color: $on-surface-variant;
+      opacity: 0.4;
     }
   }
 }
 
-@media (max-width: 599px) {
-  .summary-card {
-    flex: 1 1 100%;
+// --------------- PULSE OF THE DAY GRID ---------------
+.pulse-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  margin-bottom: 56px;
+
+  @media (min-width: 600px) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: 1fr 1fr 1fr;
   }
 }
 
-.top-actions {
+.pulse-card {
+  position: relative;
+  padding: 32px;
+  box-sizing: border-box;
+  background: rgba(26, 26, 26, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(228, 194, 133, 0.15);
+  transition: transform 0.4s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.4s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  &--clickable {
+    cursor: pointer;
+  }
+
+  &__bg-icon {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    pointer-events: none;
+    opacity: 0.1;
+    transition: opacity 0.3s ease;
+
+    .material-symbols-outlined {
+      font-size: 64px;
+      color: $gold;
+    }
+  }
+
+  &:hover &__bg-icon {
+    opacity: 0.2;
+  }
+
+  &__label {
+    font-family: $font-body;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: $on-surface-variant;
+    margin: 0 0 24px;
+    opacity: 0.8;
+  }
+
+  &__value-row {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+  }
+
+  &__value {
+    font-family: $font-display;
+    font-size: 64px;
+    font-weight: 400;
+    color: $gold;
+    margin: 0;
+    line-height: 1;
+  }
+
+  &__sub-label {
+    font-family: $font-body;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: $on-surface-variant;
+    opacity: 0.6;
+    margin: 0;
+  }
+
+  &__breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__breakdown-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__breakdown-label {
+    font-family: $font-body;
+    font-size: 14px;
+    font-weight: 300;
+    color: $on-surface;
+  }
+
+  &__breakdown-count {
+    font-family: $font-body;
+    font-size: 16px;
+    font-weight: 600;
+    color: $gold;
+  }
+}
+
+// --------------- TABLE SECTION ---------------
+.table-section {
+  margin-bottom: 56px;
+
+  &.mt-section-gap {
+    margin-top: 80px;
+  }
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 32px;
+
+    @media (min-width: #{$bp-mobile + 1}) {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+  }
+}
+
+.section-title {
+  font-family: $font-display;
+  font-size: 28px;
+  font-weight: 400;
+  color: $gold;
+  margin: 0 0 8px;
+  line-height: 1.2;
+
+  &.italic {
+    font-style: italic;
+  }
+}
+
+.section-subtitle {
+  font-family: $font-body;
+  font-size: 14px;
+  font-weight: 300;
+  color: $on-surface-variant;
+  opacity: 0.6;
+  margin: 0;
+}
+
+// --------------- TOGGLE SWITCH ---------------
+.toggle-switch {
+  display: flex;
+  background-color: $surface-container;
+  padding: 4px;
+  border: 1px solid rgba(228, 194, 133, 0.1);
+  box-sizing: border-box;
+  max-width: fit-content;
+}
+
+.toggle-switch__btn {
+  background: transparent;
+  border: none;
+  color: $on-surface-variant;
+  padding: 8px 24px;
+  font-family: $font-body;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  outline: none;
+
+  &:hover {
+    color: $gold;
+  }
+
+  &--active {
+    background-color: rgba(93, 69, 20, 0.4);
+    color: $secondary-fixed;
+
+    &:hover {
+      color: $secondary-fixed;
+    }
+  }
+}
+
+// --------------- DATA TABLE ---------------
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+
+  &.glass-panel {
+    background: rgba(26, 26, 26, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(228, 194, 133, 0.15);
+  }
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-family: $font-body;
+
+  thead tr {
+    border-bottom: 1px solid rgba(228, 194, 133, 0.15);
+  }
+
+  th {
+    padding: 24px;
+    font-family: $font-display;
+    font-size: 18px;
+    font-weight: 400;
+    font-style: italic;
+    color: $secondary-fixed;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 20px 24px;
+    font-size: 15px;
+    font-weight: 300;
+    color: $on-surface;
+    border-bottom: 1px solid rgba(228, 194, 133, 0.05);
+    vertical-align: middle;
+  }
+
+  tbody tr {
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: rgba(228, 194, 133, 0.03);
+    }
+  }
+
+  .room-cell {
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    color: $gold;
+  }
+
+  .email-cell {
+    color: $on-surface-variant;
+    opacity: 0.8;
+  }
+
+  .text-right {
+    text-align: right;
+  }
+}
+
+// --------------- STATUS INDICATOR ---------------
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  &__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: rgba(228, 226, 221, 0.2);
+    display: inline-block;
+
+    &--active {
+      background-color: $gold;
+    }
+  }
+
+  &__label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: $on-surface-variant;
+    opacity: 0.6;
+
+    &--active {
+      color: $gold;
+      opacity: 1;
+    }
+  }
+}
+
+.action-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  color: $on-surface-variant;
+  transition: color 0.3s ease;
+  outline: none;
+
+  &:hover {
+    color: $gold;
+  }
+
+  .material-symbols-outlined {
+    font-size: 20px;
+  }
+}
+
+// --------------- PAGINATOR OVERRIDES ---------------
+.paginator-wrap {
+  margin-top: 16px;
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 12px;
-}
 
-.search-box {
-  margin-bottom: 16px;
-}
+  ::ng-deep .mat-mdc-paginator {
+    background: transparent !important;
+    color: $on-surface !important;
+  }
 
-.search-field {
-  width: 100%;
-  max-width: 400px;
-}
-
-.clickable-row {
-  cursor: pointer;
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.04);
+  ::ng-deep .mat-mdc-icon-button {
+    color: $on-surface !important;
   }
 }
 
+// --------------- ACTION FAB ---------------
+.action-fab {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  width: 56px;
+  height: 56px;
+  background-color: $gold;
+  border: none;
+  border-radius: 28px;
+  color: #131411;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  transition: all 0.4s cubic-bezier(0.2, 0, 0, 1);
+  z-index: 99;
+  overflow: hidden;
+  padding: 0 16px;
+  outline: none;
+
+  @media (min-width: 768px) {
+    bottom: 48px;
+    right: 48px;
+    width: 64px;
+    height: 64px;
+    border-radius: 32px;
+  }
+
+  &__icon {
+    font-size: 28px;
+    flex-shrink: 0;
+    transition: transform 0.5s ease;
+    font-variation-settings: 'wght' 300;
+  }
+
+  &__label {
+    font-family: $font-body;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0;
+    max-width: 0;
+    white-space: nowrap;
+    transition: all 0.4s cubic-bezier(0.2, 0, 0, 1);
+    margin-left: 0;
+  }
+
+  &:hover {
+    width: 240px;
+    border-radius: 32px;
+    box-shadow: 0 12px 40px rgba(228, 194, 133, 0.3);
+
+    @media (max-width: 767px) {
+      width: 220px;
+    }
+  }
+
+  &:hover &__icon {
+    transform: rotate(90deg);
+  }
+
+  &:hover &__label {
+    opacity: 1;
+    max-width: 200px;
+    margin-left: 12px;
+  }
+}
+
+// --------------- UTILS & DEFAULTS ---------------
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 48px 0;
+}
+
+.error-container {
+  margin-bottom: 24px;
+}
+
+.no-results {
+  font-family: $font-body;
+  font-size: 16px;
+  color: $on-surface-variant;
+  opacity: 0.6;
+  margin: 24px 0;
+}
+
+// --------------- ANIMATIONS ---------------
+@keyframes pulse-gold {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.gold-pulse {
+  animation: pulse-gold 3s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+// --------------- MATERIAL OVERRIDES ---------------
+::ng-deep {
+  .mat-mdc-progress-spinner circle {
+    stroke: $gold !important;
+  }
+}

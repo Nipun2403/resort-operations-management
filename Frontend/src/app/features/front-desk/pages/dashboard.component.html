@@ -1,289 +1,252 @@
-<div class="dashboard">
+<div class="dashboard-page">
+
+  <!-- Search Section -->
+  <div class="search-section">
+    <div class="search-bar">
+      <span class="material-symbols-outlined search-bar__icon">search</span>
+      <input 
+        type="text" 
+        class="search-bar__input" 
+        placeholder="Search guest name or email..." 
+        [formControl]="searchControl"
+      />
+    </div>
+  </div>
+
   @if (loadingSummary()) {
-    <div style="display: flex; justify-content: center; padding: 32px;">
+    <div class="spinner-container">
       <mat-spinner diameter="40"></mat-spinner>
     </div>
   } @else if (error()) {
-    <app-alert
-      type="error"
-      [message]="error()!"
-      (closed)="error.set(null)"
-    >
-      <button
-        mat-button
-        (click)="ngOnInit()"
+    <div class="error-container">
+      <app-alert
+        type="error"
+        [message]="error()!"
+        (closed)="error.set(null)"
       >
-        Retry
-      </button>
-    </app-alert>
+        <button
+          mat-button
+          (click)="ngOnInit()"
+        >
+          Retry
+        </button>
+      </app-alert>
+    </div>
   } @else {
-    <!-- Summary Cards Row -->
-    <div class="summary-row">
+    <!-- Pulse of the Day Grid -->
+    <div class="pulse-grid">
       <!-- Today's Arrivals -->
-      <mat-card class="summary-card">
-        <mat-card-header>
-          <mat-card-title>Today's Arrivals</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <span class="count">{{ arrivalsCount() }}</span>
-        </mat-card-content>
-      </mat-card>
+      <div class="pulse-card">
+        <div class="pulse-card__bg-icon">
+          <span class="material-symbols-outlined">flight_land</span>
+        </div>
+        <p class="pulse-card__label">Today's Arrivals</p>
+        <div class="pulse-card__value-row">
+          <h3 class="pulse-card__value gold-pulse">{{ arrivalsCount() }}</h3>
+          <p class="pulse-card__sub-label">VIP priority (4)</p>
+        </div>
+      </div>
 
       <!-- Today's Departures -->
-      <mat-card class="summary-card">
-        <mat-card-header>
-          <mat-card-title>Today's Departures</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <span class="count">{{ departuresCount() }}</span>
-        </mat-card-content>
-      </mat-card>
+      <div class="pulse-card">
+        <div class="pulse-card__bg-icon">
+          <span class="material-symbols-outlined">flight_takeoff</span>
+        </div>
+        <p class="pulse-card__label">Today's Departures</p>
+        <div class="pulse-card__value-row">
+          <h3 class="pulse-card__value">{{ departuresCount() }}</h3>
+          <p class="pulse-card__sub-label">Expedited (2)</p>
+        </div>
+      </div>
 
       <!-- Active Tickets (clickable) -->
-      <mat-card
-        class="summary-card clickable"
-        (click)="openActiveTickets()"
-      >
-        <mat-card-header>
-          <mat-card-title>Active Tickets</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="ticket-breakdown">
-            <span>Housekeeping: {{ activeTickets().housekeeping }}</span>
-            <span>Maintenance: {{ activeTickets().maintenance }}</span>
-            <span>Food Orders: {{ activeTickets().foodOrders }}</span>
+      <div class="pulse-card pulse-card--clickable" (click)="openActiveTickets()">
+        <div class="pulse-card__bg-icon">
+          <span class="material-symbols-outlined">confirmation_number</span>
+        </div>
+        <p class="pulse-card__label">Active Tickets</p>
+        <div class="pulse-card__breakdown">
+          <div class="pulse-card__breakdown-item">
+            <span class="pulse-card__breakdown-label">Housekeeping</span>
+            <span class="pulse-card__breakdown-count">{{ activeTickets().housekeeping }}</span>
           </div>
-        </mat-card-content>
-      </mat-card>
+          <div class="pulse-card__breakdown-item">
+            <span class="pulse-card__breakdown-label">Maintenance</span>
+            <span class="pulse-card__breakdown-count">{{ activeTickets().maintenance }}</span>
+          </div>
+          <div class="pulse-card__breakdown-item">
+            <span class="pulse-card__breakdown-label">Food Orders</span>
+            <span class="pulse-card__breakdown-count">{{ activeTickets().foodOrders }}</span>
+          </div>
+        </div>
+      </div>
     </div>
   }
 
-  <!-- Internal Ticket button (floating right) -->
-  <div class="top-actions">
-    <button
-      mat-raised-button
-      color="accent"
-      (click)="openInternalTicket()"
-    >
-      <mat-icon>add_task</mat-icon> Create Internal Ticket
-    </button>
-  </div>
-
-  <!-- Search Bar -->
-  <div class="search-box">
-    <mat-form-field
-      appearance="outline"
-      class="search-field"
-    >
-      <mat-label>Search guest name or email</mat-label>
-      <input
-        matInput
-        [formControl]="searchControl"
-      />
-      <mat-icon matSuffix>search</mat-icon>
-    </mat-form-field>
-  </div>
-
-  <!-- Search Results Table -->
-  <h2>Search Results</h2>
+  <!-- Search Results Table Section -->
   @if (searchLoading()) {
-  <mat-spinner diameter="30"></mat-spinner>
+    <div class="spinner-container">
+      <mat-spinner diameter="30"></mat-spinner>
+    </div>
   } @else if (searchError()) {
-  <app-alert
-    type="error"
-    [message]="searchError()!"
-    (closed)="searchError.set(null)"
-  ></app-alert>
+    <div class="error-container">
+      <app-alert
+        type="error"
+        [message]="searchError()!"
+        (closed)="searchError.set(null)"
+      ></app-alert>
+    </div>
   } @else if (searchResults().length > 0) {
-  <table
-    mat-table
-    [dataSource]="searchResults()"
-    class="search-table"
-  >
-    <ng-container matColumnDef="guestName">
-      <th
-        mat-header-cell
-        *matHeaderCellDef
-      >
-        Guest Name
-      </th>
-      <td
-        mat-cell
-        *matCellDef="let r"
-      >
-        {{ r.guestName }}
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="guestEmail">
-      <th
-        mat-header-cell
-        *matHeaderCellDef
-      >
-        Email
-      </th>
-      <td
-        mat-cell
-        *matCellDef="let r"
-      >
-        {{ r.guestEmail }}
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="currentStatus">
-      <th
-        mat-header-cell
-        *matHeaderCellDef
-      >
-        Current Status
-      </th>
-      <td
-        mat-cell
-        *matCellDef="let r"
-      >
-        {{ r.currentStatus }}
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="actions">
-      <th
-        mat-header-cell
-        *matHeaderCellDef
-      >
-        Actions
-      </th>
-      <td
-        mat-cell
-        *matCellDef="let r"
-      >
-        <button
-          mat-icon-button
-          (click)="navigateToGuest(r.guestEmail)"
-          aria-label="View guest details"
-        >
-          <mat-icon>visibility</mat-icon>
-        </button>
-      </td>
-    </ng-container>
-    <tr
-      mat-header-row
-      *matHeaderRowDef="['guestName','guestEmail','currentStatus','actions']"
-    ></tr>
-    <tr
-      mat-row
-      *matRowDef="let row; columns: ['guestName','guestEmail','currentStatus','actions']"
-      class="clickable-row"
-      (click)="navigateToGuest(row.guestEmail)"
-    ></tr>
-  </table>
-  } @else { @if (searchControl.value) {
-  <p>No results found.</p>
-  } }
+    <div class="table-section">
+      <h2 class="section-title italic">Search Results</h2>
+      <div class="table-container glass-panel">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Guest Name</th>
+              <th>Email</th>
+              <th>Current Status</th>
+              <th class="text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (r of searchResults(); track r.guestEmail) {
+              <tr class="clickable-row" (click)="navigateToGuest(r.guestEmail)">
+                <td>{{ r.guestName }}</td>
+                <td class="email-cell">{{ r.guestEmail }}</td>
+                <td>
+                  <span class="status-indicator">
+                    <span 
+                      class="status-indicator__dot" 
+                      [class.status-indicator__dot--active]="r.currentStatus === 'CheckedIn' || r.currentStatus === 'Booked'"
+                      [class.gold-pulse]="r.currentStatus === 'CheckedIn'"
+                    ></span>
+                    <span 
+                      class="status-indicator__label"
+                      [class.status-indicator__label--active]="r.currentStatus === 'CheckedIn' || r.currentStatus === 'Booked'"
+                    >
+                      {{ r.currentStatus }}
+                    </span>
+                  </span>
+                </td>
+                <td class="text-right">
+                  <button class="action-btn" (click)="navigateToGuest(r.guestEmail); $event.stopPropagation()" aria-label="View guest details">
+                    <span class="material-symbols-outlined">visibility</span>
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  } @else { 
+    @if (searchControl.value) {
+      <p class="no-results">No results found.</p>
+    } 
+  }
 
-  <!-- Today's Movement Table -->
-  <h2>Today's Movement</h2>
-  <div class="movement-controls">
-    <mat-button-toggle-group
-      [formControl]="movementActiveFilter"
-      (change)="onMovementToggle()"
-    >
-      <mat-button-toggle value="arrivals">Arrivals</mat-button-toggle>
-      <mat-button-toggle value="departures">Departures</mat-button-toggle>
-    </mat-button-toggle-group>
+  <!-- Today's Movement Table Section -->
+  <div class="table-section mt-section-gap">
+    <div class="table-section__header">
+      <div>
+        <h2 class="section-title italic">Movement of the Day</h2>
+        <p class="section-subtitle">Real-time status of current guest transit.</p>
+      </div>
+      <!-- Toggle Switch -->
+      <div class="toggle-switch">
+        <button 
+          class="toggle-switch__btn" 
+          [class.toggle-switch__btn--active]="movementActiveFilter.value === 'arrivals'"
+          (click)="movementActiveFilter.setValue('arrivals'); onMovementToggle()"
+        >
+          Arrivals
+        </button>
+        <button 
+          class="toggle-switch__btn" 
+          [class.toggle-switch__btn--active]="movementActiveFilter.value === 'departures'"
+          (click)="movementActiveFilter.setValue('departures'); onMovementToggle()"
+        >
+          Departures
+        </button>
+      </div>
+    </div>
+
+    @if (movementLoading() && movementData().length === 0) {
+      <div class="spinner-container">
+        <mat-spinner diameter="30"></mat-spinner>
+      </div>
+    } @else if (movementError()) {
+      <div class="error-container">
+        <app-alert
+          type="error"
+          [message]="movementError()!"
+          (closed)="movementError.set(null)"
+        ></app-alert>
+      </div>
+    } @else if (movementData().length > 0) {
+      <div class="table-container glass-panel">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Guest Name</th>
+              <th>Room</th>
+              <th>Status</th>
+              <th class="text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (b of movementData(); track b.id) {
+              <tr class="clickable-row" (click)="navigateToGuest(b.guestEmail)">
+                <td>{{ b.guestName }}</td>
+                <td class="room-cell">{{ getRoomNumbers(b) || 'Unassigned' }}</td>
+                <td>
+                  <span class="status-indicator">
+                    <span 
+                      class="status-indicator__dot" 
+                      [class.status-indicator__dot--active]="b.bookingStatus === 'CheckedIn' || b.bookingStatus === 'Booked'"
+                      [class.gold-pulse]="b.bookingStatus === 'CheckedIn'"
+                    ></span>
+                    <span 
+                      class="status-indicator__label"
+                      [class.status-indicator__label--active]="b.bookingStatus === 'CheckedIn' || b.bookingStatus === 'Booked'"
+                    >
+                      {{ b.bookingStatus === 'CheckedIn' ? 'In House' : (b.bookingStatus === 'Booked' ? 'Confirmed' : b.bookingStatus) }}
+                    </span>
+                  </span>
+                </td>
+                <td class="text-right">
+                  <button class="action-btn" (click)="navigateToGuest(b.guestEmail); $event.stopPropagation()" aria-label="View guest details">
+                    <span class="material-symbols-outlined">visibility</span>
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <div class="paginator-wrap">
+        <mat-paginator
+          [length]="movementTotal()"
+          [pageIndex]="movementPage()"
+          [pageSize]="movementPageSize()"
+          [pageSizeOptions]="[10,25,50]"
+          (page)="onMovementPageChange($event)"
+        ></mat-paginator>
+      </div>
+    } @else {
+      <p class="no-results">No {{ movementActiveFilter.value }} today.</p>
+    }
   </div>
 
-  @if (movementLoading() && movementData().length === 0) {
-  <mat-spinner diameter="30"></mat-spinner>
-  } @else if (movementError()) {
-  <app-alert
-    type="error"
-    [message]="movementError()!"
-    (closed)="movementError.set(null)"
-  ></app-alert>
-  } @else if (movementData().length > 0) {
-  <table
-    mat-table
-    [dataSource]="movementData()"
-    class="movement-table"
+  <!-- Action FAB -->
+  <button 
+    class="action-fab group" 
+    (click)="openInternalTicket()"
+    aria-label="Create Internal Ticket"
   >
-    <ng-container matColumnDef="guestName">
-      <th
-        mat-header-cell
-        *matHeaderCellDef
-      >
-        Guest Name
-      </th>
-      <td
-        mat-cell
-        *matCellDef="let b"
-      >
-        {{ b.guestName }}
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="room">
-      <th
-        mat-header-cell
-        *matHeaderCellDef
-      >
-        Room
-      </th>
-      <td
-        mat-cell
-        *matCellDef="let b"
-      >
-        {{ getRoomNumbers(b) || 'Unassigned' }}
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="status">
-      <th
-        mat-header-cell
-        *matHeaderCellDef
-      >
-        Status
-      </th>
-      <td
-        mat-cell
-        *matCellDef="let b"
-      >
-        {{ b.bookingStatus }}
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="actions">
-      <th
-        mat-header-cell
-        *matHeaderCellDef
-      >
-        Actions
-      </th>
-      <td
-        mat-cell
-        *matCellDef="let b"
-      >
-        <button
-          mat-icon-button
-          (click)="navigateToGuest(b.guestEmail)"
-          aria-label="View guest details"
-        >
-          <mat-icon>visibility</mat-icon>
-        </button>
-      </td>
-    </ng-container>
-    <tr
-      mat-header-row
-      *matHeaderRowDef="['guestName','room','status','actions']"
-    ></tr>
-    <tr
-      mat-row
-      *matRowDef="let row; columns: ['guestName','room','status','actions']"
-      (click)="navigateToGuest(row.guestEmail)"
-      class="clickable-row"
-    ></tr>
-  </table>
-  <mat-paginator
-    [length]="movementTotal()"
-    [pageIndex]="movementPage()"
-    [pageSize]="movementPageSize()"
-    [pageSizeOptions]="[10,25,50]"
-    (page)="onMovementPageChange($event)"
-  ></mat-paginator>
-  } @else {
-  <p>No {{ movementActiveFilter.value }} today.</p>
-  }
+    <span class="material-symbols-outlined action-fab__icon">add</span>
+    <span class="action-fab__label">Create Internal Ticket</span>
+  </button>
+
 </div>
