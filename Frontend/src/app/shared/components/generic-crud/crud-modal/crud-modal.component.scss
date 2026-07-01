@@ -1,32 +1,75 @@
+@import '../../../../../styles/theme/index';
+
+:host {
+  display: block;
+  background: var(--color-surface-container) !important;
+  color: var(--color-on-surface);
+  border-radius: 4px;
+}
+
 h2[mat-dialog-title] {
+  margin: 0;
+  padding: 24px 32px;
+  @include font-label-caps;
+  font-size: 14px;
+  letter-spacing: 0.25em;
+  color: var(--color-secondary) !important;
+  border-bottom: 1px solid rgba(228, 194, 133, 0.15) !important;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 0;
-  padding: 16px 16px 16px 24px;
-  font-size: 1.125rem;
-  font-weight: 600;
-  border-bottom: 1px solid #e0e0e0;
+
+  .custom-title-container {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-start;
+  }
+
+  .custom-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    letter-spacing: 0.03em;
+    text-transform: none;
+    color: var(--color-on-surface);
+    font-weight: 400;
+    line-height: 1.2;
+  }
+
+  .custom-subtitle {
+    @include font-label-caps;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--color-secondary);
+  }
 
   .close-btn {
-    margin-left: auto;
+    color: var(--color-on-surface-variant) !important;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: var(--color-secondary) !important;
+    }
   }
 }
 
 mat-dialog-content {
-  padding: 16px 24px;
-  min-width: 360px;
-  max-width: 560px;
+  padding: 32px;
+  min-width: 400px;
+  max-width: 600px;
+  background: transparent !important;
 
   form {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 16px;
+    margin-top: 15px;
   }
 
   @media (max-width: 768px) {
     min-width: unset;
     width: 100%;
+    padding: 24px;
   }
 }
 
@@ -37,68 +80,215 @@ mat-dialog-content {
 .toggle-row {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 8px 0;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 
   .toggle-label {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: rgba(0, 0, 0, 0.6);
+    @include font-label-caps;
+    font-size: 11px;
+    color: var(--color-on-surface-variant);
   }
 }
 
 mat-dialog-actions {
-  padding: 12px 24px 16px;
-  border-top: 1px solid #e0e0e0;
-  gap: 8px;
+  padding: 16px 32px 24px;
+  border-top: 1px solid rgba(228, 194, 133, 0.15) !important;
+  background: transparent !important;
+  gap: 16px;
+
+  button {
+    @include font-label-caps;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    padding: 12px 24px;
+    border-radius: 4px;
+    height: auto;
+  }
+
+  button[mat-button] {
+    color: var(--color-on-surface-variant) !important;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: var(--color-secondary) !important;
+    }
+  }
+
+  button[mat-raised-button] {
+    background-color: var(--color-secondary) !important;
+    color: var(--color-surface-dim) !important;
+    font-weight: 700;
+
+    &[disabled] {
+      background-color: rgba(228, 194, 133, 0.2) !important;
+      color: rgba(255, 255, 255, 0.3) !important;
+    }
+
+    &:not([disabled]):hover {
+      background-color: #ffdea4 !important;
+    }
+  }
 }
 
-.key-value-list, .image-url-list {
+::ng-deep {
+  .mat-mdc-dialog-container {
+    --mdc-dialog-container-color: var(--color-surface-container) !important;
+    border: 1px solid rgba(228, 194, 133, 0.15) !important;
+    border-radius: 4px !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  mat-dialog-content {
+    .mat-mdc-text-field-wrapper {
+      background-color: transparent !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+
+    .mdc-text-field--outlined {
+
+      .mdc-notched-outline__leading,
+      .mdc-notched-outline__notch,
+      .mdc-notched-outline__trailing {
+        border-top: none !important;
+        border-left: none !important;
+        border-right: none !important;
+        border-bottom: 1px solid rgba(228, 226, 221, 0.2) !important;
+        border-radius: 0 !important;
+        transition: border-color 0.3s ease;
+      }
+
+      &.mdc-text-field--focused {
+
+        .mdc-notched-outline__leading,
+        .mdc-notched-outline__notch,
+        .mdc-notched-outline__trailing {
+          border-bottom: 2px solid var(--color-secondary) !important;
+        }
+      }
+
+      &.mdc-text-field--invalid {
+
+        .mdc-notched-outline__leading,
+        .mdc-notched-outline__notch,
+        .mdc-notched-outline__trailing {
+          border-bottom: 2px solid var(--color-error) !important;
+        }
+      }
+    }
+
+    .mat-mdc-form-field-label-wrapper {
+      padding-top: 0 !important;
+    }
+
+    .mat-mdc-form-field-focus-indicator {
+      display: none !important;
+    }
+
+    .mat-mdc-form-field-input-control,
+    .mat-mdc-input-element,
+    input,
+    textarea {
+      color: var(--color-on-surface) !important;
+      @include font-body-md;
+      font-size: 14px;
+
+      &::placeholder {
+        color: rgba(228, 226, 221, 0.4) !important;
+      }
+    }
+
+    .mat-mdc-floating-label,
+    .mdc-floating-label {
+      color: var(--color-on-surface-variant) !important;
+      @include font-label-caps;
+      font-size: 11px !important;
+      letter-spacing: 0.1em;
+
+      &.mdc-floating-label--float-above {
+        color: var(--color-secondary) !important;
+      }
+    }
+
+    .mat-mdc-form-field-subscript-wrapper {
+      padding-left: 0 !important;
+    }
+
+    .mat-mdc-form-field-error {
+      color: var(--color-error) !important;
+      @include font-label-caps;
+      font-size: 9px;
+      margin-top: 4px;
+    }
+
+    .mat-mdc-select-value-text {
+      color: var(--color-on-surface) !important;
+    }
+
+    .mat-mdc-select-placeholder {
+      color: rgba(228, 226, 221, 0.4) !important;
+    }
+
+    .mat-mdc-select-arrow {
+      color: var(--color-secondary) !important;
+    }
+  }
+}
+
+.key-value-list,
+.image-url-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin: 8px 0;
+  gap: 16px;
+  margin: 16px 0;
+  padding: 16px;
+  background-color: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(228, 194, 133, 0.05);
+  border-radius: 4px;
 
   .list-label {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: rgba(0, 0, 0, 0.6);
+    @include font-label-caps;
+    font-size: 11px;
+    color: var(--color-secondary);
+    letter-spacing: 0.1em;
   }
 
-  .pair-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    width: 100%;
-
-    mat-form-field {
-      flex: 1;
-      margin-bottom: -1.25em;
-    }
-    
-    button {
-      align-self: center;
-    }
-  }
-
+  .pair-row,
   .url-row {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 16px;
     width: 100%;
 
     mat-form-field {
       flex: 1;
-      margin-bottom: -1.25em;
+      margin-bottom: 0 !important;
     }
 
     button {
       align-self: center;
+      color: var(--color-on-surface-variant) !important;
+
+      &:hover {
+        color: var(--color-error) !important;
+      }
     }
   }
 
   .add-btn {
     align-self: flex-start;
     margin-top: 8px;
+    background: transparent !important;
+    color: var(--color-secondary) !important;
+    @include font-label-caps;
+    font-size: 11px;
+    border: 1px dashed rgba(228, 194, 133, 0.3) !important;
+    padding: 8px 16px !important;
+
+    &:hover {
+      background: rgba(228, 194, 133, 0.05) !important;
+      border-color: var(--color-secondary) !important;
+    }
   }
 }

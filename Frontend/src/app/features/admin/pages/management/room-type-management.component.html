@@ -1,9 +1,22 @@
-<app-generic-crud
-  [config]="crudConfig"
-  [searchQuery]="searchQuery()"
-  (searchChange)="onSearchChange($event)"
-  (filterChange)="onFilterChange($event)"
-  (sortChange)="onSortChange($event)"
-  (pageChange)="onPageChange($event)"
-  (save)="onSave($event)"
-></app-generic-crud>
+<div class="room-type-management-layout">
+  <div class="section-header">
+    <div class="title-area">
+      <h3 class="section-title">Room Types</h3>
+      <p class="section-subtitle">Orchestrating the Architecture of Rest</p>
+    </div>
+    <button class="add-btn" (click)="crud.openAddModal()">
+      <mat-icon>add</mat-icon> ADD ROOM TYPE
+    </button>
+  </div>
+
+  <app-generic-crud
+    #crud
+    [config]="crudConfig"
+    [searchQuery]="searchQuery()"
+    (searchChange)="onSearchChange($event)"
+    (filterChange)="onFilterChange($event)"
+    (sortChange)="onSortChange($event)"
+    (pageChange)="onPageChange($event)"
+    (save)="onSave($event)"
+  ></app-generic-crud>
+</div>

@@ -1,23 +1,33 @@
 @for (row of data(); track $index) {
-  <mat-card class="entity-card">
-    <mat-card-content>
-      @for (col of columns(); track col.field) {
-        <div class="card-row">
-          <span class="card-label">{{ col.header }}:</span>
-          <span class="card-value">
-            @if (col.cellTemplate) {
-              <ng-container *ngTemplateOutlet="col.cellTemplate; context: { $implicit: row }"></ng-container>
-            } @else {
-              {{ col.getValue(row) }}
-            }
-          </span>
-        </div>
+  <div class="entity-card">
+    <div class="card-header">
+      <div class="header-info">
+        <span class="record-tag">RECORD #{{ row.id || ($index + 1) }}</span>
+        <h3 class="record-title">{{ columns()[0]?.getValue(row) }}</h3>
+      </div>
+      <mat-icon class="more-icon">more_vert</mat-icon>
+    </div>
+    
+    <div class="card-grid">
+      @for (col of columns(); track col.field; let first = $first) {
+        @if (!first) {
+          <div class="grid-cell">
+            <span class="cell-label">{{ col.header.toUpperCase() }}</span>
+            <span class="cell-value">
+              @if (col.cellTemplate) {
+                <ng-container *ngTemplateOutlet="col.cellTemplate; context: { $implicit: row }"></ng-container>
+              } @else {
+                {{ col.getValue(row) }}
+              }
+            </span>
+          </div>
+        }
       }
-    </mat-card-content>
-    <mat-card-actions align="end">
-      <button mat-icon-button (click)="edit.emit(row)" aria-label="Edit">
-        <mat-icon>edit</mat-icon>
-      </button>
-    </mat-card-actions>
-  </mat-card>
+    </div>
+
+    <div class="card-actions">
+      <button class="action-btn text-left" (click)="edit.emit(row)">EDIT RECORD</button>
+    </div>
+  </div>
 }
+

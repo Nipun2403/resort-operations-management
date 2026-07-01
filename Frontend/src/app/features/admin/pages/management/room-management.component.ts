@@ -305,6 +305,7 @@ export class RoomManagementComponent implements OnInit {
   onGridRoomClicked(room: RoomStatus): void {
     this.searchQuery.set(room.roomNumber);
     this.pageIndex.set(0);
+    this.viewMode.setValue('table');
     this.saveState();
     this.fetchData();
   }

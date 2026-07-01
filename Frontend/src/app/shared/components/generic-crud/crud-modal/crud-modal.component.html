@@ -1,5 +1,14 @@
 <h2 mat-dialog-title>
-  {{ data.editMode ? 'Edit' : 'Add' }} {{ data.formFields.length > 0 ? '' : 'Item' }}
+  @if (data.modalTitle) {
+    <div class="custom-title-container">
+      <span class="custom-title">{{ data.modalTitle }}</span>
+      @if (data.modalSubtitle) {
+        <span class="custom-subtitle">{{ data.modalSubtitle }}</span>
+      }
+    </div>
+  } @else {
+    <span>{{ data.editMode ? 'Edit' : 'Add' }} {{ data.formFields.length > 0 ? '' : 'Item' }}</span>
+  }
   <button mat-icon-button mat-dialog-close class="close-btn" aria-label="Close dialog">
     <mat-icon>close</mat-icon>
   </button>

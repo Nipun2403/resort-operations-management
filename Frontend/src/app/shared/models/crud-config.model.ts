@@ -54,6 +54,9 @@ export interface CrudConfig<T> {
   totalCount: Signal<number>;
   pageIndex: Signal<number>;
   pageSize: Signal<number>;
+  hideHeader?: boolean;
+  modalTitle?: string;
+  modalSubtitle?: string;
 }
 
 export interface CrudModalData {
@@ -62,6 +65,8 @@ export interface CrudModalData {
   formFields: FormFieldDef[];
   supportsToggle: boolean;
   entityName?: string;
+  modalTitle?: string;
+  modalSubtitle?: string;
 }
 
 export interface CrudModalResult {

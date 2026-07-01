@@ -170,6 +170,8 @@ export class GenericCrudComponent {
       formFields: this.config().formFields,
       supportsToggle: this.config().supportsToggle,
       entityName: this.config().entityName,
+      modalTitle: this.config().modalTitle,
+      modalSubtitle: this.config().modalSubtitle,
     };
     this.dialogRef = this.dialog.open(CrudModalComponent, { data });
     this.handleModalClose();
@@ -185,6 +187,8 @@ export class GenericCrudComponent {
       formFields: this.config().formFields,
       supportsToggle: this.config().supportsToggle,
       entityName: this.config().entityName,
+      modalTitle: this.config().modalTitle,
+      modalSubtitle: this.config().modalSubtitle,
     };
     this.dialogRef = this.dialog.open(CrudModalComponent, { data });
     this.handleModalClose();

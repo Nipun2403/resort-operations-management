@@ -6,50 +6,57 @@
     <!-- Always show the content area, even when loading (if data exists) -->
     <div class="crud-content">
       <!-- Top bar -->
-      <div class="top-bar">
-        <h2>{{ config().entityNamePlural }}</h2>
-        <button
-          mat-raised-button
-          color="primary"
-          (click)="openAddModal()"
-        >
-          <mat-icon>add</mat-icon> Add {{ config().entityName }}
-        </button>
-      </div>
+      @if (!config().hideHeader) {
+        <div class="top-bar">
+          <h2>{{ config().entityNamePlural }}</h2>
+          <button
+            class="add-btn"
+            (click)="openAddModal()"
+          >
+            <mat-icon>add</mat-icon> ADD NEW {{ (config().entityName || '').toUpperCase() }}
+          </button>
+        </div>
+      }
 
-      <!-- Search & Filter Bar -->
+      <!-- Instruments: Search & Filters -->
       <div class="search-filter-bar">
-        <mat-form-field
-          appearance="outline"
-          class="search-field"
-        >
-          <mat-label>Search {{ config().entityNamePlural }}</mat-label>
+        <div class="search-field-container">
           <input
-            matInput
+            class="search-input"
+            [placeholder]="'SEARCH ' + (config().entityNamePlural || '').toUpperCase() + '...'"
             [formControl]="searchControl"
             (keyup)="onSearchDebounced()"
           />
-          <mat-icon matSuffix>search</mat-icon>
-        </mat-form-field>
-        @for (filter of config().filters; track filter.key) {
-        <mat-form-field appearance="outline">
-          <mat-label>{{ filter.label }}</mat-label>
-          <mat-select
-            [formControl]="getFilterControl(filter.key)"
-            (selectionChange)="onFilterChange(filter.key)"
-          >
-            @for (option of filter.options; track option.value) {
-            <mat-option [value]="option.value">{{ option.label }}</mat-option>
+          <mat-icon class="search-icon">search</mat-icon>
+        </div>
+        
+        @if (config().filters && config().filters.length > 0) {
+          <div class="filter-divider"></div>
+          <div class="filters-container">
+            @for (filter of config().filters; track filter.key) {
+              <select
+                class="filter-select"
+                [formControl]="getFilterControl(filter.key)"
+                (change)="onFilterChange(filter.key)"
+              >
+                @if (filter.key === 'roomTypeId') {
+                  <option [ngValue]="null">ALL</option>
+                }
+                @for (option of filter.options; track option.value) {
+                  <option [ngValue]="option.value">{{ option.label }}</option>
+                }
+              </select>
             }
-          </mat-select>
-        </mat-form-field>
-        } @if (hasActiveFilters()) {
-        <button
-          mat-button
-          (click)="clearFilters()"
-        >
-          Clear Filters
-        </button>
+          </div>
+        }
+
+        @if (hasActiveFilters()) {
+          <button
+            class="clear-filters-btn"
+            (click)="clearFilters()"
+          >
+            CLEAR FILTERS
+          </button>
         }
       </div>
 
@@ -76,20 +83,20 @@
           />
           <p>No {{ config().entityNamePlural }} found.</p>
           @if (hasActiveFilters()) {
-          <p>Try adjusting your filters.</p>
-          <button
-            mat-button
-            (click)="clearFilters()"
-          >
-            Clear Filters
-          </button>
+            <p>Try adjusting your filters.</p>
+            <button
+              class="clear-filters-btn"
+              (click)="clearFilters()"
+            >
+              CLEAR FILTERS
+            </button>
           } @else {
-          <button
-            mat-raised-button
-            (click)="openAddModal()"
-          >
-            Add your first {{ config().entityName }}
-          </button>
+            <button
+              class="add-btn"
+              (click)="openAddModal()"
+            >
+              Add your first {{ config().entityName }}
+            </button>
           }
         </div>
       }
@@ -106,27 +113,29 @@
             (matSortChange)="onSortChange($event)"
           >
             @for (col of config().columns; track col.field; let i = $index) {
-            <ng-container [matColumnDef]="col.field">
-              <th
-                mat-header-cell
-                *matHeaderCellDef
-                mat-sort-header="{{ col.sortable ? col.field : '' }}"
-                [style.width]="columnWidths()[i]"
-              >
-                {{ col.header }}
-              </th>
-              <td
-                mat-cell
-                *matCellDef="let row"
-                [style.width]="columnWidths()[i]"
-              >
-                @if (col.cellTemplate) {
-                <ng-container
-                  *ngTemplateOutlet="col.cellTemplate; context: { $implicit: row }"
-                ></ng-container>
-                } @else { {{ col.getValue(row) }} }
-              </td>
-            </ng-container>
+              <ng-container [matColumnDef]="col.field">
+                <th
+                  mat-header-cell
+                  *matHeaderCellDef
+                  mat-sort-header="{{ col.sortable ? col.field : '' }}"
+                  [style.width]="columnWidths()[i]"
+                >
+                  {{ col.header }}
+                </th>
+                <td
+                  mat-cell
+                  *matCellDef="let row"
+                  [style.width]="columnWidths()[i]"
+                >
+                  @if (col.cellTemplate) {
+                    <ng-container
+                      *ngTemplateOutlet="col.cellTemplate; context: { $implicit: row }"
+                    ></ng-container>
+                  } @else {
+                    {{ col.getValue(row) }}
+                  }
+                </td>
+              </ng-container>
             }
             <ng-container matColumnDef="actions">
               <th
@@ -134,17 +143,18 @@
                 *matHeaderCellDef
                 [style.width]="columnWidths()[config().columns.length]"
               >
-                Actions
               </th>
               <td
                 mat-cell
                 *matCellDef="let row"
                 [style.width]="columnWidths()[config().columns.length]"
+                class="actions-cell"
               >
                 <button
                   mat-icon-button
                   (click)="openEditModal(row)"
                   aria-label="Edit"
+                  class="edit-btn"
                 >
                   <mat-icon>edit</mat-icon>
                 </button>
@@ -158,6 +168,7 @@
               mat-row
               *matRowDef="let row; columns: displayedColumns"
               [attr.data-row-id]="row.id"
+              class="group"
             ></tr>
           </table>
         </div>
@@ -183,3 +194,4 @@
     </div>
   }
 </div>
+

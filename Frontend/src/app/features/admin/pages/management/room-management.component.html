@@ -1,29 +1,58 @@
 <!-- View toggle (mobile only) -->
 @if (isMobile()) {
-<div class="view-toggle">
-  <mat-button-toggle-group [formControl]="viewMode" aria-label="View mode">
-    <mat-button-toggle value="table">
-      <mat-icon>table_chart</mat-icon> Table
-    </mat-button-toggle>
-    <mat-button-toggle value="grid">
-      <mat-icon>grid_view</mat-icon> Grid
-    </mat-button-toggle>
-  </mat-button-toggle-group>
+<div class="view-toggle-container px-4 pt-4">
+  <div class="custom-toggle-bar">
+    <button 
+      class="toggle-btn"
+      [class.active]="viewMode.value === 'grid'"
+      (click)="viewMode.setValue('grid')"
+    >
+      <mat-icon>grid_view</mat-icon> GRID
+    </button>
+    <button 
+      class="toggle-btn"
+      [class.active]="viewMode.value === 'table'"
+      (click)="viewMode.setValue('table')"
+    >
+      <mat-icon>list</mat-icon> TABLE
+    </button>
+  </div>
 </div>
 }
 
-@if (!isMobile() || viewMode.value === 'grid') {
-<div class="status-grid-row">
-  <app-room-status-grid
-    [roomTypeId]="roomTypeFilter()"
-    (roomClicked)="onGridRoomClicked($event)"
-  ></app-room-status-grid>
+<div class="room-management-layout max-w-[1440px] mx-auto" [class.mobile-layout]="isMobile()">
+  @if (!isMobile() || viewMode.value === 'grid') {
+    <div class="status-grid-section">
+      @if (!isMobile()) {
+        <div class="section-header">
+          <h3 class="section-title">Cartography Chamber</h3>
+          <p class="section-subtitle">Real-time spatial distribution across the estate.</p>
+        </div>
+      }
+      <app-room-status-grid
+        [roomTypeId]="roomTypeFilter()"
+        (roomClicked)="onGridRoomClicked($event)"
+      ></app-room-status-grid>
+    </div>
+  }
+
+  @if (!isMobile() || viewMode.value === 'table') {
+    <div class="table-section">
+      @if (!isMobile()) {
+        <div class="section-header table-header-row">
+          <h3 class="section-title">Corridor Ledger</h3>
+        </div>
+      }
+      <app-generic-crud 
+        [config]="crudConfig" 
+        [searchQuery]="searchQuery()" 
+        (edit)="onEdit($event)"
+        (searchChange)="onSearchChange($event)" 
+        (filterChange)="onFilterChange($event)"
+        (sortChange)="onSortChange($event)" 
+        (pageChange)="onPageChange($event)"
+        (save)="onSave($event)"
+      ></app-generic-crud>
+    </div>
+  }
 </div>
-} @if (!isMobile() || viewMode.value === 'table') {
-<div class="table-section">
-  <app-generic-crud [config]="crudConfig" [searchQuery]="searchQuery()" (edit)="onEdit($event)"
-    (searchChange)="onSearchChange($event)" (filterChange)="onFilterChange($event)"
-    (sortChange)="onSortChange($event)" (pageChange)="onPageChange($event)"
-    (save)="onSave($event)"></app-generic-crud>
-</div>
-}

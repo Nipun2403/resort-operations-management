@@ -6,6 +6,8 @@ import { Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs/operators';
 
+import { MatIconModule } from '@angular/material/icon';
+
 import { GenericCrudComponent } from '../../../../shared/components/generic-crud/generic-crud.component';
 import { CrudConfig } from '../../../../shared/models/crud-config.model';
 import { RoomTypeApiService } from '../../services/room-type-api.service';
@@ -25,7 +27,7 @@ interface RoomTypesState {
 @Component({
   selector: 'app-room-type-management',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatSnackBarModule, GenericCrudComponent],
+  imports: [CommonModule, ReactiveFormsModule, MatSnackBarModule, MatIconModule, GenericCrudComponent],
   templateUrl: './room-type-management.component.html',
   styleUrls: ['./room-type-management.component.scss'],
 })
@@ -138,6 +140,9 @@ export class RoomTypeManagementComponent implements OnInit {
     error: this.error,
     pageIndex: this.pageIndex,
     pageSize: this.pageSize,
+    hideHeader: true,
+    modalTitle: 'Articulating the Sanctuary',
+    modalSubtitle: 'DEFINE THE DIMENSIONS OF LUXURY',
   };
 
   ngOnInit(): void {
