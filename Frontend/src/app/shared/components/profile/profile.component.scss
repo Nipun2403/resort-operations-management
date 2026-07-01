@@ -1,12 +1,269 @@
-.profile-card {
-  max-width: 600px;
-  margin: 0 auto;
+@mixin glass-panel {
+  background: rgba(26, 26, 26, 0.7) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
+  border: 1px solid rgba(228, 194, 133, 0.2) !important;
 }
-.info-grid p {
-  margin: 8px 0;
+
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: #0e0e0c;
+  color: #e4e2dd;
+  font-family: var(--font-body, "Manrope"), sans-serif;
+  box-sizing: border-box;
 }
-.form-actions {
-  display: flex;
+
+.profile-page {
+  padding: 40px 20px 80px 20px;
+  box-sizing: border-box;
+
+  @media (min-width: 768px) {
+    padding: 80px 80px 160px 80px;
+  }
+}
+
+.glass-panel {
+  @include glass-panel;
+  border-radius: 0px !important; /* Sharp Aetheris edges */
+}
+
+/* Typography & Layout */
+.font-headline-md {
+  font-family: var(--font-display-lg, "Playfair Display"), serif;
+  font-size: 28px;
+  font-weight: 400;
+  color: #e4e2dd;
+
+  @media (min-width: 768px) {
+    font-size: 32px;
+  }
+}
+
+.font-label-caps {
+  font-family: var(--font-label, "Manrope"), sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  color: #e4c285;
+}
+
+.font-body-lg {
+  font-family: var(--font-body, "Manrope"), sans-serif;
+  font-size: 16px;
+  font-weight: 300;
+  color: #e4e2dd;
+
+  @media (min-width: 768px) {
+    font-size: 18px;
+  }
+}
+
+.font-body-md {
+  font-family: var(--font-body, "Manrope"), sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  color: #e4e2dd;
+
+  @media (min-width: 768px) {
+    font-size: 16px;
+  }
+}
+
+/* Edit Toggle Button */
+#edit-toggle-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  
+  .font-label-caps {
+    color: rgba(228, 194, 133, 0.6);
+    transition: color 0.3s ease;
+  }
+  
+  .material-symbols-outlined {
+    color: rgba(228, 194, 133, 0.6);
+    transition: transform 0.3s ease, color 0.3s ease;
+  }
+
+  &:hover {
+    .font-label-caps {
+      color: #e4c285;
+    }
+    .material-symbols-outlined {
+      color: #e4c285;
+      transform: scale(1.1);
+    }
+  }
+}
+
+/* Info Grid Layout */
+.grid-cols-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px;
+  }
+}
+
+.col-span-2 {
+  grid-column: span 1 / span 1;
+
+  @media (min-width: 768px) {
+    grid-column: span 2 / span 2;
+  }
+}
+
+.gap-x-gutter {
+  column-gap: 24px;
+
+  @media (min-width: 768px) {
+    column-gap: 32px;
+  }
+}
+
+.gap-y-10 {
+  row-gap: 24px;
+
+  @media (min-width: 768px) {
+    row-gap: 40px;
+  }
+}
+
+/* Inputs & Form Fields */
+.gold-border-glow {
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: 1px solid rgba(228, 194, 133, 0.2);
+  background: transparent;
+  padding: 12px 0;
+  font-family: var(--font-body, "Manrope"), sans-serif;
+  color: #e4e2dd;
+  font-size: 16px;
+  font-weight: 300;
+  transition: all 0.3s ease;
+  border-radius: 0;
+
+  @media (min-width: 768px) {
+    font-size: 18px;
+  }
+
+  &:focus {
+    outline: none;
+    border-bottom-color: #e4c285;
+    box-shadow: 0 4px 12px -6px rgba(228, 194, 133, 0.4);
+  }
+}
+
+/* Access Cards & Chips */
+.role-chip-admin {
+  background: linear-gradient(135deg, #5d4514 0%, #261900 100%);
+  border: 1px solid rgba(228, 194, 133, 0.3);
+  padding: 8px 16px;
+  display: inline-flex;
+  align-items: center;
   gap: 12px;
-  margin-top: 16px;
+  box-sizing: border-box;
+}
+
+.mobile-access-card {
+  box-sizing: border-box;
+  background: rgba(26, 26, 26, 0.7);
+  border: 1px solid rgba(228, 194, 133, 0.2);
+  border-radius: 0px;
+}
+
+/* Buttons */
+button {
+  transition: all 0.3s ease;
+}
+
+button[type="submit"] {
+  background-color: #e4c285;
+  color: #131411;
+  border: none;
+  font-family: var(--font-label, "Manrope"), sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(228, 194, 133, 0.2);
+
+  &:hover:not(:disabled) {
+    background-color: #e5e2e1;
+    box-shadow: 0 0 15px rgba(228, 194, 133, 0.4);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+button[type="button"] {
+  background-color: transparent;
+  border: 1px solid rgba(228, 194, 133, 0.2);
+  color: #e4e2dd;
+  font-family: var(--font-label, "Manrope"), sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  cursor: pointer;
+
+  &:hover {
+    border-color: #e4c285;
+    color: #e4c285;
+  }
+}
+
+/* Validation & Alerts */
+.validation-error {
+  color: #ffb4ab;
+  font-family: var(--font-body, "Manrope"), sans-serif;
+  font-size: 11px;
+}
+
+/* Material overrides */
+::ng-deep {
+  .mat-mdc-progress-spinner {
+    circle {
+      stroke: #e4c285 !important;
+    }
+  }
+}
+
+/* Spacers & Utilities */
+.space-y-1 > * + * {
+  margin-top: 4px;
+}
+
+.space-y-3 > * + * {
+  margin-top: 12px;
+}
+
+.space-y-6 > * + * {
+  margin-top: 24px;
+}
+
+.space-y-8 > * + * {
+  margin-top: 32px;
+}
+
+.space-y-10 > * + * {
+  margin-top: 40px;
+}
+
+.space-y-12 > * + * {
+  margin-top: 48px;
+}
+
+.grid-cols-1 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
 }
