@@ -74,13 +74,11 @@
               <span class="font-label-caps text-[9px] text-on-tertiary-container uppercase tracking-[0.2em]">Public Visibility</span>
               
               <!-- Custom slide toggle wrapper for mobile -->
-              <button class="w-12 h-6 rounded-full border border-secondary/30 relative overflow-hidden bg-black/60 transition-colors custom-toggle-btn"
+              <button class="custom-toggle-btn"
+                      [class.active-bg]="!f.isHidden"
                       (click)="onToggleHidden(f, !f.isHidden)">
-                <div class="absolute left-1 top-1 w-4 h-4 rounded-full transition-transform duration-300 slide-dot"
-                     [class.translate-x-6]="!f.isHidden"
-                     [class.bg-secondary]="!f.isHidden"
-                     [class.active-dot]="!f.isHidden"
-                     [class.bg-on-tertiary-container]="f.isHidden"></div>
+                <div class="slide-dot"
+                     [class.active-dot]="!f.isHidden"></div>
               </button>
             </footer>
           </article>

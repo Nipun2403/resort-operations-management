@@ -5,6 +5,12 @@
   font-family: var(--font-body, "Manrope"), sans-serif;
 }
 
+::ng-deep .cdk-overlay-backdrop {
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  background-color: rgba(14, 14, 12, 0.9) !important;
+}
+
 ::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
   background: rgba(26, 26, 26, 0.95) !important;
   backdrop-filter: blur(24px) !important;
