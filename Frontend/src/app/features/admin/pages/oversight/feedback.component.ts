@@ -67,7 +67,7 @@ export class FeedbackComponent implements OnInit {
   private readonly STORAGE_KEY = 'feedbackState';
 
   // Table columns
-  displayedColumns = ['id', 'bookingId', 'rating', 'comments', 'createdAt', 'isHidden', 'actions'];
+  displayedColumns = ['id', 'bookingId', 'rating', 'comments', 'createdAt', 'actions'];
 
   // Data (canonical signals)
   entries = signal<Feedback[]>([]);

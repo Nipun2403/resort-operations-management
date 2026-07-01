@@ -1,8 +1,16 @@
-<h2 mat-dialog-title>{{ data.title }}</h2>
-<mat-dialog-content>
-  <p>{{ data.message }}</p>
-</mat-dialog-content>
-<mat-dialog-actions align="end">
-  <button mat-button (click)="cancel()">Cancel</button>
-  <button mat-raised-button color="warn" (click)="confirm()">Confirm</button>
-</mat-dialog-actions>
+<div class="glass-panel-dialog-wrapper relative p-8 text-center overflow-hidden">
+  <div class="top-gold-gradient absolute top-0 left-0 w-full h-1"></div>
+  
+  <span class="material-symbols-outlined dialog-icon text-secondary text-5xl mb-6">
+    {{ (data.title.toLowerCase().includes('hide') || data.title.toLowerCase().includes('visibility')) ? 'visibility_off' : 'help_outline' }}
+  </span>
+  
+  <h3 class="font-headline-md dialog-title text-on-background mb-4">{{ data.title }}</h3>
+  <p class="font-body-md dialog-message text-on-surface-variant mb-10">{{ data.message }}</p>
+  
+  <div class="flex gap-4 justify-center dialog-actions">
+    <button class="aetheris-btn secondary-btn" (click)="cancel()">Cancel</button>
+    <button class="aetheris-btn primary-btn" (click)="confirm()">Confirm</button>
+  </div>
+</div>
+
