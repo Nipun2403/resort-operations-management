@@ -210,6 +210,18 @@
       font-size: 13px;
     }
 
+    .mat-mdc-paginator-page-size-label {
+      color: var(--color-on-surface-variant) !important;
+    }
+
+    .mat-mdc-select-value-text {
+      color: var(--color-on-surface) !important;
+    }
+
+    .mat-mdc-select-arrow {
+      color: var(--color-secondary) !important;
+    }
+
     .mat-mdc-paginator-range-label {
       color: var(--color-on-surface-variant);
     }
