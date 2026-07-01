@@ -1,66 +1,83 @@
-<mat-sidenav-container>
-  <!-- SIDEBAR -->
-  <mat-sidenav #sidenav [mode]="isMobile() ? 'over' : 'side'" [opened]="isMobile() ? sidebarOpen() : true"
-    aria-label="Customer navigation">
-    <mat-toolbar color="primary">Hotel</mat-toolbar>
-    <mat-nav-list>
-      <a mat-list-item routerLink="/user/dashboard" routerLinkActive="active" (click)="onNavClick()">
-        <mat-icon matListItemIcon aria-hidden="true">dashboard</mat-icon>
-        <span matListItemTitle>Dashboard</span>
-      </a>
-      <a mat-list-item routerLink="/user/bookings" routerLinkActive="active" (click)="onNavClick()">
-        <mat-icon matListItemIcon aria-hidden="true">book_online</mat-icon>
-        <span matListItemTitle>My Bookings</span>
-      </a>
-      <a mat-list-item routerLink="/user/room-service" routerLinkActive="active" (click)="onNavClick()">
-        <mat-icon matListItemIcon aria-hidden="true">room_service</mat-icon>
-        <span matListItemTitle>Room Service</span>
-      </a>
-    </mat-nav-list>
-  </mat-sidenav>
+<div class="shell-layout">
+  <!-- Mobile Sidebar Backdrop -->
+  @if (isMobile() && sidebarOpen()) {
+    <div class="backdrop" (click)="sidebarOpen.set(false)"></div>
+  }
 
-  <!-- MAIN CONTENT -->
-  <mat-sidenav-content>
-    <mat-toolbar color="primary">
-      @if (isMobile()) {
-      <button mat-icon-button (click)="sidebarOpen.set(!sidebarOpen())">
-        <mat-icon aria-hidden="true">menu</mat-icon>
-      </button>
-      }
-      <span>Hotel</span>
-      <span class="spacer"></span>
-      <button mat-icon-button [matMenuTriggerFor]="userMenu" aria-label="Open user menu">
-        <mat-icon aria-hidden="true">account_circle</mat-icon>
-      </button>
-      <mat-menu #userMenu="matMenu">
-        <button mat-menu-item routerLink="/user/profile">
-          <mat-icon aria-hidden="true">manage_accounts</mat-icon> Profile
-        </button>
-        <button mat-menu-item (click)="logout()">
-          <mat-icon aria-hidden="true">logout</mat-icon> Logout
-        </button>
-      </mat-menu>
-    </mat-toolbar>
-
-    <!-- ROUTER OUTLET -->
-    <div class="content">
-      <router-outlet></router-outlet>
-
-      <footer class="site-footer">
-        <div class="footer-links">
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms of Service</a>
-          <a href="#">Press</a>
-          <a href="#">Careers</a>
-          <a href="#">Contact</a>
-        </div>
-        <div class="footer-logo">AETHERIS</div>
-        <div class="footer-info">
-          <span>1 AETHERIS PEAK, THE SILENT VALLEY</span>
-          <span class="separator"></span>
-          <span>&copy; 2024 AETHERIS. ALL RIGHTS RESERVED.</span>
-        </div>
-      </footer>
+  <!-- SideNavBar -->
+  <nav class="sidebar"
+       [class.sidebar-mobile-open]="isMobile() && sidebarOpen()"
+       [class.sidebar-mobile-closed]="isMobile() && !sidebarOpen()">
+    <!-- Header/Brand -->
+    <div class="brand-container">
+      <h1 class="brand-title">The Private Corridor</h1>
     </div>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+    
+    <!-- Navigation Links -->
+    <ul class="nav-links">
+      <li>
+        <a routerLink="/user/dashboard" routerLinkActive="active" (click)="onNavClick()">
+          <span class="material-symbols-outlined nav-icon" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+          <span class="nav-label">Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/user/bookings" routerLinkActive="active" (click)="onNavClick()">
+          <span class="material-symbols-outlined nav-icon">book_online</span>
+          <span class="nav-label">My Bookings</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/user/room-service" routerLinkActive="active" (click)="onNavClick()">
+          <span class="material-symbols-outlined nav-icon">room_service</span>
+          <span class="nav-label">Room Service</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Main Content Area -->
+  <div class="main-container" [class.main-desktop-padded]="!isMobile()">
+    <!-- TopAppBar -->
+    <header class="top-app-bar">
+      <div class="app-bar-left">
+        @if (isMobile()) {
+          <button class="mobile-menu-btn" (click)="sidebarOpen.set(!sidebarOpen())" aria-label="Toggle Navigation">
+            <span class="material-symbols-outlined">menu</span>
+          </button>
+        }
+        <span class="brand-logo">Aetheris</span>
+      </div>
+
+      <!-- Actions -->
+      <div class="app-bar-right">
+        <button class="profile-btn" [matMenuTriggerFor]="userMenu" aria-label="Open user menu">
+          <span class="material-symbols-outlined">account_circle</span>
+        </button>
+        <mat-menu #userMenu="matMenu">
+          <button mat-menu-item routerLink="/user/profile">
+            <mat-icon aria-hidden="true">manage_accounts</mat-icon> Profile
+          </button>
+          <button mat-menu-item (click)="logout()">
+            <mat-icon aria-hidden="true">logout</mat-icon> Logout
+          </button>
+        </mat-menu>
+      </div>
+    </header>
+
+    <!-- Dashboard Content Canvas -->
+    <main class="content-canvas">
+      <router-outlet></router-outlet>
+    </main>
+
+    <!-- Footer -->
+    <footer class="shell-footer">
+      <p class="footer-copyright">© 2024 Aetheris Ultra-Luxury Resort. All Rights Reserved.</p>
+      <div class="footer-links">
+        <a href="#">Privacy</a>
+        <a href="#">Concierge</a>
+        <a href="#">Legal</a>
+      </div>
+    </footer>
+  </div>
+</div>
