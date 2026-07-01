@@ -51,7 +51,7 @@ mat-sidenav-content {
 }
 
 .content {
-  padding: 24px;
+  padding: 0;
   flex-grow: 1;
   overflow-y: auto;
   box-sizing: border-box;
@@ -98,7 +98,7 @@ mat-nav-list {
 
 @media (max-width: 1024px) {
   .content {
-    padding: 16px;
+    padding: 0;
   }
 }
 

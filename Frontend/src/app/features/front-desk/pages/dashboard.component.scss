@@ -22,8 +22,6 @@ $bp-mobile: 767px;
 // --------------- HOST ---------------
 :host {
   display: block;
-  background-color: #0e0e0c;
-  min-height: 100vh;
   color: $on-surface;
   font-family: $font-body;
 }
