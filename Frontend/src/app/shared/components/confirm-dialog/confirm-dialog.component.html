@@ -2,11 +2,11 @@
   <div class="top-gold-gradient absolute top-0 left-0 w-full h-1"></div>
   
   <span class="material-symbols-outlined dialog-icon text-secondary text-5xl mb-6">
-    {{ (data.title.toLowerCase().includes('hide') || data.title.toLowerCase().includes('visibility')) ? 'visibility_off' : 'help_outline' }}
+    {{ (data?.title?.toLowerCase()?.includes('hide') || data?.title?.toLowerCase()?.includes('visibility')) ? 'visibility_off' : 'help_outline' }}
   </span>
   
-  <h3 class="font-headline-md dialog-title text-on-background mb-4">{{ data.title }}</h3>
-  <p class="font-body-md dialog-message text-on-surface-variant mb-10">{{ data.message }}</p>
+  <h3 class="font-headline-md dialog-title text-on-background mb-4">{{ data?.title || 'Confirmation' }}</h3>
+  <p class="font-body-md dialog-message text-on-surface-variant mb-10">{{ data?.message || 'Are you sure you want to proceed?' }}</p>
   
   <div class="flex gap-4 justify-center dialog-actions">
     <button class="aetheris-btn secondary-btn" (click)="cancel()">Cancel</button>
