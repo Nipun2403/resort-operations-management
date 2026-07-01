@@ -6,15 +6,26 @@
   } @else if (error()) {
     <div class="error-state">
       <p>{{ error() }}</p>
-      <a routerLink="/rooms" class="back-link">← Back to Villas</a>
+      @if (isFromBooking()) {
+        <a (click)="goBackToBooking()" class="back-link" style="cursor: pointer;">← Back to Booking</a>
+      } @else {
+        <a routerLink="/rooms" class="back-link">← Back to Villas</a>
+      }
     </div>
   } @else if (room()) {
     <!-- Image Gallery Section -->
     <section class="gallery-section">
-      <a routerLink="/rooms" class="back-to-villas-btn">
-        <span class="material-symbols-outlined">arrow_back</span>
-        <span>BACK TO VILLAS</span>
-      </a>
+      @if (isFromBooking()) {
+        <a (click)="goBackToBooking()" class="back-to-villas-btn" style="cursor: pointer;">
+          <span class="material-symbols-outlined">arrow_back</span>
+          <span>BACK TO BOOKING</span>
+        </a>
+      } @else {
+        <a routerLink="/rooms" class="back-to-villas-btn">
+          <span class="material-symbols-outlined">arrow_back</span>
+          <span>BACK TO VILLAS</span>
+        </a>
+      }
 
       <div class="gallery-scroll" #galleryContainer>
         <!-- Design images (static, shown first) -->

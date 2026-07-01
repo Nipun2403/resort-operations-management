@@ -118,7 +118,7 @@
         <div class="horizontal-scroll-container snap-x">
           @for (room of availableRooms(); track room.roomTypeId) {
             <div class="room-card glass-panel" [class.selected]="getRoomQuantity(room.roomTypeId) > 0">
-              <div class="room-image-wrapper">
+              <div class="room-image-wrapper" (click)="goToRoomDetails(room.roomTypeId)" style="cursor: pointer;" title="View Room Details" aria-label="View Room Details">
                 <img 
                   class="room-image" 
                   [src]="room.imageUrls && room.imageUrls.length > 0 ? room.imageUrls[0] : 'assets/placeholder-room.jpg'"

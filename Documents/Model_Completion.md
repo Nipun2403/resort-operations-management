@@ -5560,6 +5560,80 @@ CRITICAL RULE COMPLIANCE CONFIRMATION
 
 
 
+================================================================================
+SPEC IMPLEMENTATION COMPLIANCE REPORT
+Spec: room-detail-booking-integration
+Date: 2026-07-01
+================================================================================
+
+FILES CREATED
+-------------
+None.
+
+FILES MODIFIED (existing files updated per spec)
+-------------------------------------------------
+✓ src/app/features/user/components/booking-wizard/booking-wizard.component.ts — Added state preservation in sessionStorage, stepper selection hook in ngAfterViewInit, and goToRoomDetails() method.
+✓ src/app/features/user/components/booking-wizard/booking-wizard.component.html — Made room image wrappers clickable to call goToRoomDetails().
+✓ src/app/features/public/pages/room-detail.component.ts — Added queryParam check for source='booking', isFromBooking signal, and goBackToBooking() method.
+✓ src/app/features/public/pages/room-detail.component.html — Dynamic BACK TO BOOKING / BACK TO VILLAS buttons based on isFromBooking() signal.
+
+REQUIREMENTS IMPLEMENTED
+------------------------
+✓ Room Detail View Routing
+  ✓ Click on room image in Booking Wizard navigates to public /rooms/:id.
+  ✓ Passed queryParam source='booking' to identify origin.
+✓ Booking Wizard State Preservation
+  ✓ Saved datesForm.value, selectedRoomQuantities(), and stepper.selectedIndex in sessionStorage as JSON string before navigating.
+  ✓ Extracted and parsed saved state in ngOnInit.
+  ✓ Restored datesForm values and loaded rooms.
+  ✓ Restored stepper index programmatically in ngAfterViewInit using setTimeout.
+  ✓ Restored selectedRoomQuantities correctly in loadRooms success callback.
+  ✓ Removed saved state from sessionStorage after restoration to avoid pollution.
+✓ Dynamic Back Button on Room Detail Page
+  ✓ isFromBooking signal is set to true if source query param equals 'booking'.
+  ✓ Rendered BACK TO BOOKING button in success and error states.
+  ✓ BACK TO BOOKING triggers goBackToBooking() which returns the user to the booking wizard.
+
+API INTEGRATION
+---------------
+None.
+
+LOGIC TRACES
+------------
+Flow: Navigate to Room Details from Booking Wizard
+  Entry: Click on room card image in Step 2 of Booking Wizard.
+  Path: goToRoomDetails() runs -> saves current form values, selected quantities, and stepper index (1) to sessionStorage -> navigates to /rooms/:id?source=booking.
+  Result: ✓ Matches spec
+
+Flow: Return to Booking Wizard
+  Entry: Click BACK TO BOOKING on Room Details page.
+  Path: goBackToBooking() runs -> navigates to /user/bookings?new=true -> BookingWizardComponent initializes -> ngOnInit reads sessionStorage state, patches datesForm, and calls loadRooms() -> ngAfterViewInit sets stepper.selectedIndex to 1 -> loadRooms success callback restores selected room quantities.
+  Result: ✓ Matches spec
+
+KNOWN DEVIATIONS
+----------------
+None. All requirements implemented exactly as specified.
+
+DEFAULTS APPLIED FOR AMBIGUITIES
+---------------------------------
+None.
+
+CRITICAL RULE COMPLIANCE CONFIRMATION
+--------------------------------------
+✓ I confirm that every ✓ in the requirements section corresponds to code
+  that exists and is correct. No requirement has been marked complete
+  without implementation evidence.
+✓ I confirm that no file, function, or feature was added beyond what
+  the spec defines.
+✓ I confirm that all API calls match the spec contracts exactly.
+✓ I confirm that all regex validators are character-for-character matches
+  to the spec.
+✓ I confirm that all role-to-route mappings match the spec exactly.
+================================================================================
+
+
+
+
 
 
 

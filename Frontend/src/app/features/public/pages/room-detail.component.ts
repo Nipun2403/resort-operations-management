@@ -26,6 +26,7 @@ export class RoomDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   room = signal<RoomType | null>(null);
   loading = signal(false);
   error = signal<string | null>(null);
+  isFromBooking = signal(false);
 
   // Parallax
   @ViewChild('galleryContainer') galleryRef!: ElementRef<HTMLElement>;
@@ -37,6 +38,15 @@ export class RoomDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.error.set('Room not found.');
     }
+
+    const source = this.route.snapshot.queryParamMap.get('source');
+    if (source === 'booking') {
+      this.isFromBooking.set(true);
+    }
+  }
+
+  goBackToBooking(): void {
+    this.router.navigate(['/user/bookings'], { queryParams: { new: 'true' } });
   }
 
   ngAfterViewInit(): void {

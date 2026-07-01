@@ -1,7 +1,8 @@
-import { Component, inject, signal, computed, input, output, ChangeDetectorRef, DestroyRef, OnInit } from '@angular/core';
+import { Component, inject, signal, computed, input, output, ChangeDetectorRef, DestroyRef, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, FormArray, Validators, AbstractControl } from '@angular/forms';
-import { MatStepperModule } from '@angular/material/stepper';
+import { MatStepperModule, MatStepper } from '@angular/material/stepper';
+import { Router } from '@angular/router';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -45,7 +46,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   templateUrl: './booking-wizard.component.html',
   styleUrls: ['./booking-wizard.component.scss']
 })
-export class BookingWizardComponent implements OnInit {
+export class BookingWizardComponent implements OnInit, AfterViewInit {
   userProfile = input.required<{ firstName: string; lastName: string; email: string }>();
   bookingCreated = output<number>();
 
@@ -61,6 +62,11 @@ export class BookingWizardComponent implements OnInit {
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly router = inject(Router);
+
+  @ViewChild('stepper') stepper!: MatStepper;
+
+  private restoredState: any = null;
 
   isMobile = toSignal(
     this.breakpointObserver.observe('(max-width: 767px)').pipe(map(r => r.matches)),
@@ -70,13 +76,37 @@ export class BookingWizardComponent implements OnInit {
   private initialRoomApplied = false;
 
   ngOnInit(): void {
-    if (this.initialCheckIn() && this.initialCheckOut() && this.initialGuests()) {
+    const savedStateStr = sessionStorage.getItem('bookingWizardState');
+    if (savedStateStr) {
+      try {
+        this.restoredState = JSON.parse(savedStateStr);
+        sessionStorage.removeItem('bookingWizardState');
+        if (this.restoredState.dates) {
+          this.datesForm.patchValue(this.restoredState.dates);
+          this.loadRooms();
+        }
+      } catch (e) {
+        console.error('Failed to parse bookingWizardState', e);
+      }
+    } else if (this.initialCheckIn() && this.initialCheckOut() && this.initialGuests()) {
       this.datesForm.patchValue({
         checkInDate: this.initialCheckIn(),
         checkOutDate: this.initialCheckOut(),
         guestCount: this.initialGuests() ?? 1
       });
       this.loadRooms();
+    }
+  }
+
+  ngAfterViewInit(): void {
+    if (this.restoredState && typeof this.restoredState.step === 'number') {
+      setTimeout(() => {
+        this.stepper.selectedIndex = this.restoredState.step;
+        if (this.restoredState.step === 2) {
+          this.loadAmenities();
+        }
+        this.cdr.detectChanges();
+      });
     }
   }
 
@@ -201,19 +231,25 @@ export class BookingWizardComponent implements OnInit {
           res.data.forEach(r => {
             quantities[r.roomTypeId] = 0;
           });
-          this.selectedRoomQuantities.set(quantities);
 
-          if (!this.initialRoomApplied && this.initialRoomTypeId()) {
+          if (this.restoredState && this.restoredState.quantities) {
+            Object.keys(this.restoredState.quantities).forEach(key => {
+              const rId = Number(key);
+              if (quantities[rId] !== undefined) {
+                const room = res.data.find(r => r.roomTypeId === rId);
+                const limit = room ? room.availableCount : 0;
+                quantities[rId] = Math.min(this.restoredState.quantities[key], limit);
+              }
+            });
+          } else if (!this.initialRoomApplied && this.initialRoomTypeId()) {
             const room = res.data.find(r => r.roomTypeId === this.initialRoomTypeId());
             if (room && room.availableCount > 0) {
-              this.selectedRoomQuantities.update(q => ({
-                ...q,
-                [room.roomTypeId]: 1
-              }));
+              quantities[room.roomTypeId] = 1;
               this.initialRoomApplied = true;
             }
           }
 
+          this.selectedRoomQuantities.set(quantities);
           this.updateRoomsFormValidity();
         },
         error: (err) => {
@@ -221,6 +257,16 @@ export class BookingWizardComponent implements OnInit {
           this.error.set(message);
         }
       });
+  }
+
+  goToRoomDetails(roomId: number): void {
+    const state = {
+      dates: this.datesForm.value,
+      quantities: this.selectedRoomQuantities(),
+      step: this.stepper?.selectedIndex ?? 1
+    };
+    sessionStorage.setItem('bookingWizardState', JSON.stringify(state));
+    this.router.navigate(['/rooms', roomId], { queryParams: { source: 'booking' } });
   }
 
   loadAmenities(): void {
