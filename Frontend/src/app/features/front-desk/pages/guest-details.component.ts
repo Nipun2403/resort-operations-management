@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, OnInit, DestroyRef } from '@angular/core';
+import { Component, inject, signal, computed, OnInit, DestroyRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute } from '@angular/router';
@@ -53,7 +53,7 @@ import { GuestBillingComponent } from '../components/guest-billing/guest-billing
   templateUrl: './guest-details.component.html',
   styleUrls: ['./guest-details.component.scss'],
 })
-export class GuestDetailsComponent implements OnInit {
+export class GuestDetailsComponent implements OnInit, AfterViewInit {
   email = signal('');
   bookings = signal<Booking[]>([]);
   loading = signal(false);
@@ -92,6 +92,14 @@ export class GuestDetailsComponent implements OnInit {
       },
       error: (err: any) => console.error('Failed to load guest profile', err)
     });
+  }
+
+  ngAfterViewInit(): void {
+    // Triggers window resize to recalculate/realign Angular Material tab inkbar/headers
+    // which can fail to render initially inside dynamically sized layout containers.
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 150);
   }
 
   fetchBookings(): void {
