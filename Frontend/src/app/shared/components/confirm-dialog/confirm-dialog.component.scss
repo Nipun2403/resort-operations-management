@@ -1,22 +1,24 @@
+@import '../../../../styles/theme/index';
+
 :host {
   display: block;
   background: transparent !important;
-  color: var(--color-on-surface, #e4e2dd);
-  font-family: var(--font-body, "Manrope"), sans-serif;
+  color: var(--color-on-surface);
+  font-family: var(--font-body), sans-serif;
 }
 
 ::ng-deep .cdk-overlay-backdrop {
   backdrop-filter: blur(8px) !important;
   -webkit-backdrop-filter: blur(8px) !important;
-  background-color: rgba(14, 14, 12, 0.9) !important;
+  background-color: rgba(19, 20, 17, 0.6) !important;
 }
 
 ::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
-  background: rgba(26, 26, 26, 0.95) !important;
+  background: var(--glass-bg) !important;
   backdrop-filter: blur(24px) !important;
   -webkit-backdrop-filter: blur(24px) !important;
-  border: 1px solid rgba(228, 194, 133, 0.25) !important;
-  border-radius: 0px !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: 4px !important;
   box-shadow: 0 24px 48px rgba(0, 0, 0, 0.8) !important;
   padding: 0 !important;
 }
@@ -34,21 +36,17 @@
 
   .dialog-icon {
     font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 48;
-    color: var(--color-secondary, #e4c285);
+    color: var(--color-secondary);
   }
 
   .dialog-title {
-    font-family: var(--font-display-lg, "Playfair Display"), serif;
-    font-size: 32px;
-    font-weight: 400;
-    color: var(--color-on-background, #e4e2dd);
+    @include font-headline-md;
+    color: var(--color-on-background);
   }
 
   .dialog-message {
-    font-family: var(--font-body, "Manrope"), sans-serif;
-    font-size: 16px;
-    font-weight: 300;
-    color: rgba(228, 226, 221, 0.7);
+    @include font-body-md;
+    color: var(--color-on-surface-variant);
     line-height: 1.6;
     margin-bottom: 40px;
   }
@@ -60,37 +58,37 @@
 
     .aetheris-btn {
       padding: 12px 32px;
-      font-family: var(--font-label, "Manrope"), sans-serif;
-      font-size: 10px;
-      font-weight: 500;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
+      @include font-label-caps;
       transition: all 0.3s ease;
       cursor: pointer;
-      border-radius: 0px;
+      border-radius: 4px;
       outline: none;
 
       &.secondary-btn {
         background: transparent;
-        color: var(--color-on-background, #e4e2dd);
-        border: 1px solid rgba(228, 194, 133, 0.2);
+        color: var(--color-on-background);
+        border: 1px solid var(--glass-border);
 
         &:hover {
-          background: rgba(228, 194, 133, 0.1);
+          background: rgba(228, 194, 133, 0.05);
+          color: var(--color-secondary);
+          border-color: var(--color-secondary);
         }
       }
 
       &.primary-btn {
-        background: var(--color-secondary, #e4c285);
-        color: #261900;
-        border: 1px solid var(--color-secondary, #e4c285);
+        background: var(--color-secondary);
+        color: var(--color-on-secondary);
+        border: 1px solid var(--color-secondary);
+        font-weight: 600;
 
         &:hover {
-          background: #e4c285;
-          opacity: 0.9;
+          background: #ffdea4;
+          border-color: #ffdea4;
         }
       }
     }
   }
 }
+
 

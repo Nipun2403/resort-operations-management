@@ -82,7 +82,7 @@
         mat-cell
         *matCellDef="let t"
       >
-        {{ t.status }}
+        <span [class]="'status-chip ' + t.status">{{ t.status }}</span>
       </td>
     </ng-container>
 

@@ -1,0 +1,16 @@
+@import '../../../../../styles/theme/index';
+
+:host {
+  display: block;
+}
+
+mat-dialog-content {
+  min-width: 550px;
+  max-width: 100%;
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+
+  @media (max-width: 600px) {
+    min-width: 100%;
+  }
+}

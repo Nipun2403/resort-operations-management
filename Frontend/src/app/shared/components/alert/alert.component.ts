@@ -15,6 +15,8 @@ import { MatIconModule } from '@angular/material/icon';
       </button>
     </div>
   `,
+  styleUrls: ['./alert.component.scss'],
+  /*
   styles: [`
     .alert-box {
       display: flex;
@@ -42,6 +44,7 @@ import { MatIconModule } from '@angular/material/icon';
       color: inherit;
     }
   `]
+  */
 })
 export class AlertComponent {
   @Input() type: 'success' | 'error' = 'success';

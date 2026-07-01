@@ -1,29 +1,66 @@
+@import '../../../../styles/theme/index';
+
 .new-booking-page {
   padding: 24px;
   max-width: 900px;
   margin: 0 auto;
 
   h1 {
-    margin-bottom: 24px;
-    font-weight: 500;
+    margin-bottom: 32px;
+    color: var(--color-secondary);
+    @include font-headline-md;
   }
 
   form {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    padding: 16px 0;
+    gap: 20px;
+    padding: 24px 0;
     max-width: 500px;
   }
 
-  mat-form-field {
-    width: 100%;
+  // Styles for all stepper navigation buttons
+  button[mat-button], button[mat-raised-button], button[matStepperNext], button[matStepperPrevious] {
+    @include font-label-caps;
+    border-radius: 4px !important;
+    height: 38px;
+    padding: 0 20px !important;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+
+    &[color="primary"], &:not([matStepperPrevious]):not([mat-dialog-close]):not([type="button"]) {
+      background-color: var(--color-secondary) !important;
+      color: var(--color-on-secondary) !important;
+      border: none !important;
+      
+      &:hover:not([disabled]) {
+        background-color: #ffdea4 !important;
+      }
+      
+      &[disabled] {
+        opacity: 0.3;
+        background-color: var(--color-surface-bright) !important;
+        color: var(--color-outline) !important;
+        cursor: not-allowed;
+      }
+    }
+
+    &[matStepperPrevious] {
+      background-color: transparent !important;
+      color: var(--color-on-surface-variant) !important;
+      border: 1px solid var(--glass-border) !important;
+      
+      &:hover {
+        background-color: rgba(228, 194, 133, 0.05) !important;
+        color: var(--color-secondary) !important;
+      }
+    }
   }
 
   .step-actions {
     display: flex;
     gap: 12px;
-    margin-top: 16px;
+    margin-top: 24px;
   }
 
   .room-list {
@@ -31,27 +68,45 @@
     flex-direction: column;
     gap: 16px;
     margin-bottom: 24px;
+    max-width: 700px;
 
     .room-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 16px;
-      border: 1px solid rgba(0, 0, 0, 0.12);
-      border-radius: 8px;
-      background-color: #fafafa;
+      padding: 20px;
+      @include glass-panel;
+      border-radius: 4px;
       gap: 16px;
 
       p {
+        @include font-body-md;
+        color: var(--color-on-surface);
         margin: 0;
         flex: 1;
+        line-height: 1.5;
       }
 
       .qty-controls {
         display: flex;
         align-items: center;
-        gap: 12px;
-        font-weight: 500;
+        gap: 16px;
+        @include font-body-lg;
+        color: var(--color-secondary);
+
+        button {
+          color: var(--color-secondary) !important;
+          border: 1px solid var(--glass-border) !important;
+          background-color: rgba(228, 194, 133, 0.03) !important;
+          
+          &:hover:not([disabled]) {
+            background-color: rgba(228, 194, 133, 0.1) !important;
+          }
+          
+          &[disabled] {
+            opacity: 0.3;
+          }
+        }
       }
     }
   }
@@ -59,33 +114,47 @@
   .amenity-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
     margin-bottom: 24px;
+    max-width: 500px;
+    
+    mat-checkbox {
+      color: var(--color-on-surface);
+      font-family: var(--font-body);
+      @include font-body-md;
+    }
   }
 
   .warning {
-    color: #f44336;
+    color: var(--color-error);
     font-weight: 500;
     margin-bottom: 16px;
+    @include font-body-md;
   }
 
   .summary {
-    background-color: #f5f5f5;
-    padding: 20px;
-    border-radius: 8px;
+    @include glass-panel;
+    padding: 24px;
+    border-radius: 4px;
     margin-bottom: 24px;
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    max-width: 600px;
+    color: var(--color-on-surface);
 
     h3 {
+      @include font-headline-sm;
+      color: var(--color-secondary);
       margin-top: 0;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
 
     h4 {
-      margin-top: 16px;
-      margin-bottom: 8px;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-      padding-bottom: 4px;
+      @include font-body-lg;
+      color: var(--color-secondary);
+      font-weight: 600;
+      margin-top: 24px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--glass-border);
+      padding-bottom: 6px;
     }
 
     ul {
@@ -94,7 +163,19 @@
     }
 
     li {
-      margin-bottom: 6px;
+      @include font-body-md;
+      margin-bottom: 8px;
+    }
+
+    p {
+      @include font-body-lg;
+      margin-top: 24px;
+      margin-bottom: 0;
+      
+      strong {
+        color: var(--color-secondary);
+        font-size: 1.1em;
+      }
     }
   }
 }
@@ -111,7 +192,7 @@
       .room-item {
         flex-direction: column;
         align-items: flex-start;
-        gap: 12px;
+        gap: 16px;
 
         .qty-controls {
           align-self: flex-end;
@@ -120,3 +201,4 @@
     }
   }
 }
+

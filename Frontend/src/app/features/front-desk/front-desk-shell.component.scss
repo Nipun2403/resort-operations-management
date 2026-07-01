@@ -1,16 +1,25 @@
+@import '../../../styles/theme/index';
+
 mat-sidenav-container {
   height: 100vh;
   width: 100%;
+  background-color: var(--color-background);
 }
 
 mat-sidenav {
   width: 250px;
-  border-right: 1px solid rgba(0, 0, 0, 0.12);
+  background-color: var(--color-surface);
+  border-right: 1px solid var(--glass-border);
 
   mat-toolbar {
     position: sticky;
     top: 0;
     z-index: 2;
+    background-color: var(--color-surface-dim);
+    color: var(--color-secondary);
+    font-family: var(--font-headline);
+    border-bottom: 1px solid var(--glass-border);
+    @include font-headline-sm;
   }
 }
 
@@ -18,11 +27,22 @@ mat-sidenav-content {
   display: flex;
   flex-direction: column;
   height: 100%;
+  background-color: var(--color-background);
 
   mat-toolbar {
     position: sticky;
     top: 0;
     z-index: 2;
+    background-color: var(--color-surface-dim);
+    color: var(--color-on-surface);
+    border-bottom: 1px solid var(--glass-border);
+    font-family: var(--font-body);
+
+    span {
+      @include font-body-lg;
+      font-weight: 500;
+      color: var(--color-on-surface);
+    }
   }
 }
 
@@ -35,15 +55,44 @@ mat-sidenav-content {
   flex-grow: 1;
   overflow-y: auto;
   box-sizing: border-box;
+  background-color: var(--color-background);
 }
 
-.active {
-  background-color: rgba(63, 81, 181, 0.08);
-  color: #3f51b5 !important;
-  font-weight: 500;
+mat-nav-list {
+  padding-top: 8px !important;
 
-  mat-icon {
-    color: #3f51b5;
+  a[mat-list-item] {
+    color: var(--color-on-surface-variant) !important;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+    margin: 4px 8px;
+    border-radius: 4px;
+    height: 48px;
+
+    mat-icon {
+      color: var(--color-on-surface-variant) !important;
+      transition: color 0.3s ease;
+    }
+
+    &:hover {
+      background-color: rgba(228, 194, 133, 0.05) !important;
+      color: var(--color-secondary) !important;
+
+      mat-icon {
+        color: var(--color-secondary) !important;
+      }
+    }
+
+    &.active {
+      background-color: rgba(93, 69, 20, 0.1) !important;
+      color: var(--color-secondary) !important;
+      border-left: 3px solid var(--color-secondary);
+      font-weight: 500;
+
+      mat-icon {
+        color: var(--color-secondary) !important;
+      }
+    }
   }
 }
 
@@ -52,3 +101,4 @@ mat-sidenav-content {
     padding: 16px;
   }
 }
+

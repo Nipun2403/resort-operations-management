@@ -1,19 +1,52 @@
+@import '../../../../../../styles/theme/index';
+
 .bill-summary {
+  @include glass-panel;
+  padding: 16px;
+  border-radius: 4px;
+  
   p {
     margin: 8px 0;
+    @include font-body-md;
+    color: var(--color-on-surface);
+    
+    strong {
+      color: var(--color-secondary);
+      font-weight: 500;
+    }
   }
 }
 
 .actions {
   button {
     min-width: 140px;
+    @include font-label-caps;
+    border-radius: 4px !important;
+    height: 38px;
+    font-weight: 600;
+    
+    &[color="primary"] {
+      background-color: var(--color-secondary) !important;
+      color: var(--color-on-secondary) !important;
+      &:hover {
+        background-color: #ffdea4 !important;
+      }
+    }
   }
 }
 
 .confirmation {
   text-align: center;
+  
+  mat-icon {
+    color: var(--color-secondary) !important;
+  }
+  
   p {
     font-size: 1.1rem;
-    color: #2e7d32;
+    color: var(--color-secondary) !important;
+    font-family: var(--font-body);
+    font-weight: 500;
   }
 }
+

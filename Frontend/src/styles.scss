@@ -105,67 +105,300 @@ svg {
   .mat-mdc-snackbar-surface { background: transparent; box-shadow: none; }
 }
 
-// ── Material Datepicker theme overrides ────────────────
-.mat-datepicker-content {
-  background-color: var(--color-surface-container) !important;
-  border: 1px solid rgba(228, 194, 133, 0.3) !important;
+// ── CDK Overlay backdrop blur ────────────────────────
+.cdk-overlay-backdrop {
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  background-color: rgba(19, 20, 17, 0.6) !important;
+}
+
+// ── Material dialog surface global overrides ──────────
+.mat-mdc-dialog-container {
+  .mdc-dialog__container {
+    .mdc-dialog__surface {
+      background-color: var(--color-surface-container) !important;
+      border: 1px solid var(--glass-border) !important;
+      border-radius: 4px !important;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6) !important;
+    }
+  }
+}
+
+.mat-mdc-dialog-title {
+  font-family: var(--font-headline) !important;
+  color: var(--color-secondary) !important;
+  @include font-headline-sm;
+  padding: 20px 24px 12px !important;
+  border-bottom: 1px solid rgba(228, 194, 133, 0.15) !important;
+}
+
+.mat-mdc-dialog-content {
   color: var(--color-on-surface) !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
-  border-radius: 12px !important;
-  backdrop-filter: blur(15px) !important;
-  -webkit-backdrop-filter: blur(15px) !important;
+  font-family: var(--font-body) !important;
+  @include font-body-md;
+  padding: 20px 24px !important;
+}
+
+.mat-mdc-dialog-actions {
+  padding: 12px 24px !important;
+  border-top: 1px solid rgba(228, 194, 133, 0.15) !important;
+  gap: 12px !important;
   
-  .mat-calendar {
+  button {
     font-family: var(--font-body) !important;
+    @include font-label-caps;
+    border-radius: 4px !important;
+    height: 38px;
+    padding: 0 16px !important;
+    
+    &.mat-mdc-button {
+      color: var(--color-on-surface-variant) !important;
+      &:hover {
+        background-color: rgba(228, 194, 133, 0.05) !important;
+        color: var(--color-secondary) !important;
+      }
+    }
+    
+    &.mat-mdc-raised-button, &.mat-raised-button {
+      background-color: var(--color-secondary) !important;
+      color: var(--color-on-secondary) !important;
+      font-weight: 600 !important;
+      border: none !important;
+      &:hover {
+        background-color: #ffdea4 !important;
+      }
+    }
+  }
+}
+
+// ── Material Menu Global overrides ──────────────────
+.mat-mdc-menu-panel {
+  background-color: var(--color-surface-container) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: 4px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  
+  .mat-mdc-menu-item {
+    font-family: var(--font-body) !important;
+    @include font-body-md;
+    color: var(--color-on-surface) !important;
+    height: 44px !important;
+    
+    mat-icon {
+      color: var(--color-on-surface-variant) !important;
+      margin-right: 12px !important;
+    }
+    
+    &:hover {
+      background-color: rgba(228, 194, 133, 0.08) !important;
+      color: var(--color-secondary) !important;
+      
+      mat-icon {
+        color: var(--color-secondary) !important;
+      }
+    }
+  }
+}
+
+// ── Material Select & Option Global overrides ───────
+.mat-mdc-select-panel {
+  background-color: var(--color-surface-container) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: 4px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+  
+  .mat-mdc-option {
+    font-family: var(--font-body) !important;
+    @include font-body-md;
+    color: var(--color-on-surface) !important;
+    
+    &:hover:not(.mdc-list-item--disabled) {
+      background-color: rgba(228, 194, 133, 0.08) !important;
+      color: var(--color-secondary) !important;
+    }
+    
+    &.mdc-list-item--selected:not(.mdc-list-item--disabled) {
+      background-color: rgba(228, 194, 133, 0.15) !important;
+      .mdc-list-item__primary-text {
+        color: var(--color-secondary) !important;
+      }
+    }
+  }
+}
+
+// ── Material Cards Global override ──────────────────
+mat-card, .mat-mdc-card {
+  background-color: var(--color-surface-container) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: 4px !important;
+  color: var(--color-on-surface) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+}
+
+// ── Material Tab Group Global overrides ──────────────
+.mat-mdc-tab-group {
+  background-color: transparent !important;
+  
+  .mat-mdc-tab-header {
+    border-bottom: 1px solid var(--glass-border) !important;
+  }
+  
+  .mat-mdc-tab {
+    font-family: var(--font-body) !important;
+    @include font-label-caps;
+    color: var(--color-on-surface-variant) !important;
+    height: 48px !important;
+    opacity: 0.7;
+    
+    &.mdc-tab--active {
+      opacity: 1;
+      .mdc-tab__text-label {
+        color: var(--color-secondary) !important;
+      }
+    }
+    
+    &:hover {
+      background-color: rgba(228, 194, 133, 0.03) !important;
+      opacity: 1;
+      .mdc-tab__text-label {
+        color: var(--color-secondary) !important;
+      }
+    }
+  }
+  
+  .mat-mdc-tab-labels {
     background-color: transparent !important;
   }
-  
-  .mat-calendar-header {
-    color: var(--color-secondary) !important;
-    .mat-calendar-arrow {
-      fill: var(--color-secondary) !important;
-    }
-    .mat-calendar-previous-button, 
-    .mat-calendar-next-button {
-      color: var(--color-secondary) !important;
-    }
-  }
 
-  .mat-calendar-table-header {
-    color: var(--color-outline) !important;
-  }
-
-  .mat-calendar-body-label {
-    color: var(--color-secondary) !important;
-  }
-
-  .mat-calendar-body-cell-content {
-    color: var(--color-on-surface) !important;
-    border-radius: 50% !important;
-    border: 1px solid transparent !important;
-    transition: all 0.2s ease-in-out !important;
-    &:hover {
-      background-color: rgba(228, 194, 133, 0.1) !important;
-      color: var(--color-secondary) !important;
-      border-color: rgba(228, 194, 133, 0.3) !important;
-    }
-  }
-
-  .mat-calendar-body-selected {
-    background-color: var(--color-secondary) !important;
-    color: var(--color-on-secondary) !important;
-    font-weight: 600 !important;
-  }
-
-  .mat-calendar-body-today {
+  .mdc-tab-indicator__content--activated {
     border-color: var(--color-secondary) !important;
-    background-color: rgba(228, 194, 133, 0.05) !important;
+  }
+  
+  .mat-mdc-tab-body-wrapper {
+    padding-top: 16px;
+    background-color: transparent !important;
+  }
+}
+
+// ── Material Expansion Panel Global overrides ─────
+.mat-expansion-panel {
+  background-color: var(--color-surface-container) !important;
+  color: var(--color-on-surface) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: 4px !important;
+  
+  .mat-expansion-panel-header {
+    font-family: var(--font-body) !important;
+    @include font-body-lg;
+    color: var(--color-secondary) !important;
+    
+    .mat-panel-title {
+      color: var(--color-secondary) !important;
+    }
+    
+    &:hover {
+      background-color: rgba(228, 194, 133, 0.05) !important;
+    }
+  }
+  
+  .mat-expansion-panel-content {
+    background-color: transparent !important;
+    color: var(--color-on-surface) !important;
+  }
+}
+
+// ── Material Stepper Global overrides ───────────────
+.mat-stepper-horizontal, .mat-stepper-vertical {
+  background-color: transparent !important;
+  font-family: var(--font-body) !important;
+  
+  .mat-step-header {
+    &:hover {
+      background-color: rgba(228, 194, 133, 0.05) !important;
+    }
+    
+    .mat-step-icon {
+      background-color: var(--color-surface-bright) !important;
+      color: var(--color-on-surface) !important;
+      
+      &.mat-step-icon-selected {
+        background-color: var(--color-secondary) !important;
+        color: var(--color-on-secondary) !important;
+      }
+      
+      &.mat-step-icon-state-edit {
+        background-color: var(--color-secondary) !important;
+        color: var(--color-on-secondary) !important;
+      }
+    }
+    
+    .mat-step-label {
+      color: var(--color-on-surface-variant) !important;
+      @include font-label-caps;
+      font-size: 11px;
+      
+      &.mat-step-label-active {
+        color: var(--color-secondary) !important;
+        font-weight: 600;
+      }
+      
+      &.mat-step-label-selected {
+        color: var(--color-secondary) !important;
+      }
+    }
   }
 
-  // Active hover/focus visual states
+  .mat-stepper-horizontal-line {
+    border-top-color: var(--glass-border) !important;
+  }
+}
+
+// ── Status Badge / Chips Utility ───────────────────
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-family: var(--font-body);
+  @include font-label-caps;
+  font-size: 10px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  
+  &.status-pending, &.Pending, &.status-ordered, &.Ordered {
+    background-color: rgba(245, 158, 11, 0.1);
+    border-color: rgba(245, 158, 11, 0.3);
+    color: #f59e0b;
+  }
+  
+  &.status-inprogress, &.InProgress, &.status-preparing, &.Preparing, &.status-active, &.Active {
+    background-color: rgba(228, 194, 133, 0.1);
+    border-color: rgba(228, 194, 133, 0.3);
+    color: var(--color-secondary);
+  }
+  
+  &.status-completed, &.Completed, &.status-delivered, &.Delivered, &.status-paid, &.Paid, &.status-checkedin, &.CheckedIn {
+    background-color: rgba(16, 185, 129, 0.1);
+    border-color: rgba(16, 185, 129, 0.3);
+    color: #10b981;
+  }
+  
+  &.status-cancelled, &.Cancelled, &.status-error, &.Error, &.status-failed, &.Failed {
+    background-color: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+  }
+}
+
+// Active hover/focus visual states (Calendar)
+.mat-datepicker-content {
   .mat-calendar-body-active {
     .mat-calendar-body-cell-content {
       border-color: var(--color-secondary) !important;
     }
   }
 }
+

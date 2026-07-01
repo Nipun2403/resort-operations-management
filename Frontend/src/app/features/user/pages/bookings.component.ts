@@ -41,8 +41,7 @@ export class BookingsComponent implements OnInit {
   ngOnInit(): void {
     this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       if (params['new'] === 'true') {
-        this.viewMode.setValue('new'); // switch to new booking view
-        // Set pre‑fill values
+        this.viewMode.setValue('new');
         this.initialCheckIn = params['checkIn'] ? new Date(params['checkIn']) : null;
         this.initialCheckOut = params['checkOut'] ? new Date(params['checkOut']) : null;
         this.initialGuests = params['guests'] ? +params['guests'] : null;
@@ -53,21 +52,34 @@ export class BookingsComponent implements OnInit {
     this.authApi
       .getMe()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((me) => {
-        const given =
-          me.claims?.find(
-            (c) => c.type === 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname',
-          )?.value ?? '';
-        const surname =
-          me.claims?.find(
-            (c) => c.type === 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname',
-          )?.value ?? '';
-        const email =
-          me.claims?.find(
-            (c) => c.type === 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name',
-          )?.value ?? '';
-        this.userEmail.set(email);
-        this.userProfile.set({ firstName: given, lastName: surname, email });
+      .subscribe({
+        next: (me: any) => {
+          let email = '';
+          let firstName = '';
+          let lastName = '';
+
+          // Try claims array first (JWT style)
+          if (Array.isArray(me.claims)) {
+            const findClaim = (type: string) =>
+              me.claims.find((c: any) => c.type === type)?.value ?? '';
+
+            firstName = findClaim('http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname');
+            lastName = findClaim('http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname');
+            email = findClaim('http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name');
+          } else {
+            // Fallback to flat object (like ProfileComponent)
+            email = me.email ?? '';
+            firstName = me.firstName ?? '';
+            lastName = me.lastName ?? '';
+          }
+
+          this.userEmail.set(email);
+          this.userProfile.set({ firstName, lastName, email });
+        },
+        error: (err) => {
+          console.error('Failed to load user profile:', err);
+          this.userProfile.set(null);
+        },
       });
   }
 

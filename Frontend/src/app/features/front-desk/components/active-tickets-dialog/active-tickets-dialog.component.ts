@@ -18,6 +18,7 @@ import { TicketListComponent } from '../ticket-list/ticket-list.component';
     TicketListComponent,
   ],
   templateUrl: './active-tickets-dialog.component.html',
+  styleUrls: ['./active-tickets-dialog.component.scss'],
 })
 export class ActiveTicketsDialogComponent {
   data = inject<{

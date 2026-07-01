@@ -1,27 +1,120 @@
+@import '../../../../styles/theme/index';
+
 .guest-details {
   padding: 16px;
 
   .header {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 16px;
+    gap: 16px;
+    margin-bottom: 24px;
+
+    button {
+      color: var(--color-secondary) !important;
+    }
+
+    h1 {
+      @include font-headline-md;
+      color: var(--color-secondary);
+      margin: 0;
+    }
   }
 
   .tab-content {
-    padding-top: 16px;
+    padding-top: 24px;
+    color: var(--color-on-surface);
+  }
+
+  .profile-info {
+    @include glass-panel;
+    padding: 24px;
+    border-radius: 4px;
+    margin-bottom: 24px;
+    max-width: 600px;
+
+    h3 {
+      @include font-headline-sm;
+      color: var(--color-secondary);
+      margin-top: 0;
+      margin-bottom: 16px;
+    }
+
+    p {
+      @include font-body-md;
+      margin-bottom: 12px;
+      line-height: 1.6;
+      strong {
+        color: var(--color-secondary);
+        font-weight: 500;
+      }
+    }
   }
 
   .booking-item {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 12px;
-    margin-bottom: 12px;
+    @include glass-panel;
+    border-radius: 4px;
+    padding: 20px;
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    p {
+      @include font-body-md;
+      margin: 0;
+      strong {
+        color: var(--color-secondary);
+        font-weight: 500;
+      }
+    }
 
     .actions {
       display: flex;
-      gap: 8px;
+      gap: 12px;
       flex-wrap: wrap;
+
+      button {
+        @include font-label-caps;
+        border-radius: 4px !important;
+        height: 38px;
+        font-weight: 600;
+
+        &[color="primary"] {
+          background-color: var(--color-secondary) !important;
+          color: var(--color-on-secondary) !important;
+          &:hover {
+            background-color: #ffdea4 !important;
+          }
+        }
+
+        &[color="warn"] {
+          background-color: var(--color-error-container) !important;
+          color: var(--color-on-error-container) !important;
+          &:hover {
+            background-color: #ffdad6 !important;
+          }
+        }
+
+        &[color="accent"] {
+          background-color: var(--color-surface-bright) !important;
+          color: var(--color-secondary) !important;
+          border: 1px solid var(--color-secondary) !important;
+          &:hover {
+            background-color: rgba(228, 194, 133, 0.1) !important;
+          }
+        }
+
+        &:not([color]) {
+          background-color: transparent !important;
+          color: var(--color-on-surface) !important;
+          border: 1px solid var(--glass-border) !important;
+          &:hover {
+            background-color: rgba(228, 194, 133, 0.05) !important;
+            color: var(--color-secondary) !important;
+          }
+        }
+      }
     }
   }
 }
+
