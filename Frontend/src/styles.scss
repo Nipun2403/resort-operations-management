@@ -253,7 +253,7 @@ mat-card, .mat-mdc-card {
     opacity: 0.7;
     
     .mdc-tab__text-label {
-      color: inherit !important;
+      color: var(--color-on-surface-variant) !important;
     }
     
     &.mdc-tab--active, &.mdc-tab--activated, &.mat-mdc-tab-active {
