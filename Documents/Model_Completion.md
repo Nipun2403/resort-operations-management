@@ -5649,6 +5649,7 @@ FILES MODIFIED (existing files updated per spec)
 ✓ src/app/features/user/pages/room-service.component.scss — Configured variables, fonts, glass effects, custom tab rules, and deep overrides for mat-select dropdown options.
 ✓ src/app/features/user/pages/room-service.component.html — Integrated dynamic header, custom Compass of Service tab bar, and conditional components loading.
 ✓ src/app/features/user/pages/room-service.component.ts — Implemented activeTab signal, selectTab helper, and pageTitle computed signal for dynamic headers.
+✓ src/app/features/user/user-shell.component.scss — Increased z-index of mobile backdrop and sidebar drawers to sit on top of all sticky elements on mobile.
 ✓ src/app/features/user/components/food-order/food-order.component.scss — Configured flex layout for menu grid & persistent desktop cart sidebar.
 ✓ src/app/features/user/components/food-order/food-order.component.html — Configured structured delivery select field row.
 ✓ src/app/features/user/components/food-order/menu-grid.component.ts — Integrated dynamic descriptions and Unsplash images mappings.
