@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { AvailableRoomType } from '../models/available-room-type.model';
 import { PaginatedResponse } from '../../../core/models/paginated-response.model';
+import { RoomType } from '../../admin/models/room-type.model';
 
 @Injectable({ providedIn: 'root' })
 export class RoomTypeApiService {
@@ -25,7 +26,7 @@ export class RoomTypeApiService {
     return this.http.get<PaginatedResponse<AvailableRoomType>>(`${this.baseUrl}/availability`, { params });
   }
 
-  getById(id: number): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/${id}`);
+  getById(id: number): Observable<RoomType> {
+    return this.http.get<RoomType>(`${this.baseUrl}/${id}`);
   }
 }

@@ -34,7 +34,7 @@
     padding: 0 var(--margin-mobile);
 
     @media (max-width: 768px) {
-        transform: translateY(-140px); 
+        transform: translateY(-160px); 
     }
 
   // transform: translateY(-120px); 
@@ -336,6 +336,6 @@
 
 // Ken Burns animation
 @keyframes kenburns {
-  from { transform: scale(1.05); }
+  from { transform: scale(1.0); }
   to { transform: scale(1.1); }
 }

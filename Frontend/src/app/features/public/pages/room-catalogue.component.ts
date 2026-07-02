@@ -1,6 +1,6 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -22,6 +22,7 @@ import { RoomType } from '../../admin/models/room-type.model';
 export class RoomCatalogueComponent implements OnInit {
   private roomTypeApi = inject(RoomTypeApiService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private destroyRef = inject(DestroyRef);
 
   rooms = signal<RoomType[]>([]);
@@ -47,6 +48,15 @@ export class RoomCatalogueComponent implements OnInit {
   private readonly ANIMATION_DURATION = 600; // ms
 
   ngOnInit(): void {
+    this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
+      const page = Number(params.get('page'));
+      if (Number.isFinite(page) && page > 0) {
+        this.currentGroupIndex.set(page - 1);
+      } else {
+        this.currentGroupIndex.set(0);
+      }
+    });
+
     this.fetchRooms();
     window.scrollTo({ top: 0 });
   }
@@ -57,7 +67,12 @@ export class RoomCatalogueComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
       finalize(() => this.loading.set(false))
     ).subscribe({
-      next: res => this.rooms.set(res.data),
+      next: res => {
+        this.rooms.set(res.data);
+        if (this.currentGroupIndex() > this.totalGroups() - 1) {
+          this.currentGroupIndex.set(0);
+        }
+      },
       error: (err: any) => this.error.set(this.extractErrorMessage(err))
     });
   }
@@ -67,7 +82,9 @@ export class RoomCatalogueComponent implements OnInit {
   }
 
   viewRoom(roomId: number): void {
-    this.router.navigate(['/rooms', roomId]);
+    this.router.navigate(['/rooms', roomId], {
+      queryParams: { page: this.currentGroupIndex() + 1 }
+    });
   }
 
   subscribe(): void {
@@ -94,6 +111,10 @@ export class RoomCatalogueComponent implements OnInit {
     this.isTransitioning.set(true);
     setTimeout(() => {
       updateFn();
+      this.router.navigate(['/rooms'], {
+        queryParams: { page: this.currentGroupIndex() + 1 },
+        replaceUrl: true
+      });
       
       // Scroll the room section into view, accounting for the fixed navbar
       const element = document.querySelector('.rooms-section');

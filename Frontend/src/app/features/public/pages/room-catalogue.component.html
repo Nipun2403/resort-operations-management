@@ -47,7 +47,7 @@
                   <span class="separator">·</span>
                   <span>{{ room.squareFootage || '—' }} sqm</span>
                 </div>
-                <a [routerLink]="['/rooms', room.id]" class="view-link">
+                <a [routerLink]="['/rooms', room.id]" [queryParams]="{ page: currentGroupIndex() + 1 }" class="view-link">
                   VIEW DETAILS <span class="arrow">→</span>
                 </a>
               </div>
