@@ -487,6 +487,16 @@ mat-nav-list {
     background-color: transparent !important;
   }
 
+  .mdc-floating-label, .mat-mdc-form-field-label {
+    color: rgba(196, 199, 199, 0.6) !important;
+  }
+
+  &.mat-focused {
+    .mdc-floating-label, .mat-mdc-form-field-label {
+      color: var(--color-secondary) !important;
+    }
+  }
+
   input.mat-mdc-input-element, textarea.mat-mdc-input-element {
     color: var(--color-on-surface) !important;
     
@@ -508,10 +518,48 @@ mat-nav-list {
 .mat-mdc-select {
   .mat-mdc-select-value {
     color: var(--color-on-surface) !important;
+    
+    .mat-mdc-select-value-text {
+      color: var(--color-on-surface) !important;
+    }
   }
   
   .mat-mdc-select-arrow {
     color: var(--color-secondary) !important;
+  }
+}
+
+// ── Material Option & Panel Global overrides ────────
+.mat-mdc-select-panel {
+  background-color: var(--color-surface) !important;
+  border: 1px solid rgba(228, 194, 133, 0.2) !important;
+}
+
+.mat-mdc-option {
+  background-color: var(--color-surface) !important;
+  color: var(--color-on-surface) !important;
+  
+  .mdc-list-item__primary-text {
+    color: var(--color-on-surface) !important;
+  }
+  
+  &:hover:not(.mdc-list-item--disabled),
+  &.mat-mdc-option-active {
+    background-color: rgba(228, 194, 133, 0.08) !important;
+    color: var(--color-secondary) !important;
+    
+    .mdc-list-item__primary-text {
+      color: var(--color-secondary) !important;
+    }
+  }
+  
+  &.mdc-list-item--selected:not(.mdc-list-item--disabled) {
+    background-color: rgba(228, 194, 133, 0.15) !important;
+    color: var(--color-secondary) !important;
+    
+    .mdc-list-item__primary-text {
+      color: var(--color-secondary) !important;
+    }
   }
 }
 
