@@ -1,4 +1,3 @@
-import { inject } from '@angular/core';
 import { Routes } from '@angular/router';
 import { AuthRedirectGuard } from './core/guards/auth-redirect.guard';
 import { adminGuard } from './core/guards/admin.guard';
@@ -9,6 +8,15 @@ import { housekeepingGuard } from './core/guards/housekeeping.guard';
 import { maintenanceGuard } from './core/guards/maintenance.guard';
 
 export const routes: Routes = [
+  {
+    path: 'error/:status',
+    loadComponent: () => import('./features/error-page/error-page.component').then(m => m.ErrorPageComponent),
+  },
+  {
+    path: 'error',
+    redirectTo: 'error/500',
+    pathMatch: 'full',
+  },
   {
     path: 'auth',
     loadComponent: () => import('./features/auth/auth-page.component')
@@ -54,7 +62,7 @@ export const routes: Routes = [
           .then(m => m.ProfileComponent),
         data: { title: 'Profile' }
       },
-      { path: '**', redirectTo: 'dashboard' }
+      { path: '**', redirectTo: '/error/404' }
     ]
   },
   {
@@ -85,7 +93,7 @@ export const routes: Routes = [
         loadComponent: () => import('./shared/components/profile/profile.component')
           .then(m => m.ProfileComponent)
       },
-      { path: '**', redirectTo: 'dashboard' }
+      { path: '**', redirectTo: '/error/404' }
     ]
   },
   {
@@ -117,7 +125,7 @@ export const routes: Routes = [
           .then(m => m.GuestDetailsComponent),
         canActivate: [frontDeskGuard]
       },
-      { path: '**', redirectTo: 'dashboard' }
+      { path: '**', redirectTo: '/error/404' }
     ]
   },
   {
@@ -145,7 +153,7 @@ export const routes: Routes = [
           .then(m => m.ProfileComponent),
         canActivate: [kitchenGuard]
       },
-      { path: '**', redirectTo: 'dashboard' }
+      { path: '**', redirectTo: '/error/404' }
     ]
   },
   {
@@ -167,7 +175,7 @@ export const routes: Routes = [
           .then(m => m.ProfileComponent),
         canActivate: [housekeepingGuard]
       },
-      { path: '**', redirectTo: 'dashboard' }
+      { path: '**', redirectTo: '/error/404' }
     ]
   },
   {
@@ -240,9 +248,7 @@ export const routes: Routes = [
         loadComponent: () => import('./features/public/pages/contact.component')
           .then(m => m.ContactComponent)
       },
-      { path: '**', redirectTo: 'home' }
+      { path: '**', redirectTo: '/error/404' }
     ]
-  }
+  },
 ];
-
-
