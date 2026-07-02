@@ -1,41 +1,49 @@
-<h2 mat-dialog-title>
-  {{ data.task.type ? data.task.type + ' #' : '' }}{{ data.task.id }}
-</h2>
-<mat-dialog-content>
-  @for (section of data.detailSections; track section.title) {
-  <div class="detail-section" style="margin-bottom: 12px; margin-top: 12px;">
-    <h3 style="margin-bottom: 8px; font-weight: 500; font-size: 1.05rem;">{{ section.title }}</h3>
-    @for (field of section.fields; track field.label) {
-    <p style="margin: 4px 0;"><strong>{{ field.label }}:</strong> {{ field.value }}</p>
-    }
+<div class="dialog-container">
+  <!-- Close Button Top Right -->
+  <button mat-icon-button class="close-icon-btn" mat-dialog-close aria-label="Close dialog">
+    <mat-icon>close</mat-icon>
+  </button>
+
+  <div class="dialog-header">
+    <p class="dialog-pretitle">{{ data.task.type ? (data.task.type + ' Details') : 'ORDER DETAILS' }}</p>
+    <h2 class="dialog-title">#{{ data.task.id }}</h2>
+    <p class="dialog-subtitle">
+      {{ data.task.location }}
+    </p>
   </div>
-  <mat-divider *ngIf="!$last"></mat-divider>
-  }
-</mat-dialog-content>
-<mat-dialog-actions align="end">
-  @if (data.canStart) {
-  <button
-    mat-raised-button
-    color="primary"
-    (click)="start()"
-    style="margin-right: 8px;"
-  >
-    Start
-  </button>
-  } @if (data.canComplete) {
-  <button
-    mat-raised-button
-    color="accent"
-    (click)="complete()"
-    style="margin-right: 8px;"
-  >
-    Complete
-  </button>
-  }
-  <button
-    mat-button
-    mat-dialog-close
-  >
-    Close
-  </button>
-</mat-dialog-actions>
+
+  <mat-dialog-content class="dialog-content">
+    @for (section of data.detailSections; track section.title) {
+    <div class="detail-section">
+      <h3 class="section-title">{{ section.title | uppercase }}</h3>
+      <div class="fields-list">
+        @for (field of section.fields; track field.label) {
+        <div class="field-item">
+          <span class="field-label">{{ field.label }}</span>
+          <span class="field-value">{{ field.value }}</span>
+        </div>
+        }
+      </div>
+    </div>
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="dialog-actions-grid" [class.single-action]="!data.canStart || !data.canComplete">
+    @if (data.canStart) {
+    <button
+      class="action-btn start-btn"
+      (click)="start()"
+    >
+      START {{ (data.inProgressStatus === 'Preparing' ? 'PREPARING' : 'WORK') }}
+    </button>
+    }
+    @if (data.canComplete) {
+    <button
+      class="action-btn complete-btn"
+      (click)="complete()"
+    >
+      MARK AS {{ (data.completedStatus === 'Delivered' ? 'DELIVERED' : 'COMPLETED') }}
+    </button>
+    }
+  </mat-dialog-actions>
+</div>

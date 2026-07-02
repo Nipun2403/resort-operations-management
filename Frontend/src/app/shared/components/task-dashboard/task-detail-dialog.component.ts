@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatDialogModule, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
 
 import { Task, DetailSection } from '../../models/task.model';
 
@@ -14,8 +15,10 @@ import { Task, DetailSection } from '../../models/task.model';
     MatDialogModule,
     MatButtonModule,
     MatDividerModule,
+    MatIconModule,
   ],
   templateUrl: './task-detail-dialog.component.html',
+  styleUrls: ['./task-detail-dialog.component.scss'],
 })
 export class TaskDetailDialogComponent {
   private readonly dialogRef = inject(MatDialogRef<TaskDetailDialogComponent>);
