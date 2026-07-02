@@ -39,7 +39,8 @@
     </div>
     <div class="bill-row" style="margin-top: 12px;">
       <span class="bill-label">Payment Status:</span>
-      <span class="bill-value" [style.color]="folio()!.paymentStatus === 'Paid' ? 'green' : 'red'">
+      <span class="bill-value"
+        [style.color]="folio()!.paymentStatus === 'Paid' ? 'var(--color-secondary)' : 'var(--color-error)'">
         {{ folio()!.paymentStatus }}
       </span>
     </div>

@@ -37,10 +37,10 @@
     <h3>Rooms Included</h3>
     @if (enrichedRooms().length > 0) {
       @for (room of enrichedRooms(); track room.id) {
-        <div class="room-item" style="margin-bottom: 12px; padding: 8px; border-left: 3px solid #1976d2; background: #f9f9f9; border-radius: 0 4px 4px 0;">
-          <p style="margin: 0 0 4px 0;"><strong>Room:</strong> {{ room.roomNumber ?? 'Unassigned' }}</p>
-          <p style="margin: 0 0 4px 0;"><strong>Type:</strong> {{ room.roomTypeName }}</p>
-          <p style="margin: 0;"><strong>Price:</strong> {{ room.lockedInPrice | currency }}</p>
+        <div class="room-item" style="margin-bottom: 12px; padding: 8px; border-left: 3px solid var(--color-secondary); background: var(--color-surface-container); border-radius: 0 4px 4px 0;">
+          <p style="margin: 0 0 4px 0; color: var(--color-on-surface-variant);"><strong style="color: var(--color-on-surface);">Room:</strong> {{ room.roomNumber ?? 'Unassigned' }}</p>
+          <p style="margin: 0 0 4px 0; color: var(--color-on-surface-variant);"><strong style="color: var(--color-on-surface);">Type:</strong> {{ room.roomTypeName }}</p>
+          <p style="margin: 0; color: var(--color-on-surface-variant);"><strong style="color: var(--color-on-surface);">Price:</strong> {{ room.lockedInPrice | currency }}</p>
         </div>
       }
     } @else if (booking.rooms && booking.rooms.length > 0) {

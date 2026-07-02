@@ -14,6 +14,9 @@ import { finalize } from 'rxjs/operators';
   imports: [CommonModule, MatDialogModule, MatButtonModule, MatProgressSpinnerModule, AlertComponent],
   templateUrl: './billing-dialog.component.html',
   styles: [`
+    :host {
+      display: block;
+    }
     .billing-content {
       min-width: 320px;
     }
@@ -25,30 +28,34 @@ import { finalize } from 'rxjs/operators';
     }
     .bill-label {
       font-weight: 500;
-      color: rgba(0, 0, 0, 0.6);
+      color: var(--color-on-surface-variant);
     }
     .bill-value {
       font-weight: 600;
-      color: rgba(0, 0, 0, 0.87);
+      color: var(--color-on-surface);
     }
     .total-bill-row {
-      border-top: 1px solid rgba(0,0,0,0.12);
+      border-top: 1px solid var(--color-outline-variant);
       padding-top: 8px;
       margin-top: 8px;
       font-weight: bold;
       font-size: 1.1rem;
+      color: var(--color-on-surface);
     }
     h3 {
       margin: 16px 0 8px 0;
-      font-size: 1rem;
-      border-bottom: 1px solid #f0f0f0;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-on-surface-variant);
+      border-bottom: 1px solid var(--color-outline-variant);
       padding-bottom: 4px;
     }
     ul {
       margin: 0;
       padding-left: 20px;
       font-size: 0.9rem;
-      color: rgba(0,0,0,0.7);
+      color: var(--color-on-surface);
     }
   `]
 })
