@@ -8,20 +8,42 @@
     <p class="dialog-pretitle">{{ data.task.type ? (data.task.type + ' Details') : 'ORDER DETAILS' }}</p>
     <h2 class="dialog-title">#{{ data.task.id }}</h2>
     <p class="dialog-subtitle">
-      {{ data.task.location }}
+      {{ data.task.location }} @if (data.task.createdAt) { • Ordered at {{ data.task.createdAt | date:'shortTime' }} }
     </p>
   </div>
 
   <mat-dialog-content class="dialog-content">
+    <!-- If it's a Food Order with Items, show them first in Stitch format -->
+    @if (data.task.raw && data.task.raw.orderItems && data.task.raw.orderItems.length > 0) {
+    <div class="detail-section">
+      <h3 class="section-title">ITEMS</h3>
+      <div class="items-list">
+        @for (item of data.task.raw.orderItems; track item.menuItemId) {
+        <div class="item-row">
+          <div class="item-info">
+            <p class="item-name">{{ item.menuItemName || 'Item #' + item.menuItemId }}</p>
+            @if (item.notes) {
+            <p class="item-notes">{{ item.notes }}</p>
+            }
+          </div>
+          <span class="item-qty">x{{ item.quantity }}</span>
+        </div>
+        }
+      </div>
+    </div>
+    }
+
     @for (section of data.detailSections; track section.title) {
     <div class="detail-section">
       <h3 class="section-title">{{ section.title | uppercase }}</h3>
       <div class="fields-list">
         @for (field of section.fields; track field.label) {
+        @if (field.label !== 'Items') {
         <div class="field-item">
           <span class="field-label">{{ field.label }}</span>
           <span class="field-value">{{ field.value }}</span>
         </div>
+        }
         }
       </div>
     </div>
