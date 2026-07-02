@@ -1,15 +1,7 @@
-<mat-stepper
-  linear
-  #stepper
-  [orientation]="isMobile() ? 'vertical' : 'horizontal'"
-  (selectionChange)="onStepChange($event)"
-  class="custom-stepper"
->
+<mat-stepper linear #stepper [orientation]="isMobile() ? 'vertical' : 'horizontal'"
+  (selectionChange)="onStepChange($event)" class="custom-stepper">
   <!-- Step 1: Dates & Guests -->
-  <mat-step
-    [stepControl]="datesForm"
-    label="Dates & Guests"
-  >
+  <mat-step [stepControl]="datesForm" label="Dates & Guests">
     <form [formGroup]="datesForm" class="stepper-form">
       <div class="step-header">
         <h3 class="step-title">I. Temporal Anchors</h3>
@@ -19,35 +11,25 @@
       <div class="dates-inputs-grid">
         <mat-form-field class="custom-form-field">
           <mat-label>Check‑in</mat-label>
-          <input
-            matInput
-            [matDatepicker]="cinPicker"
-            formControlName="checkInDate"
-            required
-          />
+          <input matInput [matDatepicker]="cinPicker" formControlName="checkInDate" required />
           <mat-datepicker-toggle matIconSuffix [for]="cinPicker">
             <mat-icon matDatepickerToggleIcon>calendar_month</mat-icon>
           </mat-datepicker-toggle>
           <mat-datepicker #cinPicker></mat-datepicker>
           @if (datesForm.get('checkInDate')?.touched && datesForm.get('checkInDate')?.invalid) {
-            <mat-error>Check‑in date is required.</mat-error>
+          <mat-error>Check‑in date is required.</mat-error>
           }
         </mat-form-field>
 
         <mat-form-field class="custom-form-field">
           <mat-label>Check‑out</mat-label>
-          <input
-            matInput
-            [matDatepicker]="coutPicker"
-            formControlName="checkOutDate"
-            required
-          />
+          <input matInput [matDatepicker]="coutPicker" formControlName="checkOutDate" required />
           <mat-datepicker-toggle matIconSuffix [for]="coutPicker">
             <mat-icon matDatepickerToggleIcon>calendar_month</mat-icon>
           </mat-datepicker-toggle>
           <mat-datepicker #coutPicker></mat-datepicker>
           @if (datesForm.get('checkOutDate')?.touched && datesForm.get('checkOutDate')?.invalid) {
-            <mat-error>Check‑out date is required.</mat-error>
+          <mat-error>Check‑out date is required.</mat-error>
           }
         </mat-form-field>
 
@@ -57,33 +39,28 @@
             <option [ngValue]="1">Solo Sojourn (1)</option>
             <option [ngValue]="2">Duo Sanctuary (2)</option>
             @for (n of [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]; track n) {
-              <option [ngValue]="n">The Private Council ({{ n }})</option>
+            <option [ngValue]="n">The Private Council ({{ n }})</option>
             }
           </select>
           @if (datesForm.get('guestCount')?.touched && datesForm.get('guestCount')?.invalid) {
-            <span class="custom-error">Guests count must be between 1 and 20.</span>
+          <span class="custom-error">Guests count must be between 1 and 20.</span>
           }
         </div>
       </div>
 
       @if (datesForm.touched && datesForm.errors) {
-        <div class="form-error glass-panel">
-          @if (datesForm.errors['checkInInPast']) {
-            <p><mat-icon class="err-icon">error</mat-icon> Check‑in date cannot be in the past.</p>
-          }
-          @if (datesForm.errors['checkOutBeforeCheckIn']) {
-            <p><mat-icon class="err-icon">error</mat-icon> Check‑out date must be strictly after Check‑in date.</p>
-          }
-        </div>
+      <div class="form-error glass-panel">
+        @if (datesForm.errors['checkInInPast']) {
+        <p><mat-icon class="err-icon">error</mat-icon> Check‑in date cannot be in the past.</p>
+        }
+        @if (datesForm.errors['checkOutBeforeCheckIn']) {
+        <p><mat-icon class="err-icon">error</mat-icon> Check‑out date must be strictly after Check‑in date.</p>
+        }
+      </div>
       }
 
       <div class="actions">
-        <button
-          class="gold-btn"
-          matStepperNext
-          [disabled]="datesForm.invalid"
-          type="button"
-        >
+        <button class="gold-btn" matStepperNext [disabled]="datesForm.invalid" type="button">
           Next
         </button>
       </div>
@@ -91,155 +68,130 @@
   </mat-step>
 
   <!-- Step 2: Room Selection -->
-  <mat-step
-    [stepControl]="roomsForm"
-    label="Select Rooms"
-  >
+  <mat-step [stepControl]="roomsForm" label="Select Rooms">
     @if (loading()) {
-      <div class="loading-container">
-        <mat-spinner diameter="40"></mat-spinner>
-      </div>
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
     } @else if (error()) {
-      <div class="error-container">
-        <app-alert type="error" [message]="error()!" (closed)="error.set(null)">
-          <button mat-button (click)="loadRooms()" class="retry-btn">Retry</button>
-        </app-alert>
-      </div>
+    <div class="error-container">
+      <app-alert type="error" [message]="error()!" (closed)="error.set(null)">
+        <button mat-button (click)="loadRooms()" class="retry-btn">Retry</button>
+      </app-alert>
+    </div>
     } @else {
-      <form [formGroup]="roomsForm" class="stepper-form">
-        <div class="step-header flex-header">
-          <div>
-            <h3 class="step-title">II. Architectural Selection</h3>
-            <p class="step-subtitle">Choose the chamber to serve as your sanctuary.</p>
-          </div>
-          <span class="scroll-tag">SCROLL TO DISCOVER</span>
+    <form [formGroup]="roomsForm" class="stepper-form">
+      <div class="step-header flex-header">
+        <div>
+          <h3 class="step-title">II. Architectural Selection</h3>
+          <p class="step-subtitle">Choose the chamber to serve as your sanctuary.</p>
         </div>
+        <span class="scroll-tag">SCROLL TO DISCOVER</span>
+      </div>
 
-        <div class="horizontal-scroll-container snap-x">
-          @for (room of availableRooms(); track room.roomTypeId) {
-            <div class="room-card glass-panel" [class.selected]="getRoomQuantity(room.roomTypeId) > 0">
-              <div class="room-image-wrapper" (click)="goToRoomDetails(room.roomTypeId)" style="cursor: pointer;" title="View Room Details" aria-label="View Room Details">
-                <img 
-                  class="room-image" 
-                  [src]="room.imageUrls && room.imageUrls.length > 0 ? room.imageUrls[0] : 'assets/placeholder-room.jpg'"
-                  [alt]="room.name"
-                >
-                <div class="image-overlay"></div>
-                @if (getRoomQuantity(room.roomTypeId) > 0) {
-                  <div class="selected-badge">SELECTED (x{{ getRoomQuantity(room.roomTypeId) }})</div>
-                }
-              </div>
-              
-              <div class="room-card-content">
-                <div class="room-header-row">
-                  <h4 class="room-card-title">{{ room.name }}</h4>
-                  <span class="room-card-price">{{ room.basePrice | currency }}/Night</span>
-                </div>
-                <p class="room-card-description">{{ room.description || 'No description available.' }}</p>
-                <div class="room-card-meta">
-                  <span>Max guests: {{ room.maxOccupancy }}</span>
-                  <span class="meta-divider">|</span>
-                  <span [style.color]="room.availableCount > 0 ? 'var(--color-secondary)' : 'var(--color-error)'">
-                    Available: {{ room.availableCount }}
-                  </span>
-                </div>
-                
-                <div class="card-quantity-selector">
-                  <button
-                    class="qty-btn"
-                    type="button"
-                    (click)="decrementRoom(room.roomTypeId)"
-                    [disabled]="getRoomQuantity(room.roomTypeId) === 0"
-                    aria-label="Remove room"
-                  >
-                    <mat-icon>remove</mat-icon>
-                  </button>
-                  <span class="qty-display">{{ getRoomQuantity(room.roomTypeId) }}</span>
-                  <button
-                    class="qty-btn"
-                    type="button"
-                    (click)="incrementRoom(room.roomTypeId)"
-                    [disabled]="getRoomQuantity(room.roomTypeId) >= room.availableCount"
-                    aria-label="Add room"
-                  >
-                    <mat-icon>add</mat-icon>
-                  </button>
-                </div>
-              </div>
+      <div class="horizontal-scroll-container snap-x">
+        @for (room of availableRooms(); track room.roomTypeId) {
+        <div class="room-card glass-panel" [class.selected]="getRoomQuantity(room.roomTypeId) > 0">
+          <div class="room-image-wrapper" (click)="goToRoomDetails(room.roomTypeId)" style="cursor: pointer;"
+            title="View Room Details" aria-label="View Room Details">
+            <img class="room-image"
+              [src]="room.imageUrls && room.imageUrls.length > 0 ? room.imageUrls[0] : 'assets/placeholder-room.jpg'"
+              [alt]="room.name">
+            <div class="image-overlay"></div>
+            @if (getRoomQuantity(room.roomTypeId) > 0) {
+            <div class="selected-badge">SELECTED (x{{ getRoomQuantity(room.roomTypeId) }})</div>
+            }
+          </div>
+
+          <div class="room-card-content">
+            <div class="room-header-row">
+              <h4 class="room-card-title">{{ room.name }}</h4>
+              <span class="room-card-price">{{ room.basePrice | currency }}/Night</span>
             </div>
-          }
-        </div>
+            <p class="room-card-description">{{ room.description || 'No description available.' }}</p>
+            <div class="room-card-meta">
+              <span>Max guests: {{ room.maxOccupancy }}</span>
+              <span class="meta-divider">|</span>
+              <span [style.color]="room.availableCount > 0 ? 'var(--color-secondary)' : 'var(--color-error)'">
+                Available: {{ room.availableCount }}
+              </span>
+            </div>
 
-        @if (capacityWarning()) {
-          <div class="form-error capacity-warning glass-panel">
-            <p><mat-icon class="err-icon">warning</mat-icon> {{ capacityWarning() }}</p>
+            <div class="card-quantity-selector">
+              <button class="qty-btn" type="button" (click)="decrementRoom(room.roomTypeId)"
+                [disabled]="getRoomQuantity(room.roomTypeId) === 0" aria-label="Remove room">
+                <mat-icon>remove</mat-icon>
+              </button>
+              <span class="qty-display">{{ getRoomQuantity(room.roomTypeId) }}</span>
+              <button class="qty-btn" type="button" (click)="incrementRoom(room.roomTypeId)"
+                [disabled]="getRoomQuantity(room.roomTypeId) >= room.availableCount" aria-label="Add room">
+                <mat-icon>add</mat-icon>
+              </button>
+            </div>
           </div>
-        }
-
-        <div class="actions">
-          <button class="ghost-btn" matStepperPrevious type="button">Back</button>
-          <button
-            class="gold-btn"
-            matStepperNext
-            [disabled]="totalSelectedQuantity() === 0 || capacityWarning() !== null"
-            type="button"
-          >
-            Next
-          </button>
         </div>
-      </form>
+        }
+      </div>
+
+      @if (capacityWarning()) {
+      <div class="form-error capacity-warning glass-panel">
+        <p><mat-icon class="err-icon">warning</mat-icon> {{ capacityWarning() }}</p>
+      </div>
+      }
+
+      <div class="actions">
+        <button class="ghost-btn" matStepperPrevious type="button">Back</button>
+        <button class="gold-btn" matStepperNext [disabled]="totalSelectedQuantity() === 0 || capacityWarning() !== null"
+          type="button">
+          Next
+        </button>
+      </div>
+    </form>
     }
   </mat-step>
 
   <!-- Step 3: Amenities -->
-  <mat-step
-    [stepControl]="amenitiesForm"
-    label="Add Amenities"
-  >
+  <mat-step [stepControl]="amenitiesForm" label="Add Amenities">
     @if (loading()) {
-      <div class="loading-container">
-        <mat-spinner diameter="40"></mat-spinner>
-      </div>
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
     } @else if (error()) {
-      <div class="error-container">
-        <app-alert type="error" [message]="error()!" (closed)="error.set(null)">
-          <button mat-button (click)="loadAmenities()" class="retry-btn">Retry</button>
-        </app-alert>
-      </div>
+    <div class="error-container">
+      <app-alert type="error" [message]="error()!" (closed)="error.set(null)">
+        <button mat-button (click)="loadAmenities()" class="retry-btn">Retry</button>
+      </app-alert>
+    </div>
     } @else {
-      <form [formGroup]="amenitiesForm" class="stepper-form">
-        <div class="step-header">
-          <h3 class="step-title">III. The Silent Luxuries</h3>
-          <p class="step-subtitle">Bespoke enhancements for an uninterrupted experience.</p>
-        </div>
+    <form [formGroup]="amenitiesForm" class="stepper-form">
+      <div class="step-header">
+        <h3 class="step-title">III. The Silent Luxuries</h3>
+        <p class="step-subtitle">Bespoke enhancements for an uninterrupted experience.</p>
+      </div>
 
-        <div class="amenities-grid">
-          @for (amenity of availableAmenities(); track amenity.id; let i = $index) {
-            <div class="amenity-card">
-              <mat-checkbox [formControl]="getAmenityControl(i)" class="custom-checkbox">
-                <div class="amenity-info">
-                  <div class="amenity-header-row">
-                    <span class="amenity-title">{{ amenity.name }}</span>
-                    <span class="amenity-price">{{ amenity.price | currency }}</span>
-                  </div>
-                  <p class="amenity-desc">{{ amenity.description }}</p>
-                </div>
-              </mat-checkbox>
+      <div class="amenities-grid">
+        @for (amenity of availableAmenities(); track amenity.id; let i = $index) {
+        <div class="amenity-card">
+          <mat-checkbox [formControl]="getAmenityControl(i)" class="custom-checkbox">
+            <div class="amenity-info">
+              <div class="amenity-header-row">
+                <span class="amenity-title">{{ amenity.name }}</span>
+                <span class="amenity-price">{{ amenity.price | currency }}</span>
+              </div>
+              <p class="amenity-desc">{{ amenity.description }}</p>
             </div>
-          }
+          </mat-checkbox>
         </div>
-        
-        <div class="actions">
-          <button class="ghost-btn" matStepperPrevious type="button">Back</button>
-          <button
-            class="gold-btn"
-            matStepperNext
-            type="button"
-          >
-            Next
-          </button>
-        </div>
-      </form>
+        }
+      </div>
+
+      <div class="actions">
+        <button class="ghost-btn" matStepperPrevious type="button">Back</button>
+        <button class="gold-btn" matStepperNext type="button">
+          Next
+        </button>
+      </div>
+    </form>
     }
   </mat-step>
 
@@ -248,7 +200,7 @@
     <div class="stepper-form">
       <div class="covenant-card glass-panel">
         <div class="covenant-texture"></div>
-        
+
         <div class="covenant-header">
           <h3 class="covenant-title">The Covenant</h3>
           <div class="covenant-divider"></div>
@@ -259,14 +211,15 @@
             <span class="row-label">THE RESIDENCE</span>
             <span class="row-value text-glow">
               @for (item of selectedRoomEntries(); track item.roomTypeId; let last = $last) {
-                {{ item.name }} (x{{ item.quantity }}){{ !last ? ', ' : '' }}
+              {{ item.name }} (x{{ item.quantity }}){{ !last ? ', ' : '' }}
               }
             </span>
           </div>
           <div class="covenant-row">
             <span class="row-label">THE INTERVAL</span>
             <span class="row-value">
-              {{ datesForm.value.checkInDate | date:'mediumDate' }} — {{ datesForm.value.checkOutDate | date:'mediumDate' }} ({{ nights() }} Nights)
+              {{ datesForm.value.checkInDate | date:'mediumDate' }} —
+              {{ datesForm.value.checkOutDate | date:'mediumDate' }} ({{ nights() }} Nights)
             </span>
           </div>
           <div class="covenant-row">
@@ -276,34 +229,29 @@
             </span>
           </div>
           @if (selectedAmenityEntries().length > 0) {
-            <div class="covenant-row">
-              <span class="row-label">SILENT LUXURIES</span>
-              <span class="row-value">
-                @for (item of selectedAmenityEntries(); track item.id; let last = $last) {
-                  {{ item.name }}{{ !last ? ', ' : '' }}
-                }
-              </span>
-            </div>
+          <div class="covenant-row">
+            <span class="row-label">SILENT LUXURIES</span>
+            <span class="row-value">
+              @for (item of selectedAmenityEntries(); track item.id; let last = $last) {
+              {{ item.name }}{{ !last ? ', ' : '' }}
+              }
+            </span>
+          </div>
           }
-          
+
           <div class="covenant-footer">
             <div class="investment-block">
               <span class="investment-label">INVESTMENT</span>
               <span class="investment-value">{{ estimatedTotal() | currency }}</span>
             </div>
-            
+
             <div class="covenant-actions">
               <button class="ghost-btn" matStepperPrevious [disabled]="loading()" type="button">Back</button>
-              <button 
-                class="gold-btn confirm-btn" 
-                [disabled]="loading()" 
-                (click)="submitBooking()"
-                type="button"
-              >
+              <button class="gold-btn confirm-btn" [disabled]="loading()" (click)="submitBooking()" type="button">
                 @if (loading()) {
-                  <mat-spinner diameter="18" class="btn-spinner"></mat-spinner>
+                <mat-spinner diameter="18" class="btn-spinner"></mat-spinner>
                 } @else {
-                  Confirm Booking
+                Confirm Booking
                 }
               </button>
             </div>
@@ -312,11 +260,10 @@
       </div>
 
       @if (error()) {
-        <div class="error-container">
-          <app-alert type="error" [message]="error()!" (closed)="error.set(null)"></app-alert>
-        </div>
+      <div class="error-container">
+        <app-alert type="error" [message]="error()!" (closed)="error.set(null)"></app-alert>
+      </div>
       }
     </div>
   </mat-step>
 </mat-stepper>
-

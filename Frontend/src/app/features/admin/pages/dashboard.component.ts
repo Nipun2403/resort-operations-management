@@ -243,7 +243,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    // Force ECharts to recalculate dimensions after view initialisation
+    // Let ECharts recalculate once the responsive dashboard layout is painted.
     setTimeout(() => {
       window.dispatchEvent(new Event('resize'));
     });

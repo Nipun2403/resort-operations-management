@@ -113,10 +113,30 @@ export class MenuManagementComponent implements OnInit {
         showInEdit: true,
       },
       {
+        key: 'description',
+        label: 'Description',
+        type: 'textarea',
+        validators: [Validators.maxLength(500)],
+        showInAdd: true,
+        showInEdit: true,
+      },
+      {
         key: 'price',
         label: 'Price',
         type: 'number',
         validators: [Validators.required, Validators.min(0)],
+        showInAdd: true,
+        showInEdit: true,
+      },
+      {
+        key: 'imageUrl',
+        label: 'Image URL',
+        type: 'url',
+        validators: [
+          Validators.required,
+          Validators.maxLength(2048),
+          Validators.pattern(/^https?:\/\/.+/),
+        ],
         showInAdd: true,
         showInEdit: true,
       },
@@ -186,6 +206,8 @@ export class MenuManagementComponent implements OnInit {
         price: formValue.price,
         category: formValue.category ?? '',
         isAvailable: isActive,
+        description: formValue.description ?? '',
+        imageUrl: formValue.imageUrl ?? '',
       };
       this.menuItemApi
         .update(this.editingEntity()!.id, dto)
@@ -209,6 +231,8 @@ export class MenuManagementComponent implements OnInit {
         price: formValue.price,
         category: formValue.category ?? '',
         isAvailable: true, // new items are always available by default
+        description: formValue.description ?? '',
+        imageUrl: formValue.imageUrl ?? '',
       };
       this.menuItemApi
         .create(dto)

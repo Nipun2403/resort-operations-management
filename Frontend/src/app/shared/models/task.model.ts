@@ -16,6 +16,8 @@ export interface DetailSection {
 
 export interface TaskDashboardConfig<T extends Task = Task> {
   entityName: string; // 'Food Order', 'Housekeeping Task', etc.
+  defaultSortBy?: string;
+  defaultSortDescending?: boolean;
   fetchTasks: (params: {
     pageNumber: number;
     pageSize: number;

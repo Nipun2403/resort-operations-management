@@ -140,15 +140,8 @@ export class ExperiencesComponent implements OnInit {
     else if (deltaX > 50) this.prevAmenityPage();
   }
 
-  // Amenity image fallback (TODO: real images from backend later)
   getAmenityImage(amenity: Amenity): string {
-    const designImages = [
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuAdW5i14tYjpRFDsySVWECF6hlJhhTBDM_2iyrGdU2-XAB3bXyzD3yVLXHWZyo2e2LZ3uX1G1jSLZwlItX3dGYPS913zkA-FfA1LByafCBqsTY6IvyqHbvD3bqkQVrbrp1bpHP8PgE5jpFQ_Z64hfgMg0oqcs7DYWc51yLI8NhbHew3ODOZnYr6tNUqKlwV7UL9hGKdUxzpi8nDVixmT_rpoGbYFScKbbT1JJVZHHqX7kQI5bi2Ez1s8oRBXtMW4VIRwPPAcUwTthmL',
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuCm9-2a_nAuBChLPNbo_8xZPTuxw_sFMl7WV7DjfWPM5PPHMj1QV-LZ9macLM4UelYuBaCxBWZwcG28rGYVooVP0oh1o7__5O7HWtlcGStiL5cX7gmdw_8I5oY0eyZA0iNYfCnefdLJnh0kXszMos0_kYvAUIOfaO4th3XshoyUFrcqhWJbaCGyjim0v_tfmL2IA-xYP0KOMCojfpJ5q4h28YTgUupgt7h4lj1NGlO2wTmhoHtWKnW2aHj9oq8pOic2OWFK4O8F7FZV',
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuAwLAmuLY0fR8D6Oh6SSzFHVLR_yq9yeaTuwjzoG_aEN9SGxscZpdZW7TlMXwfwROcjG47GVnu9MWhZd0yWinvSFVKPgxbp1N-7sJdU69q1Z5C8ref4bCIN2C38sZE1bGrPg9Qc4N56qylrsex2kE5wbmNtevNEZZQB_Qyt2pUFnILPsymu8OLj9PGfiBy5PJPY0GZfxapYekH-qSydKwwAPbNMxnyd9zMkvntWmPEvGgmgPEzBH0aCk-_wkqJeBk_KMcYVZ3IKk7MY'
-    ];
-    const idx = amenity.id % designImages.length;
-    return designImages[idx];
+    return amenity.imageUrl ?? '';
   }
 
   // Amenity number label (global index)

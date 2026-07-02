@@ -1,0 +1,145 @@
+<div class="contact-page">
+  <!-- Hero Background Atmosphere -->
+  <div class="hero-bg-container">
+    <div class="hero-bg"></div>
+  </div>
+
+  <main class="content-canvas">
+    <!-- Header -->
+    <header class="page-header content-section">
+      <div class="header-card glass-panel">
+        <div class="fleuron text-secondary">❦</div>
+        <h1 class="page-title italic">Contact Us</h1>
+        <p class="page-subtitle">We would be honoured to hear from you.</p>
+      </div>
+    </header>
+
+    <!-- Two-Column Grid -->
+    <div class="grid-container">
+      <!-- Left Column: Form/Success -->
+      <section class="form-section content-section">
+        <div class="glass-panel form-panel">
+          @if (!submitted()) {
+            <h3 class="column-title uppercase">The Correspondence</h3>
+            
+            <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="correspondence-form">
+              <!-- Name -->
+              <div class="form-group" [class.error]="contactForm.controls['fullName'].touched && contactForm.controls['fullName'].invalid">
+                <label class="input-label">Full Name</label>
+                <input type="text" formControlName="fullName" placeholder="Your full name" class="underline-input" />
+                <div class="input-underline"></div>
+                @if (contactForm.controls['fullName'].touched && contactForm.controls['fullName'].invalid) {
+                  <span class="error-msg">Please enter your name</span>
+                }
+              </div>
+
+              <!-- Email -->
+              <div class="form-group" [class.error]="contactForm.controls['email'].touched && contactForm.controls['email'].invalid">
+                <label class="input-label">Email Address</label>
+                <input type="email" formControlName="email" placeholder="example@domain.com" class="underline-input" />
+                <div class="input-underline"></div>
+                @if (contactForm.controls['email'].touched && contactForm.controls['email'].invalid) {
+                  <span class="error-msg">Please enter a valid email address</span>
+                }
+              </div>
+
+              <!-- Subject -->
+              <div class="form-group">
+                <label class="input-label">Subject</label>
+                <div class="select-wrapper">
+                  <select formControlName="subject" class="underline-input underline-select">
+                    <option value="General Inquiry">General Inquiry</option>
+                    <option value="Private Reservation">Private Reservation</option>
+                    <option value="Event Hosting">Event Hosting</option>
+                    <option value="Press Relations">Press Relations</option>
+                  </select>
+                  <span class="material-symbols-outlined select-arrow">expand_more</span>
+                </div>
+                <div class="input-underline"></div>
+              </div>
+
+              <!-- Message -->
+              <div class="form-group" [class.error]="contactForm.controls['message'].touched && contactForm.controls['message'].invalid">
+                <label class="input-label">Message</label>
+                <textarea formControlName="message" placeholder="How may we assist you?" rows="4" class="underline-input underline-textarea"></textarea>
+                <div class="input-underline"></div>
+                @if (contactForm.controls['message'].touched && contactForm.controls['message'].invalid) {
+                  <span class="error-msg">Message must be at least 10 characters</span>
+                }
+              </div>
+
+              <!-- Submit -->
+              <div class="form-actions">
+                <button type="submit" [disabled]="loading()" class="submit-btn">
+                  <span class="btn-text">
+                    @if (loading()) { Processing... } @else { Send Message }
+                  </span>
+                  <div class="btn-hover-bg"></div>
+                </button>
+              </div>
+            </form>
+          } @else {
+            <div class="success-panel">
+              <span class="material-symbols-outlined success-icon">drafts</span>
+              <h3 class="success-title italic">Correspondence Dispatched</h3>
+              <p class="success-text">Your message has been safely received by our Concierge. A steward will review your inquiry with the discretion it warrants and respond shortly.</p>
+              <button (click)="resetForm()" class="return-btn">Send Another Message</button>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- Right Column: Details -->
+      <section class="details-section content-section">
+        <div class="glass-panel details-panel">
+          <div>
+            <h3 class="column-title italic text-secondary">Reach Us</h3>
+            
+            <div class="contact-details">
+              <!-- Address -->
+              <div class="detail-item">
+                <span class="detail-label">Address</span>
+                <address class="detail-val italic">
+                  Aetheris Retreat<br/>
+                  [Property Registration Address — Withheld]<br/>
+                  Available to confirmed guests.
+                </address>
+              </div>
+
+              <!-- Phone -->
+              <div class="detail-item">
+                <span class="detail-label">Phone</span>
+                <p class="detail-val">+1 (555) 000-0000 <span class="label-note">(by appointment only)</span></p>
+              </div>
+
+              <!-- Email -->
+              <div class="detail-item">
+                <span class="detail-label">Email</span>
+                <p class="detail-val">reservations@aetheris-retreat.com</p>
+              </div>
+
+              <!-- Concierge Hours -->
+              <div class="detail-item hours-item">
+                <span class="detail-label">Concierge Hours</span>
+                <p class="detail-val text-secondary font-medium">Available 24/7 for our distinguished guests</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Social links -->
+          <div class="social-links">
+            <a href="#" class="social-link">Instagram</a>
+            <a href="#" class="social-link">Twitter</a>
+            <a href="#" class="social-link">LinkedIn</a>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Footer Note -->
+    <footer class="footer-note content-section">
+      <div class="line-separator"></div>
+      <p class="footer-note-text italic">We look forward to welcoming you to Aetheris.</p>
+    </footer>
+  </main>
+</div>

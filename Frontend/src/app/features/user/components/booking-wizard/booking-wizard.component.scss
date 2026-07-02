@@ -694,3 +694,200 @@
   }
 }
 
+@media (max-width: 767px) {
+  .stepper-form {
+    padding: 12px 0;
+  }
+
+  .step-header {
+    margin-bottom: 24px;
+
+    &.flex-header {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .step-title {
+      font-size: 1.4rem;
+    }
+
+    .step-subtitle {
+      font-size: 0.95rem;
+    }
+  }
+
+  .dates-inputs-grid,
+  .amenities-grid {
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+
+  .horizontal-scroll-container {
+    gap: 16px;
+    padding-bottom: 16px;
+    margin-bottom: 24px;
+    scroll-snap-type: x proximity;
+    margin-left: -8px;
+    margin-right: -8px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .room-card {
+    min-width: 84vw;
+    max-width: 84vw;
+  }
+
+  .room-image-wrapper {
+    height: 180px;
+  }
+
+  .room-card-content {
+    padding: 18px;
+
+    .room-header-row {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .room-card-title {
+      font-size: 18px;
+    }
+
+    .room-card-price {
+      white-space: normal;
+    }
+
+    .room-card-description {
+      -webkit-line-clamp: 4;
+    }
+
+    .room-card-meta {
+      flex-wrap: wrap;
+      row-gap: 6px;
+      margin-bottom: 18px;
+    }
+  }
+
+  .card-quantity-selector {
+    .qty-btn {
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+  .amenity-card {
+    padding: 18px;
+  }
+
+  .amenity-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .covenant-card {
+    padding: 24px 18px;
+    margin-bottom: 24px;
+
+    .covenant-header {
+      margin-bottom: 24px;
+    }
+
+    .covenant-details {
+      gap: 16px;
+    }
+
+    .covenant-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      padding-bottom: 12px;
+
+      .row-label {
+        white-space: normal;
+      }
+
+      .row-value {
+        text-align: left;
+        width: 100%;
+        font-size: 14px;
+        line-height: 1.5;
+        word-break: break-word;
+      }
+    }
+
+    .covenant-footer {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 18px;
+      padding-top: 18px;
+
+      .investment-block {
+        .investment-value {
+          font-size: 30px;
+        }
+      }
+
+      .covenant-actions {
+        width: 100%;
+        flex-direction: column;
+        justify-content: stretch;
+
+        button {
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  .actions {
+    justify-content: stretch;
+    flex-direction: column;
+    margin-top: 24px;
+
+    button {
+      width: 100%;
+      padding: 16px 20px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .bookings-page {
+    padding: 16px;
+  }
+
+  .bookings-header {
+    margin-bottom: 48px;
+
+    .header-title {
+      font-size: 1.8rem;
+    }
+  }
+
+  .toggle-section {
+    margin-bottom: 40px;
+
+    .toggle-container {
+      width: 100%;
+    }
+
+    .toggle-btn {
+      padding: 14px 10px;
+      font-size: 0.7rem;
+    }
+  }
+
+  .covenant-card {
+    padding: 20px 14px;
+
+    .covenant-footer {
+      .investment-block {
+        .investment-value {
+          font-size: 28px;
+        }
+      }
+    }
+  }
+}

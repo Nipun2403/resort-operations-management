@@ -52,13 +52,8 @@ export class MenuGridComponent {
     return descMap[itemName] || 'Exquisitely prepared by our culinary team using the finest seasonal ingredients.';
   }
 
-  getImageUrl(itemName: string): string {
-    const imgMap: Record<string, string> = {
-      'Osetra Caviar': 'https://images.unsplash.com/photo-1599084993091-1cb5c0721cc6?q=80&w=600&auto=format&fit=crop',
-      'Wagyu Filet': 'https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=600&auto=format&fit=crop',
-      'Truffle Risotto': 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?q=80&w=600&auto=format&fit=crop'
-    };
-    return imgMap[itemName] || 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=600&auto=format&fit=crop';
+  getImageUrl(item: MenuItem): string {
+    return item.imageUrl ?? '';
   }
 
   getQuantity(menuItemId: number): number {

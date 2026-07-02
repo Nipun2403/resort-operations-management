@@ -60,6 +60,11 @@
       </div>
     } @else if (searchError()) {
       <p class="error-message">{{ searchError() }}</p>
+    } @else if (!hasSearched()) {
+      <div class="pre-search-placeholder" aria-live="polite">
+        <h2>For your eyes only</h2>
+        <p>Enter your dates to access a personally curated portfolio of our finest suites and villas.</p>
+      </div>
     } @else if (hasSearched() && availableRooms().length === 0) {
       <!-- Empty State -->
       <div class="empty-state">

@@ -19,9 +19,10 @@
           <div class="menu-item-card glass-panel card-lift">
             <div class="item-image-wrapper">
               <img
-                [src]="getImageUrl(item.name)"
+                [src]="getImageUrl(item)"
                 [alt]="item.name"
                 class="item-image"
+                referrerpolicy="no-referrer"
               />
               <div class="image-overlay"></div>
             </div>
@@ -74,4 +75,3 @@
     <p class="no-items">No delicacies available at the moment.</p>
   }
 </div>
-

@@ -6,7 +6,7 @@
     </div>
     <div class="hero-overlay"></div>
     <div class="hero-content">
-      <h1>The Silent Peak of Luxury</h1>
+      <h1>The Silent <span class="hero-peak-span">Peak</span> of Luxury</h1>
       <p class="hero-subtitle">PRIVATE ESTATE &amp; REFUGE</p>
     </div>
 
@@ -14,30 +14,14 @@
     <div class="booking-bar glass-panel">
       <div class="booking-field">
         <label class="field-label">ARRIVAL</label>
-        <input
-          type="text"
-          class="field-input"
-          [formControl]="checkIn"
-          placeholder="Select date"
-          [matDatepicker]="cinPicker"
-          (click)="cinPicker.open()"
-          [min]="minDate"
-          readonly
-        />
+        <input type="text" class="field-input" [formControl]="checkIn" placeholder="Select date"
+          [matDatepicker]="cinPicker" (click)="cinPicker.open()" [min]="minDate" readonly />
         <mat-datepicker #cinPicker></mat-datepicker>
       </div>
       <div class="booking-field">
         <label class="field-label">DEPARTURE</label>
-        <input
-          type="text"
-          class="field-input"
-          [formControl]="checkOut"
-          placeholder="Select date"
-          [matDatepicker]="coutPicker"
-          (click)="coutPicker.open()"
-          [min]="getMinCheckOutDate()"
-          readonly
-        />
+        <input type="text" class="field-input" [formControl]="checkOut" placeholder="Select date"
+          [matDatepicker]="coutPicker" (click)="coutPicker.open()" [min]="getMinCheckOutDate()" readonly />
         <mat-datepicker #coutPicker></mat-datepicker>
       </div>
       <div class="booking-field">

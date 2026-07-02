@@ -225,6 +225,21 @@ export const routes: Routes = [
         loadComponent: () => import('./features/public/pages/availability.component')
           .then(m => m.AvailabilityComponent)
       },
+      {
+        path: 'privacy',
+        loadComponent: () => import('./features/public/pages/privacy.component')
+          .then(m => m.PrivacyComponent)
+      },
+      {
+        path: 'terms',
+        loadComponent: () => import('./features/public/pages/terms.component')
+          .then(m => m.TermsComponent)
+      },
+      {
+        path: 'contact',
+        loadComponent: () => import('./features/public/pages/contact.component')
+          .then(m => m.ContactComponent)
+      },
       { path: '**', redirectTo: 'home' }
     ]
   }
