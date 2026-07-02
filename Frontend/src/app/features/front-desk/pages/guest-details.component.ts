@@ -106,7 +106,12 @@ export class GuestDetailsComponent implements OnInit, AfterViewInit {
     this.loading.set(true);
     this.bookingApi.getAll({ guestQuery: this.email(), pageSize: 200 }).pipe(
       takeUntilDestroyed(this.destroyRef),
-      finalize(() => this.loading.set(false))
+      finalize(() => {
+        this.loading.set(false);
+        setTimeout(() => {
+          window.dispatchEvent(new Event('resize'));
+        }, 150);
+      })
     ).subscribe({
       next: res => this.bookings.set(res.data),
       error: (err: any) => this.error.set(this.extractErrorMessage(err))
