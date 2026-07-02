@@ -1,12 +1,11 @@
-<div class="notification-container">
-  <div class="icon-container">
-    <mat-icon>notifications_active</mat-icon>
+<div class="notification-container glass-panel">
+  <div class="header-row">
+    <span class="notification-title">{{ data.title | uppercase }}</span>
+    <button mat-icon-button class="close-btn" (click)="snackBarRef.dismiss()" aria-label="Close notification">
+      <mat-icon>close</mat-icon>
+    </button>
   </div>
   <div class="content">
-    <strong>{{ data.title }}</strong>
-    <p>{{ data.message }}</p>
+    <p class="notification-desc">{{ data.message }}</p>
   </div>
-  <button mat-icon-button class="close-btn" (click)="snackBarRef.dismiss()">
-    <mat-icon>close</mat-icon>
-  </button>
 </div>
