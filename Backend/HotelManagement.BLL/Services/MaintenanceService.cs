@@ -40,7 +40,7 @@ public class MaintenanceService : IMaintenanceService
 
     public async Task<PaginatedResult<MaintenanceTaskDTO>> GetAllTasksAsync(int pageNumber, int pageSize, string? status = null, string? sortBy = null, bool sortDescending = false)
     {
-        var isStaff = _currentUserService.IsInRole("Admin") || _currentUserService.IsInRole("FrontDesk") || _currentUserService.IsInRole("Housekeeping");
+        var isStaff = _currentUserService.IsInRole("Admin") || _currentUserService.IsInRole("FrontDesk") || _currentUserService.IsInRole("Housekeeping") || _currentUserService.IsInRole("Maintenance");
         List<int> userRoomIds = new List<int>();
         if (!isStaff)
         {
@@ -87,7 +87,7 @@ public class MaintenanceService : IMaintenanceService
 
     public async Task<PaginatedResult<MaintenanceTaskDTO>> GetActiveTasksAsync(int pageNumber, int pageSize, string? sortBy = null, bool sortDescending = false)
     {
-        var isStaff = _currentUserService.IsInRole("Admin") || _currentUserService.IsInRole("FrontDesk") || _currentUserService.IsInRole("Housekeeping");
+        var isStaff = _currentUserService.IsInRole("Admin") || _currentUserService.IsInRole("FrontDesk") || _currentUserService.IsInRole("Housekeeping") || _currentUserService.IsInRole("Maintenance");
         List<int> userRoomIds = new List<int>();
         if (!isStaff)
         {
@@ -149,7 +149,7 @@ public class MaintenanceService : IMaintenanceService
         {
             originType = parsedOrigin;
         }
-        else if (_currentUserService.IsInRole("Admin") || _currentUserService.IsInRole("FrontDesk") || _currentUserService.IsInRole("Housekeeping"))
+        else if (_currentUserService.IsInRole("Admin") || _currentUserService.IsInRole("FrontDesk") || _currentUserService.IsInRole("Housekeeping") || _currentUserService.IsInRole("Maintenance"))
         {
             originType = MaintenanceOriginType.StaffRequested;
         }
