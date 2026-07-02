@@ -107,6 +107,68 @@ export class KitchenMenuItemsComponent implements OnInit {
     this.filteredItems.set(items);
   }
 
+  getItemsByCategory(category: string): MenuItem[] {
+    return this.filteredItems().filter((i) => (i.category || 'Other') === category);
+  }
+
+  getItemImage(item: MenuItem): string {
+    if (item.image) {
+      return item.image;
+    }
+    const name = item.name.toLowerCase();
+    if (name.includes('wagyu') || name.includes('striploin') || name.includes('steak')) {
+      return 'https://lh3.googleusercontent.com/aida-public/AB6AXuBarygmlUbYo8_hlFV_fJMXvnOBX11DAPb6pFwLKXt-UyvvfcRkXRLI7NLY4vrOGCLbwkoe7ZpGDBeNa90_Jk4Kxz0LYwp325FxskDEOBmeVdCh-Gc-w8z_phG2K_oB0Diva182Aj7alzLE-MINpn-U3GwNYJIL-K9yhQfiH28wig-ZX6piiudQ0FgqhrZ4znrPZNN4MBnt5d8bPf0RTnnoIaw1i8WPoNqRgvHGwbw1MZhrx6RTFFhJgtgWV2mesULJsOXkEM_8veyQ';
+    }
+    if (name.includes('caviar')) {
+      return 'https://lh3.googleusercontent.com/aida-public/AB6AXuDbY-HsrCSZXj1MKOoSnNdnY5O2eUG8bqeeY6wE1v1AFQWyeBf60FU3L241aD_fr1Y4Gwvb8uZVqM-aGb5QUfAcuoE-WMoWu-ERyDrOYrixqeS0diuXKvgQEliBnkElMrDMvejOWsaijV3VgCBsNuXIyZuWAJvnqkVmN_Equ_eo4EwwzoX8-vmEauzdIxZdK5g-C6UFhjn9FpTwGwbz46_1QSPmIWi-MdF0aRI-J3lwIPc4i-HnWWlJ90_wVtbRjupmZud7T_ge4gPb';
+    }
+    if (name.includes('bisque') || name.includes('soup') || name.includes('lobster') || name.includes('scallop')) {
+      return 'https://lh3.googleusercontent.com/aida-public/AB6AXuB_rNdyvU6w7p3bpV_1UHUu0WKdiBoWXFLgJ4jyj5Vv0Ci-KniE-Aele9ikC2gHQF0npuqBzzhh2vxgodvD4VOqcOXl7krYZrqlvN0e9O-vnf9_ToEe4aQMmq8YbwYizuPBiILGON-VmY4WIr7DNZHETG1IlDGA2F0IhezgYHibR0KdRt9zANheHQoZHYRTcJ138DF3lA1u6wMdFbh-zxi-HTv2tmb536kGG33-t8hyD9yITQz3Uux4rDfl49DoG6X5xLpA3hywZRin';
+    }
+    if (name.includes('risotto') || name.includes('rice') || name.includes('pasta')) {
+      return 'https://lh3.googleusercontent.com/aida-public/AB6AXuAI0KfDRcQRyuF1wkwmNaOAyfL6nx9spuyEJ6sJ7tcvDXPUZQEc8xmKak1HgUJKLb9JMFjm1YHiZ_Hf-nMiS7Iwv7a0oShuNWqfmqzYEbQknpdotT93Y9JpSgjcb5dxQgnGCjf87dBUjxtpq6HXARRdQSkg5fc2G2igtgjEqT_kl6UmMRRfBrKdPshz6dt47OvyKtEnigHu63AiUm7R12iAdhuBFqrntVFOoeuJdxsmTH7AXFWMZBtgEU1o1gPazO_E32Yi5JjEEihD';
+    }
+    if (name.includes('sphere') || name.includes('chocolate') || name.includes('dessert') || name.includes('cake') || name.includes('sweet')) {
+      return 'https://lh3.googleusercontent.com/aida-public/AB6AXuCf0ldh_BjvPjh_ENynZu6kzl-R8VqbIj8Gb_9RUTI18d2fUGgn6datoLhDKACDl2BhJcMQl7D69JzHkvAHyvyJYPLeH8GyF4cc0X0A54UDhgNSMBQniwl4qnfgrG3BetDbu0CxVjmvgRJ6CU4LUhikNjKvZbBQhXEdzq-5g2RcqsKgg77Q21Iw9dRw_TJ8qat5J6LUX8GDZYgmrPNZAxwa8k1wp2rs6zqc4NZTLUCx_OE5QKrDEi2n5aQ4Z9clCz8U6JzzCg2HQoR8';
+    }
+    if (name.includes('tartare') || name.includes('marrow')) {
+      return 'https://lh3.googleusercontent.com/aida-public/AB6AXuDZCG6JCdByJIipxOKLrSdwwusboiQiUtXql3LdVMpOWORaCGWnyPbEdH4IFBHhwiCLjhtySz9kk3XbDV1PwrJgD8ytR2MHO2GjpHCtXIWQlM7rVwC9rTLdddzwxoJNieibZ8H5Sih9aYGe9nHdpQePFXxgbNSxD6hkfAnUhZJMK9YUJd-caQUlBaM8-lJRL_fjf4xss6aBTLRAT4RfiKBuly5tCBQATOluwll79upYF29FtJpDY9b32jRJPSXptVE7lgkZCP7uBNWP';
+    }
+    
+    // Default fallback image
+    return 'https://lh3.googleusercontent.com/aida-public/AB6AXuBarygmlUbYo8_hlFV_fJMXvnOBX11DAPb6pFwLKXt-UyvvfcRkXRLI7NLY4vrOGCLbwkoe7ZpGDBeNa90_Jk4Kxz0LYwp325FxskDEOBmeVdCh-Gc-w8z_phG2K_oB0Diva182Aj7alzLE-MINpn-U3GwNYJIL-K9yhQfiH28wig-ZX6piiudQ0FgqhrZ4znrPZNN4MBnt5d8bPf0RTnnoIaw1i8WPoNqRgvHGwbw1MZhrx6RTFFhJgtgWV2mesULJsOXkEM_8veyQ';
+  }
+
+  getItemDescription(item: MenuItem): string {
+    if (item.description) {
+      return item.description;
+    }
+    const name = item.name.toLowerCase();
+    if (name.includes('wagyu') || name.includes('striploin')) {
+      return 'Grade A5 Miyazaki beef, truffle-infused reduction, bone marrow emulsion, and aged balsamic glass.';
+    }
+    if (name.includes('caviar')) {
+      return 'Sustainably sourced royal pearls, traditional accompaniments, and crème fraîche on buckwheat blinis.';
+    }
+    if (name.includes('bisque')) {
+      return 'Slow-simmered brandy reduction, heavy cream, poached lobster medallion, and chive oil drops.';
+    }
+    if (name.includes('risotto') || name.includes('truffle')) {
+      return 'Acquerello rice, Périgord black truffles, 36-month aged parmesan, and clarified heirloom butter.';
+    }
+    if (name.includes('sphere') || name.includes('chocolate')) {
+      return 'Dark chocolate mirror glaze, salted caramel core, and 24k edible gold leaf gilding.';
+    }
+    if (name.includes('scallop')) {
+      return 'Diver-caught scallops, heritage nero di seppia, and a delicate emulsification of champagne-infused butter.';
+    }
+    if (name.includes('tartare')) {
+      return 'Hand-cut premium tenderloin, truffle shavings, organic yolk, served in bone marrow.';
+    }
+    // Generic fallback
+    return `A masterfully prepared ${item.category.toLowerCase() || 'offering'} crafted with seasonal ingredients and culinary precision.`;
+  }
+
   applyFiltersDebounced(): void {
     // Value changes debounced handled in ngOnInit.
   }

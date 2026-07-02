@@ -1,32 +1,48 @@
 <div class="menu-items-page">
-  <h1>Menu Items</h1>
+  <!-- Hero Section -->
+  <header class="page-hero">
+    <p class="hero-pretitle">KITCHEN ARCHIVE</p>
+    <h1 class="hero-title">The Culinary Catalogue</h1>
+    <div class="category-underline"></div>
+    <p class="hero-desc">
+      A curated selection of the season's finest acquisitions. Every dish is a chapter in our heritage, prepared with architectural precision and obsessive detail.
+    </p>
+  </header>
 
-  <div class="filter-bar">
-    <mat-form-field appearance="outline">
-      <mat-label>Category</mat-label>
-      <mat-select
-        [formControl]="categoryFilter"
-        (selectionChange)="applyFilters()"
-      >
-        <mat-option value="All">All</mat-option>
-        @for (cat of categories(); track cat) {
-        <mat-option [value]="cat">{{ cat }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-      <mat-label>Search</mat-label>
-      <input
-        matInput
-        [formControl]="searchControl"
-        (keyup)="applyFiltersDebounced()"
-      />
-      <mat-icon matSuffix>search</mat-icon>
-    </mat-form-field>
+  <!-- Instruments of Discovery (Search & Filter) -->
+  <div class="instruments-bar glass-panel">
+    <div class="filter-group">
+      <span class="filter-label">Filter by:</span>
+      <mat-form-field appearance="outline" class="aetheris-select-form">
+        <mat-select
+          [formControl]="categoryFilter"
+          (selectionChange)="applyFilters()"
+        >
+          <mat-option value="All">All Collections</mat-option>
+          @for (cat of categories(); track cat) {
+          <mat-option [value]="cat">{{ cat }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="search-group">
+      <mat-form-field appearance="outline" class="aetheris-search-form">
+        <input
+          matInput
+          [formControl]="searchControl"
+          placeholder="Search the collection..."
+          (keyup)="applyFiltersDebounced()"
+        />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>
   </div>
 
+  <!-- Loading / Error States -->
   @if (loading()) {
-  <mat-spinner diameter="40"></mat-spinner>
+  <div class="spinner-container">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
   } @else if (error()) {
   <app-alert
     type="error"
@@ -41,29 +57,57 @@
     </button>
   </app-alert>
   } @else if (filteredItems().length === 0) {
-  <p>No menu items found.</p>
-  } @else {
-  <div class="menu-grid">
-    @for (item of filteredItems(); track item.id) {
-    <mat-card class="menu-card">
-      <mat-card-header>
-        <mat-card-title>{{ item.name }}</mat-card-title>
-        <mat-card-subtitle
-          >{{ item.category || 'Other' }} – {{ item.price | currency
-          }}</mat-card-subtitle
-        >
-      </mat-card-header>
-      <mat-card-actions>
-        <mat-slide-toggle
-          [checked]="item.isAvailable"
-          (change)="onToggleAvailability(item, $event.checked)"
-          color="primary"
-        >
-          {{ item.isAvailable ? 'Available' : 'Unavailable' }}
-        </mat-slide-toggle>
-      </mat-card-actions>
-    </mat-card>
-    }
+  <div class="empty-state glass-panel">
+    <p>No menu items found.</p>
   </div>
+  } @else {
+  <!-- Grouped Category Layout -->
+  @for (cat of categories(); track cat) {
+    @if (getItemsByCategory(cat).length > 0) {
+    <div class="category-section">
+      <div class="category-header-row">
+        <h2 class="category-title">{{ cat }}</h2>
+        <div class="category-title-underline"></div>
+      </div>
+      
+      <div class="menu-grid">
+        @for (item of getItemsByCategory(cat); track item.id) {
+        <div class="menu-card glass-panel card-hover">
+          <div class="card-image-wrapper">
+            <img [src]="getItemImage(item)" [alt]="item.name" class="card-img" />
+            <div class="image-overlay"></div>
+            @if (item.price > 150) {
+            <div class="signature-badge-container">
+              <span class="signature-badge">Signature</span>
+            </div>
+            }
+          </div>
+          <div class="card-content">
+            <div class="card-header-row">
+              <div class="card-meta">
+                <p class="card-category">{{ item.category || 'OTHER' | uppercase }}</p>
+                <h3 class="card-name">{{ item.name }}</h3>
+              </div>
+              <span class="card-price">${{ item.price }}</span>
+            </div>
+            <p class="card-desc">{{ getItemDescription(item) }}</p>
+            <div class="card-actions-row">
+              <span class="availability-label">Availability</span>
+              <mat-slide-toggle
+                [checked]="item.isAvailable"
+                (change)="onToggleAvailability(item, $event.checked)"
+                color="primary"
+                class="gold-slide-toggle"
+              >
+                {{ item.isAvailable ? 'Available' : 'Unavailable' }}
+              </mat-slide-toggle>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+    }
+  }
   }
 </div>

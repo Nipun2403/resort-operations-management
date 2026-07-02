@@ -54,7 +54,7 @@
       &.status-glow-preparing {
         box-shadow: 0 0 15px rgba(228, 194, 133, 0.1);
         border-color: rgba(228, 194, 133, 0.3);
-        
+
         .card-label {
           color: var(--color-secondary);
         }
@@ -62,7 +62,7 @@
 
       &.status-glow-delivered {
         box-shadow: 0 0 15px rgba(228, 194, 133, 0.01);
-        
+
         .card-count {
           color: var(--color-on-surface-variant);
           opacity: 0.5;
@@ -210,7 +210,7 @@
 
       .summary-card {
         padding: 20px;
-        
+
         .card-count {
           font-size: 48px;
         }
@@ -222,18 +222,18 @@
 @media (max-width: 599px) {
   .task-dashboard {
     .summary-row {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(1, 1fr);
       gap: 12px;
 
       .summary-card {
         padding: 16px;
-        
+
         .card-label {
           font-size: 8px;
           margin-bottom: 8px;
           letter-spacing: 0.1em;
         }
-        
+
         .card-count {
           font-size: 32px;
         }
@@ -247,6 +247,7 @@
 
       .filter-bar {
         width: 100%;
+
         mat-form-field {
           width: 100%;
         }
@@ -267,14 +268,14 @@
           gap: 12px;
           width: 100%;
         }
-        
+
         .mat-mdc-header-row {
           display: none !important;
         }
-        
+
         .mat-mdc-row {
           display: grid !important;
-          grid-template-areas: 
+          grid-template-areas:
             "id status"
             "desc desc"
             "loc actions";
@@ -329,32 +330,6 @@
           @include font-body-md;
           font-size: 11px;
           color: var(--color-on-surface-variant) !important;
-          
-          &::before {
-            content: 'location_on';
-            font-family: 'Material Symbols Outlined';
-            margin-right: 4px;
-            font-size: 13px;
-            color: var(--color-secondary);
-          }
-        }
-
-        .mat-column-actions {
-          grid-area: actions;
-          justify-self: end;
-          
-          .visibility-btn {
-            color: var(--color-secondary) !important;
-            width: 28px;
-            height: 28px;
-            line-height: 28px;
-            
-            mat-icon {
-              font-size: 18px;
-              width: 18px;
-              height: 18px;
-            }
-          }
         }
       }
     }

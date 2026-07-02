@@ -4,6 +4,8 @@ export interface MenuItem {
   price: number;
   category: string;
   isAvailable: boolean;
+  image?: string;
+  description?: string;
 }
 
 export interface CreateMenuItemDTO {
