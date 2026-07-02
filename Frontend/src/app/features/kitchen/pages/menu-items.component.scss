@@ -412,8 +412,8 @@
         background: var(--color-surface-container-lowest);
 
         .card-image-wrapper {
-          height: auto;
-          aspect-ratio: 3/4;
+          // height: auto;
+          // aspect-ratio: 3/4;
 
           .image-overlay {
             background: linear-gradient(to top, rgba(19, 20, 17, 0.8) 0%, transparent 60%);
