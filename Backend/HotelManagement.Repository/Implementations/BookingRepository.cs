@@ -53,6 +53,8 @@ public class BookingRepository : GenericRepository<Booking>, IBookingRepository
                 .ThenInclude(br => br.Room)
             .Include(b => b.BookingRooms)
                 .ThenInclude(br => br.RoomType)
+            .Include(b => b.BookingAmenities)
+                .ThenInclude(ba => ba.Amenity)
             .AsQueryable();
 
         if (predicates != null)
