@@ -486,6 +486,14 @@ mat-nav-list {
   .mat-mdc-text-field-wrapper {
     background-color: transparent !important;
   }
+
+  input.mat-mdc-input-element, textarea.mat-mdc-input-element {
+    color: var(--color-on-surface) !important;
+    
+    &::placeholder {
+      color: rgba(196, 199, 199, 0.4) !important;
+    }
+  }
 }
 
 // ── Material Radio & Checkbox Global overrides ─────
@@ -493,6 +501,33 @@ mat-nav-list {
   .mdc-label {
     color: var(--color-on-surface) !important;
     font-family: var(--font-body) !important;
+  }
+}
+
+// ── Material Select Global overrides ─────────────────
+.mat-mdc-select {
+  .mat-mdc-select-value {
+    color: var(--color-on-surface) !important;
+  }
+  
+  .mat-mdc-select-arrow {
+    color: var(--color-secondary) !important;
+  }
+}
+
+// ── Material Tab Header Pagination ──────────────────
+.mat-mdc-tab-header-pagination {
+  color: var(--color-secondary) !important;
+  
+  .mat-mdc-tab-header-pagination-chevron {
+    border-color: var(--color-secondary) !important;
+  }
+  
+  &.mat-mdc-tab-header-pagination-disabled {
+    color: rgba(196, 199, 199, 0.25) !important;
+    .mat-mdc-tab-header-pagination-chevron {
+      border-color: rgba(196, 199, 199, 0.25) !important;
+    }
   }
 }
 
