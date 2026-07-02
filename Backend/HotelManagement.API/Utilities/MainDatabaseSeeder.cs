@@ -541,21 +541,21 @@ public static class MainDatabaseSeeder
         // ======================================================
         var menu = new List<MenuItem>
         {
-            new MenuItem { Name = "Burger", Price = 15.0m, IsAvailable = true },
-            new MenuItem { Name = "Pizza", Price = 20.0m, IsAvailable = true },
-            new MenuItem { Name = "Soda", Price = 3.0m, IsAvailable = true },
-            new MenuItem { Name = "Steak", Price = 45.0m, IsAvailable = false }, // Out of stock
-            new MenuItem { Name = "Old Soup", Price = 5.0m, IsAvailable = false }, // Retired
-            new MenuItem { Name = "Complimentary Water", Price = 0.0m, IsAvailable = true }, // Free
-            new MenuItem { Name = "White Truffle Caviar", Price = 500.0m, IsAvailable = true }, // Expensive
-            new MenuItem { Name = "Salad", Price = 12.0m, IsAvailable = true },
-            new MenuItem { Name = "Coffee", Price = 4.0m, IsAvailable = true },
-            new MenuItem { Name = "Cheesecake", Price = 8.0m, IsAvailable = true },
-            new MenuItem { Name = "Club Sandwich", Price = 14.5m, IsAvailable = true },
-            new MenuItem { Name = "French Fries", Price = 6.0m, IsAvailable = true },
-            new MenuItem { Name = "Lobster Thermidor", Price = 120.0m, IsAvailable = true },
-            new MenuItem { Name = "Ice Cream Sundae", Price = 9.0m, IsAvailable = true },
-            new MenuItem { Name = "Craft Beer", Price = 8.5m, IsAvailable = true }
+            new MenuItem { Name = "Burger", Price = 15.0m, IsAvailable = true, Category = "Mains", Description = "Classic beef patty with lettuce, tomato, and our house sauce.", ImageUrl = "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=600&auto=format&fit=crop" },
+            new MenuItem { Name = "Pizza", Price = 20.0m, IsAvailable = true, Category = "Mains", Description = "Stone-baked Margherita with fresh basil and buffalo mozzarella.", ImageUrl = "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&auto=format&fit=crop" },
+            new MenuItem { Name = "Soda", Price = 3.0m, IsAvailable = true, Category = "Beverages", Description = "Chilled carbonated soft drink — choice of cola, lemon, or orange.", ImageUrl = "https://images.unsplash.com/photo-1581636625402-29b2a704ef13?w=600&auto=format&fit=crop" },
+            new MenuItem { Name = "Steak", Price = 45.0m, IsAvailable = false, Category = "Mains", Description = "250g dry-aged ribeye, served with seasonal vegetables and jus.", ImageUrl = "https://images.unsplash.com/photo-1544025162-d76694265947?w=600&auto=format&fit=crop" }, // Out of stock
+            new MenuItem { Name = "Old Soup", Price = 5.0m, IsAvailable = false, Category = "Starters", Description = "Retired house soup — no longer on the menu.", ImageUrl = "https://images.unsplash.com/photo-1603105037880-880cd4edfb0d?w=600&auto=format&fit=crop" }, // Retired
+            new MenuItem { Name = "Complimentary Water", Price = 0.0m, IsAvailable = true, Category = "Beverages", Description = "Still or sparkling mineral water, compliments of the hotel.", ImageUrl = "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=600&auto=format&fit=crop" }, // Free
+            new MenuItem { Name = "White Truffle Caviar", Price = 500.0m, IsAvailable = true, Category = "Starters", Description = "Oscietra caviar topped with shaved Périgord truffle on blinis.", ImageUrl = "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&auto=format&fit=crop" }, // Expensive
+            new MenuItem { Name = "Salad", Price = 12.0m, IsAvailable = true, Category = "Starters", Description = "Mixed greens with cherry tomatoes, cucumber, and balsamic vinaigrette.", ImageUrl = "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&auto=format&fit=crop" },
+            new MenuItem { Name = "Coffee", Price = 4.0m, IsAvailable = true, Category = "Beverages", Description = "Freshly ground single-origin espresso — available as americano, latte, or cappuccino.", ImageUrl = "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&auto=format&fit=crop" },
+            new MenuItem { Name = "Cheesecake", Price = 8.0m, IsAvailable = true, Category = "Desserts", Description = "New York-style baked cheesecake with a berry coulis.", ImageUrl = "https://images.unsplash.com/photo-1524351199678-941a58a3df50?w=600&auto=format&fit=crop" },
+            new MenuItem { Name = "Club Sandwich", Price = 14.5m, IsAvailable = true, Category = "Mains", Description = "Triple-decker with grilled chicken, bacon, egg, and avocado.", ImageUrl = "https://images.unsplash.com/photo-1619096252214-ef06c45683e3?w=600&auto=format&fit=crop" },
+            new MenuItem { Name = "French Fries", Price = 6.0m, IsAvailable = true, Category = "Sides", Description = "Hand-cut golden fries seasoned with sea salt and rosemary.", ImageUrl = "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=600&auto=format&fit=crop" },
+            new MenuItem { Name = "Lobster Thermidor", Price = 120.0m, IsAvailable = true, Category = "Mains", Description = "Half-lobster in a rich cream and cognac sauce, gratinéed to perfection.", ImageUrl = "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=600&auto=format&fit=crop" },
+            new MenuItem { Name = "Ice Cream Sundae", Price = 9.0m, IsAvailable = true, Category = "Desserts", Description = "Three scoops of gelato with hot fudge, whipped cream, and a cherry.", ImageUrl = "https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=600&auto=format&fit=crop" },
+            new MenuItem { Name = "Craft Beer", Price = 8.5m, IsAvailable = true, Category = "Beverages", Description = "Rotating selection of local and imported craft ales and lagers.", ImageUrl = "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&auto=format&fit=crop" }
         };
         context.MenuItems.AddRange(menu);
         context.SaveChanges();
@@ -765,18 +765,18 @@ public static class MainDatabaseSeeder
         // ======================================================
         var amenities = new List<Amenity>
         {
-            new Amenity { Name = "Swimming Pool", Description = "Olympic-sized heated pool", Price = 25.0m, IsAvailable = true },
-            new Amenity { Name = "Sauna", Description = "Relaxing steam room", Price = 15.0m, IsAvailable = true },
-            new Amenity { Name = "Gym", Description = "Fully equipped fitness center", Price = 10.0m, IsAvailable = true },
-            new Amenity { Name = "Spa Treatment", Description = "1-hour massage session", Price = 40.0m, IsAvailable = true },
-            new Amenity { Name = "Business Center", Description = "Quiet workspace with high-speed internet", Price = 20.0m, IsAvailable = true },
-            new Amenity { Name = "Airport Shuttle", Description = "Round trip shuttle service", Price = 50.0m, IsAvailable = true },
-            new Amenity { Name = "Breakfast Buffet", Description = "All you can eat", Price = 25.0m, IsAvailable = true },
-            new Amenity { Name = "Parking", Description = "Valet parking", Price = 30.0m, IsAvailable = true },
-            new Amenity { Name = "Laundry", Description = "Next day service", Price = 15.0m, IsAvailable = true },
-            new Amenity { Name = "Pet Fee", Description = "Bring your dog", Price = 75.0m, IsAvailable = true },
-            new Amenity { Name = "Private Chef Experience", Description = "In-room custom dining", Price = 450.0m, IsAvailable = true },
-            new Amenity { Name = "Helicopter Pad Access", Description = "Exclusive landing coordination", Price = 800.0m, IsAvailable = true }
+            new Amenity { Name = "Swimming Pool", Description = "Olympic-sized heated pool", Price = 25.0m, IsAvailable = true, ImageUrl = "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=600&auto=format&fit=crop" },
+            new Amenity { Name = "Sauna", Description = "Relaxing steam room", Price = 15.0m, IsAvailable = true, ImageUrl = "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=600&auto=format&fit=crop" },
+            new Amenity { Name = "Gym", Description = "Fully equipped fitness center", Price = 10.0m, IsAvailable = true, ImageUrl = "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&auto=format&fit=crop" },
+            new Amenity { Name = "Spa Treatment", Description = "1-hour massage session", Price = 40.0m, IsAvailable = true, ImageUrl = "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=600&auto=format&fit=crop" },
+            new Amenity { Name = "Business Center", Description = "Quiet workspace with high-speed internet", Price = 20.0m, IsAvailable = true, ImageUrl = "https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&auto=format&fit=crop" },
+            new Amenity { Name = "Airport Shuttle", Description = "Round trip shuttle service", Price = 50.0m, IsAvailable = true, ImageUrl = "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=600&auto=format&fit=crop" },
+            new Amenity { Name = "Breakfast Buffet", Description = "All you can eat", Price = 25.0m, IsAvailable = true, ImageUrl = "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=600&auto=format&fit=crop" },
+            new Amenity { Name = "Parking", Description = "Valet parking", Price = 30.0m, IsAvailable = true, ImageUrl = "https://images.unsplash.com/photo-1506521781263-d8422e82f27a?w=600&auto=format&fit=crop" },
+            new Amenity { Name = "Laundry", Description = "Next day service", Price = 15.0m, IsAvailable = true, ImageUrl = "https://images.unsplash.com/photo-1582735689369-4fe89db7114c?w=600&auto=format&fit=crop" },
+            new Amenity { Name = "Pet Fee", Description = "Bring your dog", Price = 75.0m, IsAvailable = true, ImageUrl = "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&auto=format&fit=crop" },
+            new Amenity { Name = "Private Chef Experience", Description = "In-room custom dining", Price = 450.0m, IsAvailable = true, ImageUrl = "https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=600&auto=format&fit=crop" },
+            new Amenity { Name = "Helicopter Pad Access", Description = "Exclusive landing coordination", Price = 800.0m, IsAvailable = true, ImageUrl = "https://images.unsplash.com/photo-1588421357574-87938a86fa28?w=600&auto=format&fit=crop" }
         };
         context.Amenities.AddRange(amenities);
         context.SaveChanges();

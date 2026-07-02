@@ -172,7 +172,7 @@ public class AmenityServiceTests
     [Test]
     public async Task CreateAmenityAsync_ShouldAddAmenityAndReturnDto()
     {
-        var dto = new CreateUpdateAmenityDTO { Name = "Pool", Price = 10m };
+        var dto = new CreateUpdateAmenityDTO { Name = "Pool", Price = 10m, ImageUrl = "https://images.unsplash.com/photo-test-pool" };
         var amenity = new Amenity { Name = "Pool", Price = 10m };
         _mockMapper.Setup(m => m.Map<Amenity>(dto)).Returns(amenity);
         _mockMapper.Setup(m => m.Map<AmenityDTO>(It.IsAny<Amenity>())).Returns(new AmenityDTO { Id = 1, Name = "Pool" });
@@ -197,7 +197,7 @@ public class AmenityServiceTests
     public async Task UpdateAmenityAsync_ShouldUpdateAndSave()
     {
         var amenity = new Amenity { Id = 1, Name = "Old", Price = 5m };
-        var dto = new CreateUpdateAmenityDTO { Name = "New", Price = 15m };
+        var dto = new CreateUpdateAmenityDTO { Name = "New", Price = 15m, ImageUrl = "https://images.unsplash.com/photo-test-new" };
         _mockAmenityRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(amenity);
         
         await _amenityService.UpdateAmenityAsync(1, dto);

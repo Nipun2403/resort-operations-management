@@ -7,7 +7,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next): Observable<HttpEv
   const authService = inject(AuthService);
   const token = authService.token();
 
-  if (token) {
+  // Skip token header for auth/login and auth/register endpoints to prevent stale tokens causing 401 Unauthorized
+  const isAuthEndpoint = req.url.includes('/auth/login') || req.url.includes('/auth/register');
+
+  if (token && !isAuthEndpoint) {
     const authReq = req.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`,

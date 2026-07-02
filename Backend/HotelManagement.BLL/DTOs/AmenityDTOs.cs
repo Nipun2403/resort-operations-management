@@ -9,6 +9,8 @@ public class AmenityDTO
     public string Description { get; set; } = string.Empty;
     public decimal Price { get; set; }
     public bool IsAvailable { get; set; }
+
+    public string? ImageUrl { get; set; }
 }
 
 public class CreateUpdateAmenityDTO
@@ -23,7 +25,13 @@ public class CreateUpdateAmenityDTO
 
     [Range(0, 10000)]
     public decimal Price { get; set; }
+
     public bool IsAvailable { get; set; }
+
+    [Required(AllowEmptyStrings = false)]
+    [Url]
+    [MaxLength(2048)]
+    public string ImageUrl { get; set; } = string.Empty;
 }
 
 public class SubscribeAmenityDTO

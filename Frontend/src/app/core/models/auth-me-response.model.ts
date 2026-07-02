@@ -4,5 +4,12 @@ export interface Claim {
 }
 
 export interface AuthMeResponse {
-  claims: Claim[];
+  claims?: Claim[];
+  id?: number;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  role?: string;
+  isActive?: boolean;
 }
+

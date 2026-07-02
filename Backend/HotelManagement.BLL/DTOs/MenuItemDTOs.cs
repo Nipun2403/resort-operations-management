@@ -16,6 +16,14 @@ public class MenuItemDTO
     public string Category { get; set; } = string.Empty;
 
     public bool IsAvailable { get; set; }
+
+    [MaxLength(500)]
+    public string? Description { get; set; }
+
+    [Required(AllowEmptyStrings = false)]
+    [Url]
+    [MaxLength(2048)]
+    public string ImageUrl { get; set; } = string.Empty;
 }
 
 public class CreateMenuItemDTO
@@ -30,4 +38,12 @@ public class CreateMenuItemDTO
     public string Category { get; set; } = string.Empty;
 
     public bool IsAvailable { get; set; }
+
+    [MaxLength(500)]
+    public string? Description { get; set; }
+
+    [Required(AllowEmptyStrings = false)]
+    [Url]
+    [MaxLength(2048)]
+    public string ImageUrl { get; set; } = string.Empty;
 }
