@@ -185,34 +185,6 @@
     }
   }
 
-  .status-chip {
-    @include font-label-caps;
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    border: 1px solid rgba(228, 194, 133, 0.3);
-    padding: 2px 12px;
-    background: rgba(228, 194, 133, 0.05);
-    color: var(--color-secondary);
-    border-radius: 2px;
-    display: inline-block;
-
-    &.Pending {
-      color: var(--color-on-surface-variant);
-      border-color: rgba(228, 194, 133, 0.15);
-      opacity: 0.6;
-    }
-
-    &.InProgress, &.Preparing {
-      color: var(--color-secondary);
-      border-color: rgba(228, 194, 133, 0.4);
-    }
-
-    &.Completed, &.Delivered {
-      color: var(--color-on-surface-variant);
-      border-color: rgba(228, 194, 133, 0.05);
-      opacity: 0.3;
-    }
-  }
 
   .empty-state {
     background: rgba(26, 26, 26, 0.6);
