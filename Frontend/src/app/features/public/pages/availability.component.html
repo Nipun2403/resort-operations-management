@@ -74,7 +74,7 @@
     } @else {
       @for (room of availableRooms(); track room.roomTypeId) {
         <article class="result-card group">
-          <div class="card-image hover-pan">
+          <div class="card-image hover-pan" [routerLink]="['/rooms', room.roomTypeId]" [queryParams]="{ source: 'availability' }" style="cursor:pointer">
             <img [src]="getFirstImage(room)" alt="{{ room.name }}" />
             <div class="image-overlay"></div>
           </div>

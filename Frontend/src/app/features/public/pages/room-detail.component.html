@@ -8,6 +8,8 @@
     <p>{{ error() }}</p>
     @if (isFromBooking()) {
     <a (click)="goBackToBooking()" class="back-link" style="cursor: pointer;">← Back to Booking</a>
+    } @else if (isFromAvailability()) {
+    <a (click)="goBackToAvailability()" class="back-link" style="cursor: pointer;">← Back to Availability</a>
     } @else {
     <a (click)="goBackToRooms()" class="back-link" style="cursor: pointer;">← Back to Villas</a>
     }
@@ -19,6 +21,11 @@
     <a (click)="goBackToBooking()" class="back-to-villas-btn" style="cursor: pointer;">
       <span class="material-symbols-outlined">arrow_back</span>
       <span>BACK TO BOOKING</span>
+    </a>
+    } @else if (isFromAvailability()) {
+    <a (click)="goBackToAvailability()" class="back-to-villas-btn" style="cursor: pointer;">
+      <span class="material-symbols-outlined">arrow_back</span>
+      <span class="back-text">BACK TO AVAILABILITY</span>
     </a>
     } @else {
     <a (click)="goBackToRooms()" class="back-to-villas-btn" style="cursor: pointer;">

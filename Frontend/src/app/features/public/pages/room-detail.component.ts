@@ -1,5 +1,5 @@
 import { Component, inject, signal, computed, OnInit, AfterViewInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -21,12 +21,14 @@ export class RoomDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private roomTypeApi = inject(RoomTypeApiService);
   private router = inject(Router);
+  private location = inject(Location);
   private destroyRef = inject(DestroyRef);
 
   room = signal<RoomType | null>(null);
   loading = signal(false);
   error = signal<string | null>(null);
   isFromBooking = signal(false);
+  isFromAvailability = signal(false);
   galleryImages = computed(() => this.room()?.imageUrls?.filter(Boolean) ?? []);
 
   // Parallax
@@ -43,11 +45,17 @@ export class RoomDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     const source = this.route.snapshot.queryParamMap.get('source');
     if (source === 'booking') {
       this.isFromBooking.set(true);
+    } else if (source === 'availability') {
+      this.isFromAvailability.set(true);
     }
   }
 
   goBackToBooking(): void {
     this.router.navigate(['/user/bookings'], { queryParams: { new: 'true' } });
+  }
+
+  goBackToAvailability(): void {
+    this.location.back();
   }
 
   goBackToRooms(): void {
