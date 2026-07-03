@@ -25,6 +25,12 @@ public class MappingProfile : Profile
 
         CreateMap<BookingRoom, BookingRoomDTO>()
             .ForMember(dest => dest.RoomNumber, opt => opt.MapFrom(src => src.Room != null ? src.Room.RoomNumber : null))
+            .ForMember(dest => dest.RoomAssignmentText, opt => opt.MapFrom(src =>
+                src.Room != null
+                    ? src.Room.RoomNumber
+                    : (src.Booking != null && src.Booking.BookingStatus == HotelManagement.DAL.Enums.BookingStatus.Cancelled
+                        ? "Booking Cancelled"
+                        : "Room Not Assigned Yet")))
             .ReverseMap();
 
         CreateMap<Housekeeping, HousekeepingDTO>()

@@ -4,6 +4,7 @@ export interface BookingRoom {
   roomTypeId: number;
   roomId: number | null;
   roomNumber: string | null;
+  roomAssignmentText?: string;
   lockedInPrice: number;
 }
 
