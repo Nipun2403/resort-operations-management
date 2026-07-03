@@ -116,6 +116,10 @@
             class="action-btn">
             <mat-icon>receipt_long</mat-icon>
           </button>
+          <button mat-icon-button (click)="downloadFolioPdf(b.id, $event)" aria-label="Download PDF"
+            matTooltip="Download Folio PDF" class="action-btn">
+            <mat-icon>picture_as_pdf</mat-icon>
+          </button>
         </td>
       </ng-container>
 

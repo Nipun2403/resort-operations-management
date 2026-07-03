@@ -118,6 +118,11 @@
             <p class="text-on-surface text-[14px]">{{ b.checkOutDate }}</p>
           </div>
         </div>
+        <div class="flex justify-end mt-4">
+          <button mat-icon-button (click)="downloadFolioPdf(b.id, $event)" aria-label="Download folio PDF" class="action-icon-btn" style="color: var(--color-secondary);">
+            <mat-icon>picture_as_pdf</mat-icon>
+          </button>
+        </div>
       </div>
       }
     </div>
@@ -236,7 +241,17 @@
             mat-cell
             *matCellDef="let b"
             class="text-right"
+            style="white-space: nowrap;"
           >
+            <button
+              mat-icon-button
+              (click)="downloadFolioPdf(b.id, $event)"
+              aria-label="Download folio PDF"
+              class="action-icon-btn"
+              matTooltip="Download Folio PDF"
+            >
+              <mat-icon>picture_as_pdf</mat-icon>
+            </button>
             <button
               mat-icon-button
               (click)="openBookingDetail(b); $event.stopPropagation()"

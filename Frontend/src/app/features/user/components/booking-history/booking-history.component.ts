@@ -8,11 +8,13 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { BookingApiService } from '../../services/booking-api.service';
+import { BillingApiService } from '../../services/billing-api.service';
 import { Booking } from '../../../../features/admin/models/booking.model';
 import { AlertComponent } from '../../../../features/auth/components/alert.component';
 import { BookingDetailDialogComponent } from '../booking-detail-dialog/booking-detail-dialog.component';
@@ -42,6 +44,7 @@ interface HistoryState {
     MatFormFieldModule,
     MatButtonModule,
     MatIconModule,
+    MatTooltipModule,
     MatProgressSpinnerModule,
     MatProgressBarModule,
     MatDialogModule,
@@ -57,6 +60,7 @@ export class BookingHistoryComponent implements AfterViewInit {
   highlightBookingId = input<number | null>(null);
 
   private readonly bookingApi = inject(BookingApiService);
+  private readonly billingApi = inject(BillingApiService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
 
@@ -245,6 +249,21 @@ export class BookingHistoryComponent implements AfterViewInit {
     this.dialog.open(BillingDialogComponent, {
       data: booking.id,
       width: '500px',
+    });
+  }
+
+  downloadFolioPdf(bookingId: number, event: Event): void {
+    event.stopPropagation();
+    this.billingApi.downloadFolioPdf(bookingId).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Aetheris_Folio_BK-${bookingId}.pdf`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: () => console.error('Failed to download folio PDF for booking', bookingId),
     });
   }
 
