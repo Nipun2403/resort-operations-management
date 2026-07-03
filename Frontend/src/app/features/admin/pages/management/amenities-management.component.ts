@@ -126,6 +126,18 @@ export class AmenitiesManagementComponent implements OnInit {
         showInEdit: true,
       },
       {
+        key: 'imageUrl',
+        label: 'Image URL',
+        type: 'url',
+        validators: [
+          Validators.required,
+          Validators.maxLength(2048),
+          Validators.pattern(/^https?:\/\/.+/),
+        ],
+        showInAdd: true,
+        showInEdit: true,
+      },
+      {
         key: 'isAvailable',
         label: 'Available',
         type: 'toggle',
@@ -192,6 +204,7 @@ export class AmenitiesManagementComponent implements OnInit {
         description: formValue.description,
         price: formValue.price,
         isAvailable: isActive,
+        imageUrl: formValue.imageUrl ?? '',
       };
       this.amenityApi
         .update(this.editingEntity()!.id, dto)
@@ -214,6 +227,7 @@ export class AmenitiesManagementComponent implements OnInit {
         name: formValue.name,
         description: formValue.description,
         price: formValue.price,
+        imageUrl: formValue.imageUrl ?? '',
       };
       this.amenityApi
         .create(dto)

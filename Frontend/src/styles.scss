@@ -105,6 +105,19 @@ svg {
   .mat-mdc-snackbar-surface { background: transparent; box-shadow: none; }
 }
 
+.mdc-snackbar__surface {
+  max-width: none !important;
+  width: auto !important;
+}
+  .mdc-snackbar__surface {
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    max-width: none !important;
+    width: auto !important;
+  }
+
 // ── CDK Overlay backdrop blur ────────────────────────
 .cdk-overlay-backdrop {
   backdrop-filter: blur(8px) !important;
@@ -579,3 +592,7 @@ mat-nav-list {
   }
 }
 
+// ── Material Divider Global override ─────────────────
+.mat-divider, .mat-mdc-divider {
+  border-top-color: var(--color-outline-variant) !important;
+}

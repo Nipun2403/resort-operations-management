@@ -99,7 +99,7 @@ public class MenuItemServiceTests
     [Test]
     public async Task CreateMenuItemAsync_ShouldAddAndReturn()
     {
-        var dto = new CreateMenuItemDTO { Name = "Pizza", Price = 10m, Category = "Food", IsAvailable = true };
+        var dto = new CreateMenuItemDTO { Name = "Pizza", Price = 10m, Category = "Food", IsAvailable = true, Description = "Classic pizza.", ImageUrl = "https://images.unsplash.com/photo-test" };
         _mockMapper.Setup(m => m.Map<MenuItemDTO>(It.IsAny<MenuItem>())).Returns(new MenuItemDTO { Id = 1, Name = "Pizza" });
 
         var result = await _menuItemService.CreateMenuItemAsync(dto);
@@ -121,7 +121,7 @@ public class MenuItemServiceTests
     public async Task UpdateMenuItemAsync_ShouldUpdateAndReturn()
     {
         var existingItem = new MenuItem { Id = 1, Name = "Old" };
-        var dto = new MenuItemDTO { Name = "New", Price = 15m, Category = "Food", IsAvailable = false };
+        var dto = new MenuItemDTO { Name = "New", Price = 15m, Category = "Food", IsAvailable = false, Description = "Updated desc.", ImageUrl = "https://images.unsplash.com/photo-test-update" };
 
         _mockMenuItemRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(existingItem);
         _mockMapper.Setup(m => m.Map<MenuItemDTO>(existingItem)).Returns(new MenuItemDTO { Id = 1, Name = "New" });

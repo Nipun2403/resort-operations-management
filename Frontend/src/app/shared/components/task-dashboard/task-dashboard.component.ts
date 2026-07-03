@@ -86,6 +86,9 @@ export class TaskDashboardComponent {
    */
   private setupRefreshEffect(): void {
     effect(() => {
+      const config = this.config();
+      this.sortField.set(config.defaultSortBy ?? 'id');
+      this.sortDescending.set(config.defaultSortDescending ?? false);
       this.refresh(); // read to track
       this.pageIndex.set(0); // reset to first page when refreshed
       this.fetchData();

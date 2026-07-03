@@ -1,0 +1,38 @@
+<main class="error-page error-page--{{ current.code }}">
+  <div class="glow-overlay" aria-hidden="true"></div>
+  <div class="gold-lattice" aria-hidden="true"></div>
+  <div class="parallax-shell" aria-hidden="true">
+    <div class="parallax-panel"></div>
+  </div>
+
+  <section class="content-shell">
+    <div class="brand-anchor">
+      <div class="brand-mark">
+        <mat-icon>shield</mat-icon>
+      </div>
+      <div class="brand-copy">
+        <p class="brand-eyebrow">AETHERIS COMMAND CENTRE</p>
+        <p class="brand-meta">{{ current.eyebrow }}</p>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <div class="error-code-wrap">
+        <h1 class="error-code">{{ current.code }}</h1>
+        <div class="glimmer-line"></div>
+      </div>
+
+      <div class="text-block">
+        <h2 class="error-title">{{ current.title }}</h2>
+        <p class="error-message">{{ current.message }}</p>
+      </div>
+
+      <div class="actions">
+        <a class="return-link" routerLink="/">
+          <mat-icon>west</mat-icon>
+          <span>{{ current.actionLabel }}</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</main>

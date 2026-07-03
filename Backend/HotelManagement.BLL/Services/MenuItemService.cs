@@ -68,7 +68,9 @@ public class MenuItemService : IMenuItemService
             Name = dto.Name,
             Price = dto.Price,
             Category = dto.Category,
-            IsAvailable = dto.IsAvailable
+            IsAvailable = dto.IsAvailable,
+            Description = dto.Description,
+            ImageUrl = dto.ImageUrl
         };
 
         await _menuItemRepository.AddAsync(menuItem);
@@ -86,6 +88,8 @@ public class MenuItemService : IMenuItemService
         existingItem.Price = dto.Price;
         existingItem.Category = dto.Category;
         existingItem.IsAvailable = dto.IsAvailable;
+        existingItem.Description = dto.Description;
+        existingItem.ImageUrl = dto.ImageUrl;
 
         _menuItemRepository.Update(existingItem);
         await _menuItemRepository.SaveChangesAsync();

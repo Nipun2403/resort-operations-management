@@ -67,7 +67,8 @@ public class AmenityService : IAmenityService
             Name = dto.Name,
             Description = dto.Description,
             Price = dto.Price,
-            IsAvailable = true
+            IsAvailable = true,
+            ImageUrl = dto.ImageUrl
         };
 
         await _amenityRepository.AddAsync(amenity);
@@ -85,6 +86,7 @@ public class AmenityService : IAmenityService
         amenity.Description = dto.Description;
         amenity.Price = dto.Price;
         amenity.IsAvailable = dto.IsAvailable;
+        amenity.ImageUrl = dto.ImageUrl;
 
         _amenityRepository.Update(amenity);
         await _amenityRepository.SaveChangesAsync();

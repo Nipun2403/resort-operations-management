@@ -8,5 +8,8 @@ export const frontDeskGuard: CanActivateFn & CanMatchFn = () => {
   if (auth.isAuthenticated() && auth.role() === "FrontDesk") {
     return true;
   }
+  if (auth.isAuthenticated()) {
+    return router.createUrlTree(['/error/403']);
+  }
   return router.createUrlTree(["/auth"]);
 };

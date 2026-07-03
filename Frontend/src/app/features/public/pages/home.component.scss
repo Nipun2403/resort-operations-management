@@ -26,11 +26,18 @@
     inset: 0;
     background: linear-gradient(to top, var(--color-background) 0%, transparent 50%, rgba(0,0,0,0.4) 100%);
   }
+
   .hero-content {
     position: relative;
     z-index: 10;
     text-align: center;
     padding: 0 var(--margin-mobile);
+
+    @media (max-width: 768px) {
+        transform: translateY(-160px); 
+    }
+
+  // transform: translateY(-120px); 
     h1 {
       @include font-display-lg;
       font-size: clamp(2.5rem, 10vw, 7.5rem);
@@ -329,6 +336,6 @@
 
 // Ken Burns animation
 @keyframes kenburns {
-  from { transform: scale(1.05); }
+  from { transform: scale(1.0); }
   to { transform: scale(1.1); }
 }

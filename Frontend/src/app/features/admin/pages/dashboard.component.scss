@@ -578,6 +578,26 @@
       .health-column {
         flex-direction: column;
       }
+
+      .charts-column {
+        gap: 16px;
+      }
+
+      .chart-glass-card {
+        padding: 20px;
+
+        .card-header {
+          margin-bottom: 16px;
+
+          .card-title {
+            font-size: 16px;
+          }
+        }
+
+        .chart-wrapper {
+          height: 240px;
+        }
+      }
     }
 
     .briefing-bar {
@@ -600,6 +620,16 @@
   .dashboard-container {
     .pillars-section {
       grid-template-columns: 1fr;
+    }
+
+    .middle-section {
+      .chart-glass-card {
+        padding: 16px;
+
+        .chart-wrapper {
+          height: 220px;
+        }
+      }
     }
   }
 }

@@ -8,5 +8,8 @@ export const maintenanceGuard: CanActivateFn & CanMatchFn = () => {
   if (auth.isAuthenticated() && auth.role() === 'Maintenance') {
     return true;
   }
+  if (auth.isAuthenticated()) {
+    return router.createUrlTree(['/error/403']);
+  }
   return router.createUrlTree(['/auth']);
 };

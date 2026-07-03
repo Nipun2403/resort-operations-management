@@ -1,6 +1,7 @@
 .amenities-page {
   .hero-small {
-    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/assets/amenities-hero.jpg') center/cover no-repeat;
+    /* Replaced hard‑coded hero image with a CSS variable for flexibility */
+    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), var(--amenities-hero-bg, none) center/cover no-repeat;
     height: 35vh;
     display: flex;
     flex-direction: column;

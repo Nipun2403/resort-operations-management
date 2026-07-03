@@ -4,7 +4,7 @@ export interface MenuItem {
   price: number;
   category: string;
   isAvailable: boolean;
-  image?: string;
+  imageUrl?: string;
   description?: string;
 }
 
@@ -13,6 +13,8 @@ export interface CreateMenuItemDTO {
   price: number;
   category: string;
   isAvailable: boolean;
+  description?: string;
+  imageUrl: string;
 }
 
 export interface UpdateMenuItemDTO {
@@ -20,4 +22,6 @@ export interface UpdateMenuItemDTO {
   price: number;
   category: string;
   isAvailable: boolean;
+  description?: string;
+  imageUrl: string;
 }

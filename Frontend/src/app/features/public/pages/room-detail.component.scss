@@ -240,10 +240,10 @@
 
 .back-to-villas-btn {
   position: absolute;
-  top: 2rem;
+  top: 4rem;
   left: var(--margin-mobile);
   z-index: 20;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   @include font-label-caps;
@@ -253,11 +253,13 @@
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(228, 194, 133, 0.3);
-  padding: 0.5rem 1rem;
+  padding: 0.85rem 1.15rem;
+  min-height: 48px;
+  min-width: 48px;
   border-radius: 20px;
   transition: all 0.3s ease;
   @media (min-width: 768px) {
-    top: 3rem;
+    top: 6rem;
     left: var(--margin-desktop);
   }
   &:hover {
@@ -265,5 +267,34 @@
     color: var(--color-secondary);
     background: rgba(26, 26, 26, 0.9);
     transform: translateX(-4px);
+  }
+}
+
+@media (max-width: 768px) {
+  .back-to-villas-btn .back-text {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .gallery-section {
+    height: auto;
+    min-height: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .gallery-scroll {
+    height: 75vh;
+    min-height: 500px;
+    flex-shrink: 0;
+  }
+
+  .glass-info-panel {
+    position: static;      // Remove absolute positioning
+    width: auto;
+    max-width: none;
+    margin: 1.5rem var(--margin-mobile) 0;
+    animation: none;       // Optional
   }
 }

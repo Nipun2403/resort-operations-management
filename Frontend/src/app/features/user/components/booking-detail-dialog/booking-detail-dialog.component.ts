@@ -16,6 +16,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   imports: [CommonModule, MatDialogModule, MatButtonModule, MatListModule, MatDividerModule],
   templateUrl: './booking-detail-dialog.component.html',
   styles: [`
+    :host {
+      display: block;
+    }
     .detail-section {
       margin-bottom: 16px;
     }
@@ -27,14 +30,25 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     .detail-label {
       font-weight: 600;
       width: 140px;
-      color: rgba(0, 0, 0, 0.6);
+      color: var(--color-on-surface-variant);
     }
     .detail-value {
-      color: rgba(0, 0, 0, 0.87);
+      color: var(--color-on-surface);
+    }
+    h3 {
+      color: var(--color-on-surface-variant);
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin: 0 0 12px 0;
     }
     ul {
       margin: 4px 0 0 0;
       padding-left: 20px;
+      color: var(--color-on-surface);
+    }
+    li {
+      margin-bottom: 4px;
     }
   `]
 })

@@ -33,6 +33,8 @@ export class HousekeepingDashboardComponent {
 
   config: TaskDashboardConfig = {
     entityName: 'Housekeeping Task',
+    defaultSortBy: 'id',
+    defaultSortDescending: true,
     fetchTasks: (params: any) =>
       this.housekeepingApi.getAll(params).pipe(
         map((res: any) => ({

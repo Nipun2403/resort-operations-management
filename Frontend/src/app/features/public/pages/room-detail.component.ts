@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit, AfterViewInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
+import { Component, inject, signal, computed, OnInit, AfterViewInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -27,6 +27,7 @@ export class RoomDetailComponent implements OnInit, AfterViewInit, OnDestroy {
   loading = signal(false);
   error = signal<string | null>(null);
   isFromBooking = signal(false);
+  galleryImages = computed(() => this.room()?.imageUrls?.filter(Boolean) ?? []);
 
   // Parallax
   @ViewChild('galleryContainer') galleryRef!: ElementRef<HTMLElement>;
@@ -49,6 +50,12 @@ export class RoomDetailComponent implements OnInit, AfterViewInit, OnDestroy {
     this.router.navigate(['/user/bookings'], { queryParams: { new: 'true' } });
   }
 
+  goBackToRooms(): void {
+    const page = Number(this.route.snapshot.queryParamMap.get('page'));
+    const queryParams = Number.isFinite(page) && page > 1 ? { page } : undefined;
+    this.router.navigate(['/rooms'], { queryParams });
+  }
+
   ngAfterViewInit(): void {
     // Bind scroll listener for parallax after view init
     const gallery = this.galleryRef?.nativeElement;
@@ -69,7 +76,7 @@ export class RoomDetailComponent implements OnInit, AfterViewInit, OnDestroy {
       takeUntilDestroyed(this.destroyRef),
       finalize(() => this.loading.set(false))
     ).subscribe({
-      next: (data: any) => this.room.set(data),
+      next: (data) => this.room.set(data),
       error: (err: any) => this.error.set(this.extractErrorMessage(err))
     });
   }

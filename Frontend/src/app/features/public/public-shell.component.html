@@ -2,9 +2,11 @@
   <nav class="nav-container">
     <div class="logo" routerLink="/home">AETHERIS</div>
     <div class="desktop-links">
-      <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" class="nav-link underline-reveal">The Estate</a>
+      <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}"
+        class="nav-link underline-reveal">The Estate</a>
       <a routerLink="/rooms" routerLinkActive="active" class="nav-link underline-reveal">Villas</a>
-      <a routerLink="/experiences" routerLinkActive="active" class="nav-link underline-reveal">Dining &amp; Amenities</a>
+      <a routerLink="/experiences" routerLinkActive="active" class="nav-link underline-reveal">Dining &amp;
+        Amenities</a>
       <a routerLink="/availability" routerLinkActive="active" class="nav-link underline-reveal">Reservations</a>
     </div>
     <div class="nav-actions">
@@ -18,33 +20,33 @@
 
 <!-- Mobile Drawer -->
 @if (drawerOpen()) {
-  <div class="drawer-overlay" (click)="closeDrawer()"></div>
-  <aside class="mobile-drawer" [class.open]="drawerOpen()">
-    <div class="drawer-header">
-      <span class="logo">AETHERIS</span>
-      <button class="close-btn" (click)="closeDrawer()" aria-label="Close menu">
-        <span class="material-symbols-outlined">close</span>
-      </button>
-    </div>
-    <nav>
-      <a routerLink="/home" (click)="closeDrawer()">
-        <span class="material-symbols-outlined">explore</span>
-        The Estate
-      </a>
-      <a routerLink="/rooms" (click)="closeDrawer()">
-        <span class="material-symbols-outlined">villa</span>
-        Villas
-      </a>
-      <a routerLink="/experiences" (click)="closeDrawer()">
-        <span class="material-symbols-outlined">spa</span>
-        Dining &amp; Amenities
-      </a>
-      <a routerLink="/availability" (click)="closeDrawer()">
-        <span class="material-symbols-outlined">calendar_month</span>
-        Reservations
-      </a>
-    </nav>
-  </aside>
+<div class="drawer-overlay" (click)="closeDrawer()"></div>
+<aside class="mobile-drawer" [class.open]="drawerOpen()">
+  <div class="drawer-header">
+    <span class="logo">AETHERIS</span>
+    <button class="close-btn" (click)="closeDrawer()" aria-label="Close menu">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </div>
+  <nav>
+    <a routerLink="/home" (click)="closeDrawer()">
+      <span class="material-symbols-outlined">explore</span>
+      The Estate
+    </a>
+    <a routerLink="/rooms" (click)="closeDrawer()">
+      <span class="material-symbols-outlined">villa</span>
+      Villas
+    </a>
+    <a routerLink="/experiences" (click)="closeDrawer()">
+      <span class="material-symbols-outlined">spa</span>
+      Dining &amp; Amenities
+    </a>
+    <a routerLink="/availability" (click)="closeDrawer()">
+      <span class="material-symbols-outlined">calendar_month</span>
+      Reservations
+    </a>
+  </nav>
+</aside>
 }
 
 <main>
@@ -52,17 +54,15 @@
 </main>
 
 <footer class="site-footer">
-  <div class="footer-links">
-    <a href="#">Privacy Policy</a>
-    <a href="#">Terms of Service</a>
-    <a href="#">Press</a>
-    <a href="#">Careers</a>
-    <a href="#">Contact</a>
-  </div>
   <div class="footer-logo">AETHERIS</div>
+  <div class="footer-links">
+    <a routerLink="/privacy">Privacy Policy</a>
+    <a routerLink="/terms">Terms of Service</a>
+
+  </div>
   <div class="footer-info">
     <span>1 AETHERIS PEAK, THE SILENT VALLEY</span>
     <span class="separator"></span>
-    <span>&copy; 2024 AETHERIS. ALL RIGHTS RESERVED.</span>
+    <span>&copy; 2026 AETHERIS. ALL RIGHTS RESERVED.</span>
   </div>
 </footer>

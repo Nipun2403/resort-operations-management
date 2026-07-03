@@ -36,6 +36,9 @@ namespace HotelManagement.DAL.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("text");
+
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("boolean");
 
@@ -415,6 +418,12 @@ namespace HotelManagement.DAL.Migrations
 
                     b.Property<string>("Category")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ImageUrl")
                         .HasColumnType("text");
 
                     b.Property<bool>("IsAvailable")

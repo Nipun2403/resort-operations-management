@@ -1,0 +1,420 @@
+@import '../../../../styles/theme/index';
+
+.contact-page {
+  overflow-x: hidden;
+  position: relative;
+}
+
+// ── Background Atmosphere ─────────────────────────
+.hero-bg-container {
+  position: absolute;
+  inset: 0;
+  z-index: -10;
+  opacity: 0.2;
+  filter: grayscale(100%);
+  pointer-events: none;
+  overflow: hidden;
+
+  .hero-bg {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBYoh6o_hgEPxbD16sJXVDj9Z5bGH_cviq6dofsC_xeZ0EzAkUeMwEB24Yfx3NKSUTaoU5MmXfvPxFLSLE7qBtR2R31007HiVy1xV2Vg8GSOyPnK3SUBKV9PiPcYiaHrR2BPs-7y3hWL9jcdpbIS7DbPTWLs_H2PwHYfjrBF0D_fYGXHA25Nxdu5X3h7PfnxM4bBqWtWZK8Hqbe9T6yyCiRCPjtoNEEkjKgNl2_IpAg7EyExfCopYCQ0c12WNAtf7K2typyST7n4Vaj');
+  }
+}
+
+.content-canvas {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 10rem var(--margin-desktop) var(--section-gap);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  @media (max-width: 768px) {
+    padding: 6rem var(--margin-mobile) 4rem;
+  }
+}
+
+// ── Header ────────────────────────────────────────
+.page-header {
+  text-align: center;
+  margin-bottom: 6rem;
+  width: 100%;
+  max-width: 900px;
+  
+  @media (max-width: 768px) {
+    margin-bottom: 3rem;
+  }
+
+  .header-card {
+    padding: 4rem 2rem;
+    border: 1px solid rgba(228, 194, 133, 0.15);
+  }
+
+  .fleuron {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .page-title {
+    @include font-display-lg;
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    color: var(--color-on-surface);
+    margin-bottom: 1.5rem;
+  }
+
+  .page-subtitle {
+    @include font-body-lg;
+    color: var(--color-on-surface-variant);
+    font-size: clamp(0.9rem, 3vw, 1.125rem);
+    margin: 0;
+  }
+}
+
+// ── Grid Layout ───────────────────────────────────
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--gutter);
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+.form-section {
+  grid-column: span 7;
+  
+  @media (max-width: 1024px) {
+    grid-column: span 1;
+  }
+}
+
+.details-section {
+  grid-column: span 5;
+  
+  @media (max-width: 1024px) {
+    grid-column: span 1;
+  }
+}
+
+.form-panel, .details-panel {
+  @include glass-panel;
+  padding: 4rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  @media (max-width: 768px) {
+    padding: 2.5rem 1.5rem;
+  }
+}
+
+.column-title {
+  @include font-label-caps;
+  color: var(--color-secondary);
+  margin-bottom: 3rem;
+  letter-spacing: 0.3em;
+  font-size: 0.85rem;
+}
+
+// ── Correspondence Form ───────────────────────────
+.correspondence-form {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.form-group {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  .input-label {
+    @include font-label-caps;
+    color: rgba(228, 194, 133, 0.6);
+    font-size: 0.625rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.15em;
+  }
+
+  .underline-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(196, 199, 199, 0.2);
+    padding: 0.75rem 0;
+    color: var(--color-on-surface);
+    @include font-body-md;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.3s;
+
+    &::placeholder {
+      color: rgba(196, 199, 199, 0.3);
+    }
+
+    &:focus {
+      border-color: transparent;
+    }
+  }
+
+  // Underline focus transition
+  .input-underline {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: var(--color-secondary);
+    transform: scaleX(0);
+    transform-origin: bottom right;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .underline-input:focus + .input-underline {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+  }
+
+  // Dropdown overrides
+  .select-wrapper {
+    position: relative;
+    width: 100%;
+    
+    .underline-select {
+      appearance: none;
+      -webkit-appearance: none;
+      padding-right: 2rem;
+      cursor: pointer;
+
+      option {
+        background-color: var(--color-surface);
+        color: var(--color-on-surface);
+      }
+    }
+
+    .select-arrow {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--color-secondary);
+      pointer-events: none;
+    }
+  }
+
+  .underline-textarea {
+    resize: none;
+  }
+
+  // Error state
+  &.error {
+    .underline-input {
+      border-bottom-color: rgba(239, 68, 68, 0.4);
+    }
+    .input-label {
+      color: rgba(239, 68, 68, 0.8);
+    }
+    .error-msg {
+      @include font-body-md;
+      font-size: 0.75rem;
+      color: #ef4444;
+      margin-top: 0.5rem;
+    }
+  }
+}
+
+// ── Submit Button ─────────────────────────────────
+.submit-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem 3rem;
+  background: var(--color-secondary);
+  color: var(--color-surface);
+  border: none;
+  @include font-label-caps;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  cursor: pointer;
+  width: 100%;
+  overflow: hidden;
+  transition: box-shadow 0.5s ease;
+
+  @media (min-width: 768px) {
+    width: auto;
+  }
+
+  &:hover {
+    box-shadow: 0 0 30px rgba(228, 194, 133, 0.3);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .btn-text {
+    position: relative;
+    z-index: 10;
+  }
+
+  .btn-hover-bg {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(100%);
+    transition: transform 0.3s ease-out;
+  }
+
+  &:hover .btn-hover-bg {
+    transform: translateY(0);
+  }
+}
+
+// ── Success Panel ─────────────────────────────────
+.success-panel {
+  text-align: center;
+  padding: 2rem 0;
+
+  .success-icon {
+    font-size: 4rem;
+    color: var(--color-secondary);
+    margin-bottom: 2rem;
+  }
+
+  .success-title {
+    @include font-headline-md;
+    color: var(--color-secondary);
+    margin-bottom: 1.5rem;
+  }
+
+  .success-text {
+    @include font-body-md;
+    color: rgba(228, 226, 221, 0.7);
+    line-height: 1.8;
+    margin-bottom: 3rem;
+  }
+
+  .return-btn {
+    background: transparent;
+    border: 1px solid var(--color-secondary);
+    color: var(--color-secondary);
+    padding: 1rem 2rem;
+    @include font-label-caps;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+
+    &:hover {
+      background: var(--color-secondary);
+      color: var(--color-surface);
+    }
+  }
+}
+
+// ── Reach Us Details ──────────────────────────────
+.contact-details {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  margin-top: 1rem;
+}
+
+.detail-item {
+  .detail-label {
+    @include font-label-caps;
+    color: rgba(196, 199, 199, 0.5);
+    font-size: 0.625rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.15em;
+    display: block;
+  }
+
+  .detail-val {
+    @include font-body-lg;
+    color: var(--color-on-surface);
+    margin: 0;
+    line-height: 1.6;
+
+    .label-note {
+      font-size: 0.8rem;
+      opacity: 0.6;
+    }
+  }
+
+  &.hours-item {
+    padding-top: 2rem;
+    border-top: 1px solid rgba(228, 194, 133, 0.1);
+  }
+}
+
+.social-links {
+  display: flex;
+  gap: 2rem;
+  margin-top: 6rem;
+  align-items: center;
+
+  @media (max-width: 1024px) {
+    margin-top: 4rem;
+  }
+
+  .social-link {
+    @include font-label-caps;
+    color: var(--color-on-surface-variant);
+    text-decoration: none;
+    font-size: 0.7rem;
+    transition: color 0.3s;
+    
+    @include underline-reveal;
+
+    &:hover {
+      color: var(--color-secondary);
+    }
+  }
+}
+
+// ── Footer Note ───────────────────────────────────
+.footer-note {
+  margin-top: 8rem;
+  text-align: center;
+  width: 100%;
+  
+  @media (max-width: 768px) {
+    margin-top: 4rem;
+  }
+
+  .line-separator {
+    width: 120px;
+    height: 1px;
+    background: rgba(228, 194, 133, 0.3);
+    margin: 0 auto 2.5rem;
+  }
+
+  .footer-note-text {
+    @include font-headline-sm;
+    color: var(--color-on-surface-variant);
+    opacity: 0.8;
+    font-size: clamp(1.1rem, 4vw, 1.5rem);
+  }
+}
+
+// ── Entry Transitions ─────────────────────────────
+.content-section {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  
+  &.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

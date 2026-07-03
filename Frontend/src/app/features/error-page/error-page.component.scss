@@ -1,0 +1,310 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: #131411;
+  color: #e4e2dd;
+  overflow: hidden;
+  font-family: 'Manrope', system-ui, sans-serif;
+}
+
+.error-page {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(228, 194, 133, 0.09), transparent 34%),
+    radial-gradient(circle at 100% 100%, rgba(228, 194, 133, 0.08), transparent 38%),
+    linear-gradient(180deg, #131411 0%, #0e0e0c 100%);
+}
+
+.error-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(228, 194, 133, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(228, 194, 133, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.18;
+  pointer-events: none;
+}
+
+.glow-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at var(--error-glow-x, 50%) var(--error-glow-y, 40%), rgba(228, 194, 133, 0.12), transparent 32%),
+    radial-gradient(circle at 0% 0%, rgba(228, 194, 133, 0.04), transparent 45%),
+    radial-gradient(circle at 100% 100%, rgba(228, 194, 133, 0.04), transparent 45%);
+  animation: pulse-glow 14s ease-in-out infinite alternate;
+}
+
+.gold-lattice {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.08;
+  mix-blend-mode: screen;
+  background-image:
+    linear-gradient(rgba(228, 194, 133, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(228, 194, 133, 0.12) 1px, transparent 1px);
+  background-size: 88px 88px;
+  mask-image: radial-gradient(circle at center, black 0%, rgba(0, 0, 0, 0.9) 44%, transparent 80%);
+}
+
+.parallax-shell {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.12;
+}
+
+.parallax-panel {
+  position: absolute;
+  inset: -12%;
+  border: 1px solid rgba(228, 194, 133, 0.08);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.02), transparent 55%),
+    radial-gradient(circle at 50% 10%, rgba(228, 194, 133, 0.12), transparent 28%);
+  transform: scale(1.08);
+  filter: blur(0.2px);
+}
+
+.content-shell {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 980px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: center;
+}
+
+.brand-anchor {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  align-self: flex-start;
+  opacity: 0.7;
+  animation: rise-in 900ms cubic-bezier(0.19, 1, 0.22, 1) both;
+}
+
+.brand-mark {
+  width: 2.75rem;
+  height: 2.75rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(228, 194, 133, 0.26);
+  background: rgba(14, 14, 12, 0.55);
+  backdrop-filter: blur(20px);
+}
+
+.brand-mark mat-icon {
+  color: #e4c285;
+}
+
+.brand-copy {
+  text-align: left;
+}
+
+.brand-eyebrow {
+  margin: 0;
+  color: #c9c6c5;
+  font-size: 0.75rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.brand-meta {
+  margin: 0.25rem 0 0;
+  color: rgba(228, 226, 221, 0.56);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.content-card {
+  width: min(100%, 860px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  padding: clamp(1.5rem, 3vw, 3rem);
+  border: 1px solid rgba(228, 194, 133, 0.16);
+  background: linear-gradient(180deg, rgba(19, 20, 17, 0.7), rgba(10, 10, 10, 0.28));
+  backdrop-filter: blur(20px);
+  box-shadow: 0 24px 90px rgba(0, 0, 0, 0.35);
+}
+
+.error-code-wrap {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.error-code {
+  margin: 0;
+  color: #e4c285;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(6rem, 18vw, 11rem);
+  line-height: 0.92;
+  letter-spacing: -0.06em;
+  font-weight: 400;
+  text-shadow: 0 0 36px rgba(228, 194, 133, 0.08);
+  animation: rise-in 1100ms cubic-bezier(0.19, 1, 0.22, 1) both;
+}
+
+.glimmer-line {
+  width: min(100%, 22rem);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(228, 194, 133, 0.48), transparent);
+}
+
+.text-block {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 44rem;
+}
+
+.error-title {
+  margin: 0;
+  color: rgba(228, 226, 221, 0.88);
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  line-height: 1.15;
+  font-weight: 400;
+  font-style: italic;
+  animation: rise-in 1250ms cubic-bezier(0.19, 1, 0.22, 1) both;
+}
+
+.error-message {
+  margin: 0;
+  color: rgba(196, 199, 199, 0.84);
+  font-size: clamp(1rem, 1.6vw, 1.125rem);
+  line-height: 1.75;
+  letter-spacing: 0.01em;
+  animation: rise-in 1400ms cubic-bezier(0.19, 1, 0.22, 1) both;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.return-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.95rem 1.2rem;
+  border: 0;
+  color: #e4c285;
+  background: transparent;
+  cursor: pointer;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.26em;
+  font-size: 0.72rem;
+  transition:
+    transform 180ms ease,
+    color 180ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease;
+}
+
+.return-link {
+  border: 1px solid rgba(228, 194, 133, 0.22);
+  background: rgba(10, 10, 10, 0.4);
+}
+
+.return-link:hover {
+  transform: translateY(-1px);
+}
+
+.return-link:hover {
+  border-color: rgba(228, 194, 133, 0.42);
+}
+
+.return-link mat-icon,
+.ghost-link mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.error-page--403 .error-code,
+.error-page--403 .error-title,
+.error-page--403 .return-link {
+  color: #ffdea4;
+}
+
+.error-page--404 .error-code,
+.error-page--404 .error-title,
+.error-page--404 .return-link {
+  color: #e4c285;
+}
+
+.error-page--500 .error-code,
+.error-page--500 .error-title,
+.error-page--500 .return-link {
+  color: #f4b8b2;
+}
+
+@keyframes pulse-glow {
+  from {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0.8;
+    transform: scale(1.04);
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .error-page {
+    padding: 20px;
+  }
+
+  .brand-anchor {
+    align-self: center;
+  }
+
+  .content-card {
+    gap: 1.5rem;
+  }
+
+  .actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .return-link,
+  .ghost-link {
+    width: 100%;
+    justify-content: center;
+  }
+}
