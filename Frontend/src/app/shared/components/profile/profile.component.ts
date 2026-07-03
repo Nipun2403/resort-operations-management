@@ -63,6 +63,7 @@ export class ProfileComponent implements OnInit {
   }, { validators: this.passwordsMatchValidator });
   passwordSubmitting = signal(false);
   passwordError = signal<string | null>(null);
+  passwordSuccess = signal(false);
 
   ngOnInit(): void {
     this.fetchProfile();
@@ -122,13 +123,14 @@ export class ProfileComponent implements OnInit {
     if (this.passwordForm.invalid) return;
     this.passwordSubmitting.set(true);
     this.passwordError.set(null);
+    this.passwordSuccess.set(false);
     const dto = this.passwordForm.getRawValue();
     this.authApi.changePassword(dto).pipe(
       takeUntilDestroyed(this.destroyRef),
       finalize(() => this.passwordSubmitting.set(false))
     ).subscribe({
       next: () => {
-        this.snackBar.open('Password changed.', 'Close', { duration: 3000 });
+        this.passwordSuccess.set(true);
         this.passwordForm.reset();
       },
       error: (err: any) => this.passwordError.set(this.extractErrorMessage(err))

@@ -65,7 +65,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPut("me")]
-    [Authorize]
+    [Authorize(Roles = "Admin,FrontDesk,RegisteredUser,housekeeping,maintenance")]
     public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDTO dto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);

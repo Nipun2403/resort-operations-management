@@ -152,6 +152,9 @@
             </div>
           </div>
 
+          @if (passwordSuccess()) {
+            <app-alert type="success" message="Password changed successfully." (closed)="passwordSuccess.set(false)"></app-alert>
+          }
           @if (passwordError()) {
             <app-alert type="error" [message]="passwordError()!" (closed)="passwordError.set(null)"></app-alert>
           }
