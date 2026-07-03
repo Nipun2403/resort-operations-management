@@ -85,8 +85,12 @@
         <th mat-header-cell *matHeaderCellDef>
           ROOMS
         </th>
-        <td mat-cell *matCellDef="let b">
-          {{ getRoomsSummary(b) }}
+        <td mat-cell *matCellDef="let b" class="rooms-cell">
+          @for (r of b.rooms; track r.id; let last = $last) {
+            <a [routerLink]="['/rooms', r.roomTypeId]" class="room-link">
+              {{ r.roomNumber || r.roomAssignmentText || 'View Room' }}
+            </a>@if (!last) { , }
+          }
         </td>
       </ng-container>
 

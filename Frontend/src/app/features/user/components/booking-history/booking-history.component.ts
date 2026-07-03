@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { RouterModule } from '@angular/router';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { BookingApiService } from '../../services/booking-api.service';
@@ -50,6 +51,7 @@ interface HistoryState {
     MatDialogModule,
     MatSnackBarModule,
     AlertComponent,
+    RouterModule,
   ],
   templateUrl: './booking-history.component.html',
   styleUrls: ['./booking-history.component.scss'],
