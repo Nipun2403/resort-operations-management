@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { BillingApiService } from '../../services/billing-api.service';
 import { BillingFolio } from '../../models/billing-folio.model';
@@ -11,7 +12,7 @@ import { finalize } from 'rxjs/operators';
 @Component({
   selector: 'app-billing-dialog',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, MatButtonModule, MatProgressSpinnerModule, AlertComponent],
+  imports: [CommonModule, MatDialogModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule, AlertComponent],
   templateUrl: './billing-dialog.component.html',
   styles: [`
     :host {
@@ -66,6 +67,7 @@ export class BillingDialogComponent implements OnInit {
   folio = signal<BillingFolio | null>(null);
   loading = signal(false);
   error = signal<string | null>(null);
+  downloading = signal(false);
 
   ngOnInit(): void {
     this.fetchBilling();
@@ -83,6 +85,23 @@ export class BillingDialogComponent implements OnInit {
           const message = err.error?.message || err.message || 'Could not fetch billing details.';
           this.error.set(message);
         }
+      });
+  }
+
+  downloadPdf(): void {
+    this.downloading.set(true);
+    this.billingApi.downloadFolioPdf(this.bookingId)
+      .pipe(finalize(() => this.downloading.set(false)))
+      .subscribe({
+        next: (blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `Aetheris_Folio_BK-${this.bookingId}.pdf`;
+          a.click();
+          window.URL.revokeObjectURL(url);
+        },
+        error: () => this.error.set('Failed to download PDF. Please try again.')
       });
   }
 }

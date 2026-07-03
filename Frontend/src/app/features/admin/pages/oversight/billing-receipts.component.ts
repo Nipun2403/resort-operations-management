@@ -18,6 +18,7 @@ import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
 import { BreakpointObserver } from '@angular/cdk/layout';
@@ -57,6 +58,7 @@ type ReceiptSortField = 'id' | 'amountPaid' | 'paidAt';
     MatCardModule,
     MatDividerModule,
     MatChipsModule,
+    MatTooltipModule,
     AlertComponent,
   ],
   templateUrl: './billing-receipts.component.html',
@@ -287,6 +289,24 @@ export class BillingReceiptsComponent implements OnInit {
     this.dialog.open(ReceiptDetailDialogComponent, {
       data: receipt,
       width: '400px',
+    });
+  }
+
+  downloadFolioPdf(bookingId: number, event: Event): void {
+    event.stopPropagation();
+    this.billingApi.downloadFolioPdf(bookingId).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Aetheris_Folio_BK-${bookingId}.pdf`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: () => {
+        // error is visible via existing error signal pattern – just log silently here
+        console.error('Failed to download folio PDF for booking', bookingId);
+      }
     });
   }
 
