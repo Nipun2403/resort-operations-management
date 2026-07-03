@@ -31,6 +31,12 @@ public class BillingService : IBillingService
         var nights = (booking.CheckOutDate - booking.CheckInDate).Days;
         if (nights <= 0) nights = 1;
 
+        var roomTypeNames = booking.BookingRooms
+            .Select(br => br.Room?.RoomType?.Name)
+            .Where(n => !string.IsNullOrWhiteSpace(n))
+            .Distinct()
+            .ToList();
+
         var folio = new BillingFolioDTO
         {
             BookingId = booking.Id,
@@ -40,6 +46,7 @@ public class BillingService : IBillingService
             FoodTotal = booking.FoodOrders.SelectMany(fo => fo.OrderItems).Sum(fi => fi.PriceAtPurchase * fi.Quantity),
             AmenityTotal = booking.BookingAmenities.Sum(ba => ba.PriceAtPurchase),
             PaymentStatus = booking.BookingStatus == DAL.Enums.BookingStatus.Cancelled ? (booking.PaymentStatus == DAL.Enums.PaymentStatus.Paid ? "Refunded" : "Cancelled") : booking.PaymentStatus.ToString(),
+            RoomTypeName = roomTypeNames.Count > 0 ? string.Join(" · ", roomTypeNames) : string.Empty,
             FoodItems = booking.FoodOrders.SelectMany(fo => fo.OrderItems).Select(fi => $"{fi.Quantity}x {fi.MenuItem.Name}").ToList(),
             AmenityItems = booking.BookingAmenities.Select(ba => ba.Amenity.Name).ToList()
         };

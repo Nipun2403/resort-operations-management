@@ -9,13 +9,13 @@ namespace HotelManagement.BLL.Services;
 public class PdfService : IPdfService
 {
     // ── Colour palette (mirrors the "Obsidian & Champagne" design tokens) ──────
-    private const string ColorBackground       = "#131411";
-    private const string ColorSurfaceHigh      = "#2a2a27";
-    private const string ColorOnSurface        = "#e4e2dd";
+    private const string ColorBackground = "#131411";
+    private const string ColorSurfaceHigh = "#2a2a27";
+    private const string ColorOnSurface = "#e4e2dd";
     private const string ColorOnSurfaceVariant = "#c4c7c7";
-    private const string ColorSecondary        = "#e4c285"; // champagne gold
-    private const string ColorMuted            = "#8e9192";
-    private const string ColorBorder           = "#444748";
+    private const string ColorSecondary = "#e4c285"; // champagne gold
+    private const string ColorMuted = "#8e9192";
+    private const string ColorBorder = "#444748";
 
     public byte[] GenerateFolioPdf(BillingFolioDTO folio)
     {
@@ -32,7 +32,7 @@ public class PdfService : IPdfService
                     .FontSize(10));
 
                 // ── Header ─────────────────────────────────────────────────────
-                page.Header().Element(ComposeHeader);
+                page.Header().Element(c => ComposeHeader(c, folio.RoomTypeName));
 
                 // ── Content ────────────────────────────────────────────────────
                 page.Content().PaddingVertical(24).Column(col =>
@@ -76,8 +76,12 @@ public class PdfService : IPdfService
 
     // ── Section composers ─────────────────────────────────────────────────────
 
-    private static void ComposeHeader(IContainer container)
+    private static void ComposeHeader(IContainer container, string roomTypeName)
     {
+        var subtitle = string.IsNullOrWhiteSpace(roomTypeName)
+            ? "AETHERIS COLLECTION"
+            : roomTypeName.ToUpperInvariant();
+
         container
             .BorderBottom(1).BorderColor(ColorSecondary)
             .PaddingBottom(16)
@@ -94,7 +98,7 @@ public class PdfService : IPdfService
 
                     col.Item()
                         .PaddingTop(4)
-                        .Text("A L T U M  R E S O R T S")
+                        .Text(subtitle)
                         .FontSize(8)
                         .FontColor(ColorMuted)
                         .LetterSpacing(0.15f);
@@ -138,7 +142,7 @@ public class PdfService : IPdfService
 
                 row.ConstantItem(140).Column(c =>
                 {
-                    LabelValue(c, "Nights Stayed", folio.NightsStayed.ToString());
+                    LabelValue(c, "Nights Booked", folio.NightsStayed.ToString());
                     LabelValue(c, "Payment Status", folio.PaymentStatus);
                 });
             });

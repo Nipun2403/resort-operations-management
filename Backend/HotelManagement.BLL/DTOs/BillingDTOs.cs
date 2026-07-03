@@ -15,6 +15,7 @@ public class BillingFolioDTO
     public decimal AmenityTotal { get; set; }
     public decimal TotalBill => RoomTotal + FoodTotal + AmenityTotal;
     public string PaymentStatus { get; set; } = string.Empty;
+    public string RoomTypeName { get; set; } = string.Empty;
     public List<string> FoodItems { get; set; } = new List<string>();
     public List<string> AmenityItems { get; set; } = new List<string>();
 }
