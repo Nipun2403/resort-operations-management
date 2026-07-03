@@ -12,14 +12,16 @@ public class BillingService : IBillingService
     private readonly IMapper _mapper;
     private readonly ICurrentUserService _currentUserService;
     private readonly IUserRepository _userRepository;
+    private readonly IEmailService _emailService;
 
-    public BillingService(IBookingRepository bookingRepository, IReceiptRepository receiptRepository, IMapper mapper, ICurrentUserService currentUserService, IUserRepository userRepository)
+    public BillingService(IBookingRepository bookingRepository, IReceiptRepository receiptRepository, IMapper mapper, ICurrentUserService currentUserService, IUserRepository userRepository, IEmailService emailService)
     {
         _bookingRepository = bookingRepository;
         _receiptRepository = receiptRepository;
         _mapper = mapper;
         _currentUserService = currentUserService;
         _userRepository = userRepository;
+        _emailService = emailService;
     }
     public async Task<BillingFolioDTO> GenerateFolioAsync(int bookingId)
     {
@@ -75,6 +77,13 @@ public class BillingService : IBillingService
         booking.PaymentStatus = DAL.Enums.PaymentStatus.Paid;
         _bookingRepository.Update(booking);
         await _bookingRepository.SaveChangesAsync();
+
+        // Send payment receipt email (non-fatal; errors are logged inside EmailService)
+        if (!string.IsNullOrWhiteSpace(booking.GuestEmail))
+        {
+            var updatedFolio = await GenerateFolioAsync(bookingId);
+            _ = _emailService.SendPaymentReceiptAsync(updatedFolio, booking.GuestEmail, dto.TransactionId, dto.PaymentMethod);
+        }
     }
 
     public async Task<object> GetGlobalBillingAsync(string? paymentStatus, DateTime? startDate, DateTime? endDate, string? search, bool detailed, int pageNumber, int pageSize, string? sortBy = null, bool sortDescending = false)

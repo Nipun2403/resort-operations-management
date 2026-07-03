@@ -21,8 +21,9 @@ public class BookingService : IBookingService
     private readonly ICurrentUserService _currentUserService;
     private readonly IAmenityRepository _amenityRepository;
     private readonly IBillingService _billingService;
+    private readonly IEmailService _emailService;
 
-    public BookingService(IBookingRepository bookingRepository, IHousekeepingService housekeepingService, IMapper mapper, INotificationService notificationService, IRoomRepository roomRepository, IRoomTypeRepository roomTypeRepository, IUserRepository userRepository, ICurrentUserService currentUserService, IAmenityRepository amenityRepository, IBillingService billingService)
+    public BookingService(IBookingRepository bookingRepository, IHousekeepingService housekeepingService, IMapper mapper, INotificationService notificationService, IRoomRepository roomRepository, IRoomTypeRepository roomTypeRepository, IUserRepository userRepository, ICurrentUserService currentUserService, IAmenityRepository amenityRepository, IBillingService billingService, IEmailService emailService)
     {
         _bookingRepository = bookingRepository;
         _housekeepingService = housekeepingService;
@@ -34,6 +35,7 @@ public class BookingService : IBookingService
         _currentUserService = currentUserService;
         _amenityRepository = amenityRepository;
         _billingService = billingService;
+        _emailService = emailService;
     }
     public async Task<BookingDTO> CreateBookingAsync(CreateBookingRequestDTO dto)
     {
@@ -166,7 +168,13 @@ public class BookingService : IBookingService
         await _bookingRepository.AddAsync(booking);
         await _bookingRepository.SaveChangesAsync();
 
-        return _mapper.Map<BookingDTO>(booking);
+        var bookingDto = _mapper.Map<BookingDTO>(booking);
+
+        // Send booking confirmation email (non-fatal; errors are logged inside EmailService)
+        if (!string.IsNullOrWhiteSpace(booking.GuestEmail))
+            _ = _emailService.SendBookingConfirmationAsync(bookingDto);
+
+        return bookingDto;
     }
     public async Task UpdateBookingStatusAsync(int bookingId, BookingStatus status)
     {
@@ -319,6 +327,10 @@ public class BookingService : IBookingService
         booking.BookingStatus = BookingStatus.Cancelled;
         _bookingRepository.Update(booking);
         await _bookingRepository.SaveChangesAsync();
+
+        // Send cancellation email (non-fatal; errors are logged inside EmailService)
+        if (!string.IsNullOrWhiteSpace(booking.GuestEmail))
+            _ = _emailService.SendBookingCancellationAsync(booking.Id, booking.GuestName, booking.GuestEmail);
     }
 
     public async Task<BookingDTO> CheckInGuestAsync(int bookingId)

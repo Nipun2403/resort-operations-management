@@ -11,7 +11,11 @@ using HotelManagement.BLL.Interfaces;
 using HotelManagement.BLL.Services;
 using HotelManagement.Repository.Implementations;
 using HotelManagement.Repository.Interfaces;
+using QuestPDF.Infrastructure;
 using Serilog;
+
+// Set QuestPDF community licence (free for non-commercial / open-source use)
+QuestPDF.Settings.License = LicenseType.Community;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -73,6 +77,11 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAuditLogService, AuditLogService>();
 builder.Services.AddScoped<IMaintenanceService, MaintenanceService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
+#endregion
+
+#region Email & PDF
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IPdfService, PdfService>();
 #endregion
 
 #region Core Infrastructure & SignalR
