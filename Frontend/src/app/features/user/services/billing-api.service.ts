@@ -16,4 +16,8 @@ export class BillingApiService {
   pay(bookingId: number, dto: { amount: number; paymentMethod: string; transactionId: string }): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/${bookingId}/pay`, dto);
   }
+
+  downloadFolioPdf(bookingId: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/${bookingId}/folio/pdf`, { responseType: 'blob' });
+  }
 }

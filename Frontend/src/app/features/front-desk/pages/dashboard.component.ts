@@ -243,7 +243,18 @@ export class PlaceholderDashboardComponent implements OnInit {
   }
 
   getRoomNumbers(booking: Booking): string {
-    return booking.rooms?.filter(r => r.roomNumber).map(r => r.roomNumber).join(', ') || '';
+    const assignedRooms = booking.rooms
+      ?.filter(r => r.roomNumber)
+      .map(r => r.roomNumber)
+      .join(', ');
+
+    if (assignedRooms) {
+      return assignedRooms;
+    }
+
+    return booking.bookingStatus === 'Cancelled'
+      ? 'Booking Cancelled'
+      : (booking.rooms?.[0]?.roomAssignmentText || 'Room Not Assigned Yet');
   }
 
   navigateToGuest(email: string): void {

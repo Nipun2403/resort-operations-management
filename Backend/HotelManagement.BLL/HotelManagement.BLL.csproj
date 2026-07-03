@@ -7,6 +7,8 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="16.1.1" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
+    <PackageReference Include="MailKit" Version="4.10.0" />
+    <PackageReference Include="QuestPDF" Version="2025.4.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.19.1" />
   </ItemGroup>
 
@@ -14,6 +16,17 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <!--
+      Suppress known moderate-severity advisories for MailKit/MimeKit until
+      a fixed release is available on NuGet.
+      GHSA-9j88-vvj5-vhgr = MailKit NTLM open-redirect (only relevant when using NTLM auth;
+                              we use plain SMTP so this attack surface does not apply).
+      GHSA-g7hc-96xr-gvvx = MimeKit moderate advisory
+    -->
+    <NuGetAuditSuppress>
+      https://github.com/advisories/GHSA-9j88-vvj5-vhgr;
+      https://github.com/advisories/GHSA-g7hc-96xr-gvvx
+    </NuGetAuditSuppress>
   </PropertyGroup>
 
 </Project>

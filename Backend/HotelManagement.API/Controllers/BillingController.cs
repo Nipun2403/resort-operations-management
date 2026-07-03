@@ -10,10 +10,12 @@ namespace HotelManagement.API.Controllers;
 public class BillingController : ControllerBase
 {
     private readonly IBillingService _billingService;
+    private readonly IPdfService _pdfService;
 
-    public BillingController(IBillingService billingService)
+    public BillingController(IBillingService billingService, IPdfService pdfService)
     {
         _billingService = billingService;
+        _pdfService = pdfService;
     }
 
     [HttpGet]
@@ -102,6 +104,24 @@ public class BillingController : ControllerBase
         catch (Exception ex)
         {
             if (ex is KeyNotFoundException || ex is UnauthorizedAccessException) throw;
+            return NotFound(ex.Message);
+        }
+    }
+
+    /// <summary>Download the billing folio for a booking as a PDF.</summary>
+    [HttpGet("{bookingId}/folio/pdf")]
+    [Authorize(Roles = "FrontDesk,Admin,RegisteredUser")]
+    public async Task<IActionResult> DownloadFolioPdf(int bookingId)
+    {
+        try
+        {
+            var folio = await _billingService.GenerateFolioAsync(bookingId);
+            var pdfBytes = _pdfService.GenerateFolioPdf(folio);
+            var fileName = $"Aetheris_Folio_BK-{bookingId}.pdf";
+            return File(pdfBytes, "application/pdf", fileName);
+        }
+        catch (KeyNotFoundException ex)
+        {
             return NotFound(ex.Message);
         }
     }

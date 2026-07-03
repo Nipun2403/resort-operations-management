@@ -67,5 +67,16 @@
   }
 </mat-dialog-content>
 <mat-dialog-actions align="end">
+  @if (folio()) {
+    <button
+      mat-button
+      [disabled]="downloading()"
+      (click)="downloadPdf()"
+      style="color: var(--color-secondary);"
+    >
+      <mat-icon style="vertical-align: middle; margin-right: 4px; font-size: 18px;">download</mat-icon>
+      {{ downloading() ? 'Downloading…' : 'Download PDF' }}
+    </button>
+  }
   <button mat-button mat-dialog-close>Close</button>
 </mat-dialog-actions>

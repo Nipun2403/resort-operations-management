@@ -199,7 +199,7 @@
             @for (b of movementData(); track b.id) {
               <tr class="clickable-row" (click)="navigateToGuest(b.guestEmail)">
                 <td>{{ b.guestName }}</td>
-                <td class="room-cell">{{ getRoomNumbers(b) || 'Unassigned' }}</td>
+                <td class="room-cell">{{ getRoomNumbers(b) }}</td>
                 <td>
                   <span class="status-indicator">
                     <span 

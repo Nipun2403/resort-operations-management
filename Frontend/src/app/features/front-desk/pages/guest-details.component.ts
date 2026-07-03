@@ -127,7 +127,18 @@ export class GuestDetailsComponent implements OnInit, AfterViewInit {
   }
 
   getRoomNumbers(booking: Booking): string {
-    return booking.rooms?.filter(r => r.roomNumber).map(r => r.roomNumber).join(', ') || 'Unassigned';
+    const assignedRooms = booking.rooms
+      ?.filter(r => r.roomNumber)
+      .map(r => r.roomNumber)
+      .join(', ');
+
+    if (assignedRooms) {
+      return assignedRooms;
+    }
+
+    return booking.bookingStatus === 'Cancelled'
+      ? 'Booking Cancelled'
+      : (booking.rooms?.[0]?.roomAssignmentText || 'Room Not Assigned Yet');
   }
 
   checkIn(booking: Booking): void {

@@ -15,11 +15,7 @@
           <h3>Booking Details</h3>
           <p>
             <strong>Status:</strong>
-            <span
-              class="status-chip"
-              [class]="booking().bookingStatus"
-              >{{ booking().bookingStatus }}</span
-            >
+            <span class="status-chip" [class]="booking().bookingStatus">{{ booking().bookingStatus }}</span>
           </p>
           <p><strong>Check‑In:</strong> {{ booking().checkInDate }}</p>
           <p><strong>Check‑Out:</strong> {{ booking().checkOutDate }}</p>
@@ -31,85 +27,62 @@
 
           <h3>Rooms</h3>
           @if (booking().rooms && booking().rooms.length > 0) {
-            <div class="rooms-list">
-              @for (room of booking().rooms; track room.id) {
-                <div class="room-card">
-                  <p>
-                    <strong>Room Number:</strong> {{ room.roomNumber ?? 'Unassigned' }}
-                  </p>
-                  <p><strong>Room Type ID:</strong> {{ room.roomTypeId }}</p>
-                  <p>
-                    <strong>Locked Price:</strong> {{ room.lockedInPrice | currency }}
-                  </p>
-                </div>
-              }
+          <div class="rooms-list">
+            @for (room of booking().rooms; track room.id) {
+            <div class="room-card">
+              <p>
+                <strong>Room Number:</strong>
+                {{ room.roomAssignmentText || room.roomNumber || (booking().bookingStatus === 'Cancelled' ? 'Booking Cancelled' : 'Room Not Assigned Yet') }}
+              </p>
+              <p><strong>Room Type ID:</strong> {{ room.roomTypeId }}</p>
+              <p>
+                <strong>Locked Price:</strong> {{ room.lockedInPrice | currency }}
+              </p>
             </div>
+            }
+          </div>
           } @else {
-            <p>No rooms assigned.</p>
+          <p>No rooms assigned.</p>
           }
 
           <mat-divider></mat-divider>
 
           <h3>Amenities</h3>
           @if (booking().amenityIds && booking().amenityIds.length > 0) {
-            <mat-chip-listbox aria-label="Amenities list">
-              @for (id of booking().amenityIds; track id) {
-                <mat-chip-option>Amenity #{{ id }}</mat-chip-option>
-              }
-            </mat-chip-listbox>
+          <mat-chip-listbox aria-label="Amenities list">
+            @for (id of booking().amenityIds; track id) {
+            <mat-chip-option>Amenity #{{ id }}</mat-chip-option>
+            }
+          </mat-chip-listbox>
           } @else {
-            <p>No amenities.</p>
+          <p>No amenities.</p>
           }
         </div>
 
         <!-- Action buttons – separated for future tab integration -->
         <div class="actions">
           @if (booking().bookingStatus === 'Booked') {
-            <button
-              mat-raised-button
-              color="primary"
-              (click)="checkIn()"
-              [disabled]="loading()"
-            >
-              <mat-icon>login</mat-icon> Check‑In
-            </button>
-            <button
-              mat-raised-button
-              color="warn"
-              (click)="cancelBooking()"
-              [disabled]="loading()"
-            >
-              <mat-icon>cancel</mat-icon> Cancel Booking
-            </button>
+          <button mat-raised-button color="primary" (click)="checkIn()" [disabled]="loading()">
+            <mat-icon>login</mat-icon> Check‑In
+          </button>
+          <button mat-raised-button color="warn" (click)="cancelBooking()" [disabled]="loading()">
+            <mat-icon>cancel</mat-icon> Cancel Booking
+          </button>
           }
           @if (booking().bookingStatus === 'CheckedIn') {
-            <button
-              mat-raised-button
-              (click)="extendStay()"
-              [disabled]="loading()"
-              style="margin-right: 8px;"
-            >
-              <mat-icon>edit_calendar</mat-icon> Extend Stay
-            </button>
-            <button
-              mat-raised-button
-              color="primary"
-              (click)="checkOut()"
-              [disabled]="loading()"
-            >
-              <mat-icon>logout</mat-icon> Check‑Out
-            </button>
+          <button mat-raised-button (click)="extendStay()" [disabled]="loading()" style="margin-right: 8px;">
+            <mat-icon>edit_calendar</mat-icon> Extend Stay
+          </button>
+          <button mat-raised-button color="primary" (click)="checkOut()" [disabled]="loading()">
+            <mat-icon>logout</mat-icon> Check‑Out
+          </button>
           }
         </div>
 
         @if (error()) {
-          <div style="margin-top: 16px;">
-            <app-alert
-              type="error"
-              [message]="error()!"
-              (closed)="error.set(null)"
-            ></app-alert>
-          </div>
+        <div style="margin-top: 16px;">
+          <app-alert type="error" [message]="error()!" (closed)="error.set(null)"></app-alert>
+        </div>
         }
       </div>
     </mat-tab>
@@ -126,10 +99,7 @@
   </mat-tab-group>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button
-    mat-button
-    mat-dialog-close
-  >
+  <button mat-button mat-dialog-close>
     Close
   </button>
 </mat-dialog-actions>

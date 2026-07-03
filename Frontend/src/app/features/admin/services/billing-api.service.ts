@@ -37,4 +37,8 @@ export class BillingApiService {
       params: httpParams,
     });
   }
+
+  downloadFolioPdf(bookingId: number): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/${bookingId}/folio/pdf`, { responseType: 'blob' });
+  }
 }

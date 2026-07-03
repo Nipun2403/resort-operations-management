@@ -10,6 +10,7 @@ public class BookingRoomDTO
     public int RoomTypeId { get; set; }
     public int? RoomId { get; set; }
     public string? RoomNumber { get; set; }
+    public string RoomAssignmentText { get; set; } = "Room Not Assigned Yet";
     public decimal LockedInPrice { get; set; }
 }
 

@@ -46,10 +46,10 @@ interface HistoryState {
     MatProgressBarModule,
     MatDialogModule,
     MatSnackBarModule,
-    AlertComponent
+    AlertComponent,
   ],
   templateUrl: './booking-history.component.html',
-  styleUrls: ['./booking-history.component.scss']
+  styleUrls: ['./booking-history.component.scss'],
 })
 export class BookingHistoryComponent implements AfterViewInit {
   userEmail = input.required<string>();
@@ -121,37 +121,38 @@ export class BookingHistoryComponent implements AfterViewInit {
     this.loading.set(true);
     this.error.set(null);
 
-    this.bookingApi.getAll({
-      guestQuery: this.userEmail(),
-      status: this.statusFilter.value || undefined,
-      pageNumber: this.pageIndex + 1,
-      pageSize: this.pageSize,
-      sortBy: this.sortField,
-      sortDescending: this.sortDescending
-    }).pipe(
-      finalize(() => this.loading.set(false))
-    ).subscribe({
-      next: (res) => {
-        this.bookings.set(res.data);
-        this.totalCount.set(res.totalCount);
-        this.saveState();
+    this.bookingApi
+      .getAll({
+        guestQuery: this.userEmail(),
+        status: this.statusFilter.value || undefined,
+        pageNumber: this.pageIndex + 1,
+        pageSize: this.pageSize,
+        sortBy: this.sortField,
+        sortDescending: this.sortDescending,
+      })
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (res) => {
+          this.bookings.set(res.data);
+          this.totalCount.set(res.totalCount);
+          this.saveState();
 
-        // If we are highlighting a row, let's schedule a scroll after DOM is updated
-        const highlightId = this.highlightBookingId();
-        if (highlightId != null) {
-          setTimeout(() => {
-            const rowEl = document.querySelector(`.highlight`);
-            if (rowEl) {
-              rowEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-          }, 300);
-        }
-      },
-      error: (err) => {
-        const message = err.error?.message || err.message || 'Failed to load bookings.';
-        this.error.set(message);
-      }
-    });
+          // If we are highlighting a row, let's schedule a scroll after DOM is updated
+          const highlightId = this.highlightBookingId();
+          if (highlightId != null) {
+            setTimeout(() => {
+              const rowEl = document.querySelector(`.highlight`);
+              if (rowEl) {
+                rowEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }
+            }, 300);
+          }
+        },
+        error: (err) => {
+          const message = err.error?.message || err.message || 'Failed to load bookings.';
+          this.error.set(message);
+        },
+      });
   }
 
   onFilterChange(): void {
@@ -184,16 +185,24 @@ export class BookingHistoryComponent implements AfterViewInit {
   }
 
   getRoomsSummary(booking: Booking): string {
-    return booking.rooms
-      .filter(r => r.roomNumber !== null)
-      .map(r => r.roomNumber as string)
-      .join(', ') || 'Pending Assignment';
+    const assignedRooms = booking.rooms
+      .filter((r) => r.roomNumber !== null)
+      .map((r) => r.roomNumber as string)
+      .join(', ');
+
+    if (assignedRooms) {
+      return assignedRooms;
+    }
+
+    return booking.bookingStatus === 'Cancelled'
+      ? 'Booking Cancelled'
+      : booking.rooms[0]?.roomAssignmentText || 'Room Not Assigned Yet';
   }
 
   openDetail(booking: Booking): void {
     this.dialog.open(BookingDetailDialogComponent, {
       data: booking,
-      width: '500px'
+      width: '500px',
     });
   }
 
@@ -201,14 +210,15 @@ export class BookingHistoryComponent implements AfterViewInit {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       data: {
         title: 'Cancel Booking',
-        message: `Are you sure you want to cancel booking #${booking.id}?`
-      }
+        message: `Are you sure you want to cancel booking #${booking.id}?`,
+      },
     });
 
     dialogRef.afterClosed().subscribe((confirmed: boolean) => {
       if (confirmed) {
         this.loading.set(true);
-        this.bookingApi.cancel(booking.id)
+        this.bookingApi
+          .cancel(booking.id)
           .pipe(finalize(() => this.loading.set(false)))
           .subscribe({
             next: () => {
@@ -218,7 +228,7 @@ export class BookingHistoryComponent implements AfterViewInit {
             error: (err) => {
               const message = err.error?.message || err.message || 'Failed to cancel booking.';
               this.snackBar.open(message, 'Close', { duration: 5000 });
-            }
+            },
           });
       }
     });
@@ -227,14 +237,14 @@ export class BookingHistoryComponent implements AfterViewInit {
   openFeedback(booking: Booking): void {
     this.dialog.open(FeedbackDialogComponent, {
       data: booking.id,
-      width: '450px'
+      width: '450px',
     });
   }
 
   openBilling(booking: Booking): void {
     this.dialog.open(BillingDialogComponent, {
       data: booking.id,
-      width: '500px'
+      width: '500px',
     });
   }
 
@@ -261,7 +271,7 @@ export class BookingHistoryComponent implements AfterViewInit {
         sortField: this.sortField,
         sortDescending: this.sortDescending,
         pageIndex: this.pageIndex,
-        pageSize: this.pageSize
+        pageSize: this.pageSize,
       };
       sessionStorage.setItem(this.STORAGE_KEY, JSON.stringify(state));
     } catch (e) {

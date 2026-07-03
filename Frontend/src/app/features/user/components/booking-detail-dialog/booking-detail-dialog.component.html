@@ -36,24 +36,31 @@
   <div class="detail-section" style="margin-top: 16px;">
     <h3>Rooms Included</h3>
     @if (enrichedRooms().length > 0) {
-      @for (room of enrichedRooms(); track room.id) {
-        <div class="room-item" style="margin-bottom: 12px; padding: 8px; border-left: 3px solid var(--color-secondary); background: var(--color-surface-container); border-radius: 0 4px 4px 0;">
-          <p style="margin: 0 0 4px 0; color: var(--color-on-surface-variant);"><strong style="color: var(--color-on-surface);">Room:</strong> {{ room.roomNumber ?? 'Unassigned' }}</p>
-          <p style="margin: 0 0 4px 0; color: var(--color-on-surface-variant);"><strong style="color: var(--color-on-surface);">Type:</strong> {{ room.roomTypeName }}</p>
-          <p style="margin: 0; color: var(--color-on-surface-variant);"><strong style="color: var(--color-on-surface);">Price:</strong> {{ room.lockedInPrice | currency }}</p>
-        </div>
-      }
+    @for (room of enrichedRooms(); track room.id) {
+    <div class="room-item"
+      style="margin-bottom: 12px; padding: 8px; border-left: 3px solid var(--color-secondary); background: var(--color-surface-container); border-radius: 0 4px 4px 0;">
+      <p style="margin: 0 0 4px 0; color: var(--color-on-surface-variant);"><strong
+          style="color: var(--color-on-surface);">Room:</strong>
+        {{ room.roomAssignmentText || room.roomNumber || (booking.bookingStatus === 'Cancelled' ? 'Booking Cancelled' : 'Room Not Assigned Yet') }}
+      </p>
+      <p style="margin: 0 0 4px 0; color: var(--color-on-surface-variant);"><strong
+          style="color: var(--color-on-surface);">Type:</strong> {{ room.roomTypeName }}</p>
+      <p style="margin: 0; color: var(--color-on-surface-variant);"><strong
+          style="color: var(--color-on-surface);">Price:</strong> {{ room.lockedInPrice | currency }}</p>
+    </div>
+    }
     } @else if (booking.rooms && booking.rooms.length > 0) {
-      <ul>
-        @for (room of booking.rooms; track room.id) {
-          <li>
-            Room Number: {{ room.roomNumber || 'Pending Assignment' }}
-            (Locked‑in Price: {{ room.lockedInPrice | currency }})
-          </li>
-        }
-      </ul>
+    <ul>
+      @for (room of booking.rooms; track room.id) {
+      <li>
+        Room Number:
+        {{ room.roomAssignmentText || room.roomNumber || (booking.bookingStatus === 'Cancelled' ? 'Booking Cancelled' : 'Room Not Assigned Yet') }}
+        (Locked‑in Price: {{ room.lockedInPrice | currency }})
+      </li>
+      }
+    </ul>
     } @else {
-      <p>No rooms assigned.</p>
+    <p>No rooms assigned.</p>
     }
   </div>
 
@@ -62,13 +69,13 @@
   <div class="detail-section" style="margin-top: 16px;">
     <h3>Amenities Subscribed</h3>
     @if (booking.amenityIds && booking.amenityIds.length > 0) {
-      <ul>
-        @for (id of booking.amenityIds; track id) {
-          <li>Amenity ID: {{ id }} (TODO: Resolve Amenity Names)</li>
-        }
-      </ul>
+    <ul>
+      @for (id of booking.amenityIds; track id) {
+      <li>Amenity ID: {{ id }} (TODO: Resolve Amenity Names)</li>
+      }
+    </ul>
     } @else {
-      <p>No amenities selected.</p>
+    <p>No amenities selected.</p>
     }
   </div>
 </mat-dialog-content>

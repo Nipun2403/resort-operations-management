@@ -27,11 +27,12 @@
       <h3>Rooms</h3>
       <mat-list>
         @for (room of data.rooms; track room.id) {
-          <mat-list-item>
-            <mat-icon matListItemIcon>meeting_room</mat-icon>
-            <span matListItemTitle>Room {{ room.roomNumber || 'Not Assigned' }}</span>
-            <span matListItemLine>Price: {{ room.lockedInPrice | currency }}</span>
-          </mat-list-item>
+        <mat-list-item>
+          <mat-icon matListItemIcon>meeting_room</mat-icon>
+          <span matListItemTitle>Room
+            {{ room.roomAssignmentText || room.roomNumber || (data.bookingStatus === 'Cancelled' ? 'Booking Cancelled' : 'Room Not Assigned Yet') }}</span>
+          <span matListItemLine>Price: {{ room.lockedInPrice | currency }}</span>
+        </mat-list-item>
         }
       </mat-list>
     </div>
