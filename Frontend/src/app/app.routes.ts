@@ -18,12 +18,6 @@ export const routes: Routes = [
     pathMatch: 'full',
   },
   {
-    path: 'auth',
-    loadComponent: () => import('./features/auth/auth-page.component')
-      .then(m => m.AuthPageComponent),
-    canActivate: [AuthRedirectGuard]
-  },
-  {
     path: 'operations/admin',
     canMatch: [adminGuard],
     canActivate: [adminGuard],
@@ -206,6 +200,12 @@ export const routes: Routes = [
       .then(m => m.PublicShellComponent),
     children: [
       { path: '', redirectTo: 'home', pathMatch: 'full' },
+      {
+        path: 'auth',
+        loadComponent: () => import('./features/auth/auth-page.component')
+          .then(m => m.AuthPageComponent),
+        canActivate: [AuthRedirectGuard]
+      },
       {
         path: 'home',
         loadComponent: () => import('./features/public/pages/home.component')

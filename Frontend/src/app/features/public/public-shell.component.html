@@ -10,7 +10,11 @@
       <a routerLink="/availability" routerLinkActive="active" class="nav-link underline-reveal">Reservations</a>
     </div>
     <div class="nav-actions">
-      <a class="inquire-btn" routerLink="/auth">Login</a>
+      @if (authService.isAuthenticated()) {
+        <a class="inquire-btn" [routerLink]="dashboardRoute()">My Account</a>
+      } @else {
+        <a class="inquire-btn" routerLink="/auth">Login</a>
+      }
       <button class="menu-btn" (click)="drawerOpen.set(true)" aria-label="Menu">
         <span class="material-symbols-outlined">menu</span>
       </button>
