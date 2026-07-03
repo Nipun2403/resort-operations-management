@@ -3,15 +3,13 @@
   <div class="bg-layer">
     <div class="bg-image bg-login" [class.active]="isLoginMode()">
       <img
-        src="https://lh3.googleusercontent.com/aida/AP1WRLs96Bq3m1-5bMTWS2MnUb9NUzR339t_s46__6B-DM7k_zsHbclUQnvfBYqpmiULS3ZH3NlIjkf3OWbV29UOulpEOQXph-mTqauRtHRmmc3SAdd6SRpSCq2b_lhNq58wQarRb4NFgoCrGiUjYiRGktjm29mz4GT0l9Co6ETYBsy2Rttxb6g1jjEE9z_1Qidjiu_ljtNbYsfiWz2Xg_xOwbr8W4hjH9HaIYNhKklQwShK3on6XiBeXgl3Us8w"
-        alt="Obsidian structure"
-      />
+        src="https://plus.unsplash.com/premium_photo-1687459981381-aea18849689b?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzN8fGRhcmslMjBnb2xkJTIwYWJzdHJhY3R8ZW58MHwwfDB8fHww"
+        alt="Obsidian structure" />
     </div>
     <div class="bg-image bg-register" [class.active]="!isLoginMode()">
       <img
-        src="https://lh3.googleusercontent.com/aida/AP1WRLurNZSLtyi3MhJP7JEDtMH4jgHE7_uMhDlCqWvkMccwDgjirQG2BEP9pmCJ9zX3owbxvedDm2S7YVbWt6O4EGPtuLHZ_0MUeHXsB3k40Y12gQQggYMENFLj9c_Bdojcl7qa7aR8xiVR7LrENDkpsuQAtAm7qqjDx5sOSsc7MTmOzAgyiULDL1bGj0towWgi5AReO4qps5iPlxyhGVEgWCJ2JJFWGvZi-Eed0s7VfIW91fQ6eZRtO8Z376I"
-        alt="Gold silk sculpture"
-      />
+        src="https://images.unsplash.com/photo-1645290099397-f73b22c51260?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        alt="Gold silk sculpture" />
     </div>
     <div class="bg-overlay"></div>
   </div>
@@ -27,24 +25,16 @@
 
       <!-- Toggle Tabs -->
       <div class="tab-row">
-        <button
-          class="tab-btn"
-          [class.active]="isLoginMode()"
-          (click)="isLoginMode.set(true)"
-        >
+        <button class="tab-btn" [class.active]="isLoginMode()" (click)="isLoginMode.set(true)">
           Login
           @if (isLoginMode()) {
-            <span class="tab-indicator"></span>
+          <span class="tab-indicator"></span>
           }
         </button>
-        <button
-          class="tab-btn"
-          [class.active]="!isLoginMode()"
-          (click)="isLoginMode.set(false)"
-        >
+        <button class="tab-btn" [class.active]="!isLoginMode()" (click)="isLoginMode.set(false)">
           Register
           @if (!isLoginMode()) {
-            <span class="tab-indicator"></span>
+          <span class="tab-indicator"></span>
           }
         </button>
       </div>
@@ -52,24 +42,18 @@
       <!-- Forms -->
       <div class="form-container">
         @if (isLoginMode()) {
-          <app-login-form
-            [loading]="loading()"
-            (submitted)="onLogin($event)"
-          />
+        <app-login-form [loading]="loading()" (submitted)="onLogin($event)" />
         } @else {
-          <app-register-form
-            [loading]="loading()"
-            (submitted)="onRegister($event)"
-          />
+        <app-register-form [loading]="loading()" (submitted)="onRegister($event)" />
         }
       </div>
 
       <!-- Inline alerts (success/error) -->
       @if (errorMessage()) {
-        <app-alert type="error" [message]="errorMessage()!" (closed)="errorMessage.set(null)"></app-alert>
+      <app-alert type="error" [message]="errorMessage()!" (closed)="errorMessage.set(null)"></app-alert>
       }
       @if (successMessage()) {
-        <app-alert type="success" [message]="successMessage()!" (closed)="successMessage.set(null)"></app-alert>
+      <app-alert type="success" [message]="successMessage()!" (closed)="successMessage.set(null)"></app-alert>
       }
 
       <!-- Footer note -->
