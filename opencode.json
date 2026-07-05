@@ -1,0 +1,8 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": [
+    "Agent/system_prompt.md",
+    "Agent/azure-blob-image-upload-plan.md",
+"Agent/Angular_Agent.md"
+  ]
+}

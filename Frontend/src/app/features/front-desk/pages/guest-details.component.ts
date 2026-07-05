@@ -1,4 +1,12 @@
-import { Component, inject, signal, computed, OnInit, DestroyRef, AfterViewInit } from '@angular/core';
+import {
+  Component,
+  inject,
+  signal,
+  computed,
+  OnInit,
+  DestroyRef,
+  AfterViewInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute } from '@angular/router';
@@ -62,9 +70,7 @@ export class GuestDetailsComponent implements OnInit, AfterViewInit {
 
   activeBooking = computed(() => {
     return (
-      this.bookings().find(b => b.bookingStatus === 'CheckedIn') ||
-      this.bookings()[0] ||
-      null
+      this.bookings().find((b) => b.bookingStatus === 'CheckedIn') || this.bookings()[0] || null
     );
   });
   activeBookingId = computed(() => this.activeBooking()?.id ?? 0);
@@ -82,16 +88,17 @@ export class GuestDetailsComponent implements OnInit, AfterViewInit {
     const decodedEmail = decodeURIComponent(encodedEmail);
     this.email.set(decodedEmail);
     this.fetchBookings();
-    this.guestApi.search(decodedEmail).pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe({
-      next: res => {
-        if (res.data && res.data.length > 0) {
-          this.guestProfile.set(res.data[0]);
-        }
-      },
-      error: (err: any) => console.error('Failed to load guest profile', err)
-    });
+    this.guestApi
+      .search(decodedEmail)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          if (res.data && res.data.length > 0) {
+            this.guestProfile.set(res.data[0]);
+          }
+        },
+        error: (err: any) => console.error('Failed to load guest profile', err),
+      });
   }
 
   ngAfterViewInit(): void {
@@ -104,22 +111,25 @@ export class GuestDetailsComponent implements OnInit, AfterViewInit {
 
   fetchBookings(): void {
     this.loading.set(true);
-    this.bookingApi.getAll({ guestQuery: this.email(), pageSize: 200 }).pipe(
-      takeUntilDestroyed(this.destroyRef),
-      finalize(() => {
-        this.loading.set(false);
-        setTimeout(() => {
-          window.dispatchEvent(new Event('resize'));
-        }, 150);
-      })
-    ).subscribe({
-      next: res => this.bookings.set(res.data),
-      error: (err: any) => this.error.set(this.extractErrorMessage(err))
-    });
+    this.bookingApi
+      .getAll({ guestQuery: this.email(), pageSize: 200 })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => {
+          this.loading.set(false);
+          setTimeout(() => {
+            window.dispatchEvent(new Event('resize'));
+          }, 150);
+        }),
+      )
+      .subscribe({
+        next: (res) => this.bookings.set(res.data),
+        error: (err: any) => this.error.set(this.extractErrorMessage(err)),
+      });
   }
 
   getOverallStatus(): string {
-    const statuses = this.bookings().map(b => b.bookingStatus);
+    const statuses = this.bookings().map((b) => b.bookingStatus);
     if (statuses.includes('CheckedIn')) return 'CheckedIn';
     if (statuses.includes('Booked')) return 'Booked';
     if (statuses.includes('CheckedOut')) return 'CheckedOut';
@@ -128,8 +138,8 @@ export class GuestDetailsComponent implements OnInit, AfterViewInit {
 
   getRoomNumbers(booking: Booking): string {
     const assignedRooms = booking.rooms
-      ?.filter(r => r.roomNumber)
-      .map(r => r.roomNumber)
+      ?.filter((r) => r.roomNumber)
+      .map((r) => r.roomNumber)
       .join(', ');
 
     if (assignedRooms) {
@@ -138,35 +148,48 @@ export class GuestDetailsComponent implements OnInit, AfterViewInit {
 
     return booking.bookingStatus === 'Cancelled'
       ? 'Booking Cancelled'
-      : (booking.rooms?.[0]?.roomAssignmentText || 'Room Not Assigned Yet');
+      : booking.rooms?.[0]?.roomAssignmentText || 'Room Not Assigned Yet';
   }
 
   checkIn(booking: Booking): void {
     const confirmRef = this.dialog.open(ConfirmDialogComponent, {
-      data: { title: 'Confirm Check-In', message: `Check in guest: ${booking.guestName}?` }
+      data: { title: 'Confirm Check-In', message: `Check in guest: ${booking.guestName}?` },
     });
-    confirmRef.afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(confirmed => {
-      if (!confirmed) return;
-      this.bookingApi.checkIn(booking.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-        next: (updated) => {
-          this.snackBar.open(`Checked in. Room: ${updated.rooms?.[0]?.roomNumber || 'assigned'}`, 'Close', { duration: 3000 });
-          this.fetchBookings();
-        },
-        error: (err: any) => this.snackBar.open(this.extractErrorMessage(err), 'Close', { duration: 5000 })
+    confirmRef
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmed) => {
+        if (!confirmed) return;
+        this.bookingApi
+          .checkIn(booking.id)
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe({
+            next: (updated) => {
+              this.snackBar.open(
+                `Checked in. Room: ${updated.rooms?.[0]?.roomNumber || 'assigned'}`,
+                'Close',
+                { duration: 3000 },
+              );
+              this.fetchBookings();
+            },
+            error: (err: any) =>
+              this.snackBar.open(this.extractErrorMessage(err), 'Close', { duration: 5000 }),
+          });
       });
-    });
   }
 
   cancelBooking(booking: Booking): void {
-    this.bookingApi.cancel(booking.id).pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe({
-      next: () => {
-        this.snackBar.open('Booking cancelled.', 'Close', { duration: 3000 });
-        this.fetchBookings();
-      },
-      error: (err: any) => this.snackBar.open(this.extractErrorMessage(err), 'Close', { duration: 5000 })
-    });
+    this.bookingApi
+      .cancel(booking.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.snackBar.open('Booking cancelled.', 'Close', { duration: 3000 });
+          this.fetchBookings();
+        },
+        error: (err: any) =>
+          this.snackBar.open(this.extractErrorMessage(err), 'Close', { duration: 5000 }),
+      });
   }
 
   extendStay(booking: Booking): void {
@@ -175,12 +198,15 @@ export class GuestDetailsComponent implements OnInit, AfterViewInit {
       width: '400px',
       maxWidth: '90vw',
     });
-    extendRef.afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(result => {
-      if (result) {
-        this.snackBar.open('Stay extended.', 'Close', { duration: 3000 });
-        this.fetchBookings();
-      }
-    });
+    extendRef
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((result) => {
+        if (result) {
+          this.snackBar.open('Stay extended.', 'Close', { duration: 3000 });
+          this.fetchBookings();
+        }
+      });
   }
 
   checkOut(booking: Booking): void {
@@ -190,12 +216,15 @@ export class GuestDetailsComponent implements OnInit, AfterViewInit {
       maxWidth: '600px',
       disableClose: true,
     });
-    checkoutRef.afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(result => {
-      if (result === true) {
-        this.snackBar.open('Check-out successful.', 'Close', { duration: 3000 });
-        this.fetchBookings();
-      }
-    });
+    checkoutRef
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((result) => {
+        if (result === true) {
+          this.snackBar.open('Check-out successful.', 'Close', { duration: 3000 });
+          this.fetchBookings();
+        }
+      });
   }
 
   private extractErrorMessage(err: any): string {

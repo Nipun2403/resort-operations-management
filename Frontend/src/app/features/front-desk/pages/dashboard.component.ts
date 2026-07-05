@@ -86,50 +86,50 @@ export class PlaceholderDashboardComponent implements OnInit {
     this.fetchMovement();
 
     this.searchControl.valueChanges
-      .pipe(
-        debounceTime(300),
-        distinctUntilChanged(),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe(value => this.onSearch(value.trim()));
+      .pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => this.onSearch(value.trim()));
   }
 
   private loadSummary(): void {
     this.loadingSummary.set(true);
     this.error.set(null);
 
-    const arrivals$ = this.bookingApi.getAll({ movementStatus: 'incoming', pageNumber: 1, pageSize: 1 }).pipe(
-      map(r => r.totalCount),
-      catchError(() => of(0))
-    );
-    const departures$ = this.bookingApi.getAll({ movementStatus: 'outgoing', pageNumber: 1, pageSize: 1 }).pipe(
-      map(r => r.totalCount),
-      catchError(() => of(0))
-    );
+    const arrivals$ = this.bookingApi
+      .getAll({ movementStatus: 'incoming', pageNumber: 1, pageSize: 1 })
+      .pipe(
+        map((r) => r.totalCount),
+        catchError(() => of(0)),
+      );
+    const departures$ = this.bookingApi
+      .getAll({ movementStatus: 'outgoing', pageNumber: 1, pageSize: 1 })
+      .pipe(
+        map((r) => r.totalCount),
+        catchError(() => of(0)),
+      );
 
     const hkPending$ = this.housekeepingApi.getAll({ status: 'Pending', pageSize: 1 }).pipe(
-      map(r => r.totalCount),
-      catchError(() => of(0))
+      map((r) => r.totalCount),
+      catchError(() => of(0)),
     );
     const hkInProgress$ = this.housekeepingApi.getAll({ status: 'InProgress', pageSize: 1 }).pipe(
-      map(r => r.totalCount),
-      catchError(() => of(0))
+      map((r) => r.totalCount),
+      catchError(() => of(0)),
     );
     const mtPending$ = this.maintenanceApi.getAll({ status: 'Pending', pageSize: 1 }).pipe(
-      map(r => r.totalCount),
-      catchError(() => of(0))
+      map((r) => r.totalCount),
+      catchError(() => of(0)),
     );
     const mtInProgress$ = this.maintenanceApi.getAll({ status: 'InProgress', pageSize: 1 }).pipe(
-      map(r => r.totalCount),
-      catchError(() => of(0))
+      map((r) => r.totalCount),
+      catchError(() => of(0)),
     );
     const foodPending$ = this.orderApi.getAll({ status: 'Pending', pageSize: 1 }).pipe(
-      map(r => r.totalCount),
-      catchError(() => of(0))
+      map((r) => r.totalCount),
+      catchError(() => of(0)),
     );
     const foodPreparing$ = this.orderApi.getAll({ status: 'Preparing', pageSize: 1 }).pipe(
-      map(r => r.totalCount),
-      catchError(() => of(0))
+      map((r) => r.totalCount),
+      catchError(() => of(0)),
     );
 
     forkJoin({
@@ -141,7 +141,7 @@ export class PlaceholderDashboardComponent implements OnInit {
     })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.loadingSummary.set(false))
+        finalize(() => this.loadingSummary.set(false)),
       )
       .subscribe({
         next: ({ arrivals, departures, hk, mt, food }) => {
@@ -171,28 +171,31 @@ export class PlaceholderDashboardComponent implements OnInit {
       return;
     }
     this.searchLoading.set(true);
-    this.bookingApi.getAll({ guestQuery: query, pageSize: 200 }).pipe(
-      takeUntilDestroyed(this.destroyRef),
-      finalize(() => this.searchLoading.set(false))
-    ).subscribe({
-      next: res => {
-        const grouped = this.groupByEmail(res.data);
-        this.searchResults.set(grouped);
-      },
-      error: (err: any) => this.searchError.set(this.extractErrorMessage(err))
-    });
+    this.bookingApi
+      .getAll({ guestQuery: query, pageSize: 200 })
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.searchLoading.set(false)),
+      )
+      .subscribe({
+        next: (res) => {
+          const grouped = this.groupByEmail(res.data);
+          this.searchResults.set(grouped);
+        },
+        error: (err: any) => this.searchError.set(this.extractErrorMessage(err)),
+      });
   }
 
   private groupByEmail(bookings: Booking[]): SearchResult[] {
     const map = new Map<string, Booking[]>();
-    bookings.forEach(b => {
+    bookings.forEach((b) => {
       if (!b.guestEmail) return;
       const arr = map.get(b.guestEmail) || [];
       arr.push(b);
       map.set(b.guestEmail, arr);
     });
     return Array.from(map.entries()).map(([email, bookings]) => {
-      const statuses = bookings.map(b => b.bookingStatus);
+      const statuses = bookings.map((b) => b.bookingStatus);
       let currentStatus = 'Cancelled';
       if (statuses.includes('CheckedIn')) currentStatus = 'CheckedIn';
       else if (statuses.includes('Booked')) currentStatus = 'Booked';
@@ -201,7 +204,7 @@ export class PlaceholderDashboardComponent implements OnInit {
         guestName: bookings[0].guestName,
         guestEmail: email,
         currentStatus,
-        bookings
+        bookings,
       };
     });
   }
@@ -219,16 +222,19 @@ export class PlaceholderDashboardComponent implements OnInit {
       params.movementStatus = 'outgoing';
       params.bookingStatus = 'CheckedIn';
     }
-    this.bookingApi.getAll(params).pipe(
-      takeUntilDestroyed(this.destroyRef),
-      finalize(() => this.movementLoading.set(false))
-    ).subscribe({
-      next: res => {
-        this.movementData.set(res.data);
-        this.movementTotal.set(res.totalCount);
-      },
-      error: (err: any) => this.movementError.set(this.extractErrorMessage(err))
-    });
+    this.bookingApi
+      .getAll(params)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.movementLoading.set(false)),
+      )
+      .subscribe({
+        next: (res) => {
+          this.movementData.set(res.data);
+          this.movementTotal.set(res.totalCount);
+        },
+        error: (err: any) => this.movementError.set(this.extractErrorMessage(err)),
+      });
   }
 
   onMovementToggle(): void {
@@ -244,8 +250,8 @@ export class PlaceholderDashboardComponent implements OnInit {
 
   getRoomNumbers(booking: Booking): string {
     const assignedRooms = booking.rooms
-      ?.filter(r => r.roomNumber)
-      .map(r => r.roomNumber)
+      ?.filter((r) => r.roomNumber)
+      .map((r) => r.roomNumber)
       .join(', ');
 
     if (assignedRooms) {
@@ -254,7 +260,7 @@ export class PlaceholderDashboardComponent implements OnInit {
 
     return booking.bookingStatus === 'Cancelled'
       ? 'Booking Cancelled'
-      : (booking.rooms?.[0]?.roomAssignmentText || 'Room Not Assigned Yet');
+      : booking.rooms?.[0]?.roomAssignmentText || 'Room Not Assigned Yet';
   }
 
   navigateToGuest(email: string): void {

@@ -31,7 +31,7 @@ import { AlertComponent } from '../../../auth/components/alert.component';
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './extend-stay-dialog.component.html',
-  host: { 'style': 'min-width: 350px; display: block;' }
+  host: { style: 'min-width: 350px; display: block;' },
 })
 export class ExtendStayDialogComponent {
   data: { bookingId: number; currentCheckOut: string } = inject(MAT_DIALOG_DATA);
@@ -64,11 +64,19 @@ export class ExtendStayDialogComponent {
       .extendStay(this.data.bookingId, dto)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        finalize(() => this.submitting.set(false))
+        finalize(() => this.submitting.set(false)),
       )
       .subscribe({
         next: () => this.dialogRef.close(true),
-        error: (err: any) => this.error.set(err.error?.message || err.message || 'Extend stay failed.'),
+        error: (err: any) => {
+          const msg =
+            err.status === 409
+              ? 'Cannot extend stay — this room has already been reserved by another guest for the requested dates.'
+              : typeof err.error === 'string' && err.error
+                ? err.error
+                : err.error?.message || 'Failed to extend stay. Please try again.';
+          this.error.set(msg);
+        },
       });
   }
 }

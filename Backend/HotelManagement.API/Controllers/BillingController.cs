@@ -145,7 +145,6 @@ public class BillingController : ControllerBase
         catch (Exception ex)
         {
             if (ex is KeyNotFoundException || ex is UnauthorizedAccessException) throw;
-            
             return BadRequest(new { message = ex.Message });
         }
     }

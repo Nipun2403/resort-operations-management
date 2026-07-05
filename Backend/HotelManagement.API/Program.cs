@@ -268,7 +268,7 @@ public class CustomDateTimeConverter : System.Text.Json.Serialization.JsonConver
 
     public override void Write(System.Text.Json.Utf8JsonWriter writer, DateTime value, System.Text.Json.JsonSerializerOptions options)
     {
-        writer.WriteStringValue(value.ToString(_format));
+        writer.WriteStringValue(value.ToString("yyyy-MM-ddTHH:mm:ssZ"));
     }
 }
 
