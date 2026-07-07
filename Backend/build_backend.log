@@ -1,0 +1,12 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  HotelManagement.DAL -> /Users/peewee/personal/repos/Hotel_Management_Full/Backend/HotelManagement.DAL/bin/Debug/net10.0/HotelManagement.DAL.dll
+  HotelManagement.Repository -> /Users/peewee/personal/repos/Hotel_Management_Full/Backend/HotelManagement.Repository/bin/Debug/net10.0/HotelManagement.Repository.dll
+  HotelManagement.BLL -> /Users/peewee/personal/repos/Hotel_Management_Full/Backend/HotelManagement.BLL/bin/Debug/net10.0/HotelManagement.BLL.dll
+  HotelManagement.API -> /Users/peewee/personal/repos/Hotel_Management_Full/Backend/HotelManagement.API/bin/Debug/net10.0/HotelManagement.API.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:02.74
