@@ -4,7 +4,7 @@ import {
   HttpHandlerFn,
   HttpInterceptorFn,
   HttpRequest,
-} from '@angular/common/http';
+} from '@angular/core';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { EMPTY, Observable, catchError, throwError } from 'rxjs';
@@ -32,7 +32,13 @@ export const errorPageInterceptor: HttpInterceptorFn = (
   return next(req).pipe(
     catchError((err: unknown) => {
       if (err instanceof HttpErrorResponse && shouldRedirect(req, err)) {
-        console.log('INTERCEPTOR ERROR:', req.url, err.status);
+        debugger;
+        console.log('=== INTERCEPTOR 500 ===');
+        console.log('URL:', req.url);
+        console.log('Status:', err.status);
+        console.log('StatusText:', err.statusText);
+        console.log('Body:', err.error);
+        console.log('Headers:', err.headers.keys());
         const status = err.status >= 500 ? 500 : err.status;
         queueMicrotask(() => {
           router.navigate(['/error', status], { replaceUrl: true });
