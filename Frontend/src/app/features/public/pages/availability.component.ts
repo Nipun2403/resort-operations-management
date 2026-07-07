@@ -52,7 +52,7 @@ export class AvailabilityComponent implements OnInit {
 
   ngOnInit(): void {
     // Automatically reset check-out if check-in changes to a date at or after check-out
-    this.checkIn.valueChanges.subscribe(val => {
+    this.checkIn.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(val => {
       if (val && this.checkOut.value && this.checkOut.value <= val) {
         this.checkOut.setValue(null);
       }

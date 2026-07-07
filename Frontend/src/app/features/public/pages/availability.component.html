@@ -2,7 +2,7 @@
   <!-- Search Form Section -->
   <section class="search-section">
     <h1 class="search-title">Curate Your Stay</h1>
-    <form class="search-form" (ngSubmit)="searchAvailability()">
+    <form class="search-form">
       <div class="form-field">
         <label class="field-label">Check-in</label>
         <mat-form-field class="date-field">
@@ -45,7 +45,7 @@
         </select>
       </div>
       <div class="form-separator"></div>
-      <button type="submit" class="search-btn arrow-link" [disabled]="checkIn.invalid || checkOut.invalid || guests.invalid || searchLoading()">
+      <button type="button" class="search-btn arrow-link" (click)="searchAvailability()" [disabled]="checkIn.invalid || checkOut.invalid || guests.invalid || searchLoading()">
         <span>Search</span>
         <span class="material-symbols-outlined arrow-icon">arrow_right_alt</span>
       </button>
