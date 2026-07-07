@@ -93,7 +93,7 @@
                 </div>
                 <div class="detail-row">
                   <span class="detail-label">Last Check-In</span>
-                  <span class="detail-value">{{ guestProfile()!.lastCheckInDate | date:'mediumDate' }}</span>
+                  <span class="detail-value">{{ guestProfile()!.lastCheckInDate ? (guestProfile()!.lastCheckInDate | date:'mediumDate') : '—' }}</span>
                 </div>
               </div>
             </div>
@@ -117,7 +117,7 @@
                 <div class="booking-title-info">
                   <h4 class="booking-id-title">Booking #{{ b.id }}</h4>
                   <p class="booking-date-range">
-                    {{ b.checkInDate | date:'mediumDate' }} — {{ b.checkOutDate | date:'mediumDate' }} | Rooms: {{ getRoomNumbers(b) }}
+                    {{ b.checkInDate ? (b.checkInDate | date:'mediumDate') : '—' }} — {{ b.checkOutDate ? (b.checkOutDate | date:'mediumDate') : '—' }} | Rooms: {{ getRoomNumbers(b) }}
                   </p>
                 </div>
               </div>

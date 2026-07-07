@@ -19,7 +19,7 @@ import { AlertComponent } from '../../../../features/auth/components/alert.compo
 import { FolioDetailDialogComponent } from './folio-detail-dialog.component';
 
 interface BillingRecord extends BillingFolio {
-  checkOutDate: Date;
+  checkOutDate: Date | null;
 }
 
 @Component({
@@ -58,12 +58,15 @@ export class GuestBillingComponent implements OnInit {
     this.fetchAllBilling();
   }
 
-  private parseDate(dateStr: string): Date {
+  private parseDate(dateStr: string): Date | null {
+    if (!dateStr) return null;
     const parts = dateStr.split('-');
     if (parts.length === 3) {
-      return new Date(+parts[2], +parts[1] - 1, +parts[0]);
+      const date = new Date(+parts[2], +parts[1] - 1, +parts[0]);
+      if (!isNaN(date.getTime())) return date;
     }
-    return new Date(dateStr);
+    const date = new Date(dateStr);
+    return !isNaN(date.getTime()) ? date : null;
   }
 
   private fetchAllBilling(): void {
@@ -92,7 +95,7 @@ export class GuestBillingComponent implements OnInit {
       .subscribe({
         next: (results) => {
           const valid = results.filter((r): r is BillingRecord => r !== null);
-          valid.sort((a, b) => b.checkOutDate.getTime() - a.checkOutDate.getTime());
+          valid.sort((a, b) => (b.checkOutDate?.getTime() ?? 0) - (a.checkOutDate?.getTime() ?? 0));
           this.billingRecords.set(valid);
         },
         error: (err) => {

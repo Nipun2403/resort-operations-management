@@ -4,7 +4,7 @@ import {
   HttpHandlerFn,
   HttpInterceptorFn,
   HttpRequest,
-} from '@angular/core';
+} from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { EMPTY, Observable, catchError, throwError } from 'rxjs';

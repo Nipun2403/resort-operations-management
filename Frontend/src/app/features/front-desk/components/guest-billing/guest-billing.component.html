@@ -64,7 +64,7 @@
                 @for (b of oldBilling(); track b.bookingId) {
                   <tr class="table-row">
                     <td>#{{ b.bookingId }}</td>
-                    <td class="checkout-date-cell">{{ b.checkOutDate | date:'mediumDate' }}</td>
+                    <td class="checkout-date-cell">{{ b.checkOutDate ? (b.checkOutDate | date:'mediumDate') : '—' }}</td>
                     <td class="text-right total-amount-cell">{{ b.totalBill | currency }}</td>
                     <td class="text-right action-cell">
                       <button class="view-pdf-btn" (click)="openFolioDetail(b)">
