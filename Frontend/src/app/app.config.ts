@@ -5,6 +5,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { errorPageInterceptor } from './core/interceptors/error-page.interceptor';
+import { idempotencyInterceptor } from './core/interceptors/idempotency.interceptor';
 import { routes } from './app.routes';
 import { provideEchartsCore } from 'ngx-echarts';
 import * as echarts from 'echarts';
@@ -14,7 +15,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    provideHttpClient(withInterceptors([authInterceptor, errorPageInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor, errorPageInterceptor, idempotencyInterceptor])),
     provideAnimationsAsync(),
     provideEchartsCore({ echarts }),
     { provide: ErrorHandler, useClass: GlobalErrorHandler },

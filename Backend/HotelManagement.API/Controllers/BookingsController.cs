@@ -64,7 +64,6 @@ public class BookingsController : ControllerBase
 
     [HttpPost]
     [AllowAnonymous]
-    [ServiceFilter(typeof(HotelManagement.API.Filters.IdempotentAttribute))]
     public async Task<IActionResult> BookRoom([FromBody] CreateBookingRequestDTO request)
     {
         try

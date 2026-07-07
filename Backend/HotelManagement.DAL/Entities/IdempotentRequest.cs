@@ -4,5 +4,7 @@ public class IdempotentRequest
 {
     public string IdempotencyKey { get; set; } = string.Empty;
     public string Path { get; set; } = string.Empty;
+    public int StatusCode { get; set; }
+    public string ResponseBody { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }
