@@ -19,11 +19,11 @@
     </div>
     <div class="detail-row">
       <span class="detail-label">Check‑in:</span>
-      <span class="detail-value">{{ booking.checkInDate }}</span>
+      <span class="detail-value">{{ booking.checkInDate | date:'dd-MM-yyyy' }}</span>
     </div>
     <div class="detail-row">
       <span class="detail-label">Check‑out:</span>
-      <span class="detail-value">{{ booking.checkOutDate }}</span>
+      <span class="detail-value">{{ booking.checkOutDate | date:'dd-MM-yyyy' }}</span>
     </div>
     <div class="detail-row">
       <span class="detail-label">Booked At:</span>

@@ -179,17 +179,29 @@ export class GuestDetailsComponent implements OnInit, AfterViewInit {
   }
 
   cancelBooking(booking: Booking): void {
-    this.bookingApi
-      .cancel(booking.id)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.snackBar.open('Booking cancelled.', 'Close', { duration: 3000 });
-          this.fetchBookings();
-        },
-        error: (err: any) =>
-          this.snackBar.open(this.extractErrorMessage(err), 'Close', { duration: 5000 }),
-      });
+    const confirmRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Cancel Booking',
+        message: `Are you sure you want to cancel booking #${booking.id} for ${booking.guestName}? This cannot be undone.`,
+      },
+    });
+
+    confirmRef.afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((confirmed: boolean) => {
+      if (!confirmed) return;
+
+      this.loading.set(true);
+      this.bookingApi
+        .cancel(booking.id)
+        .pipe(finalize(() => this.loading.set(false)))
+        .subscribe({
+          next: () => {
+            this.snackBar.open('Booking cancelled.', 'Close', { duration: 3000 });
+            this.fetchBookings();
+          },
+          error: (err: any) =>
+            this.snackBar.open(this.extractErrorMessage(err), 'Close', { duration: 5000 }),
+        });
+    });
   }
 
   extendStay(booking: Booking): void {

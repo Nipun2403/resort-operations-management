@@ -38,11 +38,11 @@
         <div class="stay-dates">
           <div class="date-block">
             <span class="date-label">Arrived</span>
-            <span class="date-value">{{ currentBooking()!.checkInDate }}</span>
+            <span class="date-value">{{ currentBooking()!.checkInDate | date:'dd-MM-yyyy' }}</span>
           </div>
           <div class="date-block">
             <span class="date-label">Departure</span>
-            <span class="date-value">{{ currentBooking()!.checkOutDate }}</span>
+            <span class="date-value">{{ currentBooking()!.checkOutDate | date:'dd-MM-yyyy' }}</span>
           </div>
         </div>
 
@@ -77,11 +77,11 @@
         <div class="stay-dates">
           <div class="date-block">
             <span class="date-label">Check-in</span>
-            <span class="date-value">{{ upcomingBooking()!.checkInDate }}</span>
+            <span class="date-value">{{ upcomingBooking()!.checkInDate | date:'dd-MM-yyyy' }}</span>
           </div>
           <div class="date-block">
             <span class="date-label">Check-out</span>
-            <span class="date-value">{{ upcomingBooking()!.checkOutDate }}</span>
+            <span class="date-value">{{ upcomingBooking()!.checkOutDate | date:'dd-MM-yyyy' }}</span>
           </div>
         </div>
 
