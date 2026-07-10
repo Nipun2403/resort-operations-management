@@ -297,8 +297,14 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     const start = this.startDateCtrl.value;
     const end = this.endDateCtrl.value;
     if (!start || !end) return;
-    const startISO = `${start.toISOString().split('T')[0]}T00:00:00Z`;
-    const endISO = `${end.toISOString().split('T')[0]}T23:59:59Z`;
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    const toLocal = (d: Date) => {
+      const off = -d.getTimezoneOffset();
+      const s = off >= 0 ? '+' : '-';
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}.${d.getMilliseconds().toString().padStart(3, '0')}${s}${pad(Math.floor(Math.abs(off) / 60))}:${pad(Math.abs(off) % 60)}`;
+    };
+    const startISO = toLocal(new Date(start.getFullYear(), start.getMonth(), start.getDate(), 0, 0, 0, 0));
+    const endISO = toLocal(new Date(end.getFullYear(), end.getMonth(), end.getDate(), 23, 59, 59, 999));
     this.loadAnalytics({ startDate: startISO, endDate: endISO });
   }
 
