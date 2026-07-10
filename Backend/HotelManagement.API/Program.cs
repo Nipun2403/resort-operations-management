@@ -121,6 +121,7 @@ builder.Services.AddScoped<INotificationService, HotelManagement.API.Services.Si
 builder.Services.AddHostedService<HotelManagement.API.Services.IdempotencyCleanupService>();
 builder.Services.AddHostedService<ImageValidationWorker>();
 builder.Services.AddHostedService<OrphanImageCleanupWorker>();
+builder.Services.AddHostedService<BlobCleanupWorker>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserService, HotelManagement.API.Services.CurrentUserService>();
 builder.Services.AddScoped<IAuditUserProvider>(sp => (IAuditUserProvider)sp.GetRequiredService<ICurrentUserService>());
