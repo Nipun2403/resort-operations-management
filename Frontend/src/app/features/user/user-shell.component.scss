@@ -235,7 +235,7 @@
 
   .footer-copyright {
     @include font-label-caps;
-    font-size: 10px;
+    font-size: 12px;
     color: var(--color-on-tertiary-container);
     margin: 0;
   }
@@ -246,7 +246,7 @@
 
     a {
       @include font-label-caps;
-      font-size: 10px;
+      font-size: 12px;
       color: var(--color-on-tertiary-container);
       text-decoration: none;
       transition: color 0.3s;
