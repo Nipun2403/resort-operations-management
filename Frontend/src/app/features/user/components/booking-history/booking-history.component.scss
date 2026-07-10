@@ -36,7 +36,7 @@
 
     th.mat-mdc-header-cell {
       @include font-label-caps;
-      font-size: 10px;
+      font-size: 12px;
       color: var(--color-secondary) !important;
       letter-spacing: 0.15em;
       border-bottom: 1px solid rgba(228, 194, 133, 0.2) !important;
@@ -60,7 +60,7 @@
 
     td.mat-mdc-cell {
       @include font-body-md;
-      font-size: 14px;
+      font-size: 16px;
       color: var(--color-on-surface) !important;
       border-bottom: 1px solid rgba(228, 194, 133, 0.05) !important;
       padding: 24px !important;
@@ -114,7 +114,7 @@
 .status-badge {
   padding: 6px 16px;
   @include font-label-caps;
-  font-size: 10px;
+  font-size: 12px;
   border-radius: 20px;
   display: inline-block;
   letter-spacing: 0.05em;
@@ -176,7 +176,7 @@
     .mdc-floating-label {
       color: var(--color-on-surface-variant) !important;
       @include font-label-caps;
-      font-size: 11px;
+      font-size: 12px;
       letter-spacing: 0.1em;
       transform: translateY(-8px) scale(0.9);
     }
@@ -189,7 +189,7 @@
     .mat-mdc-select-value-text {
       color: var(--color-on-surface) !important;
       @include font-body-md;
-      font-size: 15px;
+      font-size: 16px;
     }
 
     .mat-mdc-select-arrow {
@@ -207,7 +207,7 @@
   ::ng-deep {
     .mat-mdc-paginator-container {
       @include font-body-md;
-      font-size: 13px;
+      font-size: 15px;
     }
 
     .mat-mdc-paginator-page-size-label {
@@ -247,7 +247,7 @@
     color: var(--color-secondary);
     padding-bottom: 4px;
     @include font-label-caps;
-    font-size: 11px;
+    font-size: 12px;
     cursor: pointer;
     transition: all 0.3s ease;
 
