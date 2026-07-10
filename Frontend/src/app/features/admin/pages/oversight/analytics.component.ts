@@ -57,7 +57,7 @@ export class AnalyticsComponent implements OnInit {
 
   // Date controls
   presetControl = new FormControl<'last7' | 'last30' | 'quarterly' | 'custom'>(
-    'last7',
+    'last30',
     { nonNullable: true },
   );
   startDateCtrl = new FormControl<Date | null>(null);
@@ -374,7 +374,12 @@ export class AnalyticsComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    this.fetchData();
+    const dates = this.getPresetDates(this.presetControl.value);
+    if (dates) {
+      this.fetchData(dates.start, dates.end);
+    } else {
+      this.fetchData();
+    }
   }
 
   fetchData(startDate?: string, endDate?: string): void {
