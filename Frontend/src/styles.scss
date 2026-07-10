@@ -118,6 +118,39 @@ svg {
     width: auto !important;
   }
 
+// ── Themed snackbar toasts ────────────────────────────
+.success-snackbar {
+  .mdc-snackbar__surface {
+    background: rgba(26, 26, 26, 0.95) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border-left: 4px solid #4caf50 !important;
+    border-top: 1px solid rgba(76, 175, 80, 0.2) !important;
+    border-right: 1px solid rgba(76, 175, 80, 0.2) !important;
+    border-bottom: 1px solid rgba(76, 175, 80, 0.2) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+  }
+  .mdc-snackbar__label {
+    color: var(--color-on-surface) !important;
+  }
+}
+
+.error-snackbar {
+  .mdc-snackbar__surface {
+    background: rgba(26, 26, 26, 0.95) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border-left: 4px solid var(--color-error) !important;
+    border-top: 1px solid rgba(255, 180, 171, 0.2) !important;
+    border-right: 1px solid rgba(255, 180, 171, 0.2) !important;
+    border-bottom: 1px solid rgba(255, 180, 171, 0.2) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+  }
+  .mdc-snackbar__label {
+    color: var(--color-on-surface) !important;
+  }
+}
+
 // ── CDK Overlay backdrop blur ────────────────────────
 .cdk-overlay-backdrop {
   backdrop-filter: blur(8px) !important;

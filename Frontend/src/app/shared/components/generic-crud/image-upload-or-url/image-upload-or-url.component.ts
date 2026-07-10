@@ -192,7 +192,7 @@ export class ImageUploadOrUrlComponent {
       ),
       catchError(err => {
         const msg = this.getFriendlyErrorMessage(err);
-        this.snackBar.open(msg, 'Close', { duration: 5000 });
+        this.snackBar.open(msg, 'Close', { duration: 5000, panelClass: 'error-snackbar', verticalPosition: 'top', horizontalPosition: 'end' });
         return of(null);
       }),
       finalize(() => {
@@ -206,7 +206,7 @@ export class ImageUploadOrUrlComponent {
       if (url) {
         this.currentUrl.set(url);
         this.valueChange.emit(url);
-        this.snackBar.open('Upload successful!', 'Close', { duration: 3000 });
+        this.snackBar.open('Upload successful!', 'Close', { duration: 3000, panelClass: 'success-snackbar', verticalPosition: 'top', horizontalPosition: 'end' });
       }
     });
   }
