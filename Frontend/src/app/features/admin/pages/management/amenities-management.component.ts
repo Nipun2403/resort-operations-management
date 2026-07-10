@@ -121,13 +121,8 @@ export class AmenitiesManagementComponent implements OnInit {
       },
       {
         key: 'imageUrl',
-        label: 'Image URL',
-        type: 'url',
-        validators: [
-          Validators.required,
-          Validators.maxLength(2048),
-          Validators.pattern(/^https?:\/\/.+/),
-        ],
+        label: 'Image',
+        type: 'image',
         showInAdd: true,
         showInEdit: true,
       },

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, computed } from '@angular/core';
+import { Component, inject, OnInit, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, AbstractControl, FormArray, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef, MatDialog } from '@angular/material/dialog';
@@ -11,6 +11,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
 import { CrudModalData, CrudModalResult, FormFieldDef } from '../../../models/crud-config.model';
 import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
+import { ImageUploadOrUrlComponent } from '../image-upload-or-url/image-upload-or-url.component';
 
 @Component({
   selector: 'app-crud-modal',
@@ -26,6 +27,7 @@ import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.comp
     MatSlideToggleModule,
     MatProgressSpinnerModule,
     MatIconModule,
+    ImageUploadOrUrlComponent,
   ],
   templateUrl: './crud-modal.component.html',
   styleUrls: ['./crud-modal.component.scss'],
@@ -39,6 +41,7 @@ export class CrudModalComponent implements OnInit {
   isActiveControl = new FormControl<any>(true);
   activeFields: FormFieldDef[] = [];
   hasToggleField = computed(() => this.activeFields.some(f => f.type === 'toggle'));
+  isSaving = signal(false);
 
   ngOnInit(): void {
     this.activeFields = this.data.formFields.filter((f) => {
@@ -77,6 +80,9 @@ export class CrudModalComponent implements OnInit {
           });
         }
         controls[field.key] = new FormGroup({ urls: urlsArray });
+      } else if (field.type === 'image') {
+        const value = this.data.entity ? (this.data.entity[field.key] ?? null) : null;
+        controls[field.key] = new FormControl(value, field.validators ?? []);
       } else {
         const value = this.data.entity ? (this.data.entity[field.key] ?? null) : null;
         controls[field.key] = new FormControl(value, field.validators ?? []);

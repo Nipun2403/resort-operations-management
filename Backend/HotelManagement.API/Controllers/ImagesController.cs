@@ -7,7 +7,7 @@ using HotelManagement.DAL.Entities;
 namespace HotelManagement.API.Controllers;
 
 [ApiController]
-[Route("api/images")]
+[Route("api/v1/images")]
 [Authorize(Roles = "Admin")]
 public class ImagesController : ControllerBase
 {

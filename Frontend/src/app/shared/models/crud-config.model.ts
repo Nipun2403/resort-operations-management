@@ -34,7 +34,8 @@ export interface FormFieldDef {
     | 'select'
     | 'toggle'
     | 'keyValueList'
-    | 'imageUrlList';
+    | 'imageUrlList'
+    | 'image';
   options?: FilterOption[];
   validators?: any[];
   showInAdd?: boolean;
