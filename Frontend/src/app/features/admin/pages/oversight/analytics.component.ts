@@ -414,7 +414,7 @@ export class AnalyticsComponent implements OnInit {
       startDate.setHours(0, 0, 0, 0);
       const endDate = new Date(end);
       endDate.setHours(23, 59, 59, 999);
-      this.fetchData(startDate.toISOString(), endDate.toISOString());
+      this.fetchData(this.toLocalISOString(startDate), this.toLocalISOString(endDate));
     }
   }
 
@@ -442,6 +442,15 @@ export class AnalyticsComponent implements OnInit {
     }
     start.setHours(0, 0, 0, 0);
     end.setHours(23, 59, 59, 999);
-    return { start: start.toISOString(), end: end.toISOString() };
+    return { start: this.toLocalISOString(start), end: this.toLocalISOString(end) };
+  }
+
+  private toLocalISOString(date: Date): string {
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    const offset = -date.getTimezoneOffset();
+    const sign = offset >= 0 ? '+' : '-';
+    const hh = pad(Math.floor(Math.abs(offset) / 60));
+    const mm = pad(Math.abs(offset) % 60);
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}.${date.getMilliseconds().toString().padStart(3, '0')}${sign}${hh}:${mm}`;
   }
 }
