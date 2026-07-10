@@ -1,4 +1,4 @@
-@import '../../../../styles/theme/index';
+@use '../../../../styles/theme/index' as *;
 
 .guest-details-container {
   max-width: 1440px;

@@ -1,4 +1,4 @@
-@import '../../../../../styles/theme/index';
+@use '../../../../../styles/theme/index' as *;
 
 .modal-content {
   max-height: 70vh;

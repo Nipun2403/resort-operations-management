@@ -1,4 +1,4 @@
-@import '../../../../styles/theme/index';
+@use '../../../../styles/theme/index' as *;
 
 .dashboard-canvas {
   color: var(--color-on-surface);
