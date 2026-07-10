@@ -428,10 +428,10 @@ export class AnalyticsComponent implements OnInit {
     let end: Date = now;
     switch (preset) {
       case 'last7':
-        start = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6);
         break;
       case 'last30':
-        start = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 29);
         break;
       case 'quarterly':
         const currentQuarterMonth = Math.floor(now.getMonth() / 3) * 3;
