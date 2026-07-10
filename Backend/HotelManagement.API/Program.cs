@@ -19,6 +19,8 @@ QuestPDF.Settings.License = LicenseType.Community;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
+
 #region Logger Configuration
 builder.Host.UseSerilog((context, configuration) =>
     configuration.MinimumLevel.Debug()
