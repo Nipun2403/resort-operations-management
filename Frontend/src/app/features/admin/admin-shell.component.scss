@@ -27,7 +27,7 @@ mat-sidenav {
     
     .brand-subtitle {
       @include font-label-caps;
-      font-size: 10px;
+      font-size: 12px;
       color: var(--color-outline);
       margin-top: 8px;
       margin-bottom: 0;
@@ -59,7 +59,7 @@ mat-sidenav {
       
       .nav-title {
         @include font-label-caps;
-        font-size: 11px;
+        font-size: 13px;
         letter-spacing: 0.15em;
       }
 
@@ -91,7 +91,7 @@ mat-sidenav {
 
     .nav-subheader {
       @include font-label-caps;
-      font-size: 10px;
+      font-size: 12px;
       color: var(--color-outline);
       padding: 0 16px;
       margin: 16px 0 8px 0;
@@ -123,14 +123,14 @@ mat-sidenav {
     .user-info {
       .role-title {
         @include font-label-caps;
-        font-size: 9px;
+        font-size: 11px;
         color: var(--color-outline);
         margin: 0 0 4px 0;
         letter-spacing: 0.15em;
       }
       .user-name {
         @include font-body-md;
-        font-size: 13px;
+        font-size: 15px;
         font-weight: 400;
         color: var(--color-on-surface);
         margin: 0;
