@@ -20,9 +20,12 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             }
 
             var dbName = "HotelManagementDb_Testing_" + Guid.NewGuid().ToString("N");
+            var dbHost = Environment.GetEnvironmentVariable("TEST_DB_HOST") ?? "localhost";
+            var dbUser = Environment.GetEnvironmentVariable("TEST_DB_USER") ?? "peewee";
+            var dbPass = Environment.GetEnvironmentVariable("TEST_DB_PASS") ?? "";
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseNpgsql($"Host=localhost;Database={dbName};Username=peewee;Password=");
+                options.UseNpgsql($"Host={dbHost};Database={dbName};Username={dbUser};Password={dbPass}");
             });
 
             var sp = services.BuildServiceProvider();
