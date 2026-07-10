@@ -1,7 +1,6 @@
 import { Injectable, inject, OnDestroy, effect } from '@angular/core';
 import { HubConnection, HubConnectionBuilder, HttpTransportType, LogLevel } from '@microsoft/signalr';
 import { Subject } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { environment } from '../../../environments/environment';
 import { AuthService } from './auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';

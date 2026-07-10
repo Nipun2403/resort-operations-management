@@ -20,7 +20,6 @@ import {
   UpdateStaffDTO,
   StaffRole,
 } from '../../models/staff.model';
-import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-staff-management',
