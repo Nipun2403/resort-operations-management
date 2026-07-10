@@ -34,9 +34,8 @@ public class OrphanImageCleanupWorker : BackgroundService
                 using var scope = _scopeFactory.CreateScope();
                 var options = scope.ServiceProvider.GetRequiredService<IOptions<AzureStorageOptions>>().Value;
                 var blobServiceClient = scope.ServiceProvider.GetRequiredService<BlobServiceClient>();
-                var dbFactory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<ApplicationDbContext>>();
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-                await using var db = await dbFactory.CreateDbContextAsync(ct);
                 var now = DateTime.UtcNow;
 
                 var expiredPending = await db.Set<UploadSession>()

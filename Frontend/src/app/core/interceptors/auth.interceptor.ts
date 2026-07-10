@@ -7,10 +7,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next): Observable<HttpEv
   const authService = inject(AuthService);
   const token = authService.token();
 
-  // Skip token header for auth/login and auth/register endpoints to prevent stale tokens causing 401 Unauthorized
+  // Skip token header for auth endpoints (stale tokens cause 401) and Azure blob storage (SAS auth only)
   const isAuthEndpoint = req.url.includes('/auth/login') || req.url.includes('/auth/register');
+  const isAzureBlob = req.url.includes('.blob.core.windows.net');
 
-  if (token && !isAuthEndpoint) {
+  if (token && !isAuthEndpoint && !isAzureBlob) {
     const authReq = req.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`,

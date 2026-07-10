@@ -187,6 +187,15 @@ export class CrudModalComponent implements OnInit {
     this.getImageUrlArray(fieldName).removeAt(index);
   }
 
+  addImageUrlFromUpload(fieldName: string, url: string | null): void {
+    if (url) {
+      this.addImageUrl(fieldName);
+      const array = this.getImageUrlArray(fieldName);
+      const lastCtrl = array.at(array.length - 1) as FormControl;
+      lastCtrl.setValue(url);
+    }
+  }
+
   cancel(): void {
     this.dialogRef.close(null);
   }

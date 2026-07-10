@@ -13,11 +13,13 @@ using HotelManagement.Repository.Implementations;
 using HotelManagement.Repository.Interfaces;
 using QuestPDF.Infrastructure;
 using Serilog;
+using Azure.Storage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Queues;
 using HotelManagement.API.Utilities;
 using HotelManagement.BLL.Options;
 using HotelManagement.BLL.Workers;
+using Microsoft.Extensions.Options;
 
 // Set QuestPDF community licence (free for non-commercial / open-source use)
 QuestPDF.Settings.License = LicenseType.Community;
@@ -52,6 +54,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.Configure<AzureStorageOptions>(
     builder.Configuration.GetSection("AzureStorage"));
 builder.Services.AddSingleton<IAzureCredentialFactory, AzureCredentialFactory>();
+builder.Services.AddSingleton<StorageSharedKeyCredential>(sp =>
+{
+    var options = sp.GetRequiredService<IOptions<AzureStorageOptions>>().Value;
+    var accountName = new Uri(options.AccountUrl).Host.Split('.')[0];
+    return new StorageSharedKeyCredential(accountName, options.AccountKey);
+});
 builder.Services.AddSingleton(sp =>
 {
     var factory = sp.GetRequiredService<IAzureCredentialFactory>();

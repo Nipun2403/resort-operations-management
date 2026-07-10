@@ -25,6 +25,7 @@ public class AzureCredentialFactory : IAzureCredentialFactory
 
     public QueueServiceClient CreateQueueServiceClient()
     {
-        return new QueueServiceClient(new Uri(_options.AccountUrl), _credential);
+        var queueUrl = _options.AccountUrl.Replace(".blob.core.windows.net", ".queue.core.windows.net");
+        return new QueueServiceClient(new Uri(queueUrl), _credential);
     }
 }

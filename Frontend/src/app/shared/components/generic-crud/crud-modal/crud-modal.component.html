@@ -76,6 +76,11 @@
         } @else if (field.type === 'imageUrlList') {
           <div class="image-url-list" [formGroupName]="field.key">
             <label class="list-label">{{ field.label }}</label>
+            <app-image-upload-or-url
+              [value]="''"
+              (valueChange)="addImageUrlFromUpload(field.key, $event)"
+              (isUploadingChange)="isSaving.set($event)"
+            />
             <div formArrayName="urls">
               @for (urlCtrl of getImageUrlArray(field.key).controls; let i = $index; track i) {
                 <div class="url-row">

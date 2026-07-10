@@ -37,7 +37,7 @@ public class ImageValidationWorker : BackgroundService
                 var options = scope.ServiceProvider.GetRequiredService<IOptions<AzureStorageOptions>>().Value;
                 var blobServiceClient = scope.ServiceProvider.GetRequiredService<BlobServiceClient>();
                 var queueServiceClient = scope.ServiceProvider.GetRequiredService<QueueServiceClient>();
-                var dbFactory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<ApplicationDbContext>>();
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
                 var queueClient = queueServiceClient.GetQueueClient(options.QueueName);
 
@@ -63,7 +63,6 @@ public class ImageValidationWorker : BackgroundService
                     continue;
                 }
 
-                await using var db = await dbFactory.CreateDbContextAsync(ct);
                 var session = await db.Set<UploadSession>().FindAsync(new object[] { sessionId }, ct);
 
                 if (session == null || session.Status != UploadStatus.Pending)

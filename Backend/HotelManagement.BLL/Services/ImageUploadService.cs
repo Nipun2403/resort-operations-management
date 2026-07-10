@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Azure.Storage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Queues;
 using Azure.Storage.Sas;
@@ -14,20 +15,23 @@ namespace HotelManagement.BLL.Services;
 public class ImageUploadService : IImageUploadService
 {
     private readonly AzureStorageOptions _options;
-    private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
+    private readonly ApplicationDbContext _dbContext;
     private readonly BlobServiceClient _blobServiceClient;
     private readonly QueueServiceClient _queueServiceClient;
+    private readonly StorageSharedKeyCredential _credential;
 
     public ImageUploadService(
         IOptions<AzureStorageOptions> options,
-        IDbContextFactory<ApplicationDbContext> contextFactory,
+        ApplicationDbContext dbContext,
         BlobServiceClient blobServiceClient,
-        QueueServiceClient queueServiceClient)
+        QueueServiceClient queueServiceClient,
+        StorageSharedKeyCredential credential)
     {
         _options = options.Value;
-        _contextFactory = contextFactory;
+        _dbContext = dbContext;
         _blobServiceClient = blobServiceClient;
         _queueServiceClient = queueServiceClient;
+        _credential = credential;
     }
 
     public async Task<UploadRequestResult> RequestUploadAsync(
@@ -71,9 +75,8 @@ public class ImageUploadService : IImageUploadService
             ExpiresAtUtc = DateTime.UtcNow.AddMinutes(_options.SasExpiryMinutes)
         };
 
-        using var db = await _contextFactory.CreateDbContextAsync();
-        db.Add(session);
-        await db.SaveChangesAsync();
+        _dbContext.Add(session);
+        await _dbContext.SaveChangesAsync();
 
         var blobContainerClient = _blobServiceClient.GetBlobContainerClient(_options.ContainerName);
         var blobClient = blobContainerClient.GetBlobClient(blobName);
@@ -91,8 +94,7 @@ public class ImageUploadService : IImageUploadService
 
     public async Task ConfirmUploadAsync(Guid sessionId, string userEmail)
     {
-        using var db = await _contextFactory.CreateDbContextAsync();
-        var session = await db.Set<UploadSession>().FindAsync(sessionId);
+        var session = await _dbContext.Set<UploadSession>().FindAsync(sessionId);
 
         if (session == null)
             throw new KeyNotFoundException("Upload session not found.");
@@ -110,8 +112,7 @@ public class ImageUploadService : IImageUploadService
 
     public async Task<UploadStatusResult> GetStatusAsync(Guid sessionId, string userEmail)
     {
-        using var db = await _contextFactory.CreateDbContextAsync();
-        var session = await db.Set<UploadSession>().FindAsync(sessionId);
+        var session = await _dbContext.Set<UploadSession>().FindAsync(sessionId);
 
         if (session == null)
             throw new KeyNotFoundException("Upload session not found.");
@@ -142,8 +143,7 @@ public class ImageUploadService : IImageUploadService
             if (uri.Host != storageHost)
                 continue;
 
-            using var db = await _contextFactory.CreateDbContextAsync();
-            var session = await db.Set<UploadSession>()
+            var session = await _dbContext.Set<UploadSession>()
                 .FirstOrDefaultAsync(s => s.BlobUrl == url);
 
             if (session == null)
@@ -163,8 +163,8 @@ public class ImageUploadService : IImageUploadService
 
             session.Status = UploadStatus.Attached;
             session.AttachedEntityId = entityId;
-            db.Set<UploadSession>().Update(session);
-            await db.SaveChangesAsync();
+            _dbContext.Set<UploadSession>().Update(session);
+            await _dbContext.SaveChangesAsync();
         }
     }
 
@@ -173,8 +173,7 @@ public class ImageUploadService : IImageUploadService
         if (!entityId.HasValue)
             return 0;
 
-        using var db = await _contextFactory.CreateDbContextAsync();
-        return await db.Set<UploadSession>()
+        return await _dbContext.Set<UploadSession>()
             .CountAsync(s => s.EntityType == entityType
                 && s.AttachedEntityId == entityId.Value
                 && s.Status != UploadStatus.Expired
@@ -189,10 +188,12 @@ public class ImageUploadService : IImageUploadService
             BlobContainerName = _options.ContainerName,
             BlobName = blobClient.Name,
             Resource = "b",
+            StartsOn = DateTimeOffset.UtcNow.AddMinutes(-5),
             ExpiresOn = expiresOn
         };
         sasBuilder.SetPermissions(BlobSasPermissions.Write | BlobSasPermissions.Create);
 
-        return blobClient.GenerateSasUri(sasBuilder);
+        var sasParams = sasBuilder.ToSasQueryParameters(_credential);
+        return new Uri($"{blobClient.Uri}?{sasParams}");
     }
 }
