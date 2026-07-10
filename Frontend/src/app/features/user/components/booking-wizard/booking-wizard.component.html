@@ -121,12 +121,12 @@
             <div class="card-quantity-selector">
               <button class="qty-btn" type="button" (click)="decrementRoom(room.roomTypeId)"
                 [disabled]="getRoomQuantity(room.roomTypeId) === 0" aria-label="Remove room">
-                <mat-icon>remove</mat-icon>
+                <mat-icon aria-hidden="true">remove</mat-icon>
               </button>
               <span class="qty-display">{{ getRoomQuantity(room.roomTypeId) }}</span>
               <button class="qty-btn" type="button" (click)="incrementRoom(room.roomTypeId)"
                 [disabled]="getRoomQuantity(room.roomTypeId) >= room.availableCount" aria-label="Add room">
-                <mat-icon>add</mat-icon>
+                <mat-icon aria-hidden="true">add</mat-icon>
               </button>
             </div>
           </div>

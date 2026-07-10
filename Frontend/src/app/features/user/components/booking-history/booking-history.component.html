@@ -102,27 +102,27 @@
         <td mat-cell *matCellDef="let b" class="actions-cell">
           <button mat-icon-button (click)="openDetail(b)" aria-label="View" matTooltip="View Details"
             class="action-btn">
-            <mat-icon>visibility</mat-icon>
+            <mat-icon aria-hidden="true">visibility</mat-icon>
           </button>
           @if (b.bookingStatus === 'Booked') {
           <button mat-icon-button (click)="cancelBooking(b)" aria-label="Cancel" matTooltip="Cancel Booking"
             class="action-btn">
-            <mat-icon>cancel</mat-icon>
+            <mat-icon aria-hidden="true">cancel</mat-icon>
           </button>
           }
           @if (b.bookingStatus === 'CheckedOut') {
           <button mat-icon-button (click)="openFeedback(b)" aria-label="Feedback" matTooltip="Leave Feedback"
             class="action-btn animate-feedback">
-            <mat-icon>edit_note</mat-icon>
+            <mat-icon aria-hidden="true">edit_note</mat-icon>
           </button>
           }
           <button mat-icon-button (click)="openBilling(b)" aria-label="Billing" matTooltip="View Billing"
             class="action-btn">
-            <mat-icon>receipt_long</mat-icon>
+            <mat-icon aria-hidden="true">receipt_long</mat-icon>
           </button>
           <button mat-icon-button (click)="downloadFolioPdf(b.id, $event)" aria-label="Download PDF"
             matTooltip="Download Folio PDF" class="action-btn">
-            <mat-icon>picture_as_pdf</mat-icon>
+            <mat-icon aria-hidden="true">picture_as_pdf</mat-icon>
           </button>
         </td>
       </ng-container>

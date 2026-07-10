@@ -13,7 +13,7 @@
             class="add-btn"
             (click)="openAddModal()"
           >
-            <mat-icon>add</mat-icon> ADD NEW {{ (config().entityName || '').toUpperCase() }}
+            <mat-icon aria-hidden="true">add</mat-icon> ADD NEW {{ (config().entityName || '').toUpperCase() }}
           </button>
         </div>
       }
@@ -156,7 +156,7 @@
                   aria-label="Edit"
                   class="edit-btn"
                 >
-                  <mat-icon>edit</mat-icon>
+                  <mat-icon aria-hidden="true">edit</mat-icon>
                 </button>
               </td>
             </ng-container>

@@ -3,7 +3,7 @@
   <!-- Toast notification -->
   @if (ticketCreatedMessage()) {
     <div class="toast success" role="status" aria-live="polite">
-      <mat-icon>check_circle</mat-icon>
+      <mat-icon aria-hidden="true">check_circle</mat-icon>
       {{ ticketCreatedMessage() }}
     </div>
   }
@@ -186,8 +186,8 @@
           <p class="card-title">Today's Movement</p>
         </div>
         <div class="action-buttons">
-          <button mat-icon-button class="action-btn" aria-label="Filter"><mat-icon>filter_list</mat-icon></button>
-          <button mat-icon-button class="action-btn" aria-label="Download"><mat-icon>download</mat-icon></button>
+          <button mat-icon-button class="action-btn" aria-label="Filter"><mat-icon aria-hidden="true">filter_list</mat-icon></button>
+          <button mat-icon-button class="action-btn" aria-label="Download"><mat-icon aria-hidden="true">download</mat-icon></button>
         </div>
       </div>
 

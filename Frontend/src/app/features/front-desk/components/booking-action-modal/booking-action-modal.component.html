@@ -63,18 +63,18 @@
         <div class="actions">
           @if (booking().bookingStatus === 'Booked') {
           <button mat-raised-button color="primary" (click)="checkIn()" [disabled]="loading()">
-            <mat-icon>login</mat-icon> Check‑In
+            <mat-icon aria-hidden="true">login</mat-icon> Check‑In
           </button>
           <button mat-raised-button color="warn" (click)="cancelBooking()" [disabled]="loading()">
-            <mat-icon>cancel</mat-icon> Cancel Booking
+            <mat-icon aria-hidden="true">cancel</mat-icon> Cancel Booking
           </button>
           }
           @if (booking().bookingStatus === 'CheckedIn') {
           <button mat-raised-button (click)="extendStay()" [disabled]="loading()" style="margin-right: 8px;">
-            <mat-icon>edit_calendar</mat-icon> Extend Stay
+            <mat-icon aria-hidden="true">edit_calendar</mat-icon> Extend Stay
           </button>
           <button mat-raised-button color="primary" (click)="checkOut()" [disabled]="loading()">
-            <mat-icon>logout</mat-icon> Check‑Out
+            <mat-icon aria-hidden="true">logout</mat-icon> Check‑Out
           </button>
           }
         </div>
