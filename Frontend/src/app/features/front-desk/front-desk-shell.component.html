@@ -34,8 +34,9 @@
       <button
         mat-icon-button
         (click)="sidebarOpen.set(!sidebarOpen())"
+        aria-label="Toggle navigation menu"
       >
-        <mat-icon>menu</mat-icon>
+        <mat-icon aria-hidden="true">menu</mat-icon>
       </button>
       }
       <span>{{ title() }}</span>

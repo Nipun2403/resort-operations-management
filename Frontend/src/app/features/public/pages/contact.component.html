@@ -25,8 +25,8 @@
             <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="correspondence-form">
               <!-- Name -->
               <div class="form-group" [class.error]="contactForm.controls['fullName'].touched && contactForm.controls['fullName'].invalid">
-                <label class="input-label">Full Name</label>
-                <input type="text" formControlName="fullName" placeholder="Your full name" class="underline-input" />
+                <label class="input-label" for="contact-fullName">Full Name</label>
+                <input type="text" id="contact-fullName" formControlName="fullName" placeholder="Your full name" class="underline-input" />
                 <div class="input-underline"></div>
                 @if (contactForm.controls['fullName'].touched && contactForm.controls['fullName'].invalid) {
                   <span class="error-msg">Please enter your name</span>
@@ -35,8 +35,8 @@
 
               <!-- Email -->
               <div class="form-group" [class.error]="contactForm.controls['email'].touched && contactForm.controls['email'].invalid">
-                <label class="input-label">Email Address</label>
-                <input type="email" formControlName="email" placeholder="example@domain.com" class="underline-input" />
+                <label class="input-label" for="contact-email">Email Address</label>
+                <input type="email" id="contact-email" formControlName="email" placeholder="example@domain.com" class="underline-input" />
                 <div class="input-underline"></div>
                 @if (contactForm.controls['email'].touched && contactForm.controls['email'].invalid) {
                   <span class="error-msg">Please enter a valid email address</span>
@@ -45,9 +45,9 @@
 
               <!-- Subject -->
               <div class="form-group">
-                <label class="input-label">Subject</label>
+                <label class="input-label" for="contact-subject">Subject</label>
                 <div class="select-wrapper">
-                  <select formControlName="subject" class="underline-input underline-select">
+                  <select id="contact-subject" formControlName="subject" class="underline-input underline-select">
                     <option value="General Inquiry">General Inquiry</option>
                     <option value="Private Reservation">Private Reservation</option>
                     <option value="Event Hosting">Event Hosting</option>
@@ -60,8 +60,8 @@
 
               <!-- Message -->
               <div class="form-group" [class.error]="contactForm.controls['message'].touched && contactForm.controls['message'].invalid">
-                <label class="input-label">Message</label>
-                <textarea formControlName="message" placeholder="How may we assist you?" rows="4" class="underline-input underline-textarea"></textarea>
+                <label class="input-label" for="contact-message">Message</label>
+                <textarea id="contact-message" formControlName="message" placeholder="How may we assist you?" rows="4" class="underline-input underline-textarea"></textarea>
                 <div class="input-underline"></div>
                 @if (contactForm.controls['message'].touched && contactForm.controls['message'].invalid) {
                   <span class="error-msg">Message must be at least 10 characters</span>

@@ -56,7 +56,8 @@
           <p class="step-desc">Designate the window of occupation and entourage size.</p>
         </div>
         <div class="form-grid">
-          <div class="input-group" (click)="cinPicker.open()">
+          <div class="input-group" (click)="cinPicker.open()"
+            role="button" tabindex="0" (keydown.enter)="cinPicker.open()" (keydown.space)="cinPicker.open()">
             <label class="input-label">Arrival</label>
             <input class="custom-input cursor-pointer" [matDatepicker]="cinPicker" formControlName="checkInDate" readonly placeholder="SELECT DATE" />
             <mat-datepicker #cinPicker></mat-datepicker>
@@ -65,7 +66,8 @@
               <span *ngIf="datesForm.get('checkInDate')?.hasError('checkInInPast')">Check in date cannot be in past.</span>
             </span>
           </div>
-          <div class="input-group" (click)="coutPicker.open()">
+          <div class="input-group" (click)="coutPicker.open()"
+            role="button" tabindex="0" (keydown.enter)="coutPicker.open()" (keydown.space)="coutPicker.open()">
             <label class="input-label">Departure</label>
             <input class="custom-input cursor-pointer" [matDatepicker]="coutPicker" formControlName="checkOutDate" readonly placeholder="SELECT DATE" />
             <mat-datepicker #coutPicker></mat-datepicker>

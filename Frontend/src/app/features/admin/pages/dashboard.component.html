@@ -11,7 +11,8 @@
   <!-- Briefing Bar (Date Filter & Create Ticket) -->
   <section class="briefing-bar">
     <div class="date-filter-group">
-      <div class="date-input-container group" (click)="startPicker.open()">
+      <div class="date-input-container group" (click)="startPicker.open()"
+        role="button" tabindex="0" (keydown.enter)="startPicker.open()" (keydown.space)="startPicker.open()">
         <label class="date-label">START DATE</label>
         <input
           class="date-input"
@@ -23,7 +24,8 @@
         <mat-datepicker #startPicker></mat-datepicker>
       </div>
 
-      <div class="date-input-container group" (click)="endPicker.open()">
+      <div class="date-input-container group" (click)="endPicker.open()"
+        role="button" tabindex="0" (keydown.enter)="endPicker.open()" (keydown.space)="endPicker.open()">
         <label class="date-label">END DATE</label>
         <input
           class="date-input"
@@ -184,8 +186,8 @@
           <p class="card-title">Today's Movement</p>
         </div>
         <div class="action-buttons">
-          <button mat-icon-button class="action-btn"><mat-icon>filter_list</mat-icon></button>
-          <button mat-icon-button class="action-btn"><mat-icon>download</mat-icon></button>
+          <button mat-icon-button class="action-btn" aria-label="Filter"><mat-icon>filter_list</mat-icon></button>
+          <button mat-icon-button class="action-btn" aria-label="Download"><mat-icon>download</mat-icon></button>
         </div>
       </div>
 

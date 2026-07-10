@@ -72,24 +72,24 @@
           <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="edit-form">
 
             <div class="form-field">
-              <label class="form-field__label">FIRST NAME</label>
-              <input class="form-field__input" type="text" formControlName="firstName" />
+              <label class="form-field__label" for="profile-firstName">FIRST NAME</label>
+              <input class="form-field__input" type="text" id="profile-firstName" formControlName="firstName" />
               @if (profileForm.get('firstName')?.invalid && (profileForm.get('firstName')?.touched || profileForm.get('firstName')?.dirty)) {
                 <span class="form-field__error">Required, min 2 letters.</span>
               }
             </div>
 
             <div class="form-field">
-              <label class="form-field__label">LAST NAME</label>
-              <input class="form-field__input" type="text" formControlName="lastName" />
+              <label class="form-field__label" for="profile-lastName">LAST NAME</label>
+              <input class="form-field__input" type="text" id="profile-lastName" formControlName="lastName" />
               @if (profileForm.get('lastName')?.invalid && (profileForm.get('lastName')?.touched || profileForm.get('lastName')?.dirty)) {
                 <span class="form-field__error">Required, min 2 letters.</span>
               }
             </div>
 
             <div class="form-field">
-              <label class="form-field__label">EMAIL ADDRESS</label>
-              <input class="form-field__input" type="email" formControlName="email" />
+              <label class="form-field__label" for="profile-email">EMAIL ADDRESS</label>
+              <input class="form-field__input" type="email" id="profile-email" formControlName="email" />
               @if (profileForm.get('email')?.invalid && (profileForm.get('email')?.touched || profileForm.get('email')?.dirty)) {
                 <span class="form-field__error">Valid email required.</span>
               }
@@ -125,8 +125,8 @@
         <form [formGroup]="passwordForm" (ngSubmit)="changePassword()" class="vault-form">
 
           <div class="form-field">
-            <label class="form-field__label">CURRENT PASSWORD</label>
-            <input class="form-field__input" type="password" formControlName="currentPassword" />
+            <label class="form-field__label" for="profile-currentPassword">CURRENT PASSWORD</label>
+            <input class="form-field__input" type="password" id="profile-currentPassword" formControlName="currentPassword" />
             @if (passwordForm.get('currentPassword')?.invalid && (passwordForm.get('currentPassword')?.touched || passwordForm.get('currentPassword')?.dirty)) {
               <span class="form-field__error">Required.</span>
             }
@@ -134,15 +134,15 @@
 
           <div class="password-row">
             <div class="form-field">
-              <label class="form-field__label">NEW PASSWORD</label>
-              <input class="form-field__input" type="password" formControlName="newPassword" />
+              <label class="form-field__label" for="profile-newPassword">NEW PASSWORD</label>
+              <input class="form-field__input" type="password" id="profile-newPassword" formControlName="newPassword" />
               @if (passwordForm.get('newPassword')?.invalid && (passwordForm.get('newPassword')?.touched || passwordForm.get('newPassword')?.dirty)) {
                 <span class="form-field__error">Min 8 characters, at least 1 letter and 1 digit.</span>
               }
             </div>
             <div class="form-field">
-              <label class="form-field__label">CONFIRM PASSWORD</label>
-              <input class="form-field__input" type="password" formControlName="confirmNewPassword" />
+              <label class="form-field__label" for="profile-confirmNewPassword">CONFIRM PASSWORD</label>
+              <input class="form-field__input" type="password" id="profile-confirmNewPassword" formControlName="confirmNewPassword" />
               @if (passwordForm.get('confirmNewPassword')?.invalid && (passwordForm.get('confirmNewPassword')?.touched || passwordForm.get('confirmNewPassword')?.dirty)) {
                 <span class="form-field__error">Required.</span>
               }

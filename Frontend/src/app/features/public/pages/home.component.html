@@ -69,7 +69,8 @@
       <div class="rooms-grid">
         @for (room of featuredRooms(); track room.id; let i = $index) {
           <div class="room-card" [class.large]="i === 0">
-            <div class="card-image" [style.background-image]="'url(' + getFirstImage(room) + ')'" (click)="viewRoom(room.id)"></div>
+            <div class="card-image" [style.background-image]="'url(' + getFirstImage(room) + ')'" (click)="viewRoom(room.id)"
+              role="button" tabindex="0" (keydown.enter)="viewRoom(room.id)" (keydown.space)="viewRoom(room.id)"></div>
             <div class="card-info">
               <h3>{{ room.name }}</h3>
               <div class="meta">

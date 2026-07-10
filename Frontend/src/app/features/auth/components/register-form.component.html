@@ -1,8 +1,8 @@
 <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form" novalidate>
   <div class="name-row">
     <div class="input-group">
-      <input type="text" class="minimal-input" placeholder=" " formControlName="firstName" autocomplete="given-name" [readonly]="loading" />
-      <label class="floating-label">First Name</label>
+      <input type="text" id="firstName" class="minimal-input" placeholder=" " formControlName="firstName" autocomplete="given-name" [readonly]="loading" />
+      <label class="floating-label" for="firstName">First Name</label>
       @if (registerForm.controls.firstName.invalid && registerForm.controls.firstName.touched) {
         @if (registerForm.controls.firstName.hasError('required')) {
           <span class="error-text">First name is required.</span>
@@ -13,8 +13,8 @@
       }
     </div>
     <div class="input-group">
-      <input type="text" class="minimal-input" placeholder=" " formControlName="lastName" autocomplete="family-name" [readonly]="loading" />
-      <label class="floating-label">Last Name</label>
+      <input type="text" id="lastName" class="minimal-input" placeholder=" " formControlName="lastName" autocomplete="family-name" [readonly]="loading" />
+      <label class="floating-label" for="lastName">Last Name</label>
       @if (registerForm.controls.lastName.invalid && registerForm.controls.lastName.touched) {
         @if (registerForm.controls.lastName.hasError('required')) {
           <span class="error-text">Last name is required.</span>
@@ -27,8 +27,8 @@
   </div>
 
   <div class="input-group">
-    <input type="email" class="minimal-input" placeholder=" " formControlName="email" autocomplete="email" [readonly]="loading" />
-    <label class="floating-label">Email</label>
+    <input type="email" id="register-email" class="minimal-input" placeholder=" " formControlName="email" autocomplete="email" [readonly]="loading" />
+    <label class="floating-label" for="register-email">Email</label>
     @if (registerForm.controls.email.invalid && registerForm.controls.email.touched) {
       @if (registerForm.controls.email.hasError('required')) {
         <span class="error-text">Email is required.</span>
@@ -40,8 +40,8 @@
   </div>
 
   <div class="input-group">
-    <input type="password" class="minimal-input" placeholder=" " formControlName="password" autocomplete="new-password" [readonly]="loading" />
-    <label class="floating-label">Password</label>
+    <input type="password" id="register-password" class="minimal-input" placeholder=" " formControlName="password" autocomplete="new-password" [readonly]="loading" />
+    <label class="floating-label" for="register-password">Password</label>
     @if (registerForm.controls.password.invalid && registerForm.controls.password.touched) {
       @if (registerForm.controls.password.hasError('required')) {
         <span class="error-text">Password is required.</span>
