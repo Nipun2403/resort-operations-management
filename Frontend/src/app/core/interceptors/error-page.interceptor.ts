@@ -32,13 +32,6 @@ export const errorPageInterceptor: HttpInterceptorFn = (
   return next(req).pipe(
     catchError((err: unknown) => {
       if (err instanceof HttpErrorResponse && shouldRedirect(req, err)) {
-        debugger;
-        console.log('=== INTERCEPTOR 500 ===');
-        console.log('URL:', req.url);
-        console.log('Status:', err.status);
-        console.log('StatusText:', err.statusText);
-        console.log('Body:', err.error);
-        console.log('Headers:', err.headers.keys());
         const status = err.status >= 500 ? 500 : err.status;
         queueMicrotask(() => {
           router.navigate(['/error', status], { replaceUrl: true });

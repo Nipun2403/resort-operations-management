@@ -280,8 +280,8 @@ export class BookingHistoryComponent implements AfterViewInit {
         this.pageIndex = state.pageIndex;
         this.pageSize = state.pageSize;
       }
-    } catch (e) {
-      console.error('Error loading history state:', e);
+    } catch {
+      /* sessionStorage parse failed — use defaults */
     }
   }
 
@@ -295,8 +295,8 @@ export class BookingHistoryComponent implements AfterViewInit {
         pageSize: this.pageSize,
       };
       sessionStorage.setItem(this.STORAGE_KEY, JSON.stringify(state));
-    } catch (e) {
-      console.error('Error saving history state:', e);
+    } catch {
+      /* sessionStorage quota exceeded — silently ignore */
     }
   }
 }

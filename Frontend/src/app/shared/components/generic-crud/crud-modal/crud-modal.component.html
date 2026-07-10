@@ -10,7 +10,7 @@
     <span>{{ data.editMode ? 'Edit' : 'Add' }} {{ data.formFields.length > 0 ? '' : 'Item' }}</span>
   }
   <button mat-icon-button mat-dialog-close class="close-btn" aria-label="Close dialog">
-    <mat-icon>close</mat-icon>
+    <mat-icon aria-hidden="true">close</mat-icon>
   </button>
 </h2>
 
@@ -64,13 +64,13 @@
                     </mat-error>
                   </mat-form-field>
                   <button mat-icon-button type="button" (click)="removeKeyValuePair(field.key, i)" aria-label="Remove bed type">
-                    <mat-icon>close</mat-icon>
+                    <mat-icon aria-hidden="true">close</mat-icon>
                   </button>
                 </div>
               }
             </div>
             <button mat-button type="button" class="add-btn" (click)="addKeyValuePair(field.key)">
-              <mat-icon>add</mat-icon> Add bed type
+              <mat-icon aria-hidden="true">add</mat-icon> Add bed type
             </button>
           </div>
         } @else if (field.type === 'imageUrlList') {
@@ -87,13 +87,13 @@
                     </mat-error>
                   </mat-form-field>
                   <button mat-icon-button type="button" (click)="removeImageUrl(field.key, i)" aria-label="Remove URL">
-                    <mat-icon>close</mat-icon>
+                    <mat-icon aria-hidden="true">close</mat-icon>
                   </button>
                 </div>
               }
             </div>
             <button mat-button type="button" class="add-btn" (click)="addImageUrl(field.key)">
-              <mat-icon>add</mat-icon> Add image URL
+              <mat-icon aria-hidden="true">add</mat-icon> Add image URL
             </button>
           </div>
         } @else {

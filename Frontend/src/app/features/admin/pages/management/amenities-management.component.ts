@@ -1,18 +1,13 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, Validators } from '@angular/forms';
+import { Validators } from '@angular/forms';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
 import { finalize } from 'rxjs/operators';
 
 import { GenericCrudComponent } from '../../../../shared/components/generic-crud/generic-crud.component';
-import {
-  CrudConfig,
-  ColumnDef,
-  FilterDef,
-  FormFieldDef,
-} from '../../../../shared/models/crud-config.model';
+import { CrudConfig } from '../../../../shared/models/crud-config.model';
 import { AmenityApiService } from '../../services/amenity-api.service';
 import {
   Amenity,
@@ -25,7 +20,6 @@ import {
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,
     MatSnackBarModule,
     GenericCrudComponent,
   ],

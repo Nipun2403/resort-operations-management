@@ -1,4 +1,4 @@
-@import '../../../../styles/theme/index';
+@use '../../../../styles/theme/index' as *;
 
 .detail-page {
   overflow-x: hidden;

@@ -34,8 +34,9 @@
       <button
         mat-icon-button
         (click)="sidebarOpen.set(!sidebarOpen())"
+        aria-label="Toggle navigation menu"
       >
-        <mat-icon>menu</mat-icon>
+        <mat-icon aria-hidden="true">menu</mat-icon>
       </button>
       }
       <span>{{ title() }}</span>
@@ -45,20 +46,20 @@
         [matMenuTriggerFor]="userMenu"
         aria-label="Open user menu"
       >
-        <mat-icon>account_circle</mat-icon>
+        <mat-icon aria-hidden="true">account_circle</mat-icon>
       </button>
       <mat-menu #userMenu="matMenu">
         <button
           mat-menu-item
           routerLink="/operations/front-desk/profile"
         >
-          <mat-icon>manage_accounts</mat-icon> Profile
+          <mat-icon aria-hidden="true">manage_accounts</mat-icon> Profile
         </button>
         <button
           mat-menu-item
           (click)="logout()"
         >
-          <mat-icon>logout</mat-icon> Logout
+          <mat-icon aria-hidden="true">logout</mat-icon> Logout
         </button>
       </mat-menu>
     </mat-toolbar>

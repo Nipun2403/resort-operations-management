@@ -1,7 +1,7 @@
 // Include theming for Angular Material with `mat.theme()`.
 @use '@angular/material' as mat;
 
-@import 'styles/theme/index';
+@use 'styles/theme/index' as *;
 
 html {
   height: 100%;

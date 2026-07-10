@@ -110,18 +110,29 @@ public class RoomServiceTests
     }
 
     [Test]
-    public void UpdateRoomAsync_ShouldThrow_IfRoomNotFoundOrInactive()
+    public void UpdateRoomAsync_ShouldThrow_IfRoomNotFound()
     {
         var dto = new CreateUpdateRoomDTO();
 
         _mockRoomRepo.Setup(r => r.GetByIdAsync(99)).ReturnsAsync((Room?)null);
         var ex = Assert.ThrowsAsync<ArgumentException>(() => _roomService.UpdateRoomAsync(99, dto));
-        Assert.That(ex.Message, Does.Contain("Room not found or inactive"));
+        Assert.That(ex.Message, Does.Contain("Room not found"));
+    }
 
-        var inactiveRoom = new Room { Id = 1, IsActive = false };
+    [Test]
+    public async Task UpdateRoomAsync_ShouldAllow_IfRoomInactive()
+    {
+        var dto = new CreateUpdateRoomDTO { RoomNumber = "101", RoomTypeId = 1 };
+        var inactiveRoom = new Room { Id = 1, RoomNumber = "101", RoomTypeId = 1, IsActive = false };
+        var activeType = new RoomType { Id = 1, Name = "Standard", IsActive = true };
+
         _mockRoomRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(inactiveRoom);
-        var ex2 = Assert.ThrowsAsync<ArgumentException>(() => _roomService.UpdateRoomAsync(1, dto));
-        Assert.That(ex2.Message, Does.Contain("Room not found or inactive"));
+        _mockRoomTypeRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(activeType);
+
+        await _roomService.UpdateRoomAsync(1, dto);
+
+        _mockRoomRepo.Verify(r => r.Update(It.IsAny<Room>()), Times.Once);
+        _mockRoomRepo.Verify(r => r.SaveChangesAsync(), Times.Once);
     }
 
     [Test]

@@ -1,4 +1,4 @@
-@import '../../../../styles/theme/index';
+@use '../../../../styles/theme/index' as *;
 
 .dialog-container {
   padding: 48px;

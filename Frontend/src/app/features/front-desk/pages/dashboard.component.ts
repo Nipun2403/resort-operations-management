@@ -39,7 +39,7 @@ interface SearchResult {
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
 })
-export class PlaceholderDashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit {
   // Summary card signals (keep intact)
   arrivalsCount = signal(0);
   departuresCount = signal(0);

@@ -1,4 +1,4 @@
-@import '../../../../styles/theme/index';
+@use '../../../../styles/theme/index' as *;
 
 .dashboard-container {
   display: flex;
@@ -79,7 +79,7 @@
 
         .date-label {
           @include font-label-caps;
-          font-size: 9px;
+          font-size: 12px;
           color: var(--color-outline);
           letter-spacing: 0.15em;
           transition: color 0.3s ease;
@@ -103,20 +103,20 @@
         }
       }
 
-      .filter-actions {
-        display: flex;
-        gap: 12px;
+        .filter-actions {
+          display: flex;
+          gap: 12px;
 
-        button {
-          height: 36px;
-          border-radius: 9999px;
-          @include font-label-caps;
-          font-size: 9px;
-          letter-spacing: 0.15em;
-          padding: 0 24px;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        }
+          button {
+            height: 36px;
+            border-radius: 9999px;
+            @include font-label-caps;
+            font-size: 12px;
+            letter-spacing: 0.15em;
+            padding: 0 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+          }
 
         .btn-primary {
           background-color: var(--color-secondary);
@@ -146,7 +146,7 @@
       background-color: transparent;
       color: var(--color-secondary);
       @include font-label-caps;
-      font-size: 11px;
+      font-size: 13px;
       letter-spacing: 0.2em;
       padding: 0 32px;
       cursor: pointer;
@@ -182,7 +182,7 @@
 
       .kpi-label {
         @include font-label-caps;
-        font-size: 9px;
+        font-size: 12px;
         color: var(--color-outline);
         letter-spacing: 0.15em;
         margin-bottom: 16px;
@@ -213,7 +213,7 @@
         display: flex;
         align-items: center;
         gap: 6px;
-        font-size: 9px;
+        font-size: 12px;
         @include font-label-caps;
         color: rgba(228, 194, 133, 0.6);
 
@@ -279,7 +279,7 @@
 
         .card-label {
           @include font-label-caps;
-          font-size: 10px;
+          font-size: 12px;
           color: var(--color-outline);
           letter-spacing: 0.15em;
           margin-bottom: 6px;
@@ -361,7 +361,7 @@
 
         .health-title {
           @include font-label-caps;
-          font-size: 10px;
+          font-size: 12px;
           color: var(--color-on-surface);
           letter-spacing: 0.25em;
           margin: 0;
@@ -377,7 +377,7 @@
       .card-action {
         align-self: flex-start;
         @include font-label-caps;
-        font-size: 9px;
+        font-size: 12px;
         color: var(--color-secondary);
         letter-spacing: 0.15em;
         text-decoration: none;
@@ -422,7 +422,7 @@
 
         .card-label {
           @include font-label-caps;
-          font-size: 10px;
+          font-size: 12px;
           color: var(--color-outline);
           letter-spacing: 0.15em;
           margin-bottom: 6px;
@@ -469,7 +469,7 @@
 
           th {
             @include font-label-caps;
-            font-size: 9px;
+            font-size: 12px;
             color: var(--color-outline);
             letter-spacing: 0.15em;
             padding: 20px 32px;
@@ -479,7 +479,7 @@
           td {
             padding: 20px 32px;
             @include font-body-md;
-            font-size: 13px;
+            font-size: 15px;
             color: rgba(228, 226, 221, 0.8);
             border-bottom: 1px solid rgba(228, 194, 133, 0.05);
             transition: background-color 0.3s ease;
@@ -513,7 +513,7 @@
             background-color: rgba(228, 194, 133, 0.1);
             color: var(--color-secondary);
             @include font-label-caps;
-            font-size: 8px;
+            font-size: 11px;
             letter-spacing: 0.1em;
             border-radius: 2px;
 
@@ -590,7 +590,7 @@
           margin-bottom: 16px;
 
           .card-title {
-            font-size: 16px;
+            font-size: 18px;
           }
         }
 

@@ -60,7 +60,8 @@
       </div>
 
       <!-- Active Tickets (clickable) -->
-      <div class="pulse-card pulse-card--clickable" (click)="openActiveTickets()">
+      <div class="pulse-card pulse-card--clickable" (click)="openActiveTickets()"
+        role="button" tabindex="0" (keydown.enter)="openActiveTickets()" (keydown.space)="openActiveTickets()">
         <div class="pulse-card__bg-icon">
           <span class="material-symbols-outlined">confirmation_number</span>
         </div>

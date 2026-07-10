@@ -59,9 +59,6 @@ export class AuthPageComponent implements OnInit {
       .subscribe({
         next: (response) => {
           this.authService.handleLogin(response.token);
-          
-          console.log('Token:', response.token);
-          console.log('Role:', this.authService.role());
 
           // TODO: optionally trigger subtle sound effect for accessibility or user feedback
           this.successMessage.set('Login successful! Redirecting...');

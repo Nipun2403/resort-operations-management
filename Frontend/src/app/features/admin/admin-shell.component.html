@@ -150,14 +150,7 @@
       </div>
       
       <div class="topbar-right">
-        @if (!isMobile()) {
-        <div class="search-box">
-          <input type="text" class="search-input" placeholder="Search Estate...">
-          <mat-icon class="search-icon">search</mat-icon>
-        </div>
-        }
         <div class="user-actions">
-          <button mat-icon-button class="action-btn"><mat-icon>notifications</mat-icon></button>
           <button
             mat-icon-button
             [matMenuTriggerFor]="userMenu"

@@ -18,7 +18,8 @@
     } @else {
       @for (group of menuGroups(); track group.category; let i = $index) {
         <div class="menu-row" [class.active]="expandedCategory() === group.category">
-          <div class="menu-row-header" (click)="toggleCategory(group.category)">
+          <div class="menu-row-header" (click)="toggleCategory(group.category)"
+            role="button" tabindex="0" (keydown.enter)="toggleCategory(group.category)" (keydown.space)="toggleCategory(group.category)">
             <h2>{{ group.category }}</h2>
             <span class="category-number">[ {{ (i + 1).toString().padStart(2, '0') }} ]</span>
             <span class="expand-icon material-symbols-outlined">{{ expandedCategory() === group.category ? 'expand_less' : 'expand_more' }}</span>

@@ -22,7 +22,7 @@
         [attr.aria-label]="room.roomNumber + ' - ' + room.status"
       >
         <span class="room-number">{{ room.roomNumber }}</span>
-        <mat-icon>{{ 
+        <mat-icon aria-hidden="true">{{ 
           (room.status ?? '').toLowerCase() === 'occupied' ? 'lock' : 
           (room.status ?? '').toLowerCase() === 'available' ? 'lock_open' : 'bed' 
         }}</mat-icon>

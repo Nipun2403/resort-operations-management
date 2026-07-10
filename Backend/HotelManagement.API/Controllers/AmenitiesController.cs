@@ -73,33 +73,5 @@ public class AmenitiesController : ControllerBase
         }
     }
 
-    // [HttpPatch("{id}/status")]
-    // [Authorize(Roles = "Admin")]
-    // public async Task<IActionResult> UpdateAmenityStatus(int id, [FromQuery] bool isAvailable)
-    // {
-    //     try
-    //     {
-    //         await _amenityService.UpdateAmenityStatusAsync(id, isAvailable);
-    //         return Ok(new { Message = $"Amenity availability updated to {isAvailable}." });
-    //     }
-    //     catch (ArgumentException ex)
-    //     {
-    //         return NotFound(ex.Message);
-    //     }
-    // }
 
-    // [HttpDelete("{id}")]
-    // [Authorize(Roles = "Admin")]
-    // public async Task<IActionResult> DeleteAmenity(int id)
-    // {
-    //     try
-    //     {
-    //         await _amenityService.DeleteAmenityAsync(id);
-    //         return Ok(new { Message = "Amenity deleted (deactivated) successfully." });
-    //     }
-    //     catch (ArgumentException ex)
-    //     {
-    //         return NotFound(ex.Message);
-    //     }
-    // }
 }

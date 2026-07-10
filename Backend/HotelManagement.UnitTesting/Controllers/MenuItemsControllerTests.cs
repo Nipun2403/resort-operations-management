@@ -39,10 +39,6 @@ public class MenuItemsControllerTests
     public async Task CreateMenuItem_ShouldReturnBadRequest_WhenModelStateIsInvalid()
     {
         _controller.ModelState.AddModelError("Name", "Required");
-        //         var result = await _controller.CreateMenuItem(new MenuItemDTO()) as BadRequestObjectResult;
-
-        //         Assert.That(result, Is.Not.Null);
-        //         Assert.That(result.StatusCode, Is.EqualTo(400));
     }
 
     [Test]
@@ -73,24 +69,12 @@ public class MenuItemsControllerTests
     {
         var dto = new CreateMenuItemDTO();
         var resultDto = new MenuItemDTO();
-        //         _mockMenuItemService.Setup(s => s.UpdateMenuItemAsync(1, dto)).ReturnsAsync(resultDto);
-
-        //         var result = await _controller.UpdateMenuItem(1, dto) as OkObjectResult;
-
-        //         Assert.That(result, Is.Not.Null);
-        //         Assert.That(result.StatusCode, Is.EqualTo(200));
     }
 
     [Test]
     public async Task UpdateMenuItem_ShouldReturnNotFound_OnArgumentException()
     {
         var dto = new CreateMenuItemDTO();
-        //         _mockMenuItemService.Setup(s => s.UpdateMenuItemAsync(1, dto)).ThrowsAsync(new ArgumentException());
-
-        //         var result = await _controller.UpdateMenuItem(1, dto) as NotFoundObjectResult;
-
-        //         Assert.That(result, Is.Not.Null);
-        //         Assert.That(result.StatusCode, Is.EqualTo(404));
     }
 
     [Test]
@@ -115,25 +99,5 @@ public class MenuItemsControllerTests
         Assert.That(result.StatusCode, Is.EqualTo(404));
     }
 
-    // [Test]
-    // public async Task DeleteMenuItem_ShouldReturnOk_WhenSuccessful()
-    // {
-    //     _mockMenuItemService.Setup(s => s.DeleteMenuItemAsync(1)).Returns(Task.CompletedTask);
 
-    //     var result = await _controller.DeleteMenuItem(1) as OkObjectResult;
-
-    //     Assert.That(result, Is.Not.Null);
-    //     Assert.That(result.StatusCode, Is.EqualTo(200));
-    // }
-
-    // [Test]
-    // public async Task DeleteMenuItem_ShouldReturnNotFound_OnArgumentException()
-    // {
-    //     _mockMenuItemService.Setup(s => s.DeleteMenuItemAsync(1)).ThrowsAsync(new ArgumentException());
-
-    //     var result = await _controller.DeleteMenuItem(1) as NotFoundObjectResult;
-
-    //     Assert.That(result, Is.Not.Null);
-    //     Assert.That(result.StatusCode, Is.EqualTo(404));
-    // }
 }

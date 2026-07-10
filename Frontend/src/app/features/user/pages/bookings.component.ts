@@ -7,6 +7,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthApiService } from '../../../core/services/auth-api.service';
 import { BookingHistoryComponent } from '../components/booking-history/booking-history.component';
 import { BookingWizardComponent } from '../components/booking-wizard/booking-wizard.component';
+import { CLAIM_TYPES } from '../../../core/utils/claim-constants';
 
 @Component({
   selector: 'app-customer-bookings',
@@ -63,9 +64,9 @@ export class BookingsComponent implements OnInit {
             const findClaim = (type: string) =>
               me.claims.find((c: any) => c.type === type)?.value ?? '';
 
-            firstName = findClaim('http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname');
-            lastName = findClaim('http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname');
-            email = findClaim('http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name');
+            firstName = findClaim(CLAIM_TYPES.GIVENNAME);
+            lastName = findClaim(CLAIM_TYPES.SURNAME);
+            email = findClaim(CLAIM_TYPES.NAME);
           } else {
             // Fallback to flat object (like ProfileComponent)
             email = me.email ?? '';

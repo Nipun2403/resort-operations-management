@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 
-import { Task, DetailSection } from '../../models/task.model';
+import { DetailSection } from '../../models/task.model';
 
 @Component({
   selector: 'app-task-detail-dialog',

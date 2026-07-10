@@ -47,7 +47,7 @@
             (click)="bookingSearch.setValue(''); onBookingSearchDebounced()"
             class="clear-btn"
           >
-            <mat-icon>close</mat-icon>
+            <mat-icon aria-hidden="true">close</mat-icon>
           </button>
         }
       </mat-form-field>
@@ -98,7 +98,8 @@
     @if (isMobile()) {
     <div class="mobile-card-view">
       @for (b of bookings(); track b.id) {
-      <div (click)="openBookingDetail(b)" class="mobile-audit-card status-card" [ngClass]="'status-' + b.bookingStatus.toLowerCase().replace(' ', '-')">
+      <div (click)="openBookingDetail(b)" class="mobile-audit-card status-card" [ngClass]="'status-' + b.bookingStatus.toLowerCase().replace(' ', '-')"
+        role="button" tabindex="0" (keydown.enter)="openBookingDetail(b)" (keydown.space)="openBookingDetail(b)">
         <div class="flex justify-between items-start mb-4 card-top">
           <div>
             <h3 class="font-headline-sm text-[18px] text-on-surface">{{ b.guestName }}</h3>
@@ -120,7 +121,7 @@
         </div>
         <div class="flex justify-end mt-4">
           <button mat-icon-button (click)="downloadFolioPdf(b.id, $event)" aria-label="Download folio PDF" class="action-icon-btn" style="color: var(--color-secondary);">
-            <mat-icon>picture_as_pdf</mat-icon>
+            <mat-icon aria-hidden="true">picture_as_pdf</mat-icon>
           </button>
         </div>
       </div>
@@ -250,7 +251,7 @@
               class="action-icon-btn"
               matTooltip="Download Folio PDF"
             >
-              <mat-icon>picture_as_pdf</mat-icon>
+              <mat-icon aria-hidden="true">picture_as_pdf</mat-icon>
             </button>
             <button
               mat-icon-button
@@ -258,7 +259,7 @@
               aria-label="View booking"
               class="action-icon-btn"
             >
-              <mat-icon>arrow_forward_ios</mat-icon>
+              <mat-icon aria-hidden="true">arrow_forward_ios</mat-icon>
             </button>
           </td></ng-container
         >
@@ -366,7 +367,8 @@
     @if (isMobile()) {
     <div class="mobile-card-view">
       @for (r of receipts(); track r.id) {
-      <div (click)="openReceiptDetail(r)" class="mobile-audit-card receipt-card">
+      <div (click)="openReceiptDetail(r)" class="mobile-audit-card receipt-card"
+        role="button" tabindex="0" (keydown.enter)="openReceiptDetail(r)" (keydown.space)="openReceiptDetail(r)">
         <div class="flex justify-between items-start mb-4 card-top">
           <div>
             <p class="font-label-caps text-[9px] text-on-surface-variant/40 uppercase">Receipt ID</p>
@@ -384,7 +386,7 @@
           <div class="text-right">
             <p class="font-headline-sm text-[24px] text-secondary">{{ r.amountPaid | currency }}</p>
             <button mat-icon-button (click)="downloadFolioPdf(r.bookingId, $event)" aria-label="Download folio PDF" class="action-icon-btn" style="color: var(--color-secondary);">
-              <mat-icon>picture_as_pdf</mat-icon>
+              <mat-icon aria-hidden="true">picture_as_pdf</mat-icon>
             </button>
           </div>
         </div>
@@ -499,7 +501,7 @@
               class="action-icon-btn"
               matTooltip="Download Folio PDF"
             >
-              <mat-icon>picture_as_pdf</mat-icon>
+              <mat-icon aria-hidden="true">picture_as_pdf</mat-icon>
             </button>
             <button
               mat-icon-button
@@ -507,7 +509,7 @@
               aria-label="View receipt"
               class="action-icon-btn"
             >
-              <mat-icon>arrow_forward_ios</mat-icon>
+              <mat-icon aria-hidden="true">arrow_forward_ios</mat-icon>
             </button>
           </td></ng-container
         >

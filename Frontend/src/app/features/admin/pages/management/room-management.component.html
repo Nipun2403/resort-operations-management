@@ -7,14 +7,14 @@
       [class.active]="viewMode.value === 'grid'"
       (click)="viewMode.setValue('grid')"
     >
-      <mat-icon>grid_view</mat-icon> GRID
+      <mat-icon aria-hidden="true">grid_view</mat-icon> GRID
     </button>
     <button 
       class="toggle-btn"
       [class.active]="viewMode.value === 'table'"
       (click)="viewMode.setValue('table')"
     >
-      <mat-icon>list</mat-icon> TABLE
+      <mat-icon aria-hidden="true">list</mat-icon> TABLE
     </button>
   </div>
 </div>
@@ -31,6 +31,7 @@
       }
       <app-room-status-grid
         [roomTypeId]="roomTypeFilter()"
+        [refreshTrigger]="gridRefreshTrigger()"
         (roomClicked)="onGridRoomClicked($event)"
       ></app-room-status-grid>
     </div>

@@ -92,16 +92,7 @@ public class AmenityService : IAmenityService
         await _amenityRepository.SaveChangesAsync();
     }
 
-    // public async Task UpdateAmenityStatusAsync(int id, bool isAvailable)
-    // {
-    //     var amenity = await _amenityRepository.GetByIdAsync(id);
-    //     if (amenity == null) throw new KeyNotFoundException("Amenity not found.");
 
-    //     amenity.IsAvailable = isAvailable;
-
-    //     _amenityRepository.Update(amenity);
-    //     await _amenityRepository.SaveChangesAsync();
-    // }
 
 
     public async Task SubscribeAsync(int bookingId, int amenityId)
