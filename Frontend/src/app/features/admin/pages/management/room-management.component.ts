@@ -67,6 +67,7 @@ export class RoomManagementComponent implements OnInit {
   roomTypeFilter = signal<number | null>(null);
   includeRetired = signal(false);
   editingEntity = signal<Room | null>(null);
+  gridRefreshTrigger = signal(0);
 
   // Mobile
   isMobile = toSignal(
@@ -104,12 +105,6 @@ export class RoomManagementComponent implements OnInit {
         sortable: true,
         getValue: (r: Room) => String(r.maxOccupancy),
       },
-      // {
-      //   header: 'Active',
-      //   field: 'isActive',
-      //   sortable: false,
-      //   getValue: (r: Room) => (r.isActive ? 'Yes' : 'No'),
-      // },
       {
         header: 'Available',
         field: 'isAvailable',
@@ -283,6 +278,7 @@ export class RoomManagementComponent implements OnInit {
           next: () => {
             this.snackBar.open('Room updated', 'Close', { duration: 3000 });
             this.editingEntity.set(null);
+            this.gridRefreshTrigger.update(n => n + 1);
             this.fetchData();
           },
           error: (err: Error) => this.snackBar.open(err.message, 'Close', { duration: 5000 }),

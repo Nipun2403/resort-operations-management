@@ -20,7 +20,6 @@ export const routes: Routes = [
   {
     path: 'operations/admin',
     canMatch: [adminGuard],
-    canActivate: [adminGuard],
     loadComponent: () => import('./features/admin/admin-shell.component')
       .then(m => m.AdminShellComponent),
     children: [
@@ -62,7 +61,6 @@ export const routes: Routes = [
   {
     path: 'user',
     canMatch: [customerGuard],
-    canActivate: [customerGuard],
     loadComponent: () => import('./features/user/user-shell.component')
       .then(m => m.UserShellComponent),
     children: [
@@ -70,7 +68,7 @@ export const routes: Routes = [
       {
         path: 'dashboard',
         loadComponent: () => import('./features/user/pages/dashboard.component')
-          .then(m => m.PlaceholderCustomerDashboardComponent)
+          .then(m => m.CustomerDashboardComponent)
       },
       {
         path: 'bookings',
@@ -93,7 +91,6 @@ export const routes: Routes = [
   {
     path: 'operations/front-desk',
     canMatch: [frontDeskGuard],
-    canActivate: [frontDeskGuard],
     loadComponent: () => import('./features/front-desk/front-desk-shell.component')
       .then(m => m.FrontDeskShellComponent),
     children: [
@@ -101,7 +98,7 @@ export const routes: Routes = [
       {
         path: 'dashboard',
         loadComponent: () => import('./features/front-desk/pages/dashboard.component')
-          .then(m => m.PlaceholderDashboardComponent)
+          .then(m => m.DashboardComponent)
       },
       {
         path: 'new-booking',
@@ -116,8 +113,7 @@ export const routes: Routes = [
       {
         path: 'guest/:email',
         loadComponent: () => import('./features/front-desk/pages/guest-details.component')
-          .then(m => m.GuestDetailsComponent),
-        canActivate: [frontDeskGuard]
+          .then(m => m.GuestDetailsComponent)
       },
       { path: '**', redirectTo: '/error/404' }
     ]
@@ -125,7 +121,6 @@ export const routes: Routes = [
   {
     path: 'operations/kitchen',
     canMatch: [kitchenGuard],
-    canActivate: [kitchenGuard],
     loadComponent: () => import('./features/kitchen/kitchen-shell.component')
       .then(m => m.KitchenShellComponent),
     children: [
@@ -138,14 +133,12 @@ export const routes: Routes = [
       {
         path: 'menu-items',
         loadComponent: () => import('./features/kitchen/pages/menu-items.component')
-          .then(m => m.KitchenMenuItemsComponent),
-        canActivate: [kitchenGuard]
+          .then(m => m.KitchenMenuItemsComponent)
       },
       {
         path: 'profile',
         loadComponent: () => import('./shared/components/profile/profile.component')
-          .then(m => m.ProfileComponent),
-        canActivate: [kitchenGuard]
+          .then(m => m.ProfileComponent)
       },
       { path: '**', redirectTo: '/error/404' }
     ]
@@ -153,7 +146,6 @@ export const routes: Routes = [
   {
     path: 'operations/housekeeping',
     canMatch: [housekeepingGuard],
-    canActivate: [housekeepingGuard],
     loadComponent: () => import('./features/housekeeping/housekeeping-shell.component')
       .then(m => m.HousekeepingShellComponent),
     children: [
@@ -166,8 +158,7 @@ export const routes: Routes = [
       {
         path: 'profile',
         loadComponent: () => import('./shared/components/profile/profile.component')
-          .then(m => m.ProfileComponent),
-        canActivate: [housekeepingGuard]
+          .then(m => m.ProfileComponent)
       },
       { path: '**', redirectTo: '/error/404' }
     ]
@@ -175,7 +166,6 @@ export const routes: Routes = [
   {
     path: 'operations/maintenance',
     canMatch: [maintenanceGuard],
-    canActivate: [maintenanceGuard],
     loadComponent: () => import('./features/maintenance/maintenance-shell.component')
       .then(m => m.MaintenanceShellComponent),
     children: [
@@ -188,8 +178,7 @@ export const routes: Routes = [
       {
         path: 'profile',
         loadComponent: () => import('./shared/components/profile/profile.component')
-          .then(m => m.ProfileComponent),
-        canActivate: [maintenanceGuard]
+          .then(m => m.ProfileComponent)
       },
       { path: '**', redirectTo: 'dashboard' }
     ]

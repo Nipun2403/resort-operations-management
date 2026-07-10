@@ -90,8 +90,8 @@ export class BookingWizardComponent implements OnInit, AfterViewInit {
           this.datesForm.patchValue(restoredDates);
           this.loadRooms();
         }
-      } catch (e) {
-        console.error('Failed to parse bookingWizardState', e);
+      } catch {
+        /* sessionStorage parse failed — use defaults */
       }
     } else if (this.initialCheckIn() && this.initialCheckOut() && this.initialGuests()) {
       this.datesForm.patchValue({

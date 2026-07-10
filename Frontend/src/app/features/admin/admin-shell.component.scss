@@ -179,49 +179,6 @@ mat-sidenav-content {
       align-items: center;
       gap: 32px;
 
-      .search-box {
-        position: relative;
-        width: 256px;
-
-        .search-input {
-          width: 100%;
-          background: transparent;
-          border: none;
-          border-bottom: 1px solid rgba(228, 226, 221, 0.2);
-          padding: 6px 30px 6px 0;
-          color: var(--color-on-surface);
-          @include font-body-md;
-          font-size: 14px;
-          transition: border-color 0.3s ease;
-
-          &::placeholder {
-            color: rgba(228, 226, 221, 0.3);
-          }
-
-          &:focus {
-            outline: none;
-            border-bottom: 1px solid var(--color-secondary);
-          }
-        }
-
-        .search-icon {
-          position: absolute;
-          right: 0;
-          top: 50%;
-          transform: translateY(-50%);
-          color: rgba(228, 226, 221, 0.3);
-          font-size: 20px;
-          width: 20px;
-          height: 20px;
-          cursor: pointer;
-          transition: color 0.3s ease;
-
-          &:hover {
-            color: var(--color-secondary);
-          }
-        }
-      }
-
       .user-actions {
         display: flex;
         align-items: center;

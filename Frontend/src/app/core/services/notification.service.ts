@@ -41,8 +41,7 @@ export class NotificationService implements OnDestroy {
     const token = this.authService.token();
     if (!token) return;
 
-    const hubUrl = environment.baseUrl.replace(/\/api\/v1$/, '') + '/notifications';
-    // Example: 'http://localhost:5264/api/v1' → 'http://localhost:5264/notifications'
+    const hubUrl = environment.signalrHubUrl;
 
     this.hubConnection = new HubConnectionBuilder()
       .withUrl(hubUrl, {

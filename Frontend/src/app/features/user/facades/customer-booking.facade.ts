@@ -4,6 +4,7 @@ import { map, switchMap } from 'rxjs/operators';
 import { AuthApiService } from '../../../core/services/auth-api.service';
 import { BookingApiService } from '../services/booking-api.service';
 import { Booking } from '../../../features/admin/models/booking.model';
+import { CLAIM_TYPES } from '../../../core/utils/claim-constants';
 
 export interface CustomerProfile {
   firstName: string;
@@ -21,7 +22,7 @@ export class CustomerBookingFacade {
       switchMap((me) => {
         let email = me.email;
         if (!email && me.claims) {
-          email = me.claims.find((c) => c.type === 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name')?.value;
+          email = me.claims.find((c) => c.type === CLAIM_TYPES.NAME)?.value;
         }
         if (!email) return of(null);
         return this.bookingApi
@@ -47,9 +48,9 @@ export class CustomerBookingFacade {
 
         if (!email && me.claims) {
           const findClaim = (type: string) => me.claims?.find((c) => c.type === type)?.value ?? '';
-          firstName = findClaim('http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname');
-          lastName = findClaim('http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname');
-          email = findClaim('http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name');
+          firstName = findClaim(CLAIM_TYPES.GIVENNAME);
+          lastName = findClaim(CLAIM_TYPES.SURNAME);
+          email = findClaim(CLAIM_TYPES.NAME);
         }
 
         return { firstName, lastName, email };
