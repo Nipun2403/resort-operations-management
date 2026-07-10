@@ -15,7 +15,6 @@ public interface IAmenityService
     Task<AmenityDTO?> GetAmenityByIdAsync(int id);
     Task<AmenityDTO> CreateAmenityAsync(CreateUpdateAmenityDTO dto);
     Task UpdateAmenityAsync(int id, CreateUpdateAmenityDTO dto, bool isAvailable);
-    // Task UpdateAmenityStatusAsync(int id, bool isAvailable);
 
 
     Task SubscribeAsync(int bookingId, int amenityId);

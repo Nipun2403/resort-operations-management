@@ -166,25 +166,5 @@ public class AmenitiesControllerTests
         Assert.That(result.StatusCode, Is.EqualTo(404));
     }
 
-    [Test]
-    public async Task DeleteAmenity_ShouldReturnOk_WhenValid()
-    {
-//         _mockAmenityService.Setup(s => s.DeleteAmenityAsync(1)).Returns(Task.CompletedTask);
 
-//         var result = await _controller.DeleteAmenity(1) as OkObjectResult;
-
-//         Assert.That(result, Is.Not.Null);
-//         Assert.That(result.StatusCode, Is.EqualTo(200));
-    }
-
-    [Test]
-    public async Task DeleteAmenity_ShouldReturnNotFound_OnArgumentException()
-    {
-//         _mockAmenityService.Setup(s => s.DeleteAmenityAsync(1)).ThrowsAsync(new ArgumentException("Amenity not found."));
-
-//         var result = await _controller.DeleteAmenity(1) as NotFoundObjectResult;
-
-//         Assert.That(result, Is.Not.Null);
-//         Assert.That(result.StatusCode, Is.EqualTo(404));
-    }
 }

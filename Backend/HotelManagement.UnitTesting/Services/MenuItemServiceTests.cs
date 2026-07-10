@@ -134,27 +134,6 @@ public class MenuItemServiceTests
         _mockMenuItemRepo.Verify(r => r.SaveChangesAsync(), Times.Once);
     }
 
-    // // [Test]
-    // public void DeleteMenuItemAsync_ShouldThrow_IfNotFound()
-    // {
-    //     _mockMenuItemRepo.Setup(r => r.GetByIdAsync(99)).ReturnsAsync((MenuItem?)null);
-    //     var ex = Assert.ThrowsAsync<ArgumentException>(() => _menuItemService.DeleteMenuItemAsync(99));
-    //     Assert.That(ex.Message, Does.Contain("not found"));
-    // }
-
-    // // [Test]
-    // public async Task DeleteMenuItemAsync_ShouldSoftDelete()
-    // {
-    //     var existingItem = new MenuItem { Id = 1, IsAvailable = true };
-    //     _mockMenuItemRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(existingItem);
-
-    //     await _menuItemService.DeleteMenuItemAsync(1);
-
-    //     Assert.That(existingItem.IsAvailable, Is.False);
-    //     _mockMenuItemRepo.Verify(r => r.Update(existingItem), Times.Once);
-    //     _mockMenuItemRepo.Verify(r => r.SaveChangesAsync(), Times.Once);
-    // }
-
     [Test]
     public async Task GetMenuItemsAsync_WithSort_ShouldReturnSorted()
     {

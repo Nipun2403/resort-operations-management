@@ -80,7 +80,7 @@ public class RoomService : IRoomService
     public async Task<RoomDTO> UpdateRoomAsync(int id, CreateUpdateRoomDTO dto)
     {
         var existingRoom = await _roomRepository.GetByIdAsync(id);
-        if (existingRoom == null || !existingRoom.IsActive) throw new ArgumentException("Room not found or inactive.");
+        if (existingRoom == null) throw new ArgumentException("Room not found.");
 
         var roomType = await _roomTypeRepository.GetByIdAsync(dto.RoomTypeId);
         if (roomType == null || !roomType.IsActive) throw new ArgumentException("Invalid or inactive RoomTypeId.");

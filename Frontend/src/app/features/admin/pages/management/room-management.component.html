@@ -31,6 +31,7 @@
       }
       <app-room-status-grid
         [roomTypeId]="roomTypeFilter()"
+        [refreshTrigger]="gridRefreshTrigger()"
         (roomClicked)="onGridRoomClicked($event)"
       ></app-room-status-grid>
     </div>

@@ -108,13 +108,5 @@ public class MenuItemService : IMenuItemService
         await _menuItemRepository.SaveChangesAsync();
     }
 
-    // public async Task DeleteMenuItemAsync(int id)
-    // {
-    //     var existingItem = await _menuItemRepository.GetByIdAsync(id);
-    //     if (existingItem == null) throw new ArgumentException("MenuItem not found.");
 
-    //     existingItem.IsAvailable = false;
-    //     _menuItemRepository.Update(existingItem);
-    //     await _menuItemRepository.SaveChangesAsync();
-    // }
 }

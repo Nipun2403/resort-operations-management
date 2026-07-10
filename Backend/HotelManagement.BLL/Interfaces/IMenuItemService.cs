@@ -16,5 +16,5 @@ public interface IMenuItemService
     Task<MenuItemDTO> CreateMenuItemAsync(CreateMenuItemDTO dto);
     Task<MenuItemDTO> UpdateMenuItemAsync(int id, MenuItemDTO dto);
     Task UpdateMenuItemStatusAsync(int id, bool isAvailable);
-    // Task DeleteMenuItemAsync(int id);
+
 }

@@ -29,6 +29,7 @@ import { AlertComponent } from '../../../../features/auth/components/alert.compo
 })
 export class RoomStatusGridComponent {
   roomTypeId = input<number | null>(null);
+  refreshTrigger = input(0);
   roomClicked = output<RoomStatus>();
 
   rooms = signal<RoomStatus[]>([]);
@@ -40,8 +41,8 @@ export class RoomStatusGridComponent {
 
   constructor() {
     effect(() => {
-      // re-fetch when roomTypeId changes
       this.roomTypeId();
+      this.refreshTrigger();
       this.fetchStatuses();
     });
   }

@@ -78,18 +78,5 @@ public class MenuItemsController : ControllerBase
         }
     }
 
-    // [HttpDelete("{id}")]
-    // [Authorize(Roles = "Admin")]
-    // public async Task<IActionResult> DeleteMenuItem(int id)
-    // {
-    //     try
-    //     {
-    //         await _menuItemService.DeleteMenuItemAsync(id);
-    //         return Ok(new { Message = "Menu item marked as unavailable (soft delete)." });
-    //     }
-    //     catch (ArgumentException ex)
-    //     {
-    //         return NotFound(ex.Message);
-    //     }
-    // }
+
 }
