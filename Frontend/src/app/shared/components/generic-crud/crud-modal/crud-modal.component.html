@@ -84,16 +84,21 @@
             <div formArrayName="urls">
               @for (urlCtrl of getImageUrlArray(field.key).controls; let i = $index; track i) {
                 <div class="url-row">
-                  <mat-form-field appearance="outline" class="full-width-input">
-                    <mat-label>Image URL</mat-label>
-                    <input matInput [formControl]="$any(urlCtrl)" placeholder="https://..." />
-                    <mat-error *ngIf="urlCtrl.invalid && urlCtrl.touched">
-                      Enter a valid URL
-                    </mat-error>
-                  </mat-form-field>
-                  <button mat-icon-button type="button" (click)="removeImageUrl(field.key, i)" aria-label="Remove URL">
-                    <mat-icon aria-hidden="true">close</mat-icon>
-                  </button>
+                  <div class="url-input-row">
+                    <mat-form-field appearance="outline" class="full-width-input">
+                      <mat-label>Image URL</mat-label>
+                      <input matInput [formControl]="$any(urlCtrl)" placeholder="https://..." />
+                      <mat-error *ngIf="urlCtrl.invalid && urlCtrl.touched">
+                        Enter a valid URL
+                      </mat-error>
+                    </mat-form-field>
+                    <button mat-icon-button type="button" (click)="removeImageUrl(field.key, i)" aria-label="Remove URL">
+                      <mat-icon aria-hidden="true">close</mat-icon>
+                    </button>
+                  </div>
+                  @if (urlCtrl.value) {
+                    <img class="url-preview" [src]="urlCtrl.value" alt="Preview" (error)="onImageError($event)" />
+                  }
                 </div>
               }
             </div>

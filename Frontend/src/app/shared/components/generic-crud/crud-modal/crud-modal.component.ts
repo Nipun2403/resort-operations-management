@@ -196,6 +196,11 @@ export class CrudModalComponent implements OnInit {
     }
   }
 
+  onImageError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    img.style.display = 'none';
+  }
+
   cancel(): void {
     this.dialogRef.close(null);
   }
