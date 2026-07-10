@@ -29,6 +29,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<BookingAmenity> BookingAmenities => Set<BookingAmenity>();
     public DbSet<BookingRoom> BookingRooms => Set<BookingRoom>();
     public DbSet<IdempotentRequest> IdempotentRequests => Set<IdempotentRequest>();
+    public DbSet<UploadSession> UploadSessions => Set<UploadSession>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

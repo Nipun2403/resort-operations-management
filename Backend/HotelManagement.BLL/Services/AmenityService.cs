@@ -13,13 +13,15 @@ public class AmenityService : IAmenityService
     private readonly IBookingRepository _bookingRepository;
     private readonly IMapper _mapper;
     private readonly ICurrentUserService _currentUserService;
+    private readonly IImageUploadService _imageUploadService;
 
-    public AmenityService(IAmenityRepository amenityRepository, IBookingRepository bookingRepository, IMapper mapper, ICurrentUserService currentUserService)
+    public AmenityService(IAmenityRepository amenityRepository, IBookingRepository bookingRepository, IMapper mapper, ICurrentUserService currentUserService, IImageUploadService imageUploadService)
     {
         _amenityRepository = amenityRepository;
         _bookingRepository = bookingRepository;
         _mapper = mapper;
         _currentUserService = currentUserService;
+        _imageUploadService = imageUploadService;
     }
 
     public async Task<PaginatedResult<AmenityDTO>> GetAllAmenitiesAsync(
@@ -74,6 +76,15 @@ public class AmenityService : IAmenityService
         await _amenityRepository.AddAsync(amenity);
         await _amenityRepository.SaveChangesAsync();
 
+        if (!string.IsNullOrEmpty(amenity.ImageUrl))
+        {
+            await _imageUploadService.AttachToEntityAsync(
+                [amenity.ImageUrl],
+                UploadEntityType.Amenity,
+                amenity.Id,
+                _currentUserService.GetUserEmail()!);
+        }
+
         return _mapper.Map<AmenityDTO>(amenity);
     }
 
@@ -90,6 +101,15 @@ public class AmenityService : IAmenityService
 
         _amenityRepository.Update(amenity);
         await _amenityRepository.SaveChangesAsync();
+
+        if (!string.IsNullOrEmpty(amenity.ImageUrl))
+        {
+            await _imageUploadService.AttachToEntityAsync(
+                [amenity.ImageUrl],
+                UploadEntityType.Amenity,
+                amenity.Id,
+                _currentUserService.GetUserEmail()!);
+        }
     }
 
 

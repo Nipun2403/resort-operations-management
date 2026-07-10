@@ -13,12 +13,14 @@ public class MenuItemService : IMenuItemService
     private readonly IMenuItemRepository _menuItemRepository;
     private readonly IMapper _mapper;
     private readonly ICurrentUserService _currentUserService;
+    private readonly IImageUploadService _imageUploadService;
 
-    public MenuItemService(IMenuItemRepository menuItemRepository, IMapper mapper, ICurrentUserService currentUserService)
+    public MenuItemService(IMenuItemRepository menuItemRepository, IMapper mapper, ICurrentUserService currentUserService, IImageUploadService imageUploadService)
     {
         _menuItemRepository = menuItemRepository;
         _mapper = mapper;
         _currentUserService = currentUserService;
+        _imageUploadService = imageUploadService;
     }
 
     public async Task<PaginatedResult<MenuItemDTO>> GetMenuItemsAsync(
@@ -76,6 +78,15 @@ public class MenuItemService : IMenuItemService
         await _menuItemRepository.AddAsync(menuItem);
         await _menuItemRepository.SaveChangesAsync();
 
+        if (!string.IsNullOrEmpty(menuItem.ImageUrl))
+        {
+            await _imageUploadService.AttachToEntityAsync(
+                [menuItem.ImageUrl],
+                UploadEntityType.MenuItem,
+                menuItem.Id,
+                _currentUserService.GetUserEmail()!);
+        }
+
         return _mapper.Map<MenuItemDTO>(menuItem);
     }
 
@@ -93,6 +104,15 @@ public class MenuItemService : IMenuItemService
 
         _menuItemRepository.Update(existingItem);
         await _menuItemRepository.SaveChangesAsync();
+
+        if (!string.IsNullOrEmpty(existingItem.ImageUrl))
+        {
+            await _imageUploadService.AttachToEntityAsync(
+                [existingItem.ImageUrl],
+                UploadEntityType.MenuItem,
+                existingItem.Id,
+                _currentUserService.GetUserEmail()!);
+        }
 
         return _mapper.Map<MenuItemDTO>(existingItem);
     }

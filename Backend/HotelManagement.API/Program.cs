@@ -13,6 +13,11 @@ using HotelManagement.Repository.Implementations;
 using HotelManagement.Repository.Interfaces;
 using QuestPDF.Infrastructure;
 using Serilog;
+using Azure.Storage.Blobs;
+using Azure.Storage.Queues;
+using HotelManagement.API.Utilities;
+using HotelManagement.BLL.Options;
+using HotelManagement.BLL.Workers;
 
 // Set QuestPDF community licence (free for non-commercial / open-source use)
 QuestPDF.Settings.License = LicenseType.Community;
@@ -41,6 +46,22 @@ System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 #region Database Context
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+#endregion
+
+#region Azure Storage
+builder.Services.Configure<AzureStorageOptions>(
+    builder.Configuration.GetSection("AzureStorage"));
+builder.Services.AddSingleton<IAzureCredentialFactory, AzureCredentialFactory>();
+builder.Services.AddSingleton(sp =>
+{
+    var factory = sp.GetRequiredService<IAzureCredentialFactory>();
+    return factory.CreateBlobServiceClient();
+});
+builder.Services.AddSingleton(sp =>
+{
+    var factory = sp.GetRequiredService<IAzureCredentialFactory>();
+    return factory.CreateQueueServiceClient();
+});
 #endregion
 
 #region Repositories
@@ -79,6 +100,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAuditLogService, AuditLogService>();
 builder.Services.AddScoped<IMaintenanceService, MaintenanceService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
+builder.Services.AddScoped<IImageUploadService, ImageUploadService>();
 #endregion
 
 #region Email & PDF
@@ -89,6 +111,8 @@ builder.Services.AddScoped<IPdfService, PdfService>();
 #region Core Infrastructure & SignalR
 builder.Services.AddScoped<INotificationService, HotelManagement.API.Services.SignalRNotificationService>();
 builder.Services.AddHostedService<HotelManagement.API.Services.IdempotencyCleanupService>();
+builder.Services.AddHostedService<ImageValidationWorker>();
+builder.Services.AddHostedService<OrphanImageCleanupWorker>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserService, HotelManagement.API.Services.CurrentUserService>();
 builder.Services.AddScoped<IAuditUserProvider>(sp => (IAuditUserProvider)sp.GetRequiredService<ICurrentUserService>());
@@ -111,6 +135,12 @@ builder.Services.AddRateLimiter(options =>
         opt.PermitLimit = 100;
         opt.QueueLimit = 2;
         opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+    });
+    options.AddFixedWindowLimiter("ImageUpload", opt =>
+    {
+        opt.Window = TimeSpan.FromMinutes(5);
+        opt.PermitLimit = 20;
+        opt.QueueLimit = 0;
     });
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 });

@@ -17,14 +17,16 @@ public class RoomTypeService : IRoomTypeService
     private readonly ICurrentUserService _currentUserService;
 
     private readonly IRoomRepository _roomRepository;
+    private readonly IImageUploadService _imageUploadService;
 
-    public RoomTypeService(IRoomTypeRepository roomTypeRepository, IBookingRepository bookingRepository, IMapper mapper, ICurrentUserService currentUserService, IRoomRepository roomRepository)
+    public RoomTypeService(IRoomTypeRepository roomTypeRepository, IBookingRepository bookingRepository, IMapper mapper, ICurrentUserService currentUserService, IRoomRepository roomRepository, IImageUploadService imageUploadService)
     {
         _roomTypeRepository = roomTypeRepository;
         _bookingRepository = bookingRepository;
         _mapper = mapper;
         _currentUserService = currentUserService;
         _roomRepository = roomRepository;
+        _imageUploadService = imageUploadService;
     }
 
     public async Task<PaginatedResult<RoomTypeDTO>> GetRoomTypesAsync(int pageNumber, int pageSize, bool includeRetired = false, string? searchQuery = null, string? sortBy = null, bool sortDescending = false)
@@ -119,6 +121,15 @@ public class RoomTypeService : IRoomTypeService
         await _roomTypeRepository.AddAsync(roomType);
         await _roomTypeRepository.SaveChangesAsync();
 
+        if (roomType.ImageUrls is { Count: > 0 })
+        {
+            await _imageUploadService.AttachToEntityAsync(
+                roomType.ImageUrls,
+                UploadEntityType.RoomType,
+                roomType.Id,
+                _currentUserService.GetUserEmail()!);
+        }
+
         return _mapper.Map<RoomTypeDTO>(roomType);
     }
 
@@ -144,6 +155,15 @@ public class RoomTypeService : IRoomTypeService
 
         _roomTypeRepository.Update(existingType);
         await _roomTypeRepository.SaveChangesAsync();
+
+        if (existingType.ImageUrls is { Count: > 0 })
+        {
+            await _imageUploadService.AttachToEntityAsync(
+                existingType.ImageUrls,
+                UploadEntityType.RoomType,
+                existingType.Id,
+                _currentUserService.GetUserEmail()!);
+        }
 
         return _mapper.Map<RoomTypeDTO>(existingType);
     }
