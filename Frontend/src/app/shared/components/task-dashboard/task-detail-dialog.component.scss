@@ -37,6 +37,22 @@
       letter-spacing: -0.01em;
       color: var(--color-on-surface);
       margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .emergency-badge {
+        display: inline-block;
+        background: #f44336;
+        color: #fff;
+        font-size: 10px;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        line-height: 1.4;
+      }
     }
 
     .dialog-subtitle {

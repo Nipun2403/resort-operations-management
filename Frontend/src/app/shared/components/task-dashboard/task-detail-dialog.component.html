@@ -6,7 +6,11 @@
 
   <div class="dialog-header">
     <p class="dialog-pretitle">{{ data.task.type ? (data.task.type + ' Details') : 'ORDER DETAILS' }}</p>
-    <h2 class="dialog-title">#{{ data.task.id }}</h2>
+    <h2 class="dialog-title">#{{ data.task.id }}
+      @if (data.task.isEmergency) {
+      <span class="emergency-badge">Emergency</span>
+      }
+    </h2>
     <p class="dialog-subtitle">
       {{ data.task.location }} @if (data.task.createdAt) { • Ordered at {{ data.task.createdAt | date:'shortTime' }} }
     </p>
