@@ -348,14 +348,25 @@ Three layers prevent blob sprawl:
 
 The `BlobCleanupWorker` is the only layer that accounts for **entity state changes** — if an admin removes or replaces an image URL on an Amenity, MenuItem, or RoomType, the old blob is swept on the next run even though its `UploadSession` may still be `Attached`.
 
-### 7. Frontend Resilience
+### 7. Known Edge Cases & Minor Findings
+
+The following non-blocking findings were identified during verification review. All are acceptable given the existing cleanup architecture.
+
+| ID | Area | Finding | Risk | Mitigation |
+|----|------|---------|------|------------|
+| `ORDER-01` | `ImageValidationWorker.RejectSession` | DB save (`Status = Rejected`) executes before blob delete. If the blob delete fails, the session is marked Rejected but the blob remains in storage. | Low — orphan blob persists until next cleanup cycle | `BlobCleanupWorker` catches orphaned blobs hourly and deletes them. |
+| `MISSING-RETRY-01` | `OrphanImageCleanupWorker` | Blob deletion has no retry logic. If a transient Azure error occurs, the expired session stays expired but the blob persists. | Low — blob remains until next cleanup cycle | `BlobCleanupWorker` independently sweeps blobs not referenced by any entity, covering this gap. |
+| `RACE-01` | `BlobCleanupWorker` | Window between building `activeBlobNames` (from entity fields + sessions) and marking matching sessions as `Expired`. A session could transition to `Attached` during this window. | Very Low — window is seconds within a 1-hour cycle | In practice, a user would need to save an entity at the exact moment the worker is processing the corresponding blob. `BlobCleanupWorker` re-runs hourly and corrects state. |
+| `FRAGILE-01` | Frontend `image-upload-or-url.component.ts` | `detectEntityType()` infers entity type from `window.location.pathname` rather than receiving it as an `@Input()`. Works correctly but fragile if route paths change. | Low — functional, not broken | Consider adding an explicit `@Input()` for entity type in future iteration. |
+
+### 8. Frontend Resilience
 
 - Polling ensures entities never save with unvalidated images
 - Themed toasts give clear visual feedback at every stage
 - Error messages are user-friendly, not raw API errors
 - Both URL upload and file upload supported in the same component
 
-### 8. TypeScript Type Safety
+### 9. TypeScript Type Safety
 
 Full strick typing across all services, models, and component signals — no `any`, no implicit types, no non-null assertions.
 
