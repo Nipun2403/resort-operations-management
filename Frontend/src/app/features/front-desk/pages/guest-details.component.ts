@@ -30,6 +30,7 @@ import { Booking } from '../../admin/models/booking.model';
 import { AlertComponent } from '../../auth/components/alert.component';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { ExtendStayDialogComponent } from '../components/extend-stay-dialog/extend-stay-dialog.component';
+import { CheckinDialogComponent } from '../components/booking-action-modal/checkin-dialog/checkin-dialog.component';
 import { CheckoutDialogComponent } from '../components/booking-action-modal/checkout-dialog/checkout-dialog.component';
 import { FoodOrderPanelComponent } from '../components/booking-action-modal/food-order-panel/food-order-panel.component';
 import { HousekeepingRequestPanelComponent } from '../components/booking-action-modal/housekeeping-request-panel/housekeeping-request-panel.component';
@@ -152,37 +153,20 @@ export class GuestDetailsComponent implements OnInit, AfterViewInit {
   }
 
   checkIn(booking: Booking): void {
-    if (booking.paymentStatus !== 'Paid') {
-      this.snackBar.open(
-        'Payment must be completed before check-in. Go to the Billing tab to process payment.',
-        'Close',
-        { duration: 6000 },
-      );
-      return;
-    }
-    const confirmRef = this.dialog.open(ConfirmDialogComponent, {
-      data: { title: 'Confirm Check-In', message: `Check in guest: ${booking.guestName}?` },
+    const checkinRef = this.dialog.open(CheckinDialogComponent, {
+      data: { bookingId: booking.id },
+      width: '95vw',
+      maxWidth: '600px',
+      disableClose: true,
     });
-    confirmRef
+    checkinRef
       .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((confirmed) => {
-        if (!confirmed) return;
-        this.bookingApi
-          .checkIn(booking.id)
-          .pipe(takeUntilDestroyed(this.destroyRef))
-          .subscribe({
-            next: (updated) => {
-              this.snackBar.open(
-                `Checked in. Room: ${updated.rooms?.[0]?.roomNumber || 'assigned'}`,
-                'Close',
-                { duration: 3000 },
-              );
-              this.fetchBookings();
-            },
-            error: (err: any) =>
-              this.snackBar.open(this.extractErrorMessage(err), 'Close', { duration: 5000 }),
-          });
+      .subscribe((result) => {
+        if (result === true) {
+          this.snackBar.open('Check-in successful.', 'Close', { duration: 3000 });
+          this.fetchBookings();
+        }
       });
   }
 
