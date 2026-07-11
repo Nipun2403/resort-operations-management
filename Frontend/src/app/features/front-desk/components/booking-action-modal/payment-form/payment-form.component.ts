@@ -58,8 +58,10 @@ export class PaymentFormComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
+    const randomId = 'TXN-' + Math.random().toString(36).substring(2, 10).toUpperCase();
     this.paymentForm.patchValue({
       amount: this.amountDue(),
+      transactionId: randomId,
     });
   }
 
