@@ -7,6 +7,7 @@ export interface Task {
   description: string; // e.g., 'AC not working', 'Order #123'
   createdAt: string; // ISO date
   isEmergency: boolean;
+  assignedToUserId?: number;
   raw: any; // original DTO for detail modal
 }
 
@@ -25,6 +26,7 @@ export interface TaskDashboardConfig<T extends Task = Task> {
     status?: string;
     sortBy?: string;
     sortDescending?: boolean;
+    assignedToMe?: boolean;
   }) => Observable<{ totalCount: number; data: T[] }>;
 
   updateTaskStatus: (id: number, newStatus: string) => Observable<void>;

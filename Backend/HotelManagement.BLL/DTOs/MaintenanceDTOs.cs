@@ -16,6 +16,7 @@ public class MaintenanceTaskDTO
     public bool IsEmergency { get; set; }
     public string? StartedAt { get; set; }
     public string? FinishedAt { get; set; }
+    public int? AssignedToUserId { get; set; }
 }
 
 public class CreateInternalMaintenanceTaskDTO

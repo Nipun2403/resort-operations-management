@@ -18,6 +18,10 @@
 
   <div class="table-header-row">
     <h3 class="table-title">Active {{ config().entityName }}s</h3>
+
+    <button mat-button (click)="toggleMyTasks()" [class.active]="showMyTasks()">
+      {{ showMyTasks() ? 'My Tasks (' + data().length + '/2)' : 'All Tasks' }}
+    </button>
     
     <!-- Status Filter Dropdown -->
     <div class="filter-bar">

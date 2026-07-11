@@ -46,6 +46,7 @@ export class MaintenanceDashboardComponent {
                 description: task.description || 'No description provided.',
                 createdAt: task.createdAt,
                 isEmergency: task.isEmergency,
+                assignedToUserId: task.assignedToUserId,
                 raw: task,
               } as Task)
           ),

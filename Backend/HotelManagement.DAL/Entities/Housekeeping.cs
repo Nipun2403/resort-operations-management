@@ -20,4 +20,6 @@ public class Housekeeping
     public DateTime? FinishedAt { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public bool IsEmergency { get; set; }
+    public int? AssignedToUserId { get; set; }
+    public User? AssignedToUser { get; set; }
 }

@@ -9,4 +9,5 @@ export interface MaintenanceTask {
   createdAt: string;
   startedAt: string | null;
   finishedAt: string | null;
+  assignedToUserId?: number;
 }

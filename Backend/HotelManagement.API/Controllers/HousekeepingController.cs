@@ -26,10 +26,11 @@ public class HousekeepingController : ControllerBase
         [FromQuery] int pageSize = 10,
         [FromQuery] string? status = null,
         [FromQuery] string? sortBy = null,
-        [FromQuery] bool sortDescending = false)
+        [FromQuery] bool sortDescending = false,
+        [FromQuery] bool assignedToMe = false)
     {
         pageSize = Math.Min(pageSize, 100);
-        var tasks = await _housekeepingService.GetAllAsync(pageNumber, pageSize, status, sortBy, sortDescending);
+        var tasks = await _housekeepingService.GetAllAsync(pageNumber, pageSize, status, sortBy, sortDescending, assignedToMe);
         return Ok(tasks);
     }
 

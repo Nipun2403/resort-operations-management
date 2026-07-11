@@ -38,7 +38,7 @@ public class MaintenanceService : IMaintenanceService
         _roomRepository = roomRepository;
     }
 
-    public async Task<PaginatedResult<MaintenanceTaskDTO>> GetAllTasksAsync(int pageNumber, int pageSize, string? status = null, string? sortBy = null, bool sortDescending = false)
+    public async Task<PaginatedResult<MaintenanceTaskDTO>> GetAllTasksAsync(int pageNumber, int pageSize, string? status = null, string? sortBy = null, bool sortDescending = false, bool assignedToMe = false)
     {
         var isStaff = _currentUserService.IsInRole("Admin") || _currentUserService.IsInRole("FrontDesk") || _currentUserService.IsInRole("Housekeeping") || _currentUserService.IsInRole("Maintenance");
         List<int> userRoomIds = new List<int>();
@@ -75,6 +75,17 @@ public class MaintenanceService : IMaintenanceService
         {
             if (!isStaff)
                 filter = m => m.RoomId.HasValue && userRoomIds.Contains(m.RoomId.Value);
+        }
+
+        if (assignedToMe && isStaff)
+        {
+            var email = _currentUserService.GetUserEmail();
+            if (!string.IsNullOrEmpty(email))
+            {
+                var user = await _userRepository.GetByEmailAsync(email);
+                if (user != null)
+                    filter = m => m.AssignedToUserId == user.Id && m.Status == MaintenanceStatus.InProgress;
+            }
         }
 
         var records = await _maintenanceRepository.GetPaginatedResultAsync(pageNumber, pageSize, filter, orderBy);
@@ -232,6 +243,24 @@ public class MaintenanceService : IMaintenanceService
     {
         var task = await _maintenanceRepository.GetByIdAsync(id);
         if (task == null) throw new ArgumentException("Maintenance task not found.");
+
+        if (dto.Status == MaintenanceStatus.InProgress && task.Status != MaintenanceStatus.InProgress)
+        {
+            var email = _currentUserService.GetUserEmail();
+            if (string.IsNullOrEmpty(email)) throw new UnauthorizedAccessException("Must be logged in.");
+            var user = await _userRepository.GetByEmailAsync(email);
+            if (user == null) throw new ArgumentException("User not found.");
+
+            var activeTasks = await _maintenanceRepository.FindAsync(m =>
+                m.AssignedToUserId == user.Id && m.Status == MaintenanceStatus.InProgress);
+            if (activeTasks.Count() >= 2)
+                throw new InvalidOperationException("You can only work on up to 2 tasks at a time. Complete an existing task before starting a new one.");
+
+            task.AssignedToUserId = user.Id;
+        }
+
+        if (dto.Status == MaintenanceStatus.Completed && task.Status == MaintenanceStatus.InProgress)
+            task.AssignedToUserId = null;
 
         task.Status = dto.Status;
         if (dto.Status == MaintenanceStatus.InProgress) task.StartedAt = DateTime.UtcNow;

@@ -78,6 +78,18 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<MaintenanceTask>()
             .Property(m => m.OriginType)
             .HasConversion<string>();
+
+        modelBuilder.Entity<Housekeeping>()
+            .HasOne(h => h.AssignedToUser)
+            .WithMany()
+            .HasForeignKey(h => h.AssignedToUserId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        modelBuilder.Entity<MaintenanceTask>()
+            .HasOne(m => m.AssignedToUser)
+            .WithMany()
+            .HasForeignKey(m => m.AssignedToUserId)
+            .OnDelete(DeleteBehavior.SetNull);
         modelBuilder.Entity<MaintenanceTask>()
             .Property(m => m.Status)
             .HasConversion<string>();

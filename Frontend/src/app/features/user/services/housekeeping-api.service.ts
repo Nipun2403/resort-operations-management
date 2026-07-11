@@ -21,6 +21,7 @@ export class HousekeepingApiService {
     roomId?: number;
     sortBy?: string;
     sortDescending?: boolean;
+    assignedToMe?: boolean;
   }): Observable<PaginatedResponse<HousekeepingTask>> {
     let httpParams = new HttpParams();
     if (params) {
@@ -30,6 +31,7 @@ export class HousekeepingApiService {
       if (params.roomId) httpParams = httpParams.set('roomId', params.roomId.toString());
       if (params.sortBy) httpParams = httpParams.set('sortBy', params.sortBy);
       if (params.sortDescending !== undefined) httpParams = httpParams.set('sortDescending', params.sortDescending.toString());
+      if (params.assignedToMe !== undefined) httpParams = httpParams.set('assignedToMe', params.assignedToMe.toString());
     }
     return this.http.get<PaginatedResponse<HousekeepingTask>>(this.baseUrl, { params: httpParams });
   }

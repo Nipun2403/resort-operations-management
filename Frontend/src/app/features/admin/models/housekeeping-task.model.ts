@@ -9,4 +9,5 @@ export interface HousekeepingTask {
   createdAt: string;
   startedAt: string | null;
   finishedAt: string | null;
+  assignedToUserId?: number;
 }

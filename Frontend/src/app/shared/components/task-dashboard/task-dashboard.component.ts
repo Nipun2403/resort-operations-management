@@ -65,6 +65,7 @@ export class TaskDashboardComponent {
   // Status filter
   statusFilter = signal('All');
   statusFilterControl = new FormControl('All', { nonNullable: true });
+  showMyTasks = signal(false);
 
   // Summary cards
   summaryCards = signal<{ status: string; label: string; count: number }[]>([]);
@@ -107,6 +108,10 @@ export class TaskDashboardComponent {
     };
     if (this.statusFilter() !== 'All') {
       params.status = this.statusFilter();
+    }
+    if (this.showMyTasks()) {
+      params.assignedToMe = true;
+      params.status = 'InProgress';
     }
     this.config()
       .fetchTasks(params)
@@ -237,6 +242,12 @@ export class TaskDashboardComponent {
             });
         }
       });
+  }
+
+  toggleMyTasks(): void {
+    this.showMyTasks.update(v => !v);
+    this.pageIndex.set(0);
+    this.fetchData();
   }
 
   private extractErrorMessage(err: any): string {

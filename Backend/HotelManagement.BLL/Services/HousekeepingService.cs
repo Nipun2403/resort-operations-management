@@ -116,6 +116,24 @@ public class HousekeepingService : IHousekeepingService
         if (task == null)
             throw new KeyNotFoundException("Housekeeping task not found.");
 
+        if (status == HousekeepingStatus.InProgress && task.Status != HousekeepingStatus.InProgress)
+        {
+            var email = _currentUserService.GetUserEmail();
+            if (string.IsNullOrEmpty(email)) throw new UnauthorizedAccessException("Must be logged in.");
+            var user = await _userRepository.GetByEmailAsync(email);
+            if (user == null) throw new ArgumentException("User not found.");
+
+            var activeTasks = await _housekeepingRepository.FindAsync(h =>
+                h.AssignedToUserId == user.Id && h.Status == HousekeepingStatus.InProgress);
+            if (activeTasks.Count() >= 2)
+                throw new InvalidOperationException("You can only work on up to 2 tasks at a time. Complete an existing task before starting a new one.");
+
+            task.AssignedToUserId = user.Id;
+        }
+
+        if (status == HousekeepingStatus.Completed && task.Status == HousekeepingStatus.InProgress)
+            task.AssignedToUserId = null;
+
         task.Status = status;
         if (status == HousekeepingStatus.InProgress) task.StartedAt = DateTime.UtcNow;
         if (status == HousekeepingStatus.Completed) task.FinishedAt = DateTime.UtcNow;
@@ -123,7 +141,7 @@ public class HousekeepingService : IHousekeepingService
         await _housekeepingRepository.SaveChangesAsync();
     }
 
-    public async Task<PaginatedResult<HousekeepingDTO>> GetAllAsync(int pageNumber, int pageSize, string? status = null, string? sortBy = null, bool sortDescending = false)
+    public async Task<PaginatedResult<HousekeepingDTO>> GetAllAsync(int pageNumber, int pageSize, string? status = null, string? sortBy = null, bool sortDescending = false, bool assignedToMe = false)
     {
         var isStaff = _currentUserService.IsInRole("Admin") || _currentUserService.IsInRole("FrontDesk") || _currentUserService.IsInRole("Housekeeping");
         List<int> userRoomIds = new List<int>();
@@ -160,6 +178,17 @@ public class HousekeepingService : IHousekeepingService
         {
             if (!isStaff)
                 filter = h => h.RoomId.HasValue && userRoomIds.Contains(h.RoomId.Value);
+        }
+
+        if (assignedToMe && isStaff)
+        {
+            var email = _currentUserService.GetUserEmail();
+            if (!string.IsNullOrEmpty(email))
+            {
+                var user = await _userRepository.GetByEmailAsync(email);
+                if (user != null)
+                    filter = h => h.AssignedToUserId == user.Id && h.Status == HousekeepingStatus.InProgress;
+            }
         }
 
         var records = await _housekeepingRepository.GetPaginatedResultAsync(pageNumber, pageSize, filter, orderBy);
