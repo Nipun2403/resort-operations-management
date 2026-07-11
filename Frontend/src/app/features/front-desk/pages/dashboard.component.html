@@ -35,24 +35,24 @@
   } @else {
     <!-- Pulse of the Day Grid -->
     <div class="pulse-grid">
-      <!-- Today's Arrivals -->
+      <!-- {{ movementDateLabel }} Arrivals -->
       <div class="pulse-card">
         <div class="pulse-card__bg-icon">
           <span class="material-symbols-outlined">flight_land</span>
         </div>
-        <p class="pulse-card__label">Today's Arrivals</p>
+        <p class="pulse-card__label">{{ movementDateLabel }} Arrivals</p>
         <div class="pulse-card__value-row">
           <h3 class="pulse-card__value gold-pulse">{{ arrivalsCount() }}</h3>
           <p class="pulse-card__sub-label">VIP priority (4)</p>
         </div>
       </div>
 
-      <!-- Today's Departures -->
+      <!-- {{ movementDateLabel }} Departures -->
       <div class="pulse-card">
         <div class="pulse-card__bg-icon">
           <span class="material-symbols-outlined">flight_takeoff</span>
         </div>
-        <p class="pulse-card__label">Today's Departures</p>
+        <p class="pulse-card__label">{{ movementDateLabel }} Departures</p>
         <div class="pulse-card__value-row">
           <h3 class="pulse-card__value">{{ departuresCount() }}</h3>
           <p class="pulse-card__sub-label">Expedited (2)</p>
@@ -151,25 +151,32 @@
   <div class="table-section mt-section-gap">
     <div class="table-section__header">
       <div>
-        <h2 class="section-title italic">Movement of the Day</h2>
+        <h2 class="section-title italic">{{ movementSectionTitle }}</h2>
         <p class="section-subtitle">Real-time status of current guest transit.</p>
       </div>
-      <!-- Toggle Switch -->
-      <div class="toggle-switch">
-        <button 
-          class="toggle-switch__btn" 
-          [class.toggle-switch__btn--active]="movementActiveFilter.value === 'arrivals'"
-          (click)="movementActiveFilter.setValue('arrivals'); onMovementToggle()"
-        >
-          Arrivals
-        </button>
-        <button 
-          class="toggle-switch__btn" 
-          [class.toggle-switch__btn--active]="movementActiveFilter.value === 'departures'"
-          (click)="movementActiveFilter.setValue('departures'); onMovementToggle()"
-        >
-          Departures
-        </button>
+      <div class="movement-controls">
+        <mat-form-field appearance="fill" class="date-filter" subscriptSizing="dynamic">
+          <mat-label>Date</mat-label>
+          <input matInput [matDatepicker]="movementPicker" [formControl]="movementDateControl">
+          <mat-datepicker-toggle matSuffix [for]="movementPicker"></mat-datepicker-toggle>
+          <mat-datepicker #movementPicker></mat-datepicker>
+        </mat-form-field>
+        <div class="toggle-switch">
+          <button 
+            class="toggle-switch__btn" 
+            [class.toggle-switch__btn--active]="movementActiveFilter.value === 'arrivals'"
+            (click)="movementActiveFilter.setValue('arrivals'); onMovementToggle()"
+          >
+            Arrivals
+          </button>
+          <button 
+            class="toggle-switch__btn" 
+            [class.toggle-switch__btn--active]="movementActiveFilter.value === 'departures'"
+            (click)="movementActiveFilter.setValue('departures'); onMovementToggle()"
+          >
+            Departures
+          </button>
+        </div>
       </div>
     </div>
 

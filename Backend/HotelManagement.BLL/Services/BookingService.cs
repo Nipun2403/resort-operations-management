@@ -209,7 +209,8 @@ public class BookingService : IBookingService
         int pageSize,
         string? sortBy = null,
         bool sortDescending = false,
-        string? movementStatus = null)   // new parameter
+        string? movementStatus = null,
+        DateTime? movementDate = null)
     {
         var isStaff = _currentUserService.IsInRole("Admin") || _currentUserService.IsInRole("FrontDesk");
         var predicates = new List<Expression<Func<Booking, bool>>>();
@@ -249,19 +250,19 @@ public class BookingService : IBookingService
                                 b.Id.ToString().Contains(lowerQuery));
         }
 
-        // 4. NEW: Apply movementStatus filter (incoming / outgoing)
+        // 4. Apply movementStatus filter (incoming / outgoing)
         if (!string.IsNullOrEmpty(movementStatus))
         {
-            var today = DateTime.UtcNow.Date;
+            var targetDate = movementDate?.Date ?? DateTime.UtcNow.Date;
             if (movementStatus.Equals("incoming", StringComparison.OrdinalIgnoreCase))
             {
                 predicates.Add(b => b.BookingStatus == BookingStatus.Booked);
-                predicates.Add(b => b.CheckInDate.Date == today);
+                predicates.Add(b => b.CheckInDate.Date == targetDate);
             }
             else if (movementStatus.Equals("outgoing", StringComparison.OrdinalIgnoreCase))
             {
                 predicates.Add(b => b.BookingStatus == BookingStatus.CheckedIn);
-                predicates.Add(b => b.CheckOutDate.Date == today);
+                predicates.Add(b => b.CheckOutDate.Date == targetDate);
             }
             else
             {

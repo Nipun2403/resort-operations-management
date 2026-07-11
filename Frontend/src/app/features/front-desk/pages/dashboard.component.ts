@@ -5,6 +5,10 @@ import { Router } from '@angular/router';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize, forkJoin, of, debounceTime, distinctUntilChanged } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
@@ -34,6 +38,10 @@ interface SearchResult {
     MatDialogModule,
     MatProgressSpinnerModule,
     MatPaginatorModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatFormFieldModule,
+    MatInputModule,
     AlertComponent,
   ],
   templateUrl: './dashboard.component.html',
@@ -65,6 +73,34 @@ export class DashboardComponent implements OnInit {
   // Movement table (today's arrivals/departures)
   movementData = signal<Booking[]>([]);
   movementTotal = signal(0);
+
+  get movementDateLabel(): string {
+    const today = new Date();
+    const selected = this.movementDateControl.value;
+    if (selected &&
+        selected.getFullYear() === today.getFullYear() &&
+        selected.getMonth() === today.getMonth() &&
+        selected.getDate() === today.getDate()) {
+      return "Today's";
+    }
+    return selected?.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) ?? "Today's";
+  }
+
+  get movementSectionTitle(): string {
+    const today = new Date();
+    const selected = this.movementDateControl.value;
+    if (selected &&
+        selected.getFullYear() === today.getFullYear() &&
+        selected.getMonth() === today.getMonth() &&
+        selected.getDate() === today.getDate()) {
+      return 'Movement of the Day';
+    }
+    const d = selected ?? today;
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const yyyy = d.getFullYear();
+    return `Movement of ${dd}-${mm}-${yyyy}`;
+  }
   movementLoading = signal(false);
   movementError = signal<string | null>(null);
   movementPage = signal(0);
@@ -72,6 +108,7 @@ export class DashboardComponent implements OnInit {
   movementActiveFilter = new FormControl<'arrivals' | 'departures'>('arrivals', {
     nonNullable: true,
   });
+  movementDateControl = new FormControl(new Date(), { nonNullable: true });
 
   private readonly bookingApi = inject(BookingApiService);
   private readonly housekeepingApi = inject(HousekeepingApiService);
@@ -88,20 +125,29 @@ export class DashboardComponent implements OnInit {
     this.searchControl.valueChanges
       .pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => this.onSearch(value.trim()));
+
+    this.movementDateControl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.movementPage.set(0);
+        this.loadSummary();
+        this.fetchMovement();
+      });
   }
 
   private loadSummary(): void {
     this.loadingSummary.set(true);
     this.error.set(null);
 
+    const mvDate = this.movementDateControl.value?.toISOString().split('T')[0];
     const arrivals$ = this.bookingApi
-      .getAll({ movementStatus: 'incoming', pageNumber: 1, pageSize: 1 })
+      .getAll({ movementStatus: 'incoming', pageNumber: 1, pageSize: 1, movementDate: mvDate })
       .pipe(
         map((r) => r.totalCount),
         catchError(() => of(0)),
       );
     const departures$ = this.bookingApi
-      .getAll({ movementStatus: 'outgoing', pageNumber: 1, pageSize: 1 })
+      .getAll({ movementStatus: 'outgoing', pageNumber: 1, pageSize: 1, movementDate: mvDate })
       .pipe(
         map((r) => r.totalCount),
         catchError(() => of(0)),
@@ -221,6 +267,10 @@ export class DashboardComponent implements OnInit {
     } else {
       params.movementStatus = 'outgoing';
       params.bookingStatus = 'CheckedIn';
+    }
+    const dateVal = this.movementDateControl.value;
+    if (dateVal) {
+      params.movementDate = dateVal.toISOString().split('T')[0];
     }
     this.bookingApi
       .getAll(params)

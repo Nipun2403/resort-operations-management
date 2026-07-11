@@ -15,6 +15,7 @@ export class BookingApiService {
     bookingStatus?: string;
     guestQuery?: string;
     movementStatus?: string;
+    movementDate?: string;
     pageNumber?: number;
     pageSize?: number;
     sortBy?: string;
@@ -37,6 +38,9 @@ export class BookingApiService {
     }
     if (params.movementStatus) {
       httpParams = httpParams.set('movementStatus', params.movementStatus);
+    }
+    if (params.movementDate) {
+      httpParams = httpParams.set('movementDate', params.movementDate);
     }
 
     return this.http.get<PaginatedResponse<Booking>>(this.baseUrl, { params: httpParams });

@@ -7,7 +7,7 @@ public interface IBookingService
 {
     Task<BookingDTO> CreateBookingAsync(CreateBookingRequestDTO requestDto);
     Task UpdateBookingStatusAsync(int bookingId, BookingStatus status);
-    Task<PaginatedResult<BookingDTO>> GetBookingsAsync(string? status, string? guestQuery, int pageNumber, int pageSize, string? sortBy = null, bool sortDescending = false, string? movementStatus = null);
+    Task<PaginatedResult<BookingDTO>> GetBookingsAsync(string? status, string? guestQuery, int pageNumber, int pageSize, string? sortBy = null, bool sortDescending = false, string? movementStatus = null, DateTime? movementDate = null);
     Task<BookingDTO?> GetBookingByIdAsync(int id);
     Task CancelBookingAsync(int id);
 

@@ -33,20 +33,21 @@ public class BookingsController : ControllerBase
         [FromQuery] int pageSize = 10,
         [FromQuery] string? sortBy = null,
         [FromQuery] bool sortDescending = false,
-        [FromQuery] string? movementStatus = null)   // new parameter
+        [FromQuery] string? movementStatus = null,
+        [FromQuery] DateTime? movementDate = null)
     {
         pageSize = Math.Min(pageSize, 100);
         try
         {
             var bookings = await _bookingService.GetBookingsAsync(
-                bookingStatus, guestQuery, pageNumber, pageSize, sortBy, sortDescending, movementStatus);
+                bookingStatus, guestQuery, pageNumber, pageSize, sortBy, sortDescending, movementStatus, movementDate);
             return Ok(bookings);
         }
         catch (UnauthorizedAccessException ex)
         {
             return Unauthorized(ex.Message);
         }
-        catch (ArgumentException ex)   // catches invalid movementStatus
+        catch (ArgumentException ex)
         {
             return BadRequest(ex.Message);
         }

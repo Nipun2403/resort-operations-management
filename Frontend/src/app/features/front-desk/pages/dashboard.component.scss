@@ -237,6 +237,18 @@ $bp-mobile: 767px;
   margin: 0;
 }
 
+// --------------- MOVEMENT CONTROLS ---------------
+.movement-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.date-filter {
+  width: 200px;
+}
+
 // --------------- TOGGLE SWITCH ---------------
 .toggle-switch {
   display: flex;
