@@ -401,6 +401,18 @@
     text-transform: uppercase;
     letter-spacing: 0.1em;
     border-radius: 2px;
+
+    &.success {
+      background: rgba(76, 175, 80, 0.15);
+      color: #81c784;
+      border-color: rgba(76, 175, 80, 0.3);
+    }
+
+    &.warn {
+      background: rgba(255, 152, 0, 0.15);
+      color: #ffb74d;
+      border-color: rgba(255, 152, 0, 0.3);
+    }
   }
 }
 

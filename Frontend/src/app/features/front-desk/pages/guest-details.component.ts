@@ -152,6 +152,14 @@ export class GuestDetailsComponent implements OnInit, AfterViewInit {
   }
 
   checkIn(booking: Booking): void {
+    if (booking.paymentStatus !== 'Paid') {
+      this.snackBar.open(
+        'Payment must be completed before check-in. Go to the Billing tab to process payment.',
+        'Close',
+        { duration: 6000 },
+      );
+      return;
+    }
     const confirmRef = this.dialog.open(ConfirmDialogComponent, {
       data: { title: 'Confirm Check-In', message: `Check in guest: ${booking.guestName}?` },
     });

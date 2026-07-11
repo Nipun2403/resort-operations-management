@@ -21,4 +21,6 @@ export interface Booking {
   origin: 'WalkIn' | 'RegisteredUser' | 'Guest';
   bookedAt: string; // ISO 8601
   amenityIds: number[];
+  paymentStatus: string;
+  servicePaymentStatus: string;
 }

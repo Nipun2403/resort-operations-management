@@ -123,9 +123,14 @@
               </div>
               
               <div class="booking-actions-group">
-                <span class="booking-status-chip">
-                  {{ b.bookingStatus }}
-                </span>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                  <span class="booking-status-chip">
+                    {{ b.bookingStatus }}
+                  </span>
+                  <span class="booking-status-chip" [class.success]="b.paymentStatus === 'Paid'" [class.warn]="b.paymentStatus !== 'Paid'">
+                    {{ b.paymentStatus === 'Paid' ? 'Room Paid' : 'Room Unpaid' }}
+                  </span>
+                </div>
                 
                 @if (b.bookingStatus === 'Booked') {
                   <button

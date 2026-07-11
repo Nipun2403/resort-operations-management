@@ -28,6 +28,8 @@ public class BookingDTO
     public BookingOrigin Origin { get; set; }
     public string BookedAt { get; set; } = string.Empty;
     public List<int>? AmenityIds { get; set; }
+    public string PaymentStatus { get; set; } = string.Empty;
+    public string ServicePaymentStatus { get; set; } = string.Empty;
 }
 
 public class CreateBookingRequestDTO : IValidatableObject
