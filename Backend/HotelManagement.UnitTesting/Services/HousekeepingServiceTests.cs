@@ -190,6 +190,10 @@ public class HousekeepingServiceTests
     {
         var task = new Housekeeping { Id = 1 };
         _mockHousekeepingRepo.Setup(h => h.GetByIdAsync(1)).ReturnsAsync(task);
+        _mockCurrentUserService.Setup(c => c.GetUserEmail()).Returns("test@example.com");
+        _mockUserRepo.Setup(u => u.GetByEmailAsync("test@example.com")).ReturnsAsync(new User { Id = 1 });
+        _mockHousekeepingRepo.Setup(r => r.FindAsync(It.IsAny<Expression<Func<Housekeeping, bool>>>()))
+            .ReturnsAsync(new List<Housekeeping>());
 
         await _housekeepingService.UpdateStatusAsync(1, HousekeepingStatus.InProgress);
 
@@ -202,8 +206,10 @@ public class HousekeepingServiceTests
     [Test]
     public async Task UpdateStatusAsync_ShouldSetFinishedAt_IfCompleted()
     {
-        var task = new Housekeeping { Id = 1, StartedAt = DateTime.UtcNow.AddMinutes(-30) };
+        var task = new Housekeeping { Id = 1, StartedAt = DateTime.UtcNow.AddMinutes(-30), AssignedToUserId = 1 };
         _mockHousekeepingRepo.Setup(h => h.GetByIdAsync(1)).ReturnsAsync(task);
+        _mockCurrentUserService.Setup(c => c.GetUserEmail()).Returns("test@example.com");
+        _mockUserRepo.Setup(u => u.GetByEmailAsync("test@example.com")).ReturnsAsync(new User { Id = 1 });
 
         await _housekeepingService.UpdateStatusAsync(1, HousekeepingStatus.Completed);
 

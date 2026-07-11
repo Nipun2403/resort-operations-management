@@ -260,7 +260,15 @@ public class MaintenanceService : IMaintenanceService
         }
 
         if (dto.Status == MaintenanceStatus.Completed && task.Status == MaintenanceStatus.InProgress)
+        {
+            var email = _currentUserService.GetUserEmail();
+            if (string.IsNullOrEmpty(email)) throw new UnauthorizedAccessException("Must be logged in.");
+            var user = await _userRepository.GetByEmailAsync(email);
+            if (user == null) throw new ArgumentException("User not found.");
+            if (task.AssignedToUserId != user.Id)
+                throw new UnauthorizedAccessException("You can only complete your own tasks.");
             task.AssignedToUserId = null;
+        }
 
         task.Status = dto.Status;
         if (dto.Status == MaintenanceStatus.InProgress) task.StartedAt = DateTime.UtcNow;

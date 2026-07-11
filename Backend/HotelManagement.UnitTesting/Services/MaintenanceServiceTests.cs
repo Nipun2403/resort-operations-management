@@ -255,6 +255,10 @@ public class MaintenanceServiceTests
         // Arrange
         var task = new MaintenanceTask { Id = 1, Status = MaintenanceStatus.Pending };
         _mockMaintenanceRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(task);
+        _mockCurrentUserService.Setup(c => c.GetUserEmail()).Returns("test@example.com");
+        _mockUserRepo.Setup(u => u.GetByEmailAsync("test@example.com")).ReturnsAsync(new User { Id = 1 });
+        _mockMaintenanceRepo.Setup(r => r.FindAsync(It.IsAny<Expression<Func<MaintenanceTask, bool>>>()))
+            .ReturnsAsync(new List<MaintenanceTask>());
 
         // Act
         var result = await _maintenanceService.UpdateStatusAsync(1, new UpdateMaintenanceStatusDTO { Status = MaintenanceStatus.InProgress });
@@ -414,8 +418,10 @@ public class MaintenanceServiceTests
     [Test]
     public async Task UpdateStatusAsync_SetCompleted_SetsFinishedAt()
     {
-        var task = new MaintenanceTask { Id = 1, Status = MaintenanceStatus.InProgress };
+        var task = new MaintenanceTask { Id = 1, Status = MaintenanceStatus.InProgress, AssignedToUserId = 1 };
         _mockMaintenanceRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(task);
+        _mockCurrentUserService.Setup(c => c.GetUserEmail()).Returns("test@example.com");
+        _mockUserRepo.Setup(u => u.GetByEmailAsync("test@example.com")).ReturnsAsync(new User { Id = 1 });
 
         await _maintenanceService.UpdateStatusAsync(1, new UpdateMaintenanceStatusDTO { Status = MaintenanceStatus.Completed });
 

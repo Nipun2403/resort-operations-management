@@ -132,7 +132,15 @@ public class HousekeepingService : IHousekeepingService
         }
 
         if (status == HousekeepingStatus.Completed && task.Status == HousekeepingStatus.InProgress)
+        {
+            var email = _currentUserService.GetUserEmail();
+            if (string.IsNullOrEmpty(email)) throw new UnauthorizedAccessException("Must be logged in.");
+            var user = await _userRepository.GetByEmailAsync(email);
+            if (user == null) throw new ArgumentException("User not found.");
+            if (task.AssignedToUserId != user.Id)
+                throw new UnauthorizedAccessException("You can only complete your own tasks.");
             task.AssignedToUserId = null;
+        }
 
         task.Status = status;
         if (status == HousekeepingStatus.InProgress) task.StartedAt = DateTime.UtcNow;
