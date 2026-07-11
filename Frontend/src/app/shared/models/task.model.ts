@@ -6,6 +6,7 @@ export interface Task {
   location: string; // e.g., 'Room 201', 'Lobby', 'N/A'
   description: string; // e.g., 'AC not working', 'Order #123'
   createdAt: string; // ISO date
+  isEmergency: boolean;
   raw: any; // original DTO for detail modal
 }
 

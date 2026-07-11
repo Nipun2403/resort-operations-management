@@ -6,4 +6,5 @@ export interface CustomerRequest {
   description: string;
   status: string;
   createdAt: string;
+  isEmergency: boolean;
 }
