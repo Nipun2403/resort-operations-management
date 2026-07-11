@@ -236,8 +236,8 @@ export class CustomerDashboardComponent implements OnInit {
       if (!result) return;
 
       const api$ = type === 'housekeeping'
-        ? this.housekeepingApi.trigger(roomId, { description: result.description })
-        : this.maintenanceApi.trigger(roomId, { description: result.description });
+        ? this.housekeepingApi.trigger(roomId, { description: result.description, isEmergency: result.isEmergency })
+        : this.maintenanceApi.trigger(roomId, { description: result.description, isEmergency: result.isEmergency });
 
       api$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: () => {

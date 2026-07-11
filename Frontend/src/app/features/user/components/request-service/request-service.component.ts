@@ -7,6 +7,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -33,6 +34,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     MatInputModule,
     MatFormFieldModule,
     MatButtonModule,
+    MatCheckboxModule,
     MatIconModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
@@ -63,6 +65,8 @@ export class RequestServiceComponent implements OnInit {
     nonNullable: true,
     validators: [Validators.required, Validators.minLength(5)]
   });
+
+  isEmergency = new FormControl(false, { nonNullable: true });
 
   submitting = signal(false);
 
@@ -114,8 +118,8 @@ export class RequestServiceComponent implements OnInit {
     const desc = this.description.value;
 
     const request$ = type === 'housekeeping'
-      ? this.housekeepingApi.trigger(roomId, { description: desc })
-      : this.maintenanceApi.trigger(roomId, { description: desc });
+      ? this.housekeepingApi.trigger(roomId, { description: desc, isEmergency: this.isEmergency.value })
+      : this.maintenanceApi.trigger(roomId, { description: desc, isEmergency: this.isEmergency.value });
 
     request$.pipe(
       finalize(() => this.submitting.set(false)),

@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
@@ -13,6 +14,7 @@ export interface RequestServiceDialogData {
 
 export interface RequestServiceDialogResult {
   description: string;
+  isEmergency: boolean;
 }
 
 @Component({
@@ -22,6 +24,7 @@ export interface RequestServiceDialogResult {
     ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
+    MatCheckboxModule,
     MatFormFieldModule,
     MatInputModule,
   ],
@@ -33,12 +36,14 @@ export class RequestServiceDialogComponent {
 
   descriptionControl = new FormControl<string>('', { validators: [Validators.required], nonNullable: true });
 
+  isEmergencyControl = new FormControl(false, { nonNullable: true });
+
   submit(): void {
     this.descriptionControl.markAsTouched();
     if (this.descriptionControl.invalid) {
       return;
     }
-    const result: RequestServiceDialogResult = { description: this.descriptionControl.value };
+    const result: RequestServiceDialogResult = { description: this.descriptionControl.value, isEmergency: this.isEmergencyControl.value };
     this.dialogRef.close(result);
   }
 }

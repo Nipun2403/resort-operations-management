@@ -20,6 +20,9 @@
         <mat-error>Description is required.</mat-error>
       }
     </mat-form-field>
+    <mat-checkbox [formControl]="isEmergencyControl" color="warn" style="margin-bottom: 8px;">
+      <span style="color: #f44336; font-weight: 500;">Emergency</span>
+    </mat-checkbox>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
     <button mat-button mat-dialog-close aria-label="Cancel request">Cancel</button>

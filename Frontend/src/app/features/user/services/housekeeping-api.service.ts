@@ -10,7 +10,7 @@ export class HousekeepingApiService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = `${environment.baseUrl}/housekeeping`;
 
-  trigger(roomId: number, body: { description: string }): Observable<void> {
+  trigger(roomId: number, body: { description: string; isEmergency?: boolean }): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/trigger/${roomId}`, body);
   }
 
