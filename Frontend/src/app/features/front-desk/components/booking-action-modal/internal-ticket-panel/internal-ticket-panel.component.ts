@@ -8,6 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { finalize } from 'rxjs/operators';
 import { HousekeepingApiService } from '../../../../admin/services/housekeeping-api.service';
 import { MaintenanceApiService } from '../../../../admin/services/maintenance-api.service';
@@ -26,6 +27,7 @@ import { MaintenanceApiService } from '../../../../admin/services/maintenance-ap
     MatInputModule,
     MatIconModule,
     MatProgressSpinnerModule,
+    MatCheckboxModule,
   ],
   templateUrl: './internal-ticket-panel.component.html',
   styleUrls: ['./internal-ticket-panel.component.scss'],
@@ -39,6 +41,7 @@ export class InternalTicketPanelComponent {
     type: new FormControl<'housekeeping' | 'maintenance'>('housekeeping', Validators.required),
     location: new FormControl('', [Validators.required, Validators.maxLength(200)]),
     description: new FormControl('', [Validators.required, Validators.minLength(5)]),
+    emergency: new FormControl(false, { nonNullable: true }),
   });
 
   loading = signal(false);
@@ -48,8 +51,8 @@ export class InternalTicketPanelComponent {
     this.form.markAllAsTouched();
     if (this.form.invalid) return;
 
-    const { type, location, description } = this.form.value;
-    const body = { location: location!, description: description! };
+    const { type, location, description, emergency } = this.form.value;
+    const body = { location: location!, description: description!, isEmergency: emergency! };
 
     this.loading.set(true);
     this.errorMessage.set(null);

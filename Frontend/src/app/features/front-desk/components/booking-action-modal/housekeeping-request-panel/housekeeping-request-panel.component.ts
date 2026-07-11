@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs/operators';
 
@@ -28,6 +29,7 @@ import { ConfirmDialogComponent } from '../../../../../shared/components/confirm
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatDialogModule,
+    MatCheckboxModule,
   ],
   templateUrl: './housekeeping-request-panel.component.html',
 })
@@ -41,6 +43,7 @@ export class HousekeepingRequestPanelComponent implements OnInit {
     nonNullable: true,
     validators: [Validators.required, Validators.minLength(5)],
   });
+  isEmergency = new FormControl(false, { nonNullable: true });
   submitting = signal(false);
 
   private hkApi = inject(HousekeepingApiService);
@@ -69,7 +72,7 @@ export class HousekeepingRequestPanelComponent implements OnInit {
 
         const roomId = this.selectedRoomId.value!;
         this.hkApi
-          .trigger(roomId, { description: this.description.value })
+          .trigger(roomId, { description: this.description.value, isEmergency: this.isEmergency.value })
           .pipe(
             takeUntilDestroyed(this.destroyRef),
             finalize(() => this.submitting.set(false))
