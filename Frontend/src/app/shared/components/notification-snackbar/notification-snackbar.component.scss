@@ -6,41 +6,41 @@
   background: rgba(26, 26, 26, 0.95) !important;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-left: 8px solid var(--color-secondary) !important;
+  border-left: 16px solid var(--color-secondary) !important;
   border-top: 1px solid rgba(228, 194, 133, 0.1) !important;
   border-right: 1px solid rgba(228, 194, 133, 0.1) !important;
   border-bottom: 1px solid rgba(228, 194, 133, 0.1) !important;
   color: var(--color-on-surface);
-  padding: 48px;
+  padding: 96px;
   border-radius: 4px;
-  width: 640px;
-  box-shadow: 0 16px 64px rgba(0, 0, 0, 0.5);
+  width: 1280px;
+  box-shadow: 0 32px 128px rgba(0, 0, 0, 0.5);
   box-sizing: border-box;
 
   .header-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 16px;
+    margin-bottom: 32px;
 
     .notification-title {
       @include font-label-caps;
-      font-size: 20px;
-      letter-spacing: 0.2em;
+      font-size: 40px;
+      letter-spacing: 0.15em;
       color: var(--color-secondary);
       font-weight: 600;
     }
 
     .close-btn {
       color: var(--color-on-surface-variant) !important;
-      width: 48px;
-      height: 48px;
-      line-height: 48px;
+      width: 96px;
+      height: 96px;
+      line-height: 96px;
       
       mat-icon {
-        font-size: 36px;
-        width: 36px;
-        height: 36px;
+        font-size: 72px;
+        width: 72px;
+        height: 72px;
       }
 
       &:hover {
@@ -53,10 +53,10 @@
   .content {
     .notification-desc {
       @include font-body-md;
-      font-size: 26px;
+      font-size: 52px;
       margin: 0;
       color: var(--color-on-surface-variant);
-      line-height: 1.4;
+      line-height: 1.3;
     }
   }
 }
