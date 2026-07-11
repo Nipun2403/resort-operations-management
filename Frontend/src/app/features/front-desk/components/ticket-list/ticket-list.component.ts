@@ -34,6 +34,8 @@ export class TicketListComponent implements OnInit {
   private readonly orderApi = inject(OrderApiService);
   private readonly destroyRef = inject(DestroyRef);
 
+  displayedColumns = ['id', 'room', 'description', 'status', 'isEmergency', 'createdAt'];
+
   tickets = signal<any[]>([]);
   loading = signal(false);
   error = signal<string | null>(null);
