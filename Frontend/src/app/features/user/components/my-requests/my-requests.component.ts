@@ -122,6 +122,7 @@ export class MyRequestsComponent {
                   roomId: o.roomId ?? 0,
                   roomNumber: o.roomNumber ?? 'N/A',
                   description: `Order #${o.id}`,
+                  isEmergency: false,
                   status: o.orderStatus ?? 'Pending',
                   createdAt: o.generatedAt ?? new Date().toISOString()
                 }))
