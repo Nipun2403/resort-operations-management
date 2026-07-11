@@ -154,8 +154,8 @@ public class OrderService : IOrderService
             throw new ArgumentException("The specified room does not belong to this booking.");
 
         // 3. Validate payment and check-in status
-        if (booking.PaymentStatus == PaymentStatus.Paid)
-            throw new InvalidOperationException("Cannot add food orders to a booking that has already been paid.");
+        if (booking.ServicePaymentStatus == PaymentStatus.Paid)
+            throw new InvalidOperationException("Cannot add food orders to a booking whose service bill has already been settled.");
 
         if (booking.BookingStatus != BookingStatus.CheckedIn)
             throw new InvalidOperationException("Food orders can only be placed for guests currently checked in.");
