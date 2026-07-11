@@ -55,6 +55,10 @@ public class ApplicationDbContext : DbContext
             .HasConversion<string>();
 
         modelBuilder.Entity<Booking>()
+            .Property(b => b.ServicePaymentStatus)
+            .HasConversion<string>();
+
+        modelBuilder.Entity<Booking>()
             .HasOne(b => b.User)
             .WithMany(u => u.Bookings)
             .HasForeignKey(b => b.UserId)

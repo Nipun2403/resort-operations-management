@@ -23,6 +23,7 @@ public class Booking
     public User? User { get; set; }
     public BookingOrigin Origin { get; set; }
     public PaymentStatus PaymentStatus { get; set; } = PaymentStatus.Pending;
+    public PaymentStatus ServicePaymentStatus { get; set; } = PaymentStatus.Pending;
     public DateTime BookedAt { get; set; } = DateTime.UtcNow;
 
     [Timestamp]
