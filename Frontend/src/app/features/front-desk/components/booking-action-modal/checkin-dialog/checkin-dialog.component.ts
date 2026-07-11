@@ -102,6 +102,7 @@ export class CheckinDialogComponent implements OnInit {
   private extractErrorMessage(err: any): string {
     if (typeof err === 'string') return err;
     if (err?.error?.message) return err.error.message;
+    if (typeof err?.error === 'string') return err.error;
     if (err?.message) return err.message;
     return 'An unexpected error occurred.';
   }
