@@ -327,6 +327,18 @@
   }
 }
 
+.emergency-pill {
+  display: inline-block;
+  background-color: #f44336;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  margin-right: 8px;
+}
+
 .loading-container {
   display: flex;
   justify-content: center;

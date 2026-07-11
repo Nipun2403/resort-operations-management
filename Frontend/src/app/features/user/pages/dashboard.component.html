@@ -116,6 +116,9 @@
           @for (item of pendingHousekeeping(); track item.id) {
           <div class="request-item">
             <span class="request-desc">{{ item.description || 'No description' }}</span>
+            @if (item.isEmergency) {
+            <span class="emergency-pill">Emergency</span>
+            }
             <div class="request-status">
               <span class="status-dot" [class]="item.status.toLowerCase()"></span>
               <span class="status-label" [class]="item.status.toLowerCase()">{{ item.status }}</span>
@@ -137,6 +140,9 @@
           @for (item of pendingMaintenance(); track item.id) {
           <div class="request-item">
             <span class="request-desc">{{ item.description || 'No description' }}</span>
+            @if (item.isEmergency) {
+            <span class="emergency-pill">Emergency</span>
+            }
             <div class="request-status">
               <span class="status-dot" [class]="item.status.toLowerCase()"></span>
               <span class="status-label" [class]="item.status.toLowerCase()">{{ item.status }}</span>

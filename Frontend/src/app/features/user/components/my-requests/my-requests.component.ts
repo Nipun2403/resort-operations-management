@@ -40,7 +40,7 @@ export class MyRequestsComponent {
   requests = signal<CustomerRequest[]>([]);
   loading = signal(false);
   error = signal<string | null>(null);
-  displayedColumns = ['type', 'room', 'description', 'status', 'createdAt'];
+  displayedColumns = ['type', 'room', 'description', 'status', 'isEmergency', 'createdAt'];
 
   constructor() {
     effect(() => {
@@ -79,6 +79,7 @@ export class MyRequestsComponent {
                 roomNumber: hk.location ?? `Room ${hk.roomId}`,
                 description: hk.description ?? '',
                 status: hk.status,
+                isEmergency: hk.isEmergency,
                 createdAt: hk.createdAt
               }))
           ),
@@ -97,6 +98,7 @@ export class MyRequestsComponent {
                 roomNumber: m.location ?? `Room ${m.roomId}`,
                 description: m.description ?? '',
                 status: m.status,
+                isEmergency: m.isEmergency,
                 createdAt: m.createdAt
               }))
           ),
@@ -140,7 +142,12 @@ export class MyRequestsComponent {
         next: (results) => {
           const merged = results.reduce((acc, curr) => acc.concat(curr), []);
           // Sort by createdAt descending
-          merged.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+          merged.sort((a, b) => {
+            if (a.isEmergency !== b.isEmergency) {
+              return a.isEmergency ? -1 : 1;
+            }
+            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+          });
           this.requests.set(merged);
         },
         error: (err) => {
