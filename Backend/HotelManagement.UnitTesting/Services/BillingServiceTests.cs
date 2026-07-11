@@ -11,6 +11,7 @@ using HotelManagement.DAL.Enums;
 using HotelManagement.Repository.Interfaces;
 using Moq;
 using NUnit.Framework;
+using Microsoft.Extensions.Logging;
 
 namespace HotelManagement.UnitTesting.Services;
 
@@ -22,6 +23,7 @@ public class BillingServiceTests
     private Mock<IMapper> _mockMapper;
     private Mock<ICurrentUserService> _mockCurrentUserService;
     private Mock<IUserRepository> _mockUserRepo;
+    private Mock<IEmailService> _mockEmailService;
     private BillingService _billingService;
 
     [SetUp]
@@ -34,8 +36,9 @@ public class BillingServiceTests
         _mockUserRepo = new Mock<IUserRepository>();
 
         _mockCurrentUserService.Setup(s => s.IsInRole(It.IsAny<string>())).Returns(true); // default to staff
+        _mockEmailService = new Mock<IEmailService>();
 
-        _billingService = new BillingService(_mockBookingRepo.Object, _mockReceiptRepo.Object, _mockMapper.Object, _mockCurrentUserService.Object, _mockUserRepo.Object);
+        _billingService = new BillingService(_mockBookingRepo.Object, _mockReceiptRepo.Object, _mockMapper.Object, _mockCurrentUserService.Object, _mockUserRepo.Object, _mockEmailService.Object);
     }
 
     [Test]
@@ -235,7 +238,7 @@ public class BillingServiceTests
     [Test]
     public void ProcessPaymentAsync_ShouldThrow_IfBookingNotFound()
     {
-        _mockBookingRepo.Setup(r => r.GetBookingWithDetailsAsync(99)).ReturnsAsync((Booking?)null);
+        _mockBookingRepo.Setup(r => r.GetByIdAsync(99)).ReturnsAsync((Booking?)null);
         var ex = Assert.ThrowsAsync<KeyNotFoundException>(() => _billingService.ProcessPaymentAsync(99, new HotelManagement.BLL.DTOs.PaymentRequestDTO { Amount = 100m }));
         Assert.That(ex.Message, Does.Contain("Booking not found"));
     }
@@ -246,7 +249,7 @@ public class BillingServiceTests
         var booking = new Booking { Id = 1, PaymentStatus = PaymentStatus.Paid };
         _mockBookingRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(booking);
         var ex = Assert.ThrowsAsync<InvalidOperationException>(() => _billingService.ProcessPaymentAsync(1, new HotelManagement.BLL.DTOs.PaymentRequestDTO { Amount = 100m }));
-        Assert.That(ex.Message, Does.Contain("has already been paid"));
+        Assert.That(ex.Message, Does.Contain("already completed"));
     }
 
     [Test]
@@ -291,7 +294,7 @@ public class BillingServiceTests
         _mockBookingRepo.Setup(r => r.GetBookingWithDetailsAsync(1)).ReturnsAsync(booking);
 
         var ex = Assert.ThrowsAsync<InvalidOperationException>(() => _billingService.ProcessPaymentAsync(1, new HotelManagement.BLL.DTOs.PaymentRequestDTO { Amount = 50m, PaymentMethod = "Card", TransactionId = "123" }));
-        Assert.That(ex.Message, Does.Contain("Payment amount (50) does not match the total amount due"));
+        Assert.That(ex.Message, Does.Contain("Payment amount (50) does not match room & amenity total"));
     }
 
     [Test]
@@ -465,6 +468,78 @@ public class BillingServiceTests
     {
         var requestDto = new HotelManagement.BLL.DTOs.PaymentRequestDTO { Amount = 0 };
         var ex = Assert.ThrowsAsync<ArgumentException>(() => _billingService.ProcessPaymentAsync(1, requestDto));
+        Assert.That(ex.Message, Does.Contain("must be greater than zero"));
+    }
+
+    [Test]
+    public void ProcessServicePaymentAsync_ShouldThrow_IfBookingNotFound()
+    {
+        _mockBookingRepo.Setup(r => r.GetByIdAsync(99)).ReturnsAsync((Booking?)null);
+        var ex = Assert.ThrowsAsync<KeyNotFoundException>(() => _billingService.ProcessServicePaymentAsync(99, new PaymentRequestDTO { Amount = 50m }));
+        Assert.That(ex.Message, Does.Contain("Booking not found"));
+    }
+
+    [Test]
+    public void ProcessServicePaymentAsync_ShouldThrow_IfAlreadyPaid()
+    {
+        var booking = new Booking { Id = 1, ServicePaymentStatus = PaymentStatus.Paid };
+        _mockBookingRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(booking);
+        var ex = Assert.ThrowsAsync<InvalidOperationException>(() => _billingService.ProcessServicePaymentAsync(1, new PaymentRequestDTO { Amount = 50m }));
+        Assert.That(ex.Message, Does.Contain("already completed"));
+    }
+
+    [Test]
+    public async Task ProcessServicePaymentAsync_ShouldProcessSuccessfully()
+    {
+        var booking = new Booking
+        {
+            Id = 1,
+            ServicePaymentStatus = PaymentStatus.Pending,
+            BookingRooms = new List<BookingRoom> { new BookingRoom { LockedInPrice = 100m } },
+            CheckInDate = DateTime.UtcNow,
+            CheckOutDate = DateTime.UtcNow.AddDays(1),
+            FoodOrders = new List<FoodOrder>
+            {
+                new FoodOrder { OrderItems = new List<FoodOrderItem> { new FoodOrderItem { Quantity = 1, PriceAtPurchase = 50m, MenuItem = new MenuItem { Name = "Pizza" } } } }
+            },
+            BookingAmenities = new List<BookingAmenity>()
+        };
+        _mockBookingRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(booking);
+        _mockBookingRepo.Setup(r => r.GetBookingWithDetailsAsync(1)).ReturnsAsync(booking);
+
+        await _billingService.ProcessServicePaymentAsync(1, new PaymentRequestDTO { Amount = 50m, PaymentMethod = "Cash", TransactionId = "SVC001" });
+
+        Assert.That(booking.ServicePaymentStatus, Is.EqualTo(PaymentStatus.Paid));
+        _mockBookingRepo.Verify(r => r.Update(booking), Times.Once);
+        _mockBookingRepo.Verify(r => r.SaveChangesAsync(), Times.Once);
+        _mockReceiptRepo.Verify(r => r.AddAsync(It.IsAny<Receipt>()), Times.Once);
+        _mockReceiptRepo.Verify(r => r.SaveChangesAsync(), Times.Once);
+    }
+
+    [Test]
+    public void ProcessServicePaymentAsync_ShouldThrow_IfAmountMismatch()
+    {
+        var booking = new Booking
+        {
+            Id = 1,
+            ServicePaymentStatus = PaymentStatus.Pending,
+            BookingRooms = new List<BookingRoom> { new BookingRoom { LockedInPrice = 100m } },
+            CheckInDate = DateTime.UtcNow,
+            CheckOutDate = DateTime.UtcNow.AddDays(1),
+            FoodOrders = new List<FoodOrder>(),
+            BookingAmenities = new List<BookingAmenity>()
+        };
+        _mockBookingRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(booking);
+        _mockBookingRepo.Setup(r => r.GetBookingWithDetailsAsync(1)).ReturnsAsync(booking);
+
+        var ex = Assert.ThrowsAsync<InvalidOperationException>(() => _billingService.ProcessServicePaymentAsync(1, new PaymentRequestDTO { Amount = 10m }));
+        Assert.That(ex.Message, Does.Contain("does not match food total"));
+    }
+
+    [Test]
+    public void ProcessServicePaymentAsync_ShouldThrow_IfAmountIsZeroOrLess()
+    {
+        var ex = Assert.ThrowsAsync<ArgumentException>(() => _billingService.ProcessServicePaymentAsync(1, new PaymentRequestDTO { Amount = 0 }));
         Assert.That(ex.Message, Does.Contain("must be greater than zero"));
     }
 
