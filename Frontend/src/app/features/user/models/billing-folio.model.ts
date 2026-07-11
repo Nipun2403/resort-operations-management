@@ -8,6 +8,7 @@ export interface BillingFolio {
   amenityTotal: number;
   totalBill: number;
   paymentStatus: string;
+  servicePaymentStatus: string;
   foodItems: string[];
   amenityItems: string[];
 }
