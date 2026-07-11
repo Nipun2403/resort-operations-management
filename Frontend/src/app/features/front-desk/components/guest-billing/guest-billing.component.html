@@ -31,8 +31,12 @@
                 <span class="stat-value font-body-md">{{ latestBilling()!.roomTotal | currency }}</span>
               </div>
               <div class="stat-row">
-                <span class="stat-label">Status</span>
+                <span class="stat-label">Room & Amenity Payment</span>
                 <span class="stat-status-chip" [class]="latestBilling()!.paymentStatus">{{ latestBilling()!.paymentStatus }}</span>
+              </div>
+              <div class="stat-row">
+                <span class="stat-label">Food / Service Payment</span>
+                <span class="stat-status-chip" [class]="latestBilling()!.servicePaymentStatus">{{ latestBilling()!.servicePaymentStatus }}</span>
               </div>
             </div>
             
