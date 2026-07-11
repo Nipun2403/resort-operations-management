@@ -340,6 +340,9 @@ public class BookingService : IBookingService
         if (booking.BookingStatus != BookingStatus.Booked)
             throw new InvalidOperationException("Only 'Booked' bookings can be checked in.");
 
+        if (booking.PaymentStatus != PaymentStatus.Paid)
+            throw new InvalidOperationException("Cannot check in guest. Room & amenity payment has not been completed.");
+
         var today = DateTime.UtcNow.Date;
         if (booking.CheckInDate.Date != today)
         {
@@ -405,8 +408,8 @@ public class BookingService : IBookingService
         if (booking.BookingStatus == BookingStatus.CheckedOut)
             throw new InvalidOperationException("Booking is already checked out.");
 
-        if (booking.PaymentStatus != HotelManagement.DAL.Enums.PaymentStatus.Paid)
-            throw new InvalidOperationException("Cannot check out guest. The bill has not been settled.");
+        if (booking.ServicePaymentStatus != HotelManagement.DAL.Enums.PaymentStatus.Paid)
+            throw new InvalidOperationException("Cannot check out guest. Food/service bill has not been settled.");
 
         // 1. Mark as CheckedOut (triggers SignalR Housekeeping)
         await UpdateBookingStatusAsync(bookingId, BookingStatus.CheckedOut);

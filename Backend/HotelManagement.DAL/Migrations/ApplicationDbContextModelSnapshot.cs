@@ -140,6 +140,10 @@ namespace HotelManagement.DAL.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("bytea");
 
+                    b.Property<string>("ServicePaymentStatus")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int?>("UserId")
                         .HasColumnType("integer");
 

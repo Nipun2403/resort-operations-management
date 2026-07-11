@@ -46,6 +46,7 @@ public class BillingService : IBillingService
             FoodTotal = booking.FoodOrders.SelectMany(fo => fo.OrderItems).Sum(fi => fi.PriceAtPurchase * fi.Quantity),
             AmenityTotal = booking.BookingAmenities.Sum(ba => ba.PriceAtPurchase),
             PaymentStatus = booking.BookingStatus == DAL.Enums.BookingStatus.Cancelled ? (booking.PaymentStatus == DAL.Enums.PaymentStatus.Paid ? "Refunded" : "Cancelled") : booking.PaymentStatus.ToString(),
+            ServicePaymentStatus = booking.ServicePaymentStatus.ToString(),
             RoomTypeName = roomTypeNames.Count > 0 ? string.Join(" · ", roomTypeNames) : string.Empty,
             FoodItems = booking.FoodOrders.SelectMany(fo => fo.OrderItems).Select(fi => $"{fi.Quantity}x {fi.MenuItem.Name}").ToList(),
             AmenityItems = booking.BookingAmenities.Select(ba => ba.Amenity.Name).ToList()
@@ -62,13 +63,13 @@ public class BillingService : IBillingService
         if (booking == null) throw new KeyNotFoundException("Booking not found.");
 
         if (booking.PaymentStatus == DAL.Enums.PaymentStatus.Paid)
-            throw new InvalidOperationException("This booking has already been paid in full.");
+            throw new InvalidOperationException("Room & amenity payment already completed.");
 
         var folio = await GenerateFolioAsync(bookingId);
-        if (dto.Amount != folio.TotalBill)
-            throw new InvalidOperationException($"Payment amount ({dto.Amount}) does not match the total amount due ({folio.TotalBill}).");
+        var bookingAmount = folio.RoomTotal + folio.AmenityTotal;
+        if (dto.Amount != bookingAmount)
+            throw new InvalidOperationException($"Payment amount ({dto.Amount}) does not match room & amenity total ({bookingAmount}).");
 
-        // Create Receipt
         var receipt = new DAL.Entities.Receipt
         {
             BookingId = bookingId,
@@ -80,12 +81,47 @@ public class BillingService : IBillingService
         await _receiptRepository.AddAsync(receipt);
         await _receiptRepository.SaveChangesAsync();
 
-        // Update Booking
         booking.PaymentStatus = DAL.Enums.PaymentStatus.Paid;
         _bookingRepository.Update(booking);
         await _bookingRepository.SaveChangesAsync();
 
-        // Send payment receipt email (non-fatal; errors are logged inside EmailService)
+        if (!string.IsNullOrWhiteSpace(booking.GuestEmail))
+        {
+            var updatedFolio = await GenerateFolioAsync(bookingId);
+            _ = _emailService.SendPaymentReceiptAsync(updatedFolio, booking.GuestEmail, dto.TransactionId, dto.PaymentMethod);
+        }
+    }
+
+    public async Task ProcessServicePaymentAsync(int bookingId, PaymentRequestDTO dto)
+    {
+        if (dto.Amount <= 0)
+            throw new ArgumentException("Payment amount must be greater than zero.");
+
+        var booking = await _bookingRepository.GetByIdAsync(bookingId);
+        if (booking == null) throw new KeyNotFoundException("Booking not found.");
+
+        if (booking.ServicePaymentStatus == DAL.Enums.PaymentStatus.Paid)
+            throw new InvalidOperationException("Service payment already completed.");
+
+        var folio = await GenerateFolioAsync(bookingId);
+        if (dto.Amount != folio.FoodTotal)
+            throw new InvalidOperationException($"Payment amount ({dto.Amount}) does not match food total ({folio.FoodTotal}).");
+
+        var receipt = new DAL.Entities.Receipt
+        {
+            BookingId = bookingId,
+            AmountPaid = dto.Amount,
+            PaymentMethod = dto.PaymentMethod,
+            TransactionId = dto.TransactionId,
+            PaidAt = DateTime.UtcNow
+        };
+        await _receiptRepository.AddAsync(receipt);
+        await _receiptRepository.SaveChangesAsync();
+
+        booking.ServicePaymentStatus = DAL.Enums.PaymentStatus.Paid;
+        _bookingRepository.Update(booking);
+        await _bookingRepository.SaveChangesAsync();
+
         if (!string.IsNullOrWhiteSpace(booking.GuestEmail))
         {
             var updatedFolio = await GenerateFolioAsync(bookingId);
