@@ -13,6 +13,7 @@ public class HousekeepingDTO
     public string? StartedAt { get; set; }
     public string? FinishedAt { get; set; }
     public string CreatedAt { get; set; } = string.Empty;
+    public bool IsEmergency { get; set; }
 }
 
 public class CreateHousekeepingTaskDTO
@@ -20,6 +21,8 @@ public class CreateHousekeepingTaskDTO
     [Required]
     [MaxLength(500)]
     public string Description { get; set; } = string.Empty;
+
+    public bool IsEmergency { get; set; }
 }
 
 public class CreateInternalHousekeepingTaskDTO
@@ -31,6 +34,8 @@ public class CreateInternalHousekeepingTaskDTO
     [Required]
     [MaxLength(500)]
     public string Description { get; set; } = string.Empty;
+
+    public bool IsEmergency { get; set; }
 }
 
 public class UpdateHousekeepingStatusDTO

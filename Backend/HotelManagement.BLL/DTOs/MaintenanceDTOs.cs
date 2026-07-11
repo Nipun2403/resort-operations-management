@@ -13,6 +13,7 @@ public class MaintenanceTaskDTO
     public string Status { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public string CreatedAt { get; set; } = string.Empty;
+    public bool IsEmergency { get; set; }
     public string? StartedAt { get; set; }
     public string? FinishedAt { get; set; }
 }
@@ -26,6 +27,8 @@ public class CreateInternalMaintenanceTaskDTO
     [Required]
     [MaxLength(500)]
     public string Description { get; set; } = string.Empty;
+
+    public bool IsEmergency { get; set; }
 }
 
 public class CreateMaintenanceTaskDTO
@@ -33,6 +36,8 @@ public class CreateMaintenanceTaskDTO
     [Required]
     [MaxLength(500)]
     public string Description { get; set; } = string.Empty;
+
+    public bool IsEmergency { get; set; }
 }
 
 public class UpdateMaintenanceStatusDTO
