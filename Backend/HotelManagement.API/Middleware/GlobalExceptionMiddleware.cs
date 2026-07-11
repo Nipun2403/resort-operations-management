@@ -44,7 +44,7 @@ public class GlobalExceptionMiddleware
         else if (exception is UnauthorizedAccessException)
         {
             context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-            message = "You are not authorized to access this resource.";
+            message = exception.Message;
         }
         else if (exception is KeyNotFoundException)
         {

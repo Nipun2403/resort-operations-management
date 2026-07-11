@@ -138,7 +138,7 @@ public class HousekeepingService : IHousekeepingService
             var user = await _userRepository.GetByEmailAsync(email);
             if (user == null) throw new ArgumentException("User not found.");
             if (task.AssignedToUserId != user.Id)
-                throw new UnauthorizedAccessException("You can only complete your own tasks.");
+                throw new UnauthorizedAccessException("You can only edit your own assigned tasks.");
             task.AssignedToUserId = null;
         }
 
