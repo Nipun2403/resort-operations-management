@@ -47,6 +47,7 @@ export class HousekeepingDashboardComponent {
                 location: task.location || `Room ${task.roomId}`,
                 description: task.description || 'No description provided.',
                 createdAt: task.createdAt,
+                isEmergency: task.isEmergency,
                 raw: task,
               } as Task)
           ),
