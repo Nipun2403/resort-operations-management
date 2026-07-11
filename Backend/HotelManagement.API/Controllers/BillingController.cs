@@ -134,7 +134,11 @@ public class BillingController : ControllerBase
 
         try
         {
-            await _billingService.ProcessPaymentAsync(bookingId, request);
+            if (string.Equals(request.PaymentType, "Service", StringComparison.OrdinalIgnoreCase))
+                await _billingService.ProcessServicePaymentAsync(bookingId, request);
+            else
+                await _billingService.ProcessPaymentAsync(bookingId, request);
+
             return Ok(new { Message = "Payment processed successfully.", BookingId = bookingId });
         }
         catch (InvalidOperationException ex)
