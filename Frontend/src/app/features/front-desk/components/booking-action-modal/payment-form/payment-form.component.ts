@@ -32,6 +32,7 @@ import { AlertComponent } from '../../../../auth/components/alert.component';
 export class PaymentFormComponent implements OnInit {
   bookingId = input.required<number>();
   amountDue = input.required<number>();
+  paymentType = input<string>('Booking');
   paymentComplete = output<void>();
 
   paymentForm = new FormGroup({
@@ -67,7 +68,7 @@ export class PaymentFormComponent implements OnInit {
     this.submitting.set(true);
     this.error.set(null);
 
-    const dto = this.paymentForm.getRawValue();
+    const dto = { ...this.paymentForm.getRawValue(), paymentType: this.paymentType() };
     this.billingApi
       .pay(this.bookingId(), dto)
       .pipe(

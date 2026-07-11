@@ -42,6 +42,11 @@ export class CheckoutDialogComponent implements OnInit {
   error = signal<string | null>(null);
   bookingId = signal<number>(this.data.bookingId);
 
+  get servicePending(): boolean {
+    const b = this.billDetails();
+    return !!b && b.servicePaymentStatus === 'Pending' && b.foodTotal > 0;
+  }
+
   ngOnInit(): void {
     this.loadBill();
   }

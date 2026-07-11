@@ -8,17 +8,18 @@
     } @else if (billDetails()) {
       <div class="bill-summary">
         <p><strong>Guest:</strong> {{ billDetails().guestName }}</p>
-        <p><strong>Total Bill:</strong> {{ billDetails().totalBill | currency }}</p>
-        <p><strong>Payment Status:</strong> {{ billDetails().paymentStatus }}</p>
+        <p><strong>Room & Amenity Amount:</strong> {{ (billDetails().roomTotal + billDetails().amenityTotal) | currency }}</p>
+        <p><strong>Food Total:</strong> {{ billDetails().foodTotal | currency }}</p>
+        <p><strong>Service Payment:</strong> {{ billDetails().servicePaymentStatus }}</p>
       </div>
       <div class="actions" style="margin-top: 24px; display: flex; gap: 12px;">
-        @if (billDetails().paymentStatus === 'Pending') {
+        @if (servicePending) {
           <button
             mat-raised-button
             color="primary"
             (click)="step.set('payment')"
           >
-            Proceed to Payment
+            Pay Food Bill ({{ billDetails().foodTotal | currency }})
           </button>
         } @else {
           <button
@@ -38,7 +39,8 @@
   @if (step() === 'payment') {
     <app-payment-form
       [bookingId]="bookingId()"
-      [amountDue]="billDetails()?.totalBill ?? 0"
+      [amountDue]="billDetails()?.foodTotal ?? 0"
+      paymentType="Service"
       (paymentComplete)="onPaymentComplete()"
     />
   }
