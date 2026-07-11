@@ -21,6 +21,7 @@ import { Task, TaskDashboardConfig } from '../../models/task.model';
 import { AlertComponent } from '../../../features/auth/components/alert.component';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { TaskDetailDialogComponent } from './task-detail-dialog.component';
+import { NotificationSnackbarComponent } from '../notification-snackbar/notification-snackbar.component';
 
 @Component({
   selector: 'app-task-dashboard',
@@ -41,6 +42,7 @@ import { TaskDetailDialogComponent } from './task-detail-dialog.component';
     MatDialogModule,
     MatSnackBarModule,
     AlertComponent,
+    NotificationSnackbarComponent,
   ],
   templateUrl: './task-dashboard.component.html',
   styleUrls: ['./task-dashboard.component.scss'],
@@ -228,29 +230,40 @@ export class TaskDashboardComponent {
             )
             .subscribe({
               next: () => {
-                this.snackBar.open('Task status updated successfully.', 'Close', { duration: 3000 });
+                this.showSnackbar('SUCCESS', 'Task status updated successfully.');
                 this.fetchData();
                 this.refreshSummaryCounts();
               },
               error: (err) => {
-                this.snackBar.open(
-                  'Failed to update task status: ' + (err.error?.message || err.message),
-                  'Close',
-                  { duration: 5000 }
-                );
+                const msg = err.error?.message || '';
+                if (msg.includes('own tasks')) {
+                  this.showSnackbar('ERROR', 'This task belongs to another staff member and cannot be completed by you.');
+                } else {
+                  this.showSnackbar('ERROR', 'Failed to update task status: ' + (msg || err.message));
+                }
               },
             });
         }
       });
   }
 
-  toggleMyTasks(): void {
-    this.showMyTasks.update(v => !v);
+  setMyTasksFilter(show: boolean): void {
+    this.showMyTasks.set(show);
     this.pageIndex.set(0);
     this.fetchData();
   }
 
   private extractErrorMessage(err: any): string {
     return err?.error?.message || err?.message || 'An unexpected error occurred.';
+  }
+
+  private showSnackbar(title: string, message: string): void {
+    this.snackBar.openFromComponent(NotificationSnackbarComponent, {
+      data: { title, message },
+      duration: 5000,
+      horizontalPosition: 'right',
+      verticalPosition: 'top',
+      panelClass: 'notification-snackbar',
+    });
   }
 }
