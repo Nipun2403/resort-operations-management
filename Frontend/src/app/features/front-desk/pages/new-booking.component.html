@@ -175,6 +175,9 @@
             <button type="button" class="btn-underline" matStepperPrevious>Previous</button>
             <button class="btn-gold-outline" matStepperNext [disabled]="totalSelectedQuantity() === 0 || capacityWarning()">Select Amenities</button>
           </div>
+          @if (nights() > 0 && totalSelectedQuantity() > 0) {
+          <p class="subtotal-inline">Room subtotal: {{ estimatedTotal() | currency }} · {{ nights() }} {{ nights() === 1 ? 'night' : 'nights' }}</p>
+          }
         }
       </form>
     </mat-step>
@@ -215,6 +218,9 @@
             <button type="button" class="btn-underline" matStepperPrevious>Previous</button>
             <button class="btn-gold-outline" matStepperNext>Review Registry</button>
           </div>
+          @if (estimatedTotal() > 0) {
+          <p class="subtotal-inline">Estimated: {{ estimatedTotal() | currency }}</p>
+          }
         }
       </form>
     </mat-step>

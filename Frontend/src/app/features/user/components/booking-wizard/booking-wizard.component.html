@@ -147,6 +147,9 @@
           Next
         </button>
       </div>
+      @if (nights() > 0 && totalSelectedQuantity() > 0) {
+      <p class="subtotal-inline">Room subtotal: {{ estimatedTotal() | currency }} · {{ nights() }} {{ nights() === 1 ? 'night' : 'nights' }}</p>
+      }
     </form>
     }
   </mat-step>
@@ -192,6 +195,9 @@
           Next
         </button>
       </div>
+      @if (estimatedTotal() > 0) {
+      <p class="subtotal-inline">Estimated: {{ estimatedTotal() | currency }}</p>
+      }
     </form>
     }
   </mat-step>

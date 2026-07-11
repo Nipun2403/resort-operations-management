@@ -785,6 +785,15 @@
   }
 }
 
+.subtotal-inline {
+  text-align: right;
+  font-size: 13px;
+  color: var(--color-secondary);
+  margin-top: -36px;
+  margin-bottom: 24px;
+  letter-spacing: 0.5px;
+}
+
 .warning-alert {
   display: flex;
   align-items: center;
