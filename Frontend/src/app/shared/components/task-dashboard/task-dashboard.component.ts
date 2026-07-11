@@ -70,7 +70,7 @@ export class TaskDashboardComponent {
   summaryCards = signal<{ status: string; label: string; count: number }[]>([]);
 
   // Table columns
-  displayedColumns = ['id', 'location', 'description', 'status', 'actions'];
+  displayedColumns = ['id', 'location', 'description', 'status', 'isEmergency', 'actions'];
 
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
