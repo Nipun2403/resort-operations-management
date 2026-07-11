@@ -56,7 +56,11 @@ public class MaintenanceService : IMaintenanceService
         Func<IQueryable<MaintenanceTask>, IOrderedQueryable<MaintenanceTask>>? orderBy = null;
         if (!string.IsNullOrEmpty(sortBy))
         {
-            orderBy = q => q.OrderByDynamic(sortBy, sortDescending);
+            orderBy = q => q.OrderByDescending(t => t.IsEmergency).ThenByDynamic(sortBy, sortDescending);
+        }
+        else
+        {
+            orderBy = q => q.OrderByDescending(t => t.IsEmergency).ThenBy(t => t.CreatedAt);
         }
 
         System.Linq.Expressions.Expression<Func<MaintenanceTask, bool>>? filter = null;
@@ -103,7 +107,11 @@ public class MaintenanceService : IMaintenanceService
         Func<IQueryable<MaintenanceTask>, IOrderedQueryable<MaintenanceTask>>? orderBy = null;
         if (!string.IsNullOrEmpty(sortBy))
         {
-            orderBy = q => q.OrderByDynamic(sortBy, sortDescending);
+            orderBy = q => q.OrderByDescending(t => t.IsEmergency).ThenByDynamic(sortBy, sortDescending);
+        }
+        else
+        {
+            orderBy = q => q.OrderByDescending(t => t.IsEmergency).ThenBy(t => t.CreatedAt);
         }
 
         System.Linq.Expressions.Expression<Func<MaintenanceTask, bool>>? filter = null;
@@ -183,7 +191,8 @@ public class MaintenanceService : IMaintenanceService
             Location = $"Room {roomExists.RoomNumber}",
             OriginType = originType,
             Status = MaintenanceStatus.Pending,
-            Description = dto.Description
+            Description = dto.Description,
+            IsEmergency = dto.IsEmergency
         };
 
         await _maintenanceRepository.AddAsync(task);
@@ -207,7 +216,8 @@ public class MaintenanceService : IMaintenanceService
             Location = dto.Location,
             OriginType = MaintenanceOriginType.StaffRequested,
             Status = MaintenanceStatus.Pending,
-            Description = dto.Description
+            Description = dto.Description,
+            IsEmergency = dto.IsEmergency
         };
 
         await _maintenanceRepository.AddAsync(task);

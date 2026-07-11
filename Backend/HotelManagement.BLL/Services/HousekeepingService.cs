@@ -80,7 +80,8 @@ public class HousekeepingService : IHousekeepingService
             Location = $"Room {roomExists.RoomNumber}",
             OriginType = HousekeepingOriginType.GuestRequested, 
             Status = HousekeepingStatus.Pending,
-            Description = dto.Description 
+            Description = dto.Description,
+            IsEmergency = dto.IsEmergency
         };
         await _housekeepingRepository.AddAsync(task);
         await _housekeepingRepository.SaveChangesAsync();
@@ -99,7 +100,8 @@ public class HousekeepingService : IHousekeepingService
             Location = dto.Location,
             Description = dto.Description,
             OriginType = HousekeepingOriginType.StaffRequested, 
-            Status = HousekeepingStatus.Pending 
+            Status = HousekeepingStatus.Pending,
+            IsEmergency = dto.IsEmergency
         };
         
         await _housekeepingRepository.AddAsync(task);
@@ -139,7 +141,11 @@ public class HousekeepingService : IHousekeepingService
         Func<IQueryable<Housekeeping>, IOrderedQueryable<Housekeeping>>? orderBy = null;
         if (!string.IsNullOrEmpty(sortBy))
         {
-            orderBy = q => q.OrderByDynamic(sortBy, sortDescending);
+            orderBy = q => q.OrderByDescending(t => t.IsEmergency).ThenByDynamic(sortBy, sortDescending);
+        }
+        else
+        {
+            orderBy = q => q.OrderByDescending(t => t.IsEmergency).ThenBy(t => t.CreatedAt);
         }
 
         System.Linq.Expressions.Expression<Func<Housekeeping, bool>>? filter = null;
@@ -185,7 +191,11 @@ public class HousekeepingService : IHousekeepingService
         Func<IQueryable<Housekeeping>, IOrderedQueryable<Housekeeping>>? orderBy = null;
         if (!string.IsNullOrEmpty(sortBy))
         {
-            orderBy = q => q.OrderByDynamic(sortBy, sortDescending);
+            orderBy = q => q.OrderByDescending(t => t.IsEmergency).ThenByDynamic(sortBy, sortDescending);
+        }
+        else
+        {
+            orderBy = q => q.OrderByDescending(t => t.IsEmergency).ThenBy(t => t.CreatedAt);
         }
 
         System.Linq.Expressions.Expression<Func<Housekeeping, bool>>? filter = null;
