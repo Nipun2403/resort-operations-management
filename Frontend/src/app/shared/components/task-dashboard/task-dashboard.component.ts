@@ -247,6 +247,10 @@ export class TaskDashboardComponent {
       });
   }
 
+  toggleMyTasks(): void {
+    this.setMyTasksFilter(!this.showMyTasks());
+  }
+
   setMyTasksFilter(show: boolean): void {
     this.showMyTasks.set(show);
     this.pageIndex.set(0);
