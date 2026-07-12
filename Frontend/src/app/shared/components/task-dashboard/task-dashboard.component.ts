@@ -42,7 +42,6 @@ import { NotificationSnackbarComponent } from '../notification-snackbar/notifica
     MatDialogModule,
     MatSnackBarModule,
     AlertComponent,
-    NotificationSnackbarComponent,
   ],
   templateUrl: './task-dashboard.component.html',
   styleUrls: ['./task-dashboard.component.scss'],
