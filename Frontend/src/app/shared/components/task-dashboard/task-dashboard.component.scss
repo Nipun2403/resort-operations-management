@@ -78,12 +78,51 @@
     margin-top: 16px;
     border-bottom: 1px solid rgba(228, 194, 133, 0.1);
     padding-bottom: 12px;
+    gap: 12px;
 
     .table-title {
       @include font-headline-sm;
       font-size: 20px;
       color: var(--color-secondary);
       margin: 0;
+    }
+
+    .toggle-switch {
+      display: flex;
+      background-color: var(--color-surface-container);
+      padding: 4px;
+      border: 1px solid rgba(228, 194, 133, 0.1);
+      box-sizing: border-box;
+      max-width: fit-content;
+    }
+
+    .toggle-switch__btn {
+      background: transparent;
+      border: none;
+      color: var(--color-on-surface-variant);
+      padding: 8px 24px;
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      outline: none;
+      white-space: nowrap;
+
+      &:hover {
+        color: var(--color-secondary);
+      }
+
+      &--active {
+        background-color: rgba(93, 69, 20, 0.4);
+        color: #ffdea4;
+
+        &:hover {
+          color: #ffdea4;
+        }
+      }
     }
 
     .filter-bar {

@@ -19,9 +19,14 @@
   <div class="table-header-row">
     <h3 class="table-title">Active {{ config().entityName }}s</h3>
 
-    <button mat-button (click)="toggleMyTasks()" [class.active]="showMyTasks()">
-      {{ showMyTasks() ? 'My Tasks (' + data().length + '/2)' : 'All Tasks' }}
-    </button>
+    <div class="toggle-switch">
+      <button class="toggle-switch__btn" [class.toggle-switch__btn--active]="!showMyTasks()" (click)="setMyTasksFilter(false)">
+        All Tasks
+      </button>
+      <button class="toggle-switch__btn" [class.toggle-switch__btn--active]="showMyTasks()" (click)="setMyTasksFilter(true)">
+        My Tasks@if (showMyTasks()) { ({{ data().length }}/2) }
+      </button>
+    </div>
     
     <!-- Status Filter Dropdown -->
     <div class="filter-bar">
