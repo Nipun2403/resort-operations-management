@@ -332,7 +332,7 @@ export class FrontDeskBookingWizardComponent {
     ).subscribe({
       next: (booking) => {
         const successRef = this.dialog.open(SuccessDialogComponent, {
-          data: { bookingId: booking.id, guestName: booking.guestName },
+          data: { bookingId: booking.id, guestName: booking.guestName, guestEmail: booking.guestEmail, origin: booking.origin },
           width: '400px',
         });
         successRef.afterClosed().subscribe(() => {

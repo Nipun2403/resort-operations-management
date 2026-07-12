@@ -16,6 +16,12 @@ import { BookingApiService } from '../../../../features/user/services/booking-ap
     <h2 mat-dialog-title>Booking Created</h2>
     <mat-dialog-content>
       <p>Booking #{{ data.bookingId }} for {{ data.guestName }} has been created.</p>
+      @if (data.origin === 'WalkIn' && data.guestEmail) {
+        <p>
+          <strong>Walk-in guest registered.</strong> Login email: <strong>{{ data.guestEmail }}</strong>, temporary password: <strong>{{ data.guestEmail.split('@')[0] }}</strong>.
+          Ask the guest to change their password on first login.
+        </p>
+      }
       <p>Would you like to check in now?</p>
     </mat-dialog-content>
     <mat-dialog-actions align="end">
@@ -28,7 +34,7 @@ import { BookingApiService } from '../../../../features/user/services/booking-ap
   `
 })
 export class SuccessDialogComponent {
-  data: { bookingId: number; guestName: string } = inject(MAT_DIALOG_DATA);
+  data: { bookingId: number; guestName: string; guestEmail?: string; origin?: string } = inject(MAT_DIALOG_DATA);
   private dialogRef = inject(MatDialogRef<SuccessDialogComponent>);
   private bookingApi = inject(BookingApiService);
   private snackBar = inject(MatSnackBar);

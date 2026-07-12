@@ -113,6 +113,29 @@ public class BookingService : IBookingService
 
             if (string.IsNullOrWhiteSpace(guestName) || guestName.Length < 2)
                 throw new ArgumentException("Guest name is required and must be at least 2 characters long.");
+
+            var existingUser = await _userRepository.GetByEmailAsync(guestEmail);
+            if (existingUser != null)
+            {
+                userId = existingUser.Id;
+            }
+            else
+            {
+                var emailLocalPart = guestEmail.Split('@')[0];
+                var nameParts = guestName.Split(' ', 2);
+                var walkinUser = new User
+                {
+                    Email = guestEmail,
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(emailLocalPart),
+                    FirstName = nameParts[0],
+                    LastName = nameParts.Length > 1 ? nameParts[1] : "",
+                    Role = "RegisteredUser"
+                };
+                await _userRepository.AddAsync(walkinUser);
+                await _userRepository.SaveChangesAsync();
+                userId = walkinUser.Id;
+            }
+            origin = BookingOrigin.WalkIn;
         }
 
         if (origin == BookingOrigin.RegisteredUser && !string.IsNullOrEmpty(guestEmail))
