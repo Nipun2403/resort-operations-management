@@ -15,6 +15,7 @@ public class Housekeeping
     public string? Description { get; set; }
 
     public HousekeepingOriginType OriginType { get; set; }
+    [ConcurrencyCheck]
     public HousekeepingStatus Status { get; set; }
     public DateTime? StartedAt { get; set; }
     public DateTime? FinishedAt { get; set; }

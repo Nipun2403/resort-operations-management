@@ -6,6 +6,7 @@ using HotelManagement.DAL.Enums;
 using HotelManagement.Repository.Interfaces;
 using HotelManagement.Repository.Models;
 using HotelManagement.Repository.Utilities;
+using Microsoft.EntityFrameworkCore;
 
 namespace HotelManagement.BLL.Services;
 
@@ -145,8 +146,15 @@ public class HousekeepingService : IHousekeepingService
         task.Status = status;
         if (status == HousekeepingStatus.InProgress) task.StartedAt = DateTime.UtcNow;
         if (status == HousekeepingStatus.Completed) task.FinishedAt = DateTime.UtcNow;
-        _housekeepingRepository.Update(task);
-        await _housekeepingRepository.SaveChangesAsync();
+        try
+        {
+            _housekeepingRepository.Update(task);
+            await _housekeepingRepository.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            throw new InvalidOperationException("This task was just claimed by another staff member. Please refresh and try again.");
+        }
     }
 
     public async Task<PaginatedResult<HousekeepingDTO>> GetAllAsync(int pageNumber, int pageSize, string? status = null, string? sortBy = null, bool sortDescending = false, bool assignedToMe = false)

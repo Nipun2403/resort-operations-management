@@ -15,6 +15,7 @@ public class MaintenanceTask
     public string? Location { get; set; }
 
     public MaintenanceOriginType OriginType { get; set; }
+    [ConcurrencyCheck]
     public MaintenanceStatus Status { get; set; } = MaintenanceStatus.Pending;
 
     [Required]

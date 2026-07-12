@@ -5,6 +5,7 @@ using HotelManagement.DAL.Entities;
 using HotelManagement.DAL.Enums;
 using HotelManagement.Repository.Interfaces;
 using HotelManagement.Repository.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 using HotelManagement.Repository.Utilities;
 
@@ -274,8 +275,15 @@ public class MaintenanceService : IMaintenanceService
         if (dto.Status == MaintenanceStatus.InProgress) task.StartedAt = DateTime.UtcNow;
         if (dto.Status == MaintenanceStatus.Completed) task.FinishedAt = DateTime.UtcNow;
 
-        _maintenanceRepository.Update(task);
-        await _maintenanceRepository.SaveChangesAsync();
+        try
+        {
+            _maintenanceRepository.Update(task);
+            await _maintenanceRepository.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            throw new InvalidOperationException("This task was just claimed by another staff member. Please refresh and try again.");
+        }
 
         return _mapper.Map<MaintenanceTaskDTO>(task);
     }
