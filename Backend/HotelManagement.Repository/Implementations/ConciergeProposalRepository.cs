@@ -44,16 +44,17 @@ public class ConciergeProposalRepository : IConciergeProposalRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task CleanupExpiredAsync()
+    public async Task<int> CleanupExpiredAsync(CancellationToken ct = default)
     {
         var expired = await _context.ConciergeProposals
             .Where(p => p.Status == "pending" && p.ExpiresAt < DateTime.UtcNow)
-            .ToListAsync();
+            .ToListAsync(ct);
 
         foreach (var p in expired)
         {
             p.Status = "expired";
         }
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(ct);
+        return expired.Count;
     }
 }

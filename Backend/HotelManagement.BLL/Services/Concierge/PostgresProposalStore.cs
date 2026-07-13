@@ -54,6 +54,6 @@ public class PostgresProposalStore : IProposalStore
 
     public async Task CleanupExpiredAsync(CancellationToken ct)
     {
-        await _repo.CleanupExpiredAsync();
+        await _repo.CleanupExpiredAsync(ct);
     }
 }

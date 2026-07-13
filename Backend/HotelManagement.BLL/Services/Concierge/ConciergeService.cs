@@ -1,5 +1,6 @@
 using System.Text.Json;
 using HotelManagement.BLL.DTOs;
+using HotelManagement.BLL.Exceptions;
 using HotelManagement.BLL.Interfaces;
 using HotelManagement.BLL.Options;
 using HotelManagement.DAL.Entities;
@@ -28,6 +29,8 @@ public class ConciergeService : IConciergeService
     private readonly ILogger<ConciergeService> _logger;
 
     private readonly ChatClient _chatClient;
+
+    private static readonly string[] s_invalidFoodOrderError = new[] { "Invalid food order arguments." };
 
     public ConciergeService(
         ICurrentUserService currentUser,
@@ -64,12 +67,19 @@ public class ConciergeService : IConciergeService
     public async Task<ConciergeChatResponseDTO> ProcessMessageAsync(string userMessage, string? conversationId, CancellationToken ct)
     {
         var userId = _currentUser.GetUserId() ?? 0;
-        if (userId == 0) return new ConciergeChatResponseDTO { Reply = "Please log in to use the concierge.", IsComplete = false };
+        if (userId == 0) 
+        {
+            _logger.LogWarning("Concierge chat attempted by unauthenticated user");
+            return new ConciergeChatResponseDTO { Reply = "Please log in to use the concierge.", IsComplete = false };
+        }
 
         var convId = conversationId ?? Guid.NewGuid().ToString();
         var convKey = $"concierge:conv:{userId}:{convId}";
         var historyMessages = await _conversationRepo.GetRecentAsync(userId, convKey, 16);
         var history = historyMessages.ToList();
+
+        _logger.LogInformation("Concierge chat started: user={UserId}, conv={ConvId}, messageLength={Length}", 
+            userId, convId, userMessage.Length);
 
         var context = await BuildGuestContextAsync(ct);
         var sanitized = InputSanitizer.Sanitize(userMessage);
@@ -105,6 +115,8 @@ public class ConciergeService : IConciergeService
         var toolCalls = response.ToolCalls.ToList();
         if (toolCalls.Count > ConciergeTools.MaxToolCallsPerTurn)
         {
+            _logger.LogWarning("Tool call limit exceeded: {Count} calls, truncating to {Max}", 
+                toolCalls.Count, ConciergeTools.MaxToolCallsPerTurn);
             toolCalls = toolCalls.Take(ConciergeTools.MaxToolCallsPerTurn).ToList();
         }
 
@@ -113,18 +125,26 @@ public class ConciergeService : IConciergeService
 
         foreach (var call in toolCalls)
         {
+            _logger.LogDebug("Tool call: {FunctionName}", call.FunctionName);
             if (ConciergeTools.SideEffectToolNames.Contains(call.FunctionName))
             {
                 var proposal = await CreateProposalAsync(convId, call, context, ct);
                 proposals.Add(proposal);
+                _logger.LogInformation("Created proposal: {ProposalId} for {FunctionName}", 
+                    proposal.ProposalId, call.FunctionName);
             }
             else
             {
                 var result = await ToolExecutor.ExecuteAsync(call, context, this, ct);
                 actions.Add(result);
                 await LogActionAsync(convId, userId, sanitized, call, result, ct);
+                _logger.LogInformation("Executed read-only tool: {FunctionName}, success={Success}", 
+                    call.FunctionName, result.Success);
             }
         }
+
+        _logger.LogInformation("Tool calls processed: {ToolCount}, proposals={ProposalCount}, actions={ActionCount}",
+            toolCalls.Count, proposals.Count, actions.Count);
 
         var finalMessages = new List<ChatMessage>(messages);
 
@@ -164,7 +184,12 @@ public class ConciergeService : IConciergeService
         var userId = _currentUser.GetUserId() ?? 0;
         if (userId == 0) return new ConciergeChatResponseDTO { Reply = "Please log in.", IsComplete = false };
 
+        _logger.LogInformation("Confirming proposals: user={UserId}, conv={ConversationId}, proposalCount={Count}", 
+            userId, conversationId, proposalIds.Count);
+
         var convKey = $"concierge:conv:{userId}:{conversationId}";
+
+        var actions = new List<ConciergeActionResultDTO>();
 
         var guids = proposalIds.Select(Guid.Parse).ToList();
         var proposals = await _proposalRepo.GetByIdsAsync(guids, userId, conversationId);
@@ -172,26 +197,26 @@ public class ConciergeService : IConciergeService
         var invalid = proposals.Where(p => p.Status != "pending" || p.ExpiresAt < DateTime.UtcNow).ToList();
         if (invalid.Any())
         {
-            return new ConciergeChatResponseDTO
-            {
-                Reply = "Some proposals have expired or are no longer valid. Please try again.",
-                ConversationId = conversationId,
-                IsComplete = false
-            };
+            _logger.LogWarning("Proposal validation failed: user={UserId}, conv={ConversationId}, invalidCount={Count}", 
+                userId, conversationId, invalid.Count);
+            throw new ConciergeProposalExpiredException("One or more proposals have expired or are no longer valid.");
         }
-
-        var actions = new List<ConciergeActionResultDTO>();
 
         foreach (var proposal in proposals)
         {
-            var validationError = await ValidateToolArgsAsync(proposal.ToolName, proposal.ArgumentsJson, ct);
-            if (validationError != null)
+            try
             {
+                await ValidateToolArgsAsync(proposal.ToolName, proposal.ArgumentsJson, ct);
+            }
+            catch (ConciergeValidationException ex)
+            {
+                _logger.LogWarning("Proposal validation failed: user={UserId}, tool={ToolName}, error={Error}", 
+                    userId, proposal.ToolName, ex.Message);
                 actions.Add(new ConciergeActionResultDTO
                 {
                     Action = proposal.ToolName,
                     Success = false,
-                    Error = validationError
+                    Error = ex.Message
                 });
                 continue;
             }
@@ -203,6 +228,9 @@ public class ConciergeService : IConciergeService
 
             await LogActionAsync(conversationId, userId, "(confirmed)", call, result, ct);
         }
+
+        _logger.LogInformation("Proposals confirmed: user={UserId}, conv={ConversationId}, actionsCount={Count}, successCount={SuccessCount}", 
+            userId, conversationId, actions.Count, actions.Count(a => a.Success));
 
         await _proposalRepo.MarkConfirmedAsync(proposalIds, userId, conversationId);
 
@@ -419,35 +447,45 @@ var summaryCompletion = await _chatClient.CompleteChatAsync(
         catch { return Task.FromResult("Maintenance ticket"); }
     }
 
-    private async Task<string?> ValidateToolArgsAsync(string toolName, string argsJson, CancellationToken ct)
+    private async Task ValidateToolArgsAsync(string toolName, string argsJson, CancellationToken ct)
     {
         try
         {
-            return toolName switch
-            {
-                "CreateFoodOrder" => await ValidateFoodOrderArgsAsync(argsJson, ct),
-                _ => null
-            };
+            if (toolName == "CreateFoodOrder")
+                await ValidateFoodOrderArgsAsync(argsJson, ct);
         }
         catch (JsonException)
         {
-            return $"Invalid arguments for {toolName}";
+            throw new ConciergeValidationException($"Invalid arguments for {toolName}.");
         }
     }
 
-    private async Task<string?> ValidateFoodOrderArgsAsync(string argsJson, CancellationToken ct)
+    private async Task ValidateFoodOrderArgsAsync(string argsJson, CancellationToken ct)
     {
         var args = JsonSerializer.Deserialize<CreateFoodOrderToolArgs>(argsJson);
-        if (args == null) return "Invalid food order arguments.";
+        if (args == null)
+            throw new ConciergeValidationException("Invalid food order arguments.", 
+                new Dictionary<string, string[]> { ["items"] = s_invalidFoodOrderError });
+
+        var errors = new Dictionary<string, string[]>();
+        var itemErrors = new List<string>();
 
         foreach (var item in args.Items)
         {
             var menuItem = await _menuItemRepository.GetByIdAsync(item.MenuItemId);
-            if (menuItem == null) return $"Menu item #{item.MenuItemId} not found.";
-            if (!menuItem.IsAvailable) return $"'{menuItem.Name}' is currently unavailable.";
+            if (menuItem == null)
+                itemErrors.Add($"Menu item #{item.MenuItemId} not found.");
+            else if (!menuItem.IsAvailable)
+                itemErrors.Add($"'{menuItem.Name}' is currently unavailable.");
         }
 
-        return null;
+        if (itemErrors.Count > 0)
+        {
+            errors["items"] = itemErrors.ToArray();
+        }
+
+        if (errors.Count > 0)
+            throw new ConciergeValidationException("Food order validation failed.", errors);
     }
 
     private async Task LogActionAsync(string conversationId, int userId, string userMessage, ChatToolCall call, ConciergeActionResultDTO result, CancellationToken ct)

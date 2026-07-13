@@ -1,8 +1,8 @@
-<div class="concierge-chat" style="display:flex;flex-direction:column;height:100%;">
+<div class="concierge-chat" style="display:flex;flex-direction:column;height:100%;" role="log" aria-live="polite" aria-label="Concierge conversation">
   <!-- Context Bar -->
   @if (context(); as ctx) {
     <mat-card class="context-bar" appearance="outlined">
-      <mat-chip-set>
+      <mat-chip-set aria-label="Guest context">
         @if (ctx.bookingId) {
           <mat-chip>Booking #{{ ctx.bookingId }}</mat-chip>
         }
@@ -17,10 +17,12 @@
   }
 
   <!-- Messages -->
-  <div #messagesContainer class="messages" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;">
+  <div #messagesContainer class="messages" 
+       style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;">
     @for (msg of messages(); track $index) {
       <div class="message" [class]="'message-' + msg.role"
-           [style.align-self]="msg.role === 'user' ? 'flex-end' : 'flex-start'">
+           [style.align-self]="msg.role === 'user' ? 'flex-end' : 'flex-start'"
+           role="article" [attr.aria-label]="msg.role + ' message'">
         <div class="bubble"
              [style.background]="msg.role === 'user' ? 'var(--mat-sys-primary)' : 'var(--mat-sys-surface-variant)'"
              [style.color]="msg.role === 'user' ? 'var(--mat-sys-on-primary)' : 'var(--mat-sys-on-surface-variant)'">
@@ -31,15 +33,26 @@
             <div class="proposals" style="margin-top:8px;border:1px solid var(--mat-sys-outline);border-radius:8px;padding:12px;">
               <strong>Proposed actions:</strong>
               @for (prop of msg.proposals; track prop.proposalId) {
-                <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+                <div class="proposal-item" style="display:flex;align-items:center;gap:8px;margin-top:8px;padding:8px;background:var(--mat-sys-surface-container);border-radius:4px;">
                   <mat-icon color="primary">info</mat-icon>
                   <span>{{ prop.summary }}</span>
+                  <span class="countdown" style="margin-left:auto;font-size:12px;color:var(--mat-sys-on-surface-variant);">
+                    {{ formatTimeRemaining(getTimeRemaining(prop)) }}
+                  </span>
+                  <button mat-icon-button (click)="dismissProposal(prop.proposalId)" 
+                          [disabled]="loading()"
+                          aria-label="Dismiss proposal"
+                          style="margin-left:8px;">
+                    <mat-icon>close</mat-icon>
+                  </button>
                 </div>
               }
-              <button mat-flat-button color="primary" (click)="confirmProposals()"
-                      [disabled]="loading()" style="margin-top:8px;">
-                Confirm & Execute
-              </button>
+              <div style="margin-top:8px;display:flex;gap:8px;">
+                <button mat-flat-button color="primary" (click)="confirmProposals()"
+                        [disabled]="loading()" aria-label="Confirm and execute proposed actions">
+                  Confirm & Execute
+                </button>
+              </div>
             </div>
           }
 
@@ -48,7 +61,7 @@
             <div class="actions" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px;">
               @for (action of msg.actions; track action.toolCallId) {
                 <mat-chip [color]="action.success ? 'primary' : 'warn'" size="small">
-                  {{ action.success ? '' : '' }} {{ action.resultSummary || action.error }}
+                  {{ action.resultSummary || action.error }}
                 </mat-chip>
               }
             </div>
@@ -59,13 +72,20 @@
         </div>
       </div>
     }
+    @if (loading()) {
+      <div class="message message-assistant thinking" style="align-self:flex-start;opacity:0.7;">
+        <div class="bubble" style="background:var(--mat-sys-surface-variant);color:var(--mat-sys-on-surface-variant);">
+          <mat-spinner diameter="20" style="margin:8px auto;"></mat-spinner>
+        </div>
+      </div>
+    }
   </div>
 
   <!-- Quick Actions -->
   <div class="quick-actions" style="padding:16px;display:flex;flex-wrap:wrap;gap:8px;border-top:1px solid var(--mat-sys-outline-variant);">
     @for (action of quickActions; track action.label) {
-      <button mat-stroked-button (click)="useQuickAction(action.prompt)" [disabled]="loading()"
-              style="font-size:13px;height:32px;">
+      <button mat-stroked-button (click)="useQuickAction(action.prompt)" [disabled]="loading() || pendingProposals().length > 0"
+              style="font-size:13px;height:32px;" aria-label="Quick action: {{ action.label }}">
         {{ action.label }}
       </button>
     }
@@ -76,8 +96,11 @@
     <mat-form-field appearance="outline" style="width:100%;" [class.hidden]="loading()">
       <mat-label>Ask me anything...</mat-label>
       <input matInput [formControl]="messageControl" (keydown.enter)="sendMessage()"
-             placeholder="e.g., 'I'd like a burger and extra towels'">
-      <button mat-icon-button matSuffix (click)="sendMessage()" [disabled]="messageControl.invalid || loading() || pendingProposals().length > 0">
+             placeholder="e.g., 'I'd like a burger and extra towels'"
+             aria-label="Your message to the concierge">
+      <button mat-icon-button matSuffix (click)="sendMessage()" 
+              [disabled]="messageControl.invalid || loading() || pendingProposals().length > 0"
+              aria-label="Send message">
         <mat-icon>send</mat-icon>
       </button>
     </mat-form-field>

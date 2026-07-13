@@ -4,6 +4,7 @@ using HotelManagement.BLL.Services.Concierge;
 using HotelManagement.API.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using HotelManagement.BLL.Exceptions;
 
 namespace HotelManagement.API.Controllers;
 
@@ -23,13 +24,31 @@ public class ConciergeController : ControllerBase
         CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(request.Message))
-            return BadRequest("Message is required.");
+            return BadRequest(new ConciergeErrorResponseDTO
+            {
+                ErrorCode = "VALIDATION_ERROR",
+                Message = "Message is required.",
+                TraceId = HttpContext.TraceIdentifier
+            });
 
         // Inline sanitization
         var sanitized = InputSanitizer.Sanitize(request.Message);
 
-        var response = await _concierge.ProcessMessageAsync(sanitized, request.ConversationId, ct);
-        return Ok(response);
+        try
+        {
+            var response = await _concierge.ProcessMessageAsync(sanitized, request.ConversationId, ct);
+            return Ok(response);
+        }
+        catch (ConciergeValidationException ex)
+        {
+            return BadRequest(new ConciergeErrorResponseDTO
+            {
+                ErrorCode = "VALIDATION_ERROR",
+                Message = ex.Message,
+                Details = ex.Errors,
+                TraceId = HttpContext.TraceIdentifier
+            });
+        }
     }
 
     [HttpPost("confirm")]
@@ -39,12 +58,53 @@ public class ConciergeController : ControllerBase
         CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(request.ConversationId))
-            return BadRequest("ConversationId is required.");
+            return BadRequest(new ConciergeErrorResponseDTO
+            {
+                ErrorCode = "VALIDATION_ERROR",
+                Message = "ConversationId is required.",
+                TraceId = HttpContext.TraceIdentifier
+            });
         if (request.ProposalIds == null || request.ProposalIds.Count == 0)
-            return BadRequest("At least one proposal ID is required.");
+            return BadRequest(new ConciergeErrorResponseDTO
+            {
+                ErrorCode = "VALIDATION_ERROR",
+                Message = "At least one proposal ID is required.",
+                TraceId = HttpContext.TraceIdentifier
+            });
 
-        var response = await _concierge.ConfirmProposalsAsync(request.ConversationId, request.ProposalIds, ct);
-        return Ok(response);
+        try
+        {
+            var response = await _concierge.ConfirmProposalsAsync(request.ConversationId, request.ProposalIds, ct);
+            return Ok(response);
+        }
+        catch (ConciergeValidationException ex)
+        {
+            return BadRequest(new ConciergeErrorResponseDTO
+            {
+                ErrorCode = "VALIDATION_ERROR",
+                Message = ex.Message,
+                Details = ex.Errors,
+                TraceId = HttpContext.TraceIdentifier
+            });
+        }
+        catch (ConciergeProposalExpiredException)
+        {
+            return BadRequest(new ConciergeErrorResponseDTO
+            {
+                ErrorCode = "PROPOSAL_EXPIRED",
+                Message = "One or more proposals have expired. Please try again.",
+                TraceId = HttpContext.TraceIdentifier
+            });
+        }
+        catch (ConciergeProposalNotFoundException)
+        {
+            return NotFound(new ConciergeErrorResponseDTO
+            {
+                ErrorCode = "PROPOSAL_NOT_FOUND",
+                Message = "One or more proposals not found.",
+                TraceId = HttpContext.TraceIdentifier
+            });
+        }
     }
 
     [HttpGet("proposals")]
@@ -52,8 +112,20 @@ public class ConciergeController : ControllerBase
         [FromQuery] string conversationId,
         CancellationToken ct)
     {
-        var proposals = await _concierge.GetPendingProposalsAsync(conversationId, ct);
-        return Ok(proposals);
+        try
+        {
+            var proposals = await _concierge.GetPendingProposalsAsync(conversationId, ct);
+            return Ok(proposals);
+        }
+        catch (ConciergeProposalNotFoundException)
+        {
+            return NotFound(new ConciergeErrorResponseDTO
+            {
+                ErrorCode = "PROPOSAL_NOT_FOUND",
+                Message = "No pending proposals found.",
+                TraceId = HttpContext.TraceIdentifier
+            });
+        }
     }
 
     [HttpGet("context")]

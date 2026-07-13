@@ -73,3 +73,11 @@ public class ConversationTurn
     public string AssistantReply { get; set; } = "";
     public DateTime Timestamp { get; set; } = DateTime.UtcNow;
 }
+
+public class ConciergeErrorResponseDTO
+{
+    public string ErrorCode { get; set; } = string.Empty;
+    public string Message { get; set; } = string.Empty;
+    public Dictionary<string, string[]>? Details { get; set; }
+    public string? TraceId { get; set; }
+}

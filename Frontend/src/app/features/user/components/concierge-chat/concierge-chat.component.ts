@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit, DestroyRef, ViewChild, ElementRef } from '@angular/core';
+import { Component, inject, signal, OnInit, OnDestroy, DestroyRef, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs/operators';
 
@@ -30,15 +31,17 @@ interface ChatMessage {
   imports: [
     CommonModule, ReactiveFormsModule,
     MatInputModule, MatButtonModule, MatIconModule,
-    MatProgressSpinnerModule, MatCardModule, MatChipsModule
+    MatProgressSpinnerModule, MatCardModule, MatChipsModule,
+    MatSnackBarModule
   ],
   templateUrl: './concierge-chat.component.html',
   styleUrls: ['./concierge-chat.component.scss']
 })
-export class ConciergeChatComponent implements OnInit {
+export class ConciergeChatComponent implements OnInit, OnDestroy {
   private readonly api = inject(ConciergeApiService);
-  private readonly auth: AuthService = inject(AuthService);
+  private readonly auth = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly snackBar = inject(MatSnackBar);
 
   @ViewChild('messagesContainer') messagesContainer!: ElementRef<HTMLDivElement>;
 
@@ -59,14 +62,18 @@ export class ConciergeChatComponent implements OnInit {
     { label: 'Room Status', prompt: 'Has my room been cleaned yet?' }
   ];
 
+  private countdownTimer: ReturnType<typeof setInterval> | null = null;
+
   ngOnInit(): void {
     this.loadContext();
+    this.restoreConversation();
     this.addWelcomeMessage();
+    this.startCountdownTimer();
+  }
 
-    // Restore conversation ID from localStorage
-    const savedConvId = localStorage.getItem('concierge_conversation_id');
-    if (savedConvId) {
-      this.conversationId.set(savedConvId);
+  ngOnDestroy(): void {
+    if (this.countdownTimer) {
+      clearInterval(this.countdownTimer);
     }
   }
 
@@ -76,6 +83,21 @@ export class ConciergeChatComponent implements OnInit {
     });
   }
 
+  private restoreConversation(): void {
+    const savedConvId = localStorage.getItem('concierge_conversation_id');
+    if (savedConvId) {
+      this.conversationId.set(savedConvId);
+      const savedMessages = this.api.loadConversation(savedConvId);
+      if (savedMessages.length > 0) {
+        this.messages.set(savedMessages.map(m => ({
+          role: m.role,
+          content: m.content,
+          timestamp: m.timestamp
+        })));
+      }
+    }
+  }
+
   private addWelcomeMessage(): void {
     const name = this.auth.fullName() || 'there';
     this.messages.set([{
@@ -83,6 +105,14 @@ export class ConciergeChatComponent implements OnInit {
       content: `Hello ${name}! 👋 I'm your AI Concierge. I can help with room service, housekeeping, maintenance, billing questions, and more. What can I do for you today?`,
       timestamp: new Date()
     }]);
+  }
+
+  private startCountdownTimer(): void {
+    this.countdownTimer = setInterval(() => {
+      this.pendingProposals.update(proposals => 
+        proposals.map(p => ({ ...p, expiresAt: p.expiresAt }))
+      );
+    }, 1000);
   }
 
   sendMessage(): void {
@@ -130,9 +160,29 @@ export class ConciergeChatComponent implements OnInit {
     });
   }
 
+  dismissProposal(proposalId: string): void {
+    this.pendingProposals.update(p => p.filter(p => p.proposalId !== proposalId));
+    this.showToast('Proposal dismissed');
+  }
+
+  getTimeRemaining(proposal: ConciergeProposal): number {
+    const expiresAt = new Date(proposal.expiresAt).getTime();
+    const now = Date.now();
+    return Math.max(0, Math.ceil((expiresAt - now) / 1000));
+  }
+
+  formatTimeRemaining(seconds: number): string {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  }
+
   private handleResponse(response: ConciergeChatResponse): void {
     this.conversationId.set(response.conversationId);
     localStorage.setItem('concierge_conversation_id', response.conversationId);
+
+    // Save to localStorage
+    this.saveConversation();
 
     if (response.proposals.length > 0) {
       this.pendingProposals.set(response.proposals);
@@ -169,7 +219,24 @@ export class ConciergeChatComponent implements OnInit {
   }
 
   private handleError(err: any): void {
-    const msg = err.error?.message || err.message || 'Something went wrong. Please try again.';
+    const errorResponse = err.error as { errorCode?: string; message?: string; details?: Record<string, string[]> } | undefined;
+    let msg = 'Something went wrong. Please try again.';
+
+    if (errorResponse?.errorCode === 'VALIDATION_ERROR') {
+      msg = errorResponse.message || 'Invalid request. Please check your input.';
+    } else if (errorResponse?.errorCode === 'PROPOSAL_EXPIRED') {
+      msg = 'One or more proposals have expired. Please try again.';
+    } else if (errorResponse?.errorCode === 'PROPOSAL_NOT_FOUND') {
+      msg = 'Proposal not found. Please try again.';
+    } else if (err.status === 429) {
+      msg = 'Too many requests. Please wait a moment and try again.';
+    } else if (err.status === 401) {
+      msg = 'Your session has expired. Please log in again.';
+    } else if (err.message) {
+      msg = err.message;
+    }
+
+    this.showToast(msg, 'error');
     this.messages.update(msgs => [...msgs, {
       role: 'assistant',
       content: `I'm sorry — ${msg}`,
@@ -178,9 +245,31 @@ export class ConciergeChatComponent implements OnInit {
     this.scrollToBottom();
   }
 
+  private saveConversation(): void {
+    const convId = this.conversationId();
+    if (!convId) return;
+
+    const messagesToSave = this.messages().slice(-20).map(m => ({
+      role: m.role,
+      content: m.content,
+      timestamp: m.timestamp
+    }));
+
+    this.api.saveConversation(convId, messagesToSave);
+  }
+
   useQuickAction(prompt: string): void {
     this.messageControl.setValue(prompt);
     this.sendMessage();
+  }
+
+  private showToast(message: string, type: 'error' | 'success' | 'info' = 'info'): void {
+    this.snackBar.open(message, 'Dismiss', {
+      duration: 5000,
+      panelClass: [`${type}-snackbar`],
+      horizontalPosition: 'right',
+      verticalPosition: 'top'
+    });
   }
 
   private scrollToBottom(): void {

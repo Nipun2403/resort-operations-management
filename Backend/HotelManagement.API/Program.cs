@@ -134,6 +134,7 @@ builder.Services.AddHostedService<HotelManagement.API.Services.IdempotencyCleanu
 builder.Services.AddHostedService<ImageValidationWorker>();
 builder.Services.AddHostedService<OrphanImageCleanupWorker>();
 builder.Services.AddHostedService<BlobCleanupWorker>();
+builder.Services.AddHostedService<HotelManagement.BLL.Workers.ProposalCleanupWorker>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserService, HotelManagement.API.Services.CurrentUserService>();
 builder.Services.AddScoped<IAuditUserProvider>(sp => (IAuditUserProvider)sp.GetRequiredService<ICurrentUserService>());
@@ -162,6 +163,14 @@ builder.Services.AddRateLimiter(options =>
         opt.Window = TimeSpan.FromMinutes(5);
         opt.PermitLimit = 20;
         opt.QueueLimit = 0;
+    });
+    options.AddTokenBucketLimiter("ConciergePolicy", opt =>
+    {
+        opt.TokenLimit = 30;
+        opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        opt.QueueLimit = 5;
+        opt.ReplenishmentPeriod = TimeSpan.FromMinutes(1);
+        opt.TokensPerPeriod = 30;
     });
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 });
@@ -298,6 +307,14 @@ app.UseCors("AllowAll");
 app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Concierge-specific rate limiting
+app.MapControllerRoute(
+    name: "concierge",
+    pattern: "api/v1/concierge/{action}",
+    defaults: new { controller = "Concierge" })
+    .RequireRateLimiting("ConciergePolicy");
+
 app.MapControllers().RequireRateLimiting("GlobalPolicy");
 app.MapHub<HotelManagement.API.Hubs.NotificationHub>("/notifications").RequireCors("AllowAll");
 
