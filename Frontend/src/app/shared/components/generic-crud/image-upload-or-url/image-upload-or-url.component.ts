@@ -37,7 +37,6 @@ import { ImageApiService } from '../../../../features/admin/services/image-api.s
           hidden
         />
         <button
-          mat-stroked-button
           type="button"
           (click)="fileInput.click()"
           [disabled]="isUploading()"
@@ -95,7 +94,37 @@ import { ImageApiService } from '../../../../features/admin/services/image-api.s
     .upload-area {
       display: flex;
       align-items: center;
+      gap: 12px;
+    }
+    .upload-btn {
+      font-family: var(--font-body, 'Inter', sans-serif);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--color-secondary);
+      border: 1px solid var(--color-secondary);
+      background: transparent;
+      padding: 12px 32px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
       gap: 8px;
+      white-space: nowrap;
+    }
+    .upload-btn:hover:not([disabled]) {
+      background-color: rgba(228, 194, 133, 0.1);
+    }
+    .upload-btn[disabled] {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+    .upload-btn mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      color: var(--color-secondary);
     }
     .upload-spinner {
       display: inline-block;
@@ -112,7 +141,7 @@ import { ImageApiService } from '../../../../features/admin/services/image-api.s
       max-width: 200px;
       border-radius: 4px;
       overflow: hidden;
-      border: 1px solid #ddd;
+      border: 1px solid rgba(228, 194, 133, 0.2);
     }
     .preview img {
       width: 100%;
