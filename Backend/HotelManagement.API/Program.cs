@@ -9,6 +9,7 @@ using System.Text;
 using Microsoft.OpenApi.Models;
 using HotelManagement.BLL.Interfaces;
 using HotelManagement.BLL.Services;
+using HotelManagement.BLL.Services.Concierge;
 using HotelManagement.Repository.Implementations;
 using HotelManagement.Repository.Interfaces;
 using QuestPDF.Infrastructure;
@@ -86,6 +87,9 @@ builder.Services.AddScoped<IAuditLogRepository, AuditLogRepository>();
 builder.Services.AddScoped<IMaintenanceRepository, MaintenanceRepository>();
 builder.Services.AddScoped<IReceiptRepository, ReceiptRepository>();
 builder.Services.AddScoped<IAnalyticsRepository, AnalyticsRepository>();
+builder.Services.AddScoped<IConciergeActionLogRepository, ConciergeActionLogRepository>();
+builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
+builder.Services.AddScoped<IConciergeProposalRepository, ConciergeProposalRepository>();
 #endregion
 
 #region Services
@@ -109,6 +113,14 @@ builder.Services.AddScoped<IAuditLogService, AuditLogService>();
 builder.Services.AddScoped<IMaintenanceService, MaintenanceService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 builder.Services.AddScoped<IImageUploadService, ImageUploadService>();
+
+// Concierge
+builder.Services.Configure<OpenAIOptions>(builder.Configuration.GetSection("OpenAI"));
+builder.Services.Configure<ConciergeOptions>(builder.Configuration.GetSection("Concierge"));
+builder.Services.AddScoped<IConciergeService, ConciergeService>();
+builder.Services.AddScoped<IConversationStore, PostgresConversationStore>();
+builder.Services.AddScoped<IProposalStore, PostgresProposalStore>();
+builder.Services.AddScoped<IConciergeActionLogRepository, ConciergeActionLogRepository>();
 #endregion
 
 #region Email & PDF

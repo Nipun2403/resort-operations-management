@@ -1,6 +1,8 @@
 using HotelManagement.BLL.DTOs;
+using HotelManagement.DAL.Entities;
 using HotelManagement.DAL.Enums;
 using HotelManagement.Repository.Models;
+using System.Linq.Expressions;
 namespace HotelManagement.BLL.Interfaces;
 
 public interface IBookingService
@@ -10,6 +12,9 @@ public interface IBookingService
     Task<PaginatedResult<BookingDTO>> GetBookingsAsync(string? status, string? guestQuery, int pageNumber, int pageSize, string? sortBy = null, bool sortDescending = false, string? movementStatus = null, DateTime? movementDate = null);
     Task<BookingDTO?> GetBookingByIdAsync(int id);
     Task CancelBookingAsync(int id);
+
+    Task<User?> GetUserByEmailAsync(string email);
+    Task<PaginatedResult<BookingDTO>> GetPaginatedBookingsWithDetailsAsync(int pageNumber, int pageSize, List<Expression<Func<Booking, bool>>> predicates);
 
     // FrontDesk actions migrated to BookingService
     Task<BookingDTO> CheckInGuestAsync(int bookingId);

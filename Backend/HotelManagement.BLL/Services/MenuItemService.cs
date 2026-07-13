@@ -45,6 +45,7 @@ public class MenuItemService : IMenuItemService
             pageNumber,
             pageSize,
             isAvailable,
+            null, // category
             searchQuery,
             sortBy,
             sortDescending);

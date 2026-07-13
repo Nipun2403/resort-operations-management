@@ -30,12 +30,28 @@ public class ApplicationDbContext : DbContext
     public DbSet<BookingRoom> BookingRooms => Set<BookingRoom>();
     public DbSet<IdempotentRequest> IdempotentRequests => Set<IdempotentRequest>();
     public DbSet<UploadSession> UploadSessions => Set<UploadSession>();
+    public DbSet<ConciergeActionLog> ConciergeActionLogs => Set<ConciergeActionLog>();
+    public DbSet<ConversationMessage> ConversationMessages => Set<ConversationMessage>();
+    public DbSet<ConciergeProposal> ConciergeProposals => Set<ConciergeProposal>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<IdempotentRequest>().HasKey(i => i.IdempotencyKey);
+
+        modelBuilder.Entity<ConciergeActionLog>().HasKey(c => c.Id);
+        modelBuilder.Entity<ConciergeActionLog>()
+            .HasIndex(c => new { c.UserId, c.ConversationId, c.CreatedAt });
+
+        modelBuilder.Entity<ConversationMessage>().HasKey(c => c.Id);
+        modelBuilder.Entity<ConversationMessage>()
+            .HasIndex(c => new { c.UserId, c.ConversationId, c.CreatedAt });
+
+        modelBuilder.Entity<ConciergeProposal>().HasKey(c => c.Id);
+        modelBuilder.Entity<ConciergeProposal>()
+            .HasIndex(c => new { c.UserId, c.ConversationId, c.Status })
+            .HasFilter("status = 'pending'");
 
         modelBuilder.Entity<AuditLog>().Property(a => a.PrimaryKey).HasColumnType("jsonb");
         modelBuilder.Entity<AuditLog>().Property(a => a.OldValues).HasColumnType("jsonb");

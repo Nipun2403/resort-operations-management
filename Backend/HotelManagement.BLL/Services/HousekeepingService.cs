@@ -259,4 +259,20 @@ public class HousekeepingService : IHousekeepingService
             Data = dtos
         };
     }
+
+    public async Task<PaginatedResult<HousekeepingDTO>> GetActiveTasksAsync(int pageNumber, int pageSize, int roomId)
+    {
+        System.Linq.Expressions.Expression<Func<Housekeeping, bool>> filter = 
+            h => h.RoomId == roomId && h.Status != HousekeepingStatus.Completed;
+
+        var records = await _housekeepingRepository.GetPaginatedResultAsync(pageNumber, pageSize, filter);
+        var dtos = _mapper.Map<IEnumerable<HousekeepingDTO>>(records.Data);
+        return new PaginatedResult<HousekeepingDTO>
+        {
+            TotalCount = records.TotalCount,
+            PageNumber = records.PageNumber,
+            PageSize = records.PageSize,
+            Data = dtos
+        };
+    }
 }

@@ -1,0 +1,123 @@
+.concierge-chat {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .context-bar {
+    margin: 16px;
+    mat-chip-set {
+      gap: 8px;
+    }
+  }
+
+  .messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .message {
+    max-width: 85%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    &.message-user {
+      align-self: flex-end;
+    }
+
+    &.message-assistant {
+      align-self: flex-start;
+    }
+
+    &.message-system {
+      align-self: center;
+    }
+  }
+
+  .bubble {
+    padding: 12px 16px;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    &.message-user .bubble {
+      border-bottom-right-radius: 4px;
+    }
+
+    &.message-assistant .bubble {
+      border-bottom-left-radius: 4px;
+    }
+
+    p {
+      margin: 0;
+      white-space: pre-wrap;
+      line-height: 1.4;
+    }
+  }
+
+  .proposals {
+    background: var(--mat-sys-surface-container);
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 8px;
+    border: 1px solid var(--mat-sys-outline);
+
+    strong {
+      display: block;
+      margin-bottom: 8px;
+    }
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 8px;
+
+    mat-chip {
+      font-size: 12px;
+    }
+  }
+
+  .timestamp {
+    font-size: 11px;
+    color: var(--mat-sys-on-surface-variant);
+    padding: 0 4px;
+  }
+
+  .quick-actions {
+    padding: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    border-top: 1px solid var(--mat-sys-outline-variant);
+
+    button {
+      height: 32px;
+      font-size: 13px;
+    }
+  }
+
+  .input-area {
+    padding: 16px;
+    border-top: 1px solid var(--mat-sys-outline-variant);
+
+    mat-form-field {
+      width: 100%;
+    }
+
+    .loading {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 16px;
+    }
+  }
+
+  .hidden {
+    display: none !important;
+  }
+}

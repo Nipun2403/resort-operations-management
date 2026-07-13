@@ -474,4 +474,22 @@ public class BookingService : IBookingService
         _bookingRepository.Update(booking);
         await _bookingRepository.SaveChangesAsync();
     }
+
+    public async Task<User?> GetUserByEmailAsync(string email)
+    {
+        return await _userRepository.GetByEmailAsync(email);
+    }
+
+    public async Task<PaginatedResult<BookingDTO>> GetPaginatedBookingsWithDetailsAsync(int pageNumber, int pageSize, List<Expression<Func<Booking, bool>>> predicates)
+    {
+        var result = await _bookingRepository.GetPaginatedBookingsWithDetailsAsync(pageNumber, pageSize, predicates);
+        var dtos = _mapper.Map<IEnumerable<BookingDTO>>(result.Data);
+        return new PaginatedResult<BookingDTO>
+        {
+            TotalCount = result.TotalCount,
+            PageNumber = result.PageNumber,
+            PageSize = result.PageSize,
+            Data = dtos
+        };
+    }
 }

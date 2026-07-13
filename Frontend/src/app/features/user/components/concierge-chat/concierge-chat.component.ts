@@ -1,0 +1,192 @@
+import { Component, inject, signal, OnInit, DestroyRef, ViewChild, ElementRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { finalize } from 'rxjs/operators';
+
+import {
+  ConciergeApiService, ConciergeChatRequest, ConciergeChatResponse,
+  ConciergeProposal, ConciergeActionResult, GuestContext
+} from '../../services/concierge-api.service';
+import { AuthService } from '../../../../core/services/auth.service';
+
+interface ChatMessage {
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+  proposals?: ConciergeProposal[];
+  actions?: ConciergeActionResult[];
+  timestamp: Date;
+}
+
+@Component({
+  selector: 'app-concierge-chat',
+  standalone: true,
+  imports: [
+    CommonModule, ReactiveFormsModule,
+    MatInputModule, MatButtonModule, MatIconModule,
+    MatProgressSpinnerModule, MatCardModule, MatChipsModule
+  ],
+  templateUrl: './concierge-chat.component.html',
+  styleUrls: ['./concierge-chat.component.scss']
+})
+export class ConciergeChatComponent implements OnInit {
+  private readonly api = inject(ConciergeApiService);
+  private readonly auth: AuthService = inject(AuthService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  @ViewChild('messagesContainer') messagesContainer!: ElementRef<HTMLDivElement>;
+
+  messages = signal<ChatMessage[]>([]);
+  conversationId = signal<string | null>(null);
+  pendingProposals = signal<ConciergeProposal[]>([]);
+  loading = signal(false);
+  context = signal<GuestContext | null>(null);
+
+  messageControl = new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(1000)] });
+
+  quickActions = [
+    { label: 'Order Food', prompt: 'I\'d like to order a burger and fries' },
+    { label: 'Extra Pillows', prompt: 'Can I get extra pillows and blankets?' },
+    { label: 'Report Issue', prompt: 'There\'s a maintenance issue in my room' },
+    { label: 'Check Bill', prompt: 'What\'s my current folio balance?' },
+    { label: 'Check-out Time', prompt: 'What time is check-out?' },
+    { label: 'Room Status', prompt: 'Has my room been cleaned yet?' }
+  ];
+
+  ngOnInit(): void {
+    this.loadContext();
+    this.addWelcomeMessage();
+
+    // Restore conversation ID from localStorage
+    const savedConvId = localStorage.getItem('concierge_conversation_id');
+    if (savedConvId) {
+      this.conversationId.set(savedConvId);
+    }
+  }
+
+  private loadContext(): void {
+    this.api.getContext().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (ctx) => this.context.set(ctx)
+    });
+  }
+
+  private addWelcomeMessage(): void {
+    const name = this.auth.fullName() || 'there';
+    this.messages.set([{
+      role: 'assistant',
+      content: `Hello ${name}! 👋 I'm your AI Concierge. I can help with room service, housekeeping, maintenance, billing questions, and more. What can I do for you today?`,
+      timestamp: new Date()
+    }]);
+  }
+
+  sendMessage(): void {
+    if (this.messageControl.invalid || this.loading() || this.pendingProposals().length > 0) return;
+
+    const userMessage = this.messageControl.value;
+    this.messageControl.reset();
+    this.loading.set(true);
+
+    const userMsg: ChatMessage = { role: 'user', content: userMessage, timestamp: new Date() };
+    this.messages.update(msgs => [...msgs, userMsg]);
+    this.scrollToBottom();
+
+    const request: ConciergeChatRequest = {
+      message: userMessage,
+      conversationId: this.conversationId() || undefined
+    };
+
+    this.api.chat(request).pipe(
+      takeUntilDestroyed(this.destroyRef),
+      finalize(() => this.loading.set(false))
+    ).subscribe({
+      next: (response) => this.handleResponse(response),
+      error: (err) => this.handleError(err)
+    });
+  }
+
+  confirmProposals(): void {
+    if (this.pendingProposals().length === 0 || this.loading()) return;
+
+    this.loading.set(true);
+
+    this.api.confirm({
+      conversationId: this.conversationId()!,
+      proposalIds: this.pendingProposals().map(p => p.proposalId)
+    }).pipe(
+      takeUntilDestroyed(this.destroyRef),
+      finalize(() => this.loading.set(false))
+    ).subscribe({
+      next: (response) => {
+        this.pendingProposals.set([]);
+        this.handleResponse(response);
+      },
+      error: (err) => this.handleError(err)
+    });
+  }
+
+  private handleResponse(response: ConciergeChatResponse): void {
+    this.conversationId.set(response.conversationId);
+    localStorage.setItem('concierge_conversation_id', response.conversationId);
+
+    if (response.proposals.length > 0) {
+      this.pendingProposals.set(response.proposals);
+
+      this.messages.update(msgs => [...msgs, {
+        role: 'system',
+        content: 'Proposals ready for confirmation:',
+        proposals: response.proposals,
+        timestamp: new Date()
+      }]);
+    }
+
+    if (response.actions.length > 0) {
+      response.actions.forEach(action => {
+        this.messages.update(msgs => [...msgs, {
+          role: 'system',
+          content: action.success
+            ? `${action.resultSummary}`
+            : `${action.error || 'Action failed'}`,
+          timestamp: new Date()
+        }]);
+      });
+    }
+
+    this.messages.update(msgs => [...msgs, {
+      role: 'assistant',
+      content: response.reply,
+      proposals: response.proposals.length > 0 ? response.proposals : undefined,
+      actions: response.actions.length > 0 ? response.actions : undefined,
+      timestamp: new Date()
+    }]);
+
+    this.scrollToBottom();
+  }
+
+  private handleError(err: any): void {
+    const msg = err.error?.message || err.message || 'Something went wrong. Please try again.';
+    this.messages.update(msgs => [...msgs, {
+      role: 'assistant',
+      content: `I'm sorry — ${msg}`,
+      timestamp: new Date()
+    }]);
+    this.scrollToBottom();
+  }
+
+  useQuickAction(prompt: string): void {
+    this.messageControl.setValue(prompt);
+    this.sendMessage();
+  }
+
+  private scrollToBottom(): void {
+    setTimeout(() => {
+      const el = this.messagesContainer?.nativeElement;
+      if (el) el.scrollTop = el.scrollHeight;
+    }, 0);
+  }
+}
