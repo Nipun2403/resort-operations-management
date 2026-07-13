@@ -1,3 +1,4 @@
+using System.ClientModel;
 using System.Text.Json;
 using HotelManagement.BLL.DTOs;
 using HotelManagement.BLL.Exceptions;
@@ -9,6 +10,7 @@ using HotelManagement.Repository.Interfaces;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
 using OpenAI.Chat;
+using OpenAI;
 
 namespace HotelManagement.BLL.Services.Concierge;
 
@@ -61,7 +63,12 @@ public class ConciergeService : IConciergeService
         _openAIOptions = openAIOptions;
         _logger = logger;
 
-        _chatClient = new ChatClient(_openAIOptions.Value.Model, _openAIOptions.Value.ApiKey);
+        _chatClient = string.IsNullOrWhiteSpace(_openAIOptions.Value.Endpoint)
+            ? new ChatClient(_openAIOptions.Value.Model, new ApiKeyCredential(_openAIOptions.Value.ApiKey))
+            : new ChatClient(
+                _openAIOptions.Value.Model,
+                new ApiKeyCredential(_openAIOptions.Value.ApiKey),
+                new OpenAIClientOptions { Endpoint = new Uri(_openAIOptions.Value.Endpoint) });
     }
 
     public async Task<ConciergeChatResponseDTO> ProcessMessageAsync(string userMessage, string? conversationId, CancellationToken ct)

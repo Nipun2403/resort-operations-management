@@ -4,6 +4,31 @@
     <div class="backdrop" (click)="sidebarOpen.set(false)"></div>
   }
 
+  <!-- Concierge Slide Panel Backdrop (Mobile) -->
+  @if (isMobile() && showConcierge()) {
+    <div class="concierge-backdrop" (click)="closeConcierge()"></div>
+  }
+
+  <!-- Concierge Slide Panel -->
+  @if (showConcierge()) {
+    <aside class="concierge-panel" [class.mobile]="isMobile()" [class.open]="showConcierge()" role="dialog" aria-label="AI Concierge" aria-modal="true">
+      <header class="concierge-header">
+        <h2 class="concierge-title">AI Concierge</h2>
+        <button mat-icon-button (click)="closeConcierge()" aria-label="Close Concierge" class="concierge-close">
+          <mat-icon>close</mat-icon>
+        </button>
+      </header>
+      <div class="concierge-content">
+        <app-concierge-chat></app-concierge-chat>
+      </div>
+    </aside>
+  }
+
+  <!-- Mobile Sidebar Backdrop -->
+  @if (isMobile() && sidebarOpen()) {
+    <div class="backdrop" (click)="sidebarOpen.set(false)"></div>
+  }
+
   <!-- SideNavBar -->
   <nav class="sidebar"
        [class.sidebar-mobile-open]="isMobile() && sidebarOpen()"
@@ -12,7 +37,7 @@
     <div class="brand-container">
       <h1 class="brand-title">The Private Corridor</h1>
     </div>
-    
+
     <!-- Navigation Links -->
     <ul class="nav-links">
       <li>
@@ -51,6 +76,12 @@
 
       <!-- Actions -->
       <div class="app-bar-right">
+        <!-- Concierge FAB -->
+        <button mat-fab extended class="concierge-fab" (click)="toggleConcierge()" [class.active]="showConcierge()" aria-label="Toggle AI Concierge" aria-expanded="{{ showConcierge() }}">
+          <mat-icon [class.rotated]="showConcierge()">smart_toy</mat-icon>
+          <span class="fab-label">Concierge</span>
+        </button>
+
         <button class="profile-btn" [matMenuTriggerFor]="userMenu" aria-label="Open user menu">
           <span class="material-symbols-outlined">account_circle</span>
         </button>
