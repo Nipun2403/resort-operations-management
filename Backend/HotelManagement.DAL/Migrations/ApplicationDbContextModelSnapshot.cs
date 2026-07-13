@@ -296,7 +296,7 @@ namespace HotelManagement.DAL.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("UserId", "ConversationId", "Status")
-                        .HasFilter("status = 'pending'");
+                        .HasFilter("\"Status\" = 'pending'");
 
                     b.ToTable("ConciergeProposals");
                 });

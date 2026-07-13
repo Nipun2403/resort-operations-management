@@ -2,8 +2,6 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
-#pragma warning disable CA1861
-
 #nullable disable
 
 namespace HotelManagement.DAL.Migrations
@@ -80,7 +78,7 @@ namespace HotelManagement.DAL.Migrations
                 name: "IX_ConciergeProposals_UserId_ConversationId_Status",
                 table: "ConciergeProposals",
                 columns: new[] { "UserId", "ConversationId", "Status" },
-                filter: "status = 'pending'");
+                filter: "\"Status\" = 'pending'");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ConversationMessages_UserId_ConversationId_CreatedAt",

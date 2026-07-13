@@ -51,7 +51,7 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<ConciergeProposal>().HasKey(c => c.Id);
         modelBuilder.Entity<ConciergeProposal>()
             .HasIndex(c => new { c.UserId, c.ConversationId, c.Status })
-            .HasFilter("status = 'pending'");
+            .HasFilter("\"Status\" = 'pending'");
 
         modelBuilder.Entity<AuditLog>().Property(a => a.PrimaryKey).HasColumnType("jsonb");
         modelBuilder.Entity<AuditLog>().Property(a => a.OldValues).HasColumnType("jsonb");

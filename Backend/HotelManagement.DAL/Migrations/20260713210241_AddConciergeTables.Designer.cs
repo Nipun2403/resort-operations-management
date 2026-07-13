@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HotelManagement.DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260713173820_AddConciergeTables")]
+    [Migration("20260713210241_AddConciergeTables")]
     partial class AddConciergeTables
     {
         /// <inheritdoc />
@@ -299,7 +299,7 @@ namespace HotelManagement.DAL.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("UserId", "ConversationId", "Status")
-                        .HasFilter("status = 'pending'");
+                        .HasFilter("\"Status\" = 'pending'");
 
                     b.ToTable("ConciergeProposals");
                 });
