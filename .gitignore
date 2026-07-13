@@ -80,3 +80,10 @@ connect.lock
 typings/
 libpeerconnection.log
 .claude/
+.opencode/
+.serena/
+.superpowers/
+.gitnexus/
+Documents/
+misc/
+docs/
