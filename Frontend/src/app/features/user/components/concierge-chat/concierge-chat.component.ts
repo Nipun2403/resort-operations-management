@@ -133,6 +133,7 @@ export class ConciergeChatComponent implements OnInit, OnDestroy {
     // Timeout triggered, no active proposals, and last message is not already the welcome message
     if (elapsedMinutes >= this.CHAT_TIMEOUT_MINUTES && !hasPendingProposals && lastMsg.content !== welcomeText) {
       this.messages.update(msgs => [...msgs, welcomeMsg]);
+      this.saveConversation();
     }
   }
 
@@ -153,6 +154,7 @@ export class ConciergeChatComponent implements OnInit, OnDestroy {
 
     const userMsg: ChatMessage = { role: 'user', content: userMessage, timestamp: new Date() };
     this.messages.update(msgs => [...msgs, userMsg]);
+    this.saveConversation();
     this.scrollToBottom();
 
     const request: ConciergeChatRequest = {
@@ -234,9 +236,6 @@ export class ConciergeChatComponent implements OnInit, OnDestroy {
     this.conversationId.set(response.conversationId);
     localStorage.setItem('concierge_conversation_id', response.conversationId);
 
-    // Save to localStorage
-    this.saveConversation();
-
     if (response.proposals.length > 0) {
       this.pendingProposals.set(response.proposals);
 
@@ -256,6 +255,7 @@ export class ConciergeChatComponent implements OnInit, OnDestroy {
       timestamp: new Date()
     }]);
 
+    this.saveConversation();
     this.scrollToBottom();
   }
 
