@@ -20,6 +20,7 @@ public class AmenityServiceTests
     private Mock<IBookingRepository> _mockBookingRepo;
     private Mock<IMapper> _mockMapper;
     private Mock<ICurrentUserService> _mockCurrentUserService;
+    private Mock<IImageUploadService> _mockImageUploadService;
     private AmenityService _amenityService;
 
     [SetUp]
@@ -29,8 +30,15 @@ public class AmenityServiceTests
         _mockBookingRepo = new Mock<IBookingRepository>();
         _mockMapper = new Mock<IMapper>();
         _mockCurrentUserService = new Mock<ICurrentUserService>();
+        _mockImageUploadService = new Mock<IImageUploadService>();
         
-        _amenityService = new AmenityService(_mockAmenityRepo.Object, _mockBookingRepo.Object, _mockMapper.Object, _mockCurrentUserService.Object);
+        _amenityService = new AmenityService(
+            _mockAmenityRepo.Object, 
+            _mockBookingRepo.Object, 
+            _mockMapper.Object, 
+            _mockCurrentUserService.Object,
+            _mockImageUploadService.Object
+        );
     }
 
     [Test]
@@ -148,7 +156,7 @@ public class AmenityServiceTests
     {
         var amenities = new List<Amenity> { new Amenity { Id = 1, Name = "Spa" } };
         var pagedResult = new HotelManagement.Repository.Models.PaginatedResult<Amenity> { Data = amenities };
-        _mockAmenityRepo.Setup(r => r.GetPaginatedResultAsync(1, 10, null)).ReturnsAsync(pagedResult);
+        _mockAmenityRepo.Setup(r => r.GetPaginatedAmenitiesAsync(1, 10, null, null, false, true)).ReturnsAsync(pagedResult);
         _mockMapper.Setup(m => m.Map<IEnumerable<AmenityDTO>>(amenities)).Returns(new List<AmenityDTO> { new AmenityDTO { Id = 1, Name = "Spa" } });
 
         var result = await _amenityService.GetAllAmenitiesAsync(1, 10);
@@ -189,7 +197,7 @@ public class AmenityServiceTests
     {
         _mockAmenityRepo.Setup(r => r.GetByIdAsync(99)).ReturnsAsync((Amenity?)null);
 
-        var ex = Assert.ThrowsAsync<KeyNotFoundException>(() => _amenityService.UpdateAmenityAsync(99, new CreateUpdateAmenityDTO()));
+        var ex = Assert.ThrowsAsync<KeyNotFoundException>(() => _amenityService.UpdateAmenityAsync(99, new CreateUpdateAmenityDTO(), true));
         Assert.That(ex.Message, Does.Contain("Amenity not found"));
     }
 
@@ -200,7 +208,7 @@ public class AmenityServiceTests
         var dto = new CreateUpdateAmenityDTO { Name = "New", Price = 15m, ImageUrl = "https://images.unsplash.com/photo-test-new" };
         _mockAmenityRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(amenity);
         
-        await _amenityService.UpdateAmenityAsync(1, dto);
+        await _amenityService.UpdateAmenityAsync(1, dto, true);
 
         Assert.That(amenity.Name, Is.EqualTo("New"));
         Assert.That(amenity.Price, Is.EqualTo(15m));
@@ -228,28 +236,6 @@ public class AmenityServiceTests
         Assert.That(amenity.IsAvailable, Is.False);
         _mockAmenityRepo.Verify(r => r.Update(amenity), Times.Once);
         _mockAmenityRepo.Verify(r => r.SaveChangesAsync(), Times.Once);
-    }
-
-    [Test]
-    public async Task UpdateAmenityStatusAsync_ShouldUpdateAndSave()
-    {
-        var amenity = new Amenity { Id = 1, IsAvailable = false };
-        _mockAmenityRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(amenity);
-        
-        await _amenityService.UpdateAmenityStatusAsync(1, true);
-
-        Assert.That(amenity.IsAvailable, Is.True);
-        _mockAmenityRepo.Verify(r => r.Update(amenity), Times.Once);
-        _mockAmenityRepo.Verify(r => r.SaveChangesAsync(), Times.Once);
-    }
-
-    [Test]
-    public async Task UpdateAmenityStatusAsync_ShouldThrow_IfNotFound()
-    {
-        _mockAmenityRepo.Setup(r => r.GetByIdAsync(99)).ReturnsAsync((Amenity?)null);
-
-        var ex = Assert.ThrowsAsync<KeyNotFoundException>(() => _amenityService.UpdateAmenityStatusAsync(99, true));
-        Assert.That(ex.Message, Does.Contain("Amenity not found"));
     }
 
     [Test]

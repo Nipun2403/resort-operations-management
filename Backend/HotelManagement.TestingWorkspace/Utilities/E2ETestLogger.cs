@@ -1,4 +1,4 @@
-using System.Text;
+
 
 namespace HotelManagement.TestingWorkspace.Utilities;
 
@@ -6,8 +6,7 @@ public class E2ETestLogger
 {
     private readonly string _seedFile;
     private readonly string _experimentFile;
-    private StringBuilder _seedBuilder = new();
-    private StringBuilder _experimentBuilder = new();
+
 
     public E2ETestLogger(string workspaceRoot)
     {

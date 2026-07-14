@@ -102,7 +102,7 @@ public class HousekeepingServiceTests
             new Booking { BookingRooms = new List<BookingRoom> { new BookingRoom { RoomId = 99 } }, BookingStatus = BookingStatus.CheckedIn } // Different room
         };
         var pagedBookings = new PaginatedResult<Booking> { Data = userBookings };
-        _mockBookingRepo.Setup(b => b.GetPaginatedBookingsWithDetailsAsync(1, 100, It.IsAny<Expression<Func<Booking, bool>>>(), null)).ReturnsAsync(pagedBookings);
+        _mockBookingRepo.Setup(b => b.GetPaginatedBookingsWithDetailsAsync(1, 100, It.IsAny<IEnumerable<Expression<Func<Booking, bool>>>>(), null)).ReturnsAsync(pagedBookings);
 
         var ex = Assert.ThrowsAsync<ArgumentException>(() => _housekeepingService.CreateGuestTriggerAsync(10, new CreateHousekeepingTaskDTO { Description = "test" }));
         Assert.That(ex.Message, Does.Contain("You do not have an active booking for this room"));
@@ -122,7 +122,7 @@ public class HousekeepingServiceTests
             new Booking { BookingRooms = new List<BookingRoom> { new BookingRoom { RoomId = 10 } }, BookingStatus = BookingStatus.CheckedIn } // Correct room
         };
         var pagedBookings = new PaginatedResult<Booking> { Data = userBookings };
-        _mockBookingRepo.Setup(b => b.GetPaginatedBookingsWithDetailsAsync(1, 100, It.IsAny<Expression<Func<Booking, bool>>>(), null)).ReturnsAsync(pagedBookings);
+        _mockBookingRepo.Setup(b => b.GetPaginatedBookingsWithDetailsAsync(1, 100, It.IsAny<IEnumerable<Expression<Func<Booking, bool>>>>(), null)).ReturnsAsync(pagedBookings);
 
         await _housekeepingService.CreateGuestTriggerAsync(10, new CreateHousekeepingTaskDTO { Description = "test" });
 
@@ -172,7 +172,7 @@ public class HousekeepingServiceTests
             new Booking { BookingRooms = new List<BookingRoom> { new BookingRoom { RoomId = 10 } }, BookingStatus = BookingStatus.CheckedOut }
         };
         var pagedBookings = new PaginatedResult<Booking> { Data = userBookings };
-        _mockBookingRepo.Setup(b => b.GetPaginatedBookingsWithDetailsAsync(1, 100, It.IsAny<Expression<Func<Booking, bool>>>(), null)).ReturnsAsync(pagedBookings);
+        _mockBookingRepo.Setup(b => b.GetPaginatedBookingsWithDetailsAsync(1, 100, It.IsAny<IEnumerable<Expression<Func<Booking, bool>>>>(), null)).ReturnsAsync(pagedBookings);
 
         var ex = Assert.ThrowsAsync<ArgumentException>(() => _housekeepingService.CreateGuestTriggerAsync(10, new CreateHousekeepingTaskDTO { Description = "test" }));
         Assert.That(ex.Message, Does.Contain("You do not have an active booking for this room"));
@@ -231,6 +231,7 @@ public class HousekeepingServiceTests
                 if (orderBy != null) q = orderBy(q);
                 return new PaginatedResult<Housekeeping> { TotalCount = q.Count(), PageNumber = p1, PageSize = p2, Data = q.ToList() };
             });
+        _mockCurrentUserService.Setup(s => s.IsInRole("Admin")).Returns(true);
         _mockMapper.Setup(m => m.Map<IEnumerable<HousekeepingDTO>>(It.IsAny<IEnumerable<Housekeeping>>())).Returns(new List<HousekeepingDTO> { new HousekeepingDTO { Id = 1 } });
 
         var result1 = await _housekeepingService.GetAllAsync(1, 10, null, "Status", true);
@@ -252,6 +253,7 @@ public class HousekeepingServiceTests
                 if (orderBy != null) q = orderBy(q);
                 return new PaginatedResult<Housekeeping> { TotalCount = q.Count(), PageNumber = p1, PageSize = p2, Data = q.ToList() };
             });
+        _mockCurrentUserService.Setup(s => s.IsInRole("Admin")).Returns(true);
         _mockMapper.Setup(m => m.Map<IEnumerable<HousekeepingDTO>>(It.IsAny<IEnumerable<Housekeeping>>())).Returns(new List<HousekeepingDTO> { new HousekeepingDTO { Id = 1 } });
 
         var result = await _housekeepingService.GetActiveAsync(1, 10, "Status", true);
@@ -307,9 +309,9 @@ public class HousekeepingServiceTests
     {
         var records = new List<Housekeeping> { new Housekeeping { Id = 1 } };
         var paged = new PaginatedResult<Housekeeping> { TotalCount = 1, PageNumber = 1, PageSize = 10, Data = records };
-        // Passing null for filter and orderBy
-        _mockHousekeepingRepo.Setup(h => h.GetPaginatedResultAsync(1, 10, null, null))
+        _mockHousekeepingRepo.Setup(h => h.GetPaginatedResultAsync(1, 10, null, It.IsAny<Func<IQueryable<Housekeeping>, IOrderedQueryable<Housekeeping>>>()))
             .ReturnsAsync(paged);
+        _mockCurrentUserService.Setup(s => s.IsInRole("Admin")).Returns(true);
         _mockMapper.Setup(m => m.Map<IEnumerable<HousekeepingDTO>>(records)).Returns(new List<HousekeepingDTO> { new HousekeepingDTO { Id = 1 } });
 
         var result = await _housekeepingService.GetAllAsync(1, 10, null, null, false);
@@ -322,8 +324,9 @@ public class HousekeepingServiceTests
     {
         var records = new List<Housekeeping> { new Housekeeping { Id = 1 } };
         var paged = new PaginatedResult<Housekeeping> { TotalCount = 1, PageNumber = 1, PageSize = 10, Data = records };
-        _mockHousekeepingRepo.Setup(h => h.GetPaginatedResultAsync(1, 10, It.IsAny<Expression<Func<Housekeeping, bool>>>(), null))
+        _mockHousekeepingRepo.Setup(h => h.GetPaginatedResultAsync(1, 10, It.IsAny<Expression<Func<Housekeeping, bool>>>(), It.IsAny<Func<IQueryable<Housekeeping>, IOrderedQueryable<Housekeeping>>>()))
             .ReturnsAsync(paged);
+        _mockCurrentUserService.Setup(s => s.IsInRole("Admin")).Returns(true);
         _mockMapper.Setup(m => m.Map<IEnumerable<HousekeepingDTO>>(records)).Returns(new List<HousekeepingDTO> { new HousekeepingDTO { Id = 1 } });
 
         var result = await _housekeepingService.GetActiveAsync(1, 10, null, false);

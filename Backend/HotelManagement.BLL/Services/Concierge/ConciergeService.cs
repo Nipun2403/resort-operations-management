@@ -221,6 +221,11 @@ public class ConciergeService : IConciergeService
         var guids = proposalIds.Select(Guid.Parse).ToList();
         var proposals = await _proposalRepo.GetByIdsAsync(guids, userId, conversationId);
 
+        if (proposals.Count < guids.Count)
+        {
+            throw new KeyNotFoundException("One or more proposals were not found.");
+        }
+
         var invalid = proposals.Where(p => p.Status != "pending" || p.ExpiresAt < DateTime.UtcNow).ToList();
         if (invalid.Any())
         {

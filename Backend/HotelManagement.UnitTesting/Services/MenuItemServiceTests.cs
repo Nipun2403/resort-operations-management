@@ -20,6 +20,7 @@ public class MenuItemServiceTests
     private Mock<IMenuItemRepository> _mockMenuItemRepo;
     private Mock<IMapper> _mockMapper;
     private Mock<ICurrentUserService> _mockCurrentUserService;
+    private Mock<IImageUploadService> _mockImageUploadService;
     private MenuItemService _menuItemService;
 
     [SetUp]
@@ -28,11 +29,13 @@ public class MenuItemServiceTests
         _mockMenuItemRepo = new Mock<IMenuItemRepository>();
         _mockMapper = new Mock<IMapper>();
         _mockCurrentUserService = new Mock<ICurrentUserService>();
+        _mockImageUploadService = new Mock<IImageUploadService>();
 
         _menuItemService = new MenuItemService(
             _mockMenuItemRepo.Object,
             _mockMapper.Object,
-            _mockCurrentUserService.Object
+            _mockCurrentUserService.Object,
+            _mockImageUploadService.Object
         );
     }
 
@@ -42,9 +45,9 @@ public class MenuItemServiceTests
         _mockCurrentUserService.Setup(c => c.IsInRole("Admin")).Returns(false);
         _mockCurrentUserService.Setup(c => c.IsInRole("Kitchen")).Returns(true);
         var items = new List<MenuItem> { new MenuItem { Id = 1, IsAvailable = false } };
+        var paginatedResult = new PaginatedResult<MenuItem> { Data = items };
 
-        // FIXED: Mocking GetAllAsync()
-        _mockMenuItemRepo.Setup(r => r.GetAllAsync()).ReturnsAsync(items);
+        _mockMenuItemRepo.Setup(r => r.GetPaginatedMenuItemsAsync(1, 10, false, null, null, null, false)).ReturnsAsync(paginatedResult);
         _mockMapper.Setup(m => m.Map<IEnumerable<MenuItemDTO>>(It.IsAny<IEnumerable<MenuItem>>()))
             .Returns(new List<MenuItemDTO> { new MenuItemDTO { Id = 1 } });
 
@@ -58,8 +61,9 @@ public class MenuItemServiceTests
         _mockCurrentUserService.Setup(c => c.IsInRole("Admin")).Returns(false);
         _mockCurrentUserService.Setup(c => c.IsInRole("Kitchen")).Returns(false);
         var items = new List<MenuItem> { new MenuItem { Id = 1, IsAvailable = true } };
+        var paginatedResult = new PaginatedResult<MenuItem> { Data = items };
 
-        _mockMenuItemRepo.Setup(r => r.GetAllAsync()).ReturnsAsync(items);
+        _mockMenuItemRepo.Setup(r => r.GetPaginatedMenuItemsAsync(1, 10, true, null, null, null, false)).ReturnsAsync(paginatedResult);
         _mockMapper.Setup(m => m.Map<IEnumerable<MenuItemDTO>>(It.IsAny<IEnumerable<MenuItem>>()))
             .Returns(new List<MenuItemDTO> { new MenuItemDTO { Id = 1 } });
 
@@ -73,8 +77,9 @@ public class MenuItemServiceTests
         _mockCurrentUserService.Setup(c => c.IsInRole("Admin")).Returns(false);
         _mockCurrentUserService.Setup(c => c.IsInRole("Kitchen")).Returns(false);
         var items = new List<MenuItem> { new MenuItem { Id = 1, IsAvailable = true } };
+        var paginatedResult = new PaginatedResult<MenuItem> { Data = items };
 
-        _mockMenuItemRepo.Setup(r => r.GetAllAsync()).ReturnsAsync(items);
+        _mockMenuItemRepo.Setup(r => r.GetPaginatedMenuItemsAsync(1, 10, true, null, null, null, false)).ReturnsAsync(paginatedResult);
         _mockMapper.Setup(m => m.Map<IEnumerable<MenuItemDTO>>(It.IsAny<IEnumerable<MenuItem>>()))
             .Returns(new List<MenuItemDTO> { new MenuItemDTO { Id = 1 } });
 
@@ -87,8 +92,9 @@ public class MenuItemServiceTests
     {
         _mockCurrentUserService.Setup(c => c.IsInRole("Admin")).Returns(true);
         var items = new List<MenuItem> { new MenuItem { Id = 1, IsAvailable = false } };
+        var paginatedResult = new PaginatedResult<MenuItem> { Data = items };
 
-        _mockMenuItemRepo.Setup(r => r.GetAllAsync()).ReturnsAsync(items);
+        _mockMenuItemRepo.Setup(r => r.GetPaginatedMenuItemsAsync(1, 10, false, null, null, null, false)).ReturnsAsync(paginatedResult);
         _mockMapper.Setup(m => m.Map<IEnumerable<MenuItemDTO>>(It.IsAny<IEnumerable<MenuItem>>()))
             .Returns(new List<MenuItemDTO> { new MenuItemDTO { Id = 1 } });
 
@@ -138,7 +144,8 @@ public class MenuItemServiceTests
     public async Task GetMenuItemsAsync_WithSort_ShouldReturnSorted()
     {
         var items = new List<MenuItem> { new MenuItem { Id = 1 } };
-        _mockMenuItemRepo.Setup(r => r.GetMenuItemsAsync(false)).ReturnsAsync(items);
+        var paginatedResult = new PaginatedResult<MenuItem> { Data = items };
+        _mockMenuItemRepo.Setup(r => r.GetPaginatedMenuItemsAsync(1, 10, true, null, null, "Name", true)).ReturnsAsync(paginatedResult);
         _mockMapper.Setup(m => m.Map<IEnumerable<MenuItemDTO>>(It.IsAny<IEnumerable<MenuItem>>()))
             .Returns(new List<MenuItemDTO> { new MenuItemDTO { Id = 1 } });
 

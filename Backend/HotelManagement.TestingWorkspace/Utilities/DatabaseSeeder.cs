@@ -42,10 +42,13 @@ public static class DatabaseSeeder
         {
             GuestName = "Test Guest",
             GuestEmail = "test@example.com",
-            RoomId = room1.Id,
             CheckInDate = DateTime.UtcNow.AddDays(-2),
             CheckOutDate = DateTime.UtcNow.AddDays(2),
-            BookingStatus = BookingStatus.CheckedIn
+            BookingStatus = BookingStatus.CheckedIn,
+            BookingRooms = new List<BookingRoom>
+            {
+                new BookingRoom { RoomTypeId = roomType1.Id, RoomId = room1.Id, LockedInPrice = 150m }
+            }
         };
         context.Bookings.Add(booking);
         context.SaveChanges();

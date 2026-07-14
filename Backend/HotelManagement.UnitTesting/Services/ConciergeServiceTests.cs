@@ -85,7 +85,7 @@ public class ConciergeServiceTests
     }
 
     [Test]
-    public async Task ConfirmProposalsAsync_ShouldThrow_WhenProposalExpired()
+    public void ConfirmProposalsAsync_ShouldThrow_WhenProposalExpired()
     {
         var proposalIds = new List<string> { Guid.NewGuid().ToString() };
         var expiredProposal = new ConciergeProposal
@@ -98,24 +98,18 @@ public class ConciergeServiceTests
         _mockProposalRepo.Setup(p => p.GetByIdsAsync(It.IsAny<List<Guid>>(), 1, "conv1"))
             .ReturnsAsync(new List<ConciergeProposal> { expiredProposal });
 
-        var result = await _conciergeService.ConfirmProposalsAsync("conv1", proposalIds, CancellationToken.None);
-
-        Assert.That(result.IsComplete, Is.False);
-        Assert.That(result.Reply, Does.Contain("expired"));
+        Assert.ThrowsAsync<ConciergeProposalExpiredException>(() => _conciergeService.ConfirmProposalsAsync("conv1", proposalIds, CancellationToken.None));
     }
 
     [Test]
-    public async Task ConfirmProposalsAsync_ShouldThrow_WhenProposalNotFound()
+    public void ConfirmProposalsAsync_ShouldThrow_WhenProposalNotFound()
     {
         var proposalIds = new List<string> { Guid.NewGuid().ToString() };
 
         _mockProposalRepo.Setup(p => p.GetByIdsAsync(It.IsAny<List<Guid>>(), 1, "conv1"))
             .ReturnsAsync(new List<ConciergeProposal>());
 
-        var result = await _conciergeService.ConfirmProposalsAsync("conv1", proposalIds, CancellationToken.None);
-
-        Assert.That(result.IsComplete, Is.False);
-        Assert.That(result.Reply, Does.Contain("not found"));
+        Assert.ThrowsAsync<KeyNotFoundException>(() => _conciergeService.ConfirmProposalsAsync("conv1", proposalIds, CancellationToken.None));
     }
 
     [Test]
@@ -131,14 +125,16 @@ public class ConciergeServiceTests
 
         _mockMenuItemRepository.Setup(m => m.GetByIdAsync(999)).ReturnsAsync((MenuItem?)null);
 
-        var result = await _conciergeService.CreateFoodOrderAsync(args, new GuestContextDTO(), CancellationToken.None);
+        var context = new GuestContextDTO { BookingId = 1, RoomId = 1, BookingStatus = "CheckedIn" };
+
+        var result = await _conciergeService.CreateFoodOrderAsync(args, context, CancellationToken.None);
 
         Assert.That(result.Success, Is.False);
         Assert.That(result.Error, Does.Contain("not found"));
     }
 
     [Test]
-    public void CreateFoodOrderAsync_ShouldFail_WhenMenuItemUnavailable()
+    public async Task CreateFoodOrderAsync_ShouldFail_WhenMenuItemUnavailable()
     {
         var args = new HotelManagement.BLL.Services.Concierge.CreateFoodOrderToolArgs
         {
@@ -151,13 +147,16 @@ public class ConciergeServiceTests
         _mockMenuItemRepository.Setup(m => m.GetByIdAsync(1))
             .ReturnsAsync(new MenuItem { Id = 1, Name = "Burger", IsAvailable = false });
 
-        var result = _conciergeService.CreateFoodOrderAsync(args, new GuestContextDTO(), CancellationToken.None);
+        var context = new GuestContextDTO { BookingId = 1, RoomId = 1, BookingStatus = "CheckedIn" };
 
-        Assert.ThrowsAsync<ConciergeValidationException>(async () => await result);
+        var result = await _conciergeService.CreateFoodOrderAsync(args, context, CancellationToken.None);
+
+        Assert.That(result.Success, Is.False);
+        Assert.That(result.Error, Does.Contain("unavailable"));
     }
 
     [Test]
-    public void CreateFoodOrderAsync_ShouldFail_WhenNotCheckedIn()
+    public async Task CreateFoodOrderAsync_ShouldFail_WhenNotCheckedIn()
     {
         var args = new HotelManagement.BLL.Services.Concierge.CreateFoodOrderToolArgs
         {
@@ -177,9 +176,10 @@ public class ConciergeServiceTests
         _mockMenuItemRepository.Setup(m => m.GetByIdAsync(1))
             .ReturnsAsync(new MenuItem { Id = 1, Name = "Burger", IsAvailable = true });
 
-        var result = _conciergeService.CreateFoodOrderAsync(args, context, CancellationToken.None);
+        var result = await _conciergeService.CreateFoodOrderAsync(args, context, CancellationToken.None);
 
-        Assert.ThrowsAsync<ConciergeValidationException>(async () => await result);
+        Assert.That(result.Success, Is.False);
+        Assert.That(result.Error, Does.Contain("only available for checked-in"));
     }
 
     [Test]

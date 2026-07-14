@@ -30,6 +30,7 @@ public class BookingServiceTests
     private Mock<ICurrentUserService> _mockCurrentUserService;
     private Mock<IAmenityRepository> _mockAmenityRepo;
     private Mock<IBillingService> _mockBillingService;
+    private Mock<IEmailService> _mockEmailService;
 
     private BookingService _bookingService;
 
@@ -46,6 +47,7 @@ public class BookingServiceTests
         _mockCurrentUserService = new Mock<ICurrentUserService>();
         _mockAmenityRepo = new Mock<IAmenityRepository>();
         _mockBillingService = new Mock<IBillingService>();
+        _mockEmailService = new Mock<IEmailService>();
 
         _bookingService = new BookingService(
             _mockBookingRepo.Object,
@@ -57,7 +59,8 @@ public class BookingServiceTests
             _mockUserRepo.Object,
             _mockCurrentUserService.Object,
             _mockAmenityRepo.Object,
-            _mockBillingService.Object
+            _mockBillingService.Object,
+            _mockEmailService.Object
         );
     }
 
@@ -355,7 +358,7 @@ public class BookingServiceTests
         _mockCurrentUserService.Setup(c => c.GetUserEmail()).Returns((string?)null);
 
         // Act & Assert
-        Assert.ThrowsAsync<UnauthorizedAccessException>(() => _bookingService.GetBookingsAsync(null, 1, 10, null, false));
+        Assert.ThrowsAsync<UnauthorizedAccessException>(() => _bookingService.GetBookingsAsync(null, null, 1, 10, null, false));
     }
 
     [Test]
@@ -368,7 +371,7 @@ public class BookingServiceTests
         _mockUserRepo.Setup(u => u.GetByEmailAsync("test@example.com")).ReturnsAsync((User?)null);
 
         // Act & Assert
-        Assert.ThrowsAsync<ArgumentException>(() => _bookingService.GetBookingsAsync(null, 1, 10, null, false));
+        Assert.ThrowsAsync<ArgumentException>(() => _bookingService.GetBookingsAsync(null, null, 1, 10, null, false));
     }
 
     [Test]
@@ -383,12 +386,12 @@ public class BookingServiceTests
         var pagedResult = new PaginatedResult<Booking> { Data = new List<Booking> { new Booking { Id = 1 } }, TotalCount = 1 };
 
         // FIXED: Mocked GetPaginatedBookingsWithDetailsAsync instead of GetPaginatedResultAsync
-        _mockBookingRepo.Setup(r => r.GetPaginatedBookingsWithDetailsAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<Expression<Func<Booking, bool>>>(), It.IsAny<Func<IQueryable<Booking>, IOrderedQueryable<Booking>>>()))
+        _mockBookingRepo.Setup(r => r.GetPaginatedBookingsWithDetailsAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<IEnumerable<Expression<Func<Booking, bool>>>>(), It.IsAny<Func<IQueryable<Booking>, IOrderedQueryable<Booking>>>()))
             .ReturnsAsync(pagedResult);
         _mockMapper.Setup(m => m.Map<IEnumerable<BookingDTO>>(It.IsAny<IEnumerable<Booking>>()))
             .Returns(new List<BookingDTO> { new BookingDTO { Id = 1 } });
 
-        var result = await _bookingService.GetBookingsAsync(null, 1, 10, null, false);
+        var result = await _bookingService.GetBookingsAsync(null, null, 1, 10, null, false);
         Assert.That(result.Data.Count(), Is.EqualTo(1));
     }
 
@@ -399,12 +402,12 @@ public class BookingServiceTests
 
         var pagedResult = new PaginatedResult<Booking> { Data = new List<Booking> { new Booking { Id = 1 } }, TotalCount = 1 };
 
-        _mockBookingRepo.Setup(r => r.GetPaginatedBookingsWithDetailsAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<Expression<Func<Booking, bool>>>(), It.IsAny<Func<IQueryable<Booking>, IOrderedQueryable<Booking>>>()))
+        _mockBookingRepo.Setup(r => r.GetPaginatedBookingsWithDetailsAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<IEnumerable<Expression<Func<Booking, bool>>>>(), It.IsAny<Func<IQueryable<Booking>, IOrderedQueryable<Booking>>>()))
             .ReturnsAsync(pagedResult);
         _mockMapper.Setup(m => m.Map<IEnumerable<BookingDTO>>(It.IsAny<IEnumerable<Booking>>()))
             .Returns(new List<BookingDTO> { new BookingDTO { Id = 1 } });
 
-        var result = await _bookingService.GetBookingsAsync("Booked", 1, 10, null, false);
+        var result = await _bookingService.GetBookingsAsync("Booked", null, 1, 10, null, false);
         Assert.That(result.Data.Count(), Is.EqualTo(1));
     }
 
@@ -415,12 +418,12 @@ public class BookingServiceTests
 
         var pagedResult = new PaginatedResult<Booking> { Data = new List<Booking> { new Booking { Id = 1 } }, TotalCount = 1 };
 
-        _mockBookingRepo.Setup(r => r.GetPaginatedBookingsWithDetailsAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<Expression<Func<Booking, bool>>>(), It.IsAny<Func<IQueryable<Booking>, IOrderedQueryable<Booking>>>()))
+        _mockBookingRepo.Setup(r => r.GetPaginatedBookingsWithDetailsAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<IEnumerable<Expression<Func<Booking, bool>>>>(), It.IsAny<Func<IQueryable<Booking>, IOrderedQueryable<Booking>>>()))
             .ReturnsAsync(pagedResult);
         _mockMapper.Setup(m => m.Map<IEnumerable<BookingDTO>>(It.IsAny<IEnumerable<Booking>>()))
             .Returns(new List<BookingDTO> { new BookingDTO { Id = 1 } });
 
-        var result = await _bookingService.GetBookingsAsync(null, 1, 10, null, false);
+        var result = await _bookingService.GetBookingsAsync(null, null, 1, 10, null, false);
         Assert.That(result.Data.Count(), Is.EqualTo(1));
     }
 
@@ -431,12 +434,12 @@ public class BookingServiceTests
 
         var pagedResult = new PaginatedResult<Booking> { Data = new List<Booking> { new Booking { Id = 1 } }, TotalCount = 1 };
 
-        _mockBookingRepo.Setup(r => r.GetPaginatedBookingsWithDetailsAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<Expression<Func<Booking, bool>>>(), It.IsAny<Func<IQueryable<Booking>, IOrderedQueryable<Booking>>>()))
+        _mockBookingRepo.Setup(r => r.GetPaginatedBookingsWithDetailsAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<IEnumerable<Expression<Func<Booking, bool>>>>(), It.IsAny<Func<IQueryable<Booking>, IOrderedQueryable<Booking>>>()))
             .ReturnsAsync(pagedResult);
         _mockMapper.Setup(m => m.Map<IEnumerable<BookingDTO>>(It.IsAny<IEnumerable<Booking>>()))
             .Returns(new List<BookingDTO> { new BookingDTO { Id = 1 } });
 
-        var result = await _bookingService.GetBookingsAsync(null, 1, 10, "GuestName", true);
+        var result = await _bookingService.GetBookingsAsync(null, null, 1, 10, "GuestName", true);
         Assert.That(result.Data.Count(), Is.EqualTo(1));
     }
 

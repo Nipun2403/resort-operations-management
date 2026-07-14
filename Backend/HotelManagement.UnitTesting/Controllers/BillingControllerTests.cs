@@ -15,13 +15,15 @@ namespace HotelManagement.UnitTesting.Controllers;
 public class BillingControllerTests
 {
     private Mock<IBillingService> _mockBillingService;
+    private Mock<IPdfService> _mockPdfService;
     private BillingController _controller;
 
     [SetUp]
     public void Setup()
     {
         _mockBillingService = new Mock<IBillingService>();
-        _controller = new BillingController(_mockBillingService.Object);
+        _mockPdfService = new Mock<IPdfService>();
+        _controller = new BillingController(_mockBillingService.Object, _mockPdfService.Object);
     }
 
     [Test]
