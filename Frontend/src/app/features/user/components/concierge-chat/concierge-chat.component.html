@@ -1,138 +1,152 @@
-<div class="concierge-chat" style="display:flex;flex-direction:column;height:100%;" role="log" aria-live="polite" aria-label="Concierge conversation">
-  <!-- Header Bar with Clear Action -->
-  <div class="chat-header" style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--mat-sys-outline-variant);">
-    <span style="font-weight:500;font-size:16px;color:var(--mat-sys-on-surface);">AI Concierge</span>
-    <button mat-icon-button (click)="clearChat()" [disabled]="loading()" title="Clear chat history" aria-label="Clear chat history">
-      <mat-icon>delete_sweep</mat-icon>
-    </button>
-  </div>
-  <!-- Context Bar -->
-  @if (context(); as ctx) {
-    <mat-card class="context-bar" appearance="outlined">
-      <mat-chip-set aria-label="Guest context">
+<div class="concierge-chat" role="log" aria-live="polite" aria-label="Concierge conversation">
+  <!-- Header -->
+  <header class="chat-header">
+    <div class="header-left">
+      <button mat-icon-button (click)="closeChat.emit()" class="chat-close-btn" aria-label="Close Concierge">
+        <mat-icon>close</mat-icon>
+      </button>
+      <h1 class="chat-title">ATLAS</h1>
+      @if (context(); as ctx) {
+      <div class="header-divider"></div>
+      <div class="context-chips">
         @if (ctx.bookingId) {
-          <mat-chip>Booking #{{ ctx.bookingId }}</mat-chip>
+        <span class="context-chip">BOOKING #{{ ctx.bookingId }}</span>
         }
         @if (ctx.roomNumber) {
-          <mat-chip>Room {{ ctx.roomNumber }}</mat-chip>
+        <span class="context-chip">ROOM {{ ctx.roomNumber }}</span>
         }
         @if (ctx.bookingStatus) {
-          <mat-chip [color]="ctx.bookingStatus === 'CheckedIn' ? 'primary' : 'accent'">{{ ctx.bookingStatus }}</mat-chip>
+        <span class="context-chip status" [class.checked-in]="ctx.bookingStatus === 'CheckedIn'">
+          @if (ctx.bookingStatus === 'CheckedIn') {
+          <span class="status-dot"></span>
+          }
+          {{ ctx.bookingStatus | uppercase }}
+        </span>
         }
-      </mat-chip-set>
-    </mat-card>
-  }
+      </div>
+      }
+    </div>
+
+    <button mat-button (click)="clearChat()" [disabled]="loading()" title="Clear chat history"
+      aria-label="Clear chat history" class="clear-archive-btn">
+      <mat-icon>delete_sweep</mat-icon>
+      <span class="btn-text">CLEAR CHAT</span>
+    </button>
+  </header>
 
   <!-- Messages -->
-  <div #messagesContainer class="messages" 
-       style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;">
+  <div #messagesContainer class="messages">
     @for (msg of messages(); track $index) {
-      <div class="message" [class]="'message-' + msg.role"
-           [style.align-self]="msg.role === 'user' ? 'flex-end' : 'flex-start'"
-           role="article" [attr.aria-label]="msg.role + ' message'">
-        <div class="bubble"
-             [style.background]="msg.role === 'user' ? 'var(--mat-sys-primary)' : 'var(--mat-sys-surface-variant)'"
-             [style.color]="msg.role === 'user' ? 'var(--mat-sys-on-primary)' : 'var(--mat-sys-on-surface-variant)'">
-          <p style="margin:0;white-space:pre-wrap;">{{ msg.content }}</p>
+    <div class="message" [class.message-user]="msg.role === 'user'" [class.message-assistant]="msg.role === 'assistant'"
+      [class.message-system]="msg.role === 'system'" [class.thinking]="loading() && $index === messages().length - 1"
+      role="article" [attr.aria-label]="msg.role + ' message'">
+      <div class="bubble">
+        @if (msg.role === 'assistant') {
+        <div class="bubble-header-label">Atlas</div>
+        }
+        @if (msg.role === 'system') {
+        <div class="bubble-header-label">SYSTEM</div>
+        }
 
-          <!-- Proposals awaiting confirmation -->
-          @if (msg.proposals?.length) {
-            <div class="proposals" style="margin-top:8px;border:1px solid var(--mat-sys-outline);border-radius:8px;padding:12px;">
-              <strong>Proposed actions:</strong>
-              @for (prop of msg.proposals; track prop.proposalId) {
-                <div class="proposal-item" style="display:flex;align-items:center;gap:8px;margin-top:8px;padding:8px;background:var(--mat-sys-surface-container);border-radius:4px;">
-                  <mat-icon color="primary">info</mat-icon>
-                  <span>{{ prop.summary }}</span>
-                  @if (!msg.proposalStatus || msg.proposalStatus === 'pending') {
-                    <span class="countdown" style="margin-left:auto;font-size:12px;color:var(--mat-sys-on-surface-variant);">
-                      {{ formatTimeRemaining(getTimeRemaining(prop)) }}
-                    </span>
-                    <button mat-icon-button (click)="dismissProposal(prop.proposalId)" 
-                            [disabled]="loading()"
-                            aria-label="Dismiss proposal"
-                            style="margin-left:8px;">
-                      <mat-icon>close</mat-icon>
-                    </button>
-                  }
-                </div>
-              }
-              
+        <p class="message-content">{{ msg.content }}</p>
+
+        <!-- Proposals awaiting confirmation -->
+        @if (msg.proposals?.length) {
+        <div class="proposals-grid">
+          @for (prop of msg.proposals; track prop.proposalId) {
+          <div class="proposal-card" [class.confirmed]="msg.proposalStatus === 'confirmed'"
+            [class.cancelled]="msg.proposalStatus === 'cancelled'">
+            <div class="proposal-card-header">
+              <span class="proposal-tag">PROPOSAL {{ $index === 0 ? 'ALPHA' : $index === 1 ? 'BETA' : 'GAMMA' }}</span>
               @if (!msg.proposalStatus || msg.proposalStatus === 'pending') {
-                <div style="margin-top:8px;display:flex;gap:8px;">
-                  <button mat-flat-button color="primary" (click)="confirmProposals()"
-                          [disabled]="loading()" aria-label="Confirm and execute proposed actions">
-                    Confirm & Execute
-                  </button>
-                </div>
-              }
-
-              @if (msg.proposalStatus === 'cancelled') {
-                <div class="proposal-status cancelled" style="margin-top:12px;display:flex;align-items:center;gap:6px;color:var(--mat-sys-error);font-size:13px;font-weight:500;">
-                  <mat-icon style="font-size:18px;width:18px;height:18px;color:var(--mat-sys-error);">cancel</mat-icon>
-                  <span>Proposal cancelled</span>
-                </div>
-              }
-
-              @if (msg.proposalStatus === 'confirmed') {
-                <div class="proposal-status confirmed" style="margin-top:12px;display:flex;align-items:center;gap:6px;color:var(--mat-sys-primary);font-size:13px;font-weight:500;">
-                  <mat-icon style="font-size:18px;width:18px;height:18px;color:var(--mat-sys-primary);">check_circle</mat-icon>
-                  <span>Proposal confirmed & executed</span>
-                </div>
+              <span class="proposal-countdown">
+                <mat-icon>timer</mat-icon>
+                {{ formatTimeRemaining(getTimeRemaining(prop)) }}
+              </span>
               }
             </div>
-          }
+            <h4 class="proposal-action-title">{{ prop.action }}</h4>
+            <p class="proposal-summary">{{ prop.summary }}</p>
 
-        </div>
-        <div class="timestamp" style="font-size:11px;color:var(--mat-sys-on-surface-variant);margin-top:4px;">
-          {{ msg.timestamp | date:'shortTime' }}
-        </div>
-      </div>
-    }
-    @if (loading()) {
-      <div class="message message-assistant thinking" style="align-self:flex-start;opacity:0.7;">
-        <div class="bubble" style="background:var(--mat-sys-surface-variant);color:var(--mat-sys-on-surface-variant);">
-          <div class="typing-indicator" style="height:24px;padding:4px 8px;" aria-label="Thinking">
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
+            @if (!msg.proposalStatus || msg.proposalStatus === 'pending') {
+            <div class="proposal-card-actions">
+              <button mat-button (click)="confirmProposals(prop.proposalId)" [disabled]="loading()"
+                class="confirm-single-btn">
+                CONFIRM & EXECUTE
+              </button>
+              <button mat-icon-button (click)="dismissProposal(prop.proposalId)" [disabled]="loading()"
+                aria-label="Dismiss proposal" class="dismiss-single-btn">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+            }
           </div>
+          }
+        </div>
+
+        @if (msg.proposalStatus === 'cancelled') {
+        <div class="proposal-status cancelled">
+          <mat-icon>cancel</mat-icon>
+          <span>Proposal cancelled</span>
+        </div>
+        }
+
+        @if (msg.proposalStatus === 'confirmed') {
+        <div class="proposal-status confirmed">
+          <mat-icon>check_circle</mat-icon>
+          <span>Proposal confirmed & executed</span>
+        </div>
+        }
+        }
+
+      </div>
+      <div class="timestamp">
+        {{ msg.timestamp | date:'shortTime' }}
+      </div>
+    </div>
+    }
+
+    <!-- Thinking indicator -->
+    @if (loading()) {
+    <div class="message message-assistant thinking">
+      <div class="bubble">
+        <div class="typing-indicator" aria-label="Thinking">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
         </div>
       </div>
+    </div>
     }
   </div>
 
   <!-- Quick Actions -->
-  <div class="quick-actions" style="padding:16px;display:flex;flex-wrap:wrap;gap:8px;border-top:1px solid var(--mat-sys-outline-variant);">
+  <div class="quick-actions">
     @for (action of quickActions; track action.label) {
-      <button mat-stroked-button (click)="useQuickAction(action.prompt)" [disabled]="loading() || pendingProposals().length > 0"
-              style="font-size:13px;height:32px;" aria-label="Quick action: {{ action.label }}">
-        {{ action.label }}
-      </button>
+    <button (click)="useQuickAction(action.prompt)" [disabled]="loading() || pendingProposals().length > 0"
+      aria-label="Quick action: {{ action.label }}">
+      {{ action.label }}
+    </button>
     }
   </div>
 
-  <!-- Input -->
-  <div class="input-area" style="padding:16px;border-top:1px solid var(--mat-sys-outline-variant);">
-    <mat-form-field appearance="outline" style="width:100%;" [class.hidden]="loading()">
-      <mat-label>Ask me anything...</mat-label>
-      <input matInput [formControl]="messageControl" (keydown.enter)="sendMessage()"
-             placeholder="e.g., 'I'd like a burger and extra towels'"
-             aria-label="Your message to the concierge">
-      <button mat-icon-button matSuffix (click)="sendMessage()" 
-              [disabled]="messageControl.invalid || loading() || pendingProposals().length > 0"
-              aria-label="Send message">
-        <mat-icon>send</mat-icon>
-      </button>
-    </mat-form-field>
-    @if (loading()) {
-      <div class="loading" style="display:flex;align-items:center;gap:12px;padding:0 16px;height:56px;">
-        <div class="typing-indicator" aria-hidden="true">
-          <div class="dot"></div>
-          <div class="dot"></div>
-          <div class="dot"></div>
-        </div>
-        <span>Thinking...</span>
-      </div>
-    }
+  <!-- Input Area -->
+  <div class="input-area">
+    <div class="input-wrapper" [class.disabled]="loading()">
+      <mat-form-field appearance="outline">
+        <mat-label>Ask me anything...</mat-label>
+        <input matInput [formControl]="messageControl" (keydown.enter)="sendMessage()"
+          placeholder="e.g., 'I'd like a burger and extra towels'" aria-label="Your message to the concierge">
+        <button mat-icon-button matSuffix (click)="sendMessage()"
+          [disabled]="messageControl.invalid || loading() || pendingProposals().length > 0" aria-label="Send message"
+          class="send-btn">
+          <mat-icon>arrow_upward</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+
+    <div class="secure-channel-footer">
+      <span>Aetheris Private Network • Encrypted Session</span>
+    </div>
   </div>
 </div>

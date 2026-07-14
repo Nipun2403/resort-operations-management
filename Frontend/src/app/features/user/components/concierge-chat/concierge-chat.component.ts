@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit, OnDestroy, AfterViewInit, DestroyRef, ViewChild, ElementRef } from '@angular/core';
+import { Component, inject, signal, OnInit, OnDestroy, AfterViewInit, DestroyRef, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
@@ -45,6 +45,7 @@ export class ConciergeChatComponent implements OnInit, OnDestroy, AfterViewInit 
   private readonly snackBar = inject(MatSnackBar);
 
   @ViewChild('messagesContainer') messagesContainer!: ElementRef<HTMLDivElement>;
+  @Output() closeChat = new EventEmitter<void>();
 
   messages = signal<ChatMessage[]>([]);
   conversationId = signal<string | null>(null);
@@ -114,7 +115,7 @@ export class ConciergeChatComponent implements OnInit, OnDestroy, AfterViewInit 
 
   private addWelcomeMessage(): void {
     const name = this.auth.fullName() || 'there';
-    const welcomeText = `Hello ${name}! 👋 I'm your AI Concierge. I can help with room service, housekeeping, maintenance, billing questions, and more. What can I do for you today?`;
+    const welcomeText = `Hello ${name}! 👋 I'm ATLAS. I can help with room service, housekeeping, maintenance, billing questions, and more. What can I do for you today?`;
     const welcomeMsg: ChatMessage = {
       role: 'assistant',
       content: welcomeText,
@@ -134,8 +135,12 @@ export class ConciergeChatComponent implements OnInit, OnDestroy, AfterViewInit 
 
     const hasPendingProposals = this.pendingProposals().length > 0;
 
-    // Timeout triggered, no active proposals, and last message is not already the welcome message
-    if (elapsedMinutes >= this.CHAT_TIMEOUT_MINUTES && !hasPendingProposals && lastMsg.content !== welcomeText) {
+    // Robust check to see if the last message was a welcome message
+    const isLastMessageWelcome = lastMsg.content.includes("I'm ATLAS.") ||
+      lastMsg.content.includes("I'm your AI Concierge");
+
+    // Timeout triggered, no active proposals, and last message is not already a welcome message
+    if (elapsedMinutes >= this.CHAT_TIMEOUT_MINUTES && !hasPendingProposals && !isLastMessageWelcome) {
       this.messages.update(msgs => [...msgs, welcomeMsg]);
       this.saveConversation();
     }
@@ -143,7 +148,7 @@ export class ConciergeChatComponent implements OnInit, OnDestroy, AfterViewInit 
 
   private startCountdownTimer(): void {
     this.countdownTimer = setInterval(() => {
-      this.pendingProposals.update(proposals => 
+      this.pendingProposals.update(proposals =>
         proposals.map(p => ({ ...p, expiresAt: p.expiresAt }))
       );
     }, 1000);
@@ -175,11 +180,11 @@ export class ConciergeChatComponent implements OnInit, OnDestroy, AfterViewInit 
     });
   }
 
-  confirmProposals(): void {
-    if (this.pendingProposals().length === 0 || this.loading()) return;
+  confirmProposals(proposalId?: string): void {
+    const idsToConfirm = proposalId ? [proposalId] : this.pendingProposals().map(p => p.proposalId);
+    if (idsToConfirm.length === 0 || this.loading()) return;
 
     this.loading.set(true);
-    const idsToConfirm = this.pendingProposals().map(p => p.proposalId);
 
     this.api.confirm({
       conversationId: this.conversationId()!,
@@ -190,7 +195,7 @@ export class ConciergeChatComponent implements OnInit, OnDestroy, AfterViewInit 
     ).subscribe({
       next: (response) => {
         this.pendingProposals.set([]);
-        
+
         this.messages.update(msgs => msgs.map(msg => {
           if (msg.proposals?.some(p => idsToConfirm.includes(p.proposalId))) {
             return {
@@ -209,7 +214,7 @@ export class ConciergeChatComponent implements OnInit, OnDestroy, AfterViewInit 
 
   dismissProposal(proposalId: string): void {
     this.pendingProposals.update(p => p.filter(p => p.proposalId !== proposalId));
-    
+
     this.messages.update(msgs => msgs.map(msg => {
       if (msg.proposals?.some(p => p.proposalId === proposalId)) {
         return {
@@ -219,7 +224,7 @@ export class ConciergeChatComponent implements OnInit, OnDestroy, AfterViewInit 
       }
       return msg;
     }));
-    
+
     this.saveConversation();
     this.showToast('Proposal dismissed');
   }
