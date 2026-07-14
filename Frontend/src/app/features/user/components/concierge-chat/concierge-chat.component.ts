@@ -102,6 +102,8 @@ export class ConciergeChatComponent implements OnInit, OnDestroy {
   }
 
   private addWelcomeMessage(): void {
+    if (this.messages().length > 0) return;
+
     const name = this.auth.fullName() || 'there';
     this.messages.set([{
       role: 'assistant',

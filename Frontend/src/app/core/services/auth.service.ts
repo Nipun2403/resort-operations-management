@@ -35,6 +35,8 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem('token');
+    localStorage.removeItem('concierge_conversations');
+    localStorage.removeItem('concierge_conversation_id');
     this.token.set(null);
     this.decodeAndStore(null);
   }
