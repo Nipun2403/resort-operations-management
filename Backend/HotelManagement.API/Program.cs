@@ -21,6 +21,9 @@ using HotelManagement.API.Utilities;
 using HotelManagement.BLL.Options;
 using HotelManagement.BLL.Workers;
 using Microsoft.Extensions.Options;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Exporter.Prometheus;
+using OpenTelemetry.Resources;
 
 // Set QuestPDF community licence (free for non-commercial / open-source use)
 QuestPDF.Settings.License = LicenseType.Community;
@@ -174,6 +177,19 @@ builder.Services.AddRateLimiter(options =>
     });
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 });
+#endregion
+
+#region OpenTelemetry Metrics
+builder.Services.AddOpenTelemetry()
+    .WithMetrics(metrics =>
+    {
+        metrics
+            .AddMeter("HotelManagement.Concierge")
+            .AddRuntimeInstrumentation()
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddPrometheusExporter();
+    });
 #endregion
 
 #region Controllers & Routing
