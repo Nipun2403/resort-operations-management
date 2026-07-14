@@ -12,8 +12,8 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { map } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AuthService } from '../../core/services/auth.service';
-import { ConciergeApiService, GuestContext } from '../services/concierge-api.service';
-import { ConciergeChatComponent } from '../components/concierge-chat/concierge-chat.component';
+import { ConciergeApiService, GuestContext } from './services/concierge-api.service';
+import { ConciergeChatComponent } from './components/concierge-chat/concierge-chat.component';
 
 @Component({
   selector: 'app-user-shell',
@@ -51,7 +51,7 @@ export class UserShellComponent {
   constructor() {
     // Load context on init
     this.api.getContext().subscribe({
-      next: (ctx) => this.context.set(ctx)
+      next: (ctx: GuestContext) => this.context.set(ctx)
     });
   }
 
