@@ -24,9 +24,19 @@ public class ConciergeProposalRepository : IConciergeProposalRepository
 
     public async Task<List<ConciergeProposal>> GetByIdsAsync(List<Guid> ids, int userId, string conversationId)
     {
-        return await _context.ConciergeProposals
-            .Where(p => p.UserId == userId && p.ConversationId == conversationId && ids.Contains(p.Id))
-            .ToListAsync();
+        var query = _context.ConciergeProposals
+            .Where(p => p.UserId == userId && p.ConversationId == conversationId);
+
+        if (ids == null || ids.Count == 0)
+        {
+            query = query.Where(p => p.Status == "pending" && p.ExpiresAt > DateTime.UtcNow);
+        }
+        else
+        {
+            query = query.Where(p => ids.Contains(p.Id));
+        }
+
+        return await query.ToListAsync();
     }
 
     public async Task MarkConfirmedAsync(List<string> ids, int userId, string conversationId)
