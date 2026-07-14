@@ -77,6 +77,31 @@ public class FeedbackService : IFeedbackService
         return _mapper.Map<FeedbackDTO>(feedback);
     }
 
+    public async Task<FeedbackDTO> SubmitFeedbackCoreAsync(int bookingId, int rating, string comments)
+    {
+        var booking = await _bookingRepository.GetByIdAsync(bookingId);
+        if (booking == null) throw new KeyNotFoundException("Booking not found.");
+
+        var existingFeedback = await _feedbackRepository.FindAsync(f => f.BookingId == bookingId);
+        if (existingFeedback.Any())
+            throw new ArgumentException("Feedback already exists for this booking.");
+
+        if (rating < 1 || rating > 5) throw new ArgumentException("Rating must be between 1 and 5.");
+
+        var feedback = new Feedback
+        {
+            BookingId = bookingId,
+            Rating = rating,
+            Comments = comments,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        await _feedbackRepository.AddAsync(feedback);
+        await _feedbackRepository.SaveChangesAsync();
+
+        return _mapper.Map<FeedbackDTO>(feedback);
+    }
+
     public async Task<FeedbackDTO> ModerateFeedbackAsync(int feedbackId, bool isHidden)
     {
         var feedback = await _feedbackRepository.GetByIdAsync(feedbackId);
