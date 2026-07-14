@@ -36,23 +36,42 @@
                 <div class="proposal-item" style="display:flex;align-items:center;gap:8px;margin-top:8px;padding:8px;background:var(--mat-sys-surface-container);border-radius:4px;">
                   <mat-icon color="primary">info</mat-icon>
                   <span>{{ prop.summary }}</span>
-                  <span class="countdown" style="margin-left:auto;font-size:12px;color:var(--mat-sys-on-surface-variant);">
-                    {{ formatTimeRemaining(getTimeRemaining(prop)) }}
-                  </span>
-                  <button mat-icon-button (click)="dismissProposal(prop.proposalId)" 
-                          [disabled]="loading()"
-                          aria-label="Dismiss proposal"
-                          style="margin-left:8px;">
-                    <mat-icon>close</mat-icon>
+                  @if (!msg.proposalStatus || msg.proposalStatus === 'pending') {
+                    <span class="countdown" style="margin-left:auto;font-size:12px;color:var(--mat-sys-on-surface-variant);">
+                      {{ formatTimeRemaining(getTimeRemaining(prop)) }}
+                    </span>
+                    <button mat-icon-button (click)="dismissProposal(prop.proposalId)" 
+                            [disabled]="loading()"
+                            aria-label="Dismiss proposal"
+                            style="margin-left:8px;">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  }
+                </div>
+              }
+              
+              @if (!msg.proposalStatus || msg.proposalStatus === 'pending') {
+                <div style="margin-top:8px;display:flex;gap:8px;">
+                  <button mat-flat-button color="primary" (click)="confirmProposals()"
+                          [disabled]="loading()" aria-label="Confirm and execute proposed actions">
+                    Confirm & Execute
                   </button>
                 </div>
               }
-              <div style="margin-top:8px;display:flex;gap:8px;">
-                <button mat-flat-button color="primary" (click)="confirmProposals()"
-                        [disabled]="loading()" aria-label="Confirm and execute proposed actions">
-                  Confirm & Execute
-                </button>
-              </div>
+
+              @if (msg.proposalStatus === 'cancelled') {
+                <div class="proposal-status cancelled" style="margin-top:12px;display:flex;align-items:center;gap:6px;color:var(--mat-sys-error);font-size:13px;font-weight:500;">
+                  <mat-icon style="font-size:18px;width:18px;height:18px;color:var(--mat-sys-error);">cancel</mat-icon>
+                  <span>Proposal cancelled</span>
+                </div>
+              }
+
+              @if (msg.proposalStatus === 'confirmed') {
+                <div class="proposal-status confirmed" style="margin-top:12px;display:flex;align-items:center;gap:6px;color:var(--mat-sys-primary);font-size:13px;font-weight:500;">
+                  <mat-icon style="font-size:18px;width:18px;height:18px;color:var(--mat-sys-primary);">check_circle</mat-icon>
+                  <span>Proposal confirmed & executed</span>
+                </div>
+              }
             </div>
           }
 

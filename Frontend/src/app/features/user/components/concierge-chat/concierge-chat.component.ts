@@ -22,6 +22,7 @@ interface ChatMessage {
   content: string;
   proposals?: ConciergeProposal[];
   actions?: ConciergeActionResult[];
+  proposalStatus?: 'pending' | 'confirmed' | 'cancelled';
   timestamp: Date;
 }
 
@@ -92,6 +93,8 @@ export class ConciergeChatComponent implements OnInit, OnDestroy {
         this.messages.set(savedMessages.map(m => ({
           role: m.role,
           content: m.content,
+          proposals: m.proposals,
+          proposalStatus: m.proposalStatus,
           timestamp: m.timestamp
         })));
       }
@@ -157,11 +160,10 @@ export class ConciergeChatComponent implements OnInit, OnDestroy {
         this.pendingProposals.set([]);
         
         this.messages.update(msgs => msgs.map(msg => {
-          if (msg.proposals) {
-            const filtered = msg.proposals.filter(p => !idsToConfirm.includes(p.proposalId));
+          if (msg.proposals?.some(p => idsToConfirm.includes(p.proposalId))) {
             return {
               ...msg,
-              proposals: filtered.length > 0 ? filtered : undefined
+              proposalStatus: 'confirmed'
             };
           }
           return msg;
@@ -177,11 +179,10 @@ export class ConciergeChatComponent implements OnInit, OnDestroy {
     this.pendingProposals.update(p => p.filter(p => p.proposalId !== proposalId));
     
     this.messages.update(msgs => msgs.map(msg => {
-      if (msg.proposals) {
-        const filtered = msg.proposals.filter(p => p.proposalId !== proposalId);
+      if (msg.proposals?.some(p => p.proposalId === proposalId)) {
         return {
           ...msg,
-          proposals: filtered.length > 0 ? filtered : undefined
+          proposalStatus: 'cancelled'
         };
       }
       return msg;
@@ -224,6 +225,7 @@ export class ConciergeChatComponent implements OnInit, OnDestroy {
       role: 'assistant',
       content: response.reply,
       proposals: response.proposals.length > 0 ? response.proposals : undefined,
+      proposalStatus: response.proposals.length > 0 ? 'pending' : undefined,
       actions: response.actions.length > 0 ? response.actions : undefined,
       timestamp: new Date()
     }]);
@@ -265,6 +267,8 @@ export class ConciergeChatComponent implements OnInit, OnDestroy {
     const messagesToSave = this.messages().slice(-20).map(m => ({
       role: m.role,
       content: m.content,
+      proposals: m.proposals,
+      proposalStatus: m.proposalStatus,
       timestamp: m.timestamp
     }));
 
