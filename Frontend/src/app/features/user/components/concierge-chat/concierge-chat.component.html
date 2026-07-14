@@ -1,4 +1,11 @@
 <div class="concierge-chat" style="display:flex;flex-direction:column;height:100%;" role="log" aria-live="polite" aria-label="Concierge conversation">
+  <!-- Header Bar with Clear Action -->
+  <div class="chat-header" style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--mat-sys-outline-variant);">
+    <span style="font-weight:500;font-size:16px;color:var(--mat-sys-on-surface);">AI Concierge</span>
+    <button mat-icon-button (click)="clearChat()" [disabled]="loading()" title="Clear chat history" aria-label="Clear chat history">
+      <mat-icon>delete_sweep</mat-icon>
+    </button>
+  </div>
   <!-- Context Bar -->
   @if (context(); as ctx) {
     <mat-card class="context-bar" appearance="outlined">

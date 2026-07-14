@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit, OnDestroy, DestroyRef, ViewChild, ElementRef } from '@angular/core';
+import { Component, inject, signal, OnInit, OnDestroy, AfterViewInit, DestroyRef, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
@@ -38,7 +38,7 @@ interface ChatMessage {
   templateUrl: './concierge-chat.component.html',
   styleUrls: ['./concierge-chat.component.scss']
 })
-export class ConciergeChatComponent implements OnInit, OnDestroy {
+export class ConciergeChatComponent implements OnInit, OnDestroy, AfterViewInit {
   private readonly api = inject(ConciergeApiService);
   private readonly auth = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
@@ -77,6 +77,10 @@ export class ConciergeChatComponent implements OnInit, OnDestroy {
     if (this.countdownTimer) {
       clearInterval(this.countdownTimer);
     }
+  }
+
+  ngAfterViewInit(): void {
+    this.scrollToBottom();
   }
 
   private loadContext(): void {
@@ -299,6 +303,19 @@ export class ConciergeChatComponent implements OnInit, OnDestroy {
     }));
 
     this.api.saveConversation(convId, messagesToSave);
+  }
+
+  clearChat(): void {
+    const convId = this.conversationId();
+    if (convId) {
+      this.api.clearConversation(convId);
+    }
+    localStorage.removeItem('concierge_conversation_id');
+    this.conversationId.set(null);
+    this.pendingProposals.set([]);
+    this.messages.set([]);
+    this.addWelcomeMessage();
+    this.showToast('Chat history cleared', 'info');
   }
 
   useQuickAction(prompt: string): void {
