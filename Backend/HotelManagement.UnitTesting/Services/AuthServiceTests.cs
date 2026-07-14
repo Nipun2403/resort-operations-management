@@ -36,7 +36,7 @@ public class AuthServiceTests
     public void GenerateJwtToken_ShouldReturnValidToken()
     {
         // Act
-        var token = _authService.GenerateJwtToken("test@example.com", "Admin", "John", "Doe");
+        var token = _authService.GenerateJwtToken(1, "test@example.com", "Admin", "John", "Doe");
 
         // Assert
         Assert.That(token, Is.Not.Null);
@@ -56,7 +56,7 @@ public class AuthServiceTests
         _mockConfig.Setup(c => c["Jwt:Audience"]).Returns((string?)null);
 
         // Act
-        var token = _authService.GenerateJwtToken("test@example.com", "Admin", "John", "Doe");
+        var token = _authService.GenerateJwtToken(1, "test@example.com", "Admin", "John", "Doe");
 
         // Assert
         Assert.That(token, Is.Not.Null);

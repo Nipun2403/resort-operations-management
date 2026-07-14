@@ -21,7 +21,7 @@ public class AuthService : IAuthService
         _userRepository = userRepository;
     }
 
-    public string GenerateJwtToken(string email, string role, string firstName, string lastName)
+    public string GenerateJwtToken(int userId, string email, string role, string firstName, string lastName)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var keyString = _configuration["Jwt:Key"] ?? "super_secret_fallback_key_that_should_be_long_enough_for_hmacsha256_hotel_management";
@@ -31,7 +31,8 @@ public class AuthService : IAuthService
         {
             Subject = new ClaimsIdentity(new[]
             {
-                new Claim(ClaimTypes.Name, email),
+                new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
+                    new Claim(ClaimTypes.Name, email),
                 new Claim(ClaimTypes.Role, role),
                 new Claim(ClaimTypes.GivenName, firstName),
                 new Claim(ClaimTypes.Surname, lastName)
@@ -73,7 +74,7 @@ public class AuthService : IAuthService
         if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
             return new AuthResponseDTO { Success = false, Message = "Invalid email or password." };
 
-        var token = GenerateJwtToken(user.Email, user.Role, user.FirstName, user.LastName);
+        var token = GenerateJwtToken(user.Id, user.Email, user.Role, user.FirstName, user.LastName);
 
         return new AuthResponseDTO
         {
