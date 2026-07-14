@@ -144,16 +144,29 @@ export class ConciergeChatComponent implements OnInit, OnDestroy {
     if (this.pendingProposals().length === 0 || this.loading()) return;
 
     this.loading.set(true);
+    const idsToConfirm = this.pendingProposals().map(p => p.proposalId);
 
     this.api.confirm({
       conversationId: this.conversationId()!,
-      proposalIds: this.pendingProposals().map(p => p.proposalId)
+      proposalIds: idsToConfirm
     }).pipe(
       takeUntilDestroyed(this.destroyRef),
       finalize(() => this.loading.set(false))
     ).subscribe({
       next: (response) => {
         this.pendingProposals.set([]);
+        
+        this.messages.update(msgs => msgs.map(msg => {
+          if (msg.proposals) {
+            const filtered = msg.proposals.filter(p => !idsToConfirm.includes(p.proposalId));
+            return {
+              ...msg,
+              proposals: filtered.length > 0 ? filtered : undefined
+            };
+          }
+          return msg;
+        }));
+
         this.handleResponse(response);
       },
       error: (err) => this.handleError(err)
@@ -162,6 +175,19 @@ export class ConciergeChatComponent implements OnInit, OnDestroy {
 
   dismissProposal(proposalId: string): void {
     this.pendingProposals.update(p => p.filter(p => p.proposalId !== proposalId));
+    
+    this.messages.update(msgs => msgs.map(msg => {
+      if (msg.proposals) {
+        const filtered = msg.proposals.filter(p => p.proposalId !== proposalId);
+        return {
+          ...msg,
+          proposals: filtered.length > 0 ? filtered : undefined
+        };
+      }
+      return msg;
+    }));
+    
+    this.saveConversation();
     this.showToast('Proposal dismissed');
   }
 
