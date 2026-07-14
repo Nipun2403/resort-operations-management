@@ -1,3 +1,4 @@
+using System.ClientModel;
 using HotelManagement.BLL.DTOs;
 using HotelManagement.BLL.Interfaces;
 using HotelManagement.BLL.Services.Concierge;
@@ -46,6 +47,15 @@ public class ConciergeController : ControllerBase
                 ErrorCode = "VALIDATION_ERROR",
                 Message = ex.Message,
                 Details = ex.Errors,
+                TraceId = HttpContext.TraceIdentifier
+            });
+        }
+        catch (Exception ex) when (ex is ClientResultException or HttpRequestException)
+        {
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, new ConciergeErrorResponseDTO
+            {
+                ErrorCode = "AI_SERVICE_UNAVAILABLE",
+                Message = "The concierge AI is temporarily unavailable. Please try again in a moment.",
                 TraceId = HttpContext.TraceIdentifier
             });
         }
@@ -102,6 +112,15 @@ public class ConciergeController : ControllerBase
             {
                 ErrorCode = "PROPOSAL_NOT_FOUND",
                 Message = "One or more proposals not found.",
+                TraceId = HttpContext.TraceIdentifier
+            });
+        }
+        catch (Exception ex) when (ex is ClientResultException or HttpRequestException)
+        {
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, new ConciergeErrorResponseDTO
+            {
+                ErrorCode = "AI_SERVICE_UNAVAILABLE",
+                Message = "The concierge AI is temporarily unavailable. Please try again in a moment.",
                 TraceId = HttpContext.TraceIdentifier
             });
         }
