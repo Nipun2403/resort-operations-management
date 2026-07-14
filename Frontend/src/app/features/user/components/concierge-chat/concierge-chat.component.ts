@@ -13,7 +13,7 @@ import { finalize } from 'rxjs/operators';
 
 import {
   ConciergeApiService, ConciergeChatRequest, ConciergeChatResponse,
-  ConciergeProposal, ConciergeActionResult, GuestContext
+  ConciergeProposal, ConciergeActionResult, GuestContext, PersistedChatMessage
 } from '../../services/concierge-api.service';
 import { AuthService } from '../../../../core/services/auth.service';
 

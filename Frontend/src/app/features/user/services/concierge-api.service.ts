@@ -52,9 +52,16 @@ export interface GuestContext {
   checkOutDate?: string;
   bookingStatus?: string;
 }
+export interface PersistedChatMessage {
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+  proposals?: ConciergeProposal[];
+  proposalStatus?: 'pending' | 'confirmed' | 'cancelled';
+  timestamp: Date;
+}
 
 interface ConversationHistory {
-  messages: Array<{ role: 'user' | 'assistant' | 'system'; content: string; timestamp: Date }>;
+  messages: PersistedChatMessage[];
   turnNumber: number;
 }
 
@@ -102,12 +109,14 @@ export class ConciergeApiService {
   }
 
   // LocalStorage persistence
-  saveConversation(conversationId: string, messages: Array<{ role: 'user' | 'assistant' | 'system'; content: string; timestamp: Date }>): void {
+  saveConversation(conversationId: string, messages: PersistedChatMessage[]): void {
     try {
       const all = JSON.parse(localStorage.getItem(this.storageKey) || '{}');
       all[conversationId] = messages.slice(-20).map(m => ({
         role: m.role,
         content: m.content,
+        proposals: m.proposals,
+        proposalStatus: m.proposalStatus,
         timestamp: m.timestamp.toISOString()
       }));
       localStorage.setItem(this.storageKey, JSON.stringify(all));
@@ -116,7 +125,7 @@ export class ConciergeApiService {
     }
   }
 
-  loadConversation(conversationId: string): Array<{ role: 'user' | 'assistant' | 'system'; content: string; timestamp: Date }> {
+  loadConversation(conversationId: string): PersistedChatMessage[] {
     try {
       const all = JSON.parse(localStorage.getItem(this.storageKey) || '{}');
       const conv = all[conversationId];
@@ -124,6 +133,8 @@ export class ConciergeApiService {
       return conv.map((m: any) => ({
         role: m.role,
         content: m.content,
+        proposals: m.proposals,
+        proposalStatus: m.proposalStatus,
         timestamp: new Date(m.timestamp)
       }));
     } catch (e) {
