@@ -64,6 +64,7 @@ export class ConciergeChatComponent implements OnInit, OnDestroy {
   ];
 
   private countdownTimer: ReturnType<typeof setInterval> | null = null;
+  private readonly CHAT_TIMEOUT_MINUTES = 1;
 
   ngOnInit(): void {
     this.loadContext();
@@ -97,19 +98,42 @@ export class ConciergeChatComponent implements OnInit, OnDestroy {
           proposalStatus: m.proposalStatus,
           timestamp: m.timestamp
         })));
+
+        // Restore pending proposals from history if present
+        const pendingMsg = savedMessages.slice().reverse().find(m => m.proposalStatus === 'pending');
+        if (pendingMsg && pendingMsg.proposals) {
+          this.pendingProposals.set(pendingMsg.proposals);
+        }
       }
     }
   }
 
   private addWelcomeMessage(): void {
-    if (this.messages().length > 0) return;
-
     const name = this.auth.fullName() || 'there';
-    this.messages.set([{
+    const welcomeText = `Hello ${name}! 👋 I'm your AI Concierge. I can help with room service, housekeeping, maintenance, billing questions, and more. What can I do for you today?`;
+    const welcomeMsg: ChatMessage = {
       role: 'assistant',
-      content: `Hello ${name}! 👋 I'm your AI Concierge. I can help with room service, housekeeping, maintenance, billing questions, and more. What can I do for you today?`,
+      content: welcomeText,
       timestamp: new Date()
-    }]);
+    };
+
+    const currentMessages = this.messages();
+    if (currentMessages.length === 0) {
+      this.messages.set([welcomeMsg]);
+      return;
+    }
+
+    // Check if we should append a new welcome message
+    const lastMsg = currentMessages[currentMessages.length - 1];
+    const lastMessageTime = lastMsg.timestamp.getTime();
+    const elapsedMinutes = (Date.now() - lastMessageTime) / (1000 * 60);
+
+    const hasPendingProposals = this.pendingProposals().length > 0;
+
+    // Timeout triggered, no active proposals, and last message is not already the welcome message
+    if (elapsedMinutes >= this.CHAT_TIMEOUT_MINUTES && !hasPendingProposals && lastMsg.content !== welcomeText) {
+      this.messages.update(msgs => [...msgs, welcomeMsg]);
+    }
   }
 
   private startCountdownTimer(): void {
