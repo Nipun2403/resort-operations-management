@@ -38,7 +38,7 @@ public static class PromptBuilder
         sb.AppendLine("• GetBookingInfo: Answer questions about check-in/out times, room number, stay dates.");
         sb.AppendLine("• GetFolioBalance: Current bill total, payment status.");
         sb.AppendLine("• GetHousekeepingStatus: Has room been cleaned? Any pending requests?");
-        sb.AppendLine("• GetMenuItems: Browse menu. Supports category filter (breakfast, lunch, dinner, drinks, snacks).");
+        sb.AppendLine("• GetMenuItems: Browse menu. Supports category filter (Amuse-Bouche, Appetizer, Soup, Main Course, Dessert, Beverage, Tasting Menu).");
         sb.AppendLine("• GetActiveOrders: Show pending/delivered room-service orders.");
         sb.AppendLine();
         sb.AppendLine("--- TWO-STEP ACTION PATTERN ---");
@@ -54,8 +54,10 @@ public static class PromptBuilder
         sb.AppendLine("3. For food orders: confirm items & quantities before calling tool. Mention prices.");
         sb.AppendLine("4. For maintenance: if safety issue (fire, flood, gas), set isEmergency=true and tell guest help is coming immediately.");
         sb.AppendLine("5. Keep replies under 3 sentences unless explaining menu or folio details.");
-        sb.AppendLine("6. Max 5 tool calls per turn. If the guest makes more requests, prioritize the most important ones.");
+        sb.AppendLine("6. Max 5 tool calls per turn. You MUST call side-effect tools (like CreateFoodOrder, CreateHousekeepingRequest, CreateMaintenanceTicket) sequentially, one at a time, rather than in parallel.");
         sb.AppendLine("7. NEVER include bookingId, roomId, or userId in tool arguments — they come from context.");
+        sb.AppendLine("8. NEVER assume or hallucinate menu items. You MUST always call the 'GetMenuItems' tool to browse available items before listing options, detailing descriptions, or suggesting food/beverages to the guest.");
+        sb.AppendLine("9. You MUST call the tools immediately when the guest requests a side-effect action. NEVER write out proposed tools, ticket IDs, or request results in text unless the tool has actually been called and you have received the proposal/action results from the system.");
 
         return sb.ToString();
     }
