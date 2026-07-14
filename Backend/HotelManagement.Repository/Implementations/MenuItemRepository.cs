@@ -33,7 +33,18 @@ public class MenuItemRepository : GenericRepository<MenuItem>, IMenuItemReposito
             query = query.Where(a => a.IsAvailable);
 
         if (!string.IsNullOrWhiteSpace(category))
-            query = query.Where(m => m.Category == category);
+        {
+            var cleanCategory = category.Trim().ToLower();
+            if (cleanCategory.EndsWith('s') && cleanCategory.Length > 1)
+            {
+                var singular = cleanCategory.Substring(0, cleanCategory.Length - 1);
+                query = query.Where(m => m.Category.ToLower() == cleanCategory || m.Category.ToLower() == singular);
+            }
+            else
+            {
+                query = query.Where(m => m.Category.ToLower() == cleanCategory);
+            }
+        }
 
         if (!string.IsNullOrWhiteSpace(searchQuery))
         {
