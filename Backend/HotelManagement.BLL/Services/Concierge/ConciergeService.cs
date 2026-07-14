@@ -115,60 +115,80 @@ public class ConciergeService : IConciergeService
             ToolChoice = ChatToolChoice.CreateAutoChoice(),
             Temperature = 0.3f
         };
-
-        var completion = await _chatClient.CompleteChatAsync(messages, options, ct);
-        var response = completion.Value;
-
-        var toolCalls = response.ToolCalls.ToList();
-        if (toolCalls.Count > ConciergeTools.MaxToolCallsPerTurn)
-        {
-            _logger.LogWarning("Tool call limit exceeded: {Count} calls, truncating to {Max}", 
-                toolCalls.Count, ConciergeTools.MaxToolCallsPerTurn);
-            toolCalls = toolCalls.Take(ConciergeTools.MaxToolCallsPerTurn).ToList();
-        }
+        foreach (var t in ConciergeTools.Definitions)
+            options.Tools.Add(t);
 
         var proposals = new List<ConciergeProposalDTO>();
         var actions = new List<ConciergeActionResultDTO>();
 
-        foreach (var call in toolCalls)
+        var loopCount = 0;
+        var maxLoops = 5;
+        var requiresAnotherCompletion = true;
+        string finalReply = string.Empty;
+
+        while (requiresAnotherCompletion && loopCount < maxLoops)
         {
-            _logger.LogDebug("Tool call: {FunctionName}", call.FunctionName);
-            if (ConciergeTools.SideEffectToolNames.Contains(call.FunctionName))
+            loopCount++;
+            var completion = await _chatClient.CompleteChatAsync(messages, options, ct);
+            var response = completion.Value;
+
+            var toolCalls = response.ToolCalls.ToList();
+            string cleanedContent = response.Content.Count > 0 ? (response.Content[0]?.Text ?? string.Empty) : string.Empty;
+
+            if (toolCalls.Count == 0 && cleanedContent.Contains("<tool_call", StringComparison.Ordinal))
             {
-                var proposal = await CreateProposalAsync(convId, call, context, ct);
-                proposals.Add(proposal);
-                _logger.LogInformation("Created proposal: {ProposalId} for {FunctionName}", 
-                    proposal.ProposalId, call.FunctionName);
+                toolCalls = ParseTextToolCalls(cleanedContent, out var cleaned);
+                cleanedContent = cleaned;
+            }
+
+            if (toolCalls.Count == 0)
+            {
+                finalReply = cleanedContent;
+                requiresAnotherCompletion = false;
             }
             else
             {
-                var result = await ToolExecutor.ExecuteAsync(call, context, this, ct);
-                actions.Add(result);
-                await LogActionAsync(convId, userId, sanitized, call, result, ct);
-                _logger.LogInformation("Executed read-only tool: {FunctionName}, success={Success}", 
-                    call.FunctionName, result.Success);
+                if (toolCalls.Count > ConciergeTools.MaxToolCallsPerTurn)
+                {
+                    toolCalls = toolCalls.Take(ConciergeTools.MaxToolCallsPerTurn).ToList();
+                }
+
+                AssistantChatMessage assistantMsg = response.ToolCalls.Count > 0
+                    ? new AssistantChatMessage(response)
+                    : new AssistantChatMessage(toolCalls);
+
+                messages.Add(assistantMsg);
+
+                foreach (var call in toolCalls)
+                {
+                    _logger.LogDebug("Tool call: {FunctionName}", call.FunctionName);
+                    if (ConciergeTools.SideEffectToolNames.Contains(call.FunctionName))
+                    {
+                        var proposal = await CreateProposalAsync(convId, call, context, ct);
+                        proposals.Add(proposal);
+                        _logger.LogInformation("Created proposal: {ProposalId} for {FunctionName}", 
+                            proposal.ProposalId, call.FunctionName);
+                        
+                        messages.Add(new ToolChatMessage(call.Id, $"Proposal created (pending confirmation): {proposal.Summary}."));
+                    }
+                    else
+                    {
+                        var result = await ToolExecutor.ExecuteAsync(call, context, this, ct);
+                        actions.Add(result);
+                        await LogActionAsync(convId, userId, sanitized, call, result, ct);
+                        _logger.LogInformation("Executed read-only tool: {FunctionName}, success={Success}", 
+                            call.FunctionName, result.Success);
+
+                        messages.Add(new ToolChatMessage(call.Id, $"{(result.Success ? "OK" : "FAIL")}: {result.ResultSummary ?? result.Error}"));
+                    }
+                }
             }
         }
 
-        _logger.LogInformation("Tool calls processed: {ToolCount}, proposals={ProposalCount}, actions={ActionCount}",
-            toolCalls.Count, proposals.Count, actions.Count);
-
-        var finalMessages = new List<ChatMessage>(messages);
-
-        if (proposals.Any())
+        if (string.IsNullOrEmpty(finalReply))
         {
-            var proposalSummaries = string.Join(", ", proposals.Select(p => $"{p.Action}: {p.Summary}"));
-            finalMessages.Add(new SystemChatMessage($"Proposals created (pending confirmation): {proposalSummaries}. Tell the user what you're proposing and ask them to confirm."));
+            finalReply = "I have processed your requests. Please let me know how you'd like to proceed.";
         }
-
-        if (actions.Any())
-        {
-            var actionSummaries = string.Join("\n", actions.Select(a => $"{(a.Success ? "OK" : "FAIL")}: {a.ResultSummary ?? a.Error}"));
-            finalMessages.Add(new SystemChatMessage($"Actions executed:\n{actionSummaries}"));
-        }
-
-        var finalCompletion = await _chatClient.CompleteChatAsync(finalMessages, options, ct);
-        var finalReply = finalCompletion.Value.Content[0].Text;
 
         await _conversationRepo.AddRangeAsync(userId, convKey, new[]
         {
@@ -548,4 +568,108 @@ var summaryCompletion = await _chatClient.CompleteChatAsync(
 
     private static ConciergeActionResultDTO Success(string summary) => new() { Success = true, ResultSummary = summary };
     private static ConciergeActionResultDTO Fail(string error) => new() { Success = false, Error = error };
+
+    private static List<ChatToolCall> ParseTextToolCalls(string text, out string cleanedText)
+    {
+        var toolCalls = new List<ChatToolCall>();
+        cleanedText = text;
+
+        if (string.IsNullOrEmpty(text)) return toolCalls;
+
+        var startIndex = text.IndexOf("<tool_call", StringComparison.Ordinal);
+        if (startIndex == -1) return toolCalls;
+
+        cleanedText = text.Substring(0, startIndex).Trim();
+
+        var toolCallRegex = new System.Text.RegularExpressions.Regex(
+            @"<tool_call:(?<id>[^>]+)>(?<name>[a-zA-Z0-9_]+)",
+            System.Text.RegularExpressions.RegexOptions.Compiled);
+
+        var matches = toolCallRegex.Matches(text);
+        foreach (System.Text.RegularExpressions.Match match in matches)
+        {
+            var id = match.Groups["id"].Value;
+            var name = match.Groups["name"].Value;
+
+            var afterDeclaration = text.Substring(match.Index + match.Length);
+            var jsonArgs = "{}";
+
+            var nextTagIndex = afterDeclaration.IndexOf('<');
+            var firstBraceIndex = afterDeclaration.IndexOf('{');
+            var firstParenIndex = afterDeclaration.IndexOf('(');
+
+            if (firstBraceIndex != -1 && (nextTagIndex == -1 || firstBraceIndex < nextTagIndex))
+            {
+                var braceCount = 0;
+                var braceEnd = -1;
+                for (int i = firstBraceIndex; i < afterDeclaration.Length; i++)
+                {
+                    if (afterDeclaration[i] == '{') braceCount++;
+                    else if (afterDeclaration[i] == '}')
+                    {
+                        braceCount--;
+                        if (braceCount == 0)
+                        {
+                            braceEnd = i;
+                            break;
+                        }
+                    }
+                }
+
+                if (braceEnd != -1)
+                {
+                    jsonArgs = afterDeclaration.Substring(firstBraceIndex, braceEnd - firstBraceIndex + 1);
+                }
+            }
+            else if (firstParenIndex != -1 && (nextTagIndex == -1 || firstParenIndex < nextTagIndex))
+            {
+                var parenEnd = afterDeclaration.IndexOf(')');
+                if (parenEnd != -1 && parenEnd > firstParenIndex)
+                {
+                    var argsContent = afterDeclaration.Substring(firstParenIndex + 1, parenEnd - firstParenIndex - 1);
+                    var dict = new Dictionary<string, object>();
+                    var pairs = argsContent.Split(',');
+                    foreach (var pair in pairs)
+                    {
+                        var kv = pair.Split('=');
+                        if (kv.Length == 2)
+                        {
+                            var key = kv[0].Trim();
+                            var valStr = kv[1].Trim();
+                            if (valStr.StartsWith('\'') && valStr.EndsWith('\'') && valStr.Length > 1)
+                            {
+                                dict[key] = valStr.Substring(1, valStr.Length - 2);
+                            }
+                            else if (valStr.StartsWith('"') && valStr.EndsWith('"') && valStr.Length > 1)
+                            {
+                                dict[key] = valStr.Substring(1, valStr.Length - 2);
+                            }
+                            else if (bool.TryParse(valStr, out var bVal))
+                            {
+                                dict[key] = bVal;
+                            }
+                            else if (int.TryParse(valStr, out var iVal))
+                            {
+                                dict[key] = iVal;
+                            }
+                            else if (decimal.TryParse(valStr, out var dVal))
+                            {
+                                dict[key] = dVal;
+                            }
+                            else
+                            {
+                                dict[key] = valStr;
+                            }
+                        }
+                    }
+                    jsonArgs = JsonSerializer.Serialize(dict);
+                }
+            }
+
+            var call = ChatToolCall.CreateFunctionToolCall(id, name, BinaryData.FromString(jsonArgs));
+            toolCalls.Add(call);
+        }
+
+        return toolCalls;
+    }
 }
