@@ -56,16 +56,6 @@
             </div>
           }
 
-          <!-- Action results -->
-          @if (msg.actions?.length) {
-            <div class="actions" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px;">
-              @for (action of msg.actions; track action.toolCallId) {
-                <mat-chip [color]="action.success ? 'primary' : 'warn'" size="small">
-                  {{ action.resultSummary || action.error }}
-                </mat-chip>
-              }
-            </div>
-          }
         </div>
         <div class="timestamp" style="font-size:11px;color:var(--mat-sys-on-surface-variant);margin-top:4px;">
           {{ msg.timestamp | date:'shortTime' }}
