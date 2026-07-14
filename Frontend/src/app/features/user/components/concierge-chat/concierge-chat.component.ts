@@ -190,21 +190,8 @@ export class ConciergeChatComponent implements OnInit, OnDestroy {
       this.messages.update(msgs => [...msgs, {
         role: 'system',
         content: 'Proposals ready for confirmation:',
-        proposals: response.proposals,
         timestamp: new Date()
       }]);
-    }
-
-    if (response.actions.length > 0) {
-      response.actions.forEach(action => {
-        this.messages.update(msgs => [...msgs, {
-          role: 'system',
-          content: action.success
-            ? `${action.resultSummary}`
-            : `${action.error || 'Action failed'}`,
-          timestamp: new Date()
-        }]);
-      });
     }
 
     this.messages.update(msgs => [...msgs, {
