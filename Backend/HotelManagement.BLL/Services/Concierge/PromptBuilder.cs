@@ -80,7 +80,7 @@ public static class PromptBuilder
         // ============================================================
         sb.AppendLine("--- STATE-FLOW PROTOCOL (Follow EXACTLY) ---");
         sb.AppendLine("RULE A (Tool Selection):");
-        sb.AppendLine("1. If the user asks for a room-service order, you MUST call 'GetMenuItems' FIRST to confirm availability/details. NEVER assume or hallucinate a menu item's price, description, or name. Do NOT suggest or propose any dishes that do not appear in the menu search result.");
+        sb.AppendLine("1. If the user asks for a room-service order, you MUST call 'GetMenuItems' FIRST to confirm availability/details. NEVER assume or hallucinate a menu item's price, description, or name. If your search (e.g., searching for 'spicy' or 'soup') returns no results or an empty list, you MUST politely inform the guest that no items matching that specific description are currently available. You should then call 'GetMenuItems' with NO search query or filters to retrieve the full active menu, and suggest actual, available items from that menu instead. Do NOT suggest or propose any dishes that do not appear in the menu search result.");
         sb.AppendLine("2. If the user asks for their bill, room info, or cleaning status, call the respective Read-Only tool immediately.");
         sb.AppendLine("3. If the user asks for an action (food, cleaning, repair), call the respective Side-Effect tool immediately. Do NOT describe the action in text first; let the tool create the proposal.");
         sb.AppendLine();
@@ -97,9 +97,10 @@ public static class PromptBuilder
         sb.AppendLine("If the user's message contains MULTIPLE requests (e.g., food order AND repair), you can use multiple steps/loops to fulfill them. If one request requires clarification (e.g. food menu lookup/suggestions) but another request is fully clear and actionable (e.g. bed repair), you MUST call the tool for the actionable request immediately in the current loop. Do not wait for the clarification to be resolved before calling the actionable tool. Present ALL proposals to the guest in a single summary response.");
         sb.AppendLine("You may call up to 5 Read-Only tools in a single turn if the user asks multiple questions (e.g., booking info AND menu).");
         sb.AppendLine();
-        sb.AppendLine("RULE E (System Integrity - Tool Execution Veracity):");
-        sb.AppendLine("1. You must NEVER claim, suggest, or imply in your text response that a proposal has been prepared, a ticket has been logged, or an order has been placed unless you have successfully called the corresponding tool (e.g., 'CreateFoodOrder', 'CreateMaintenanceTicket') in the current turn. Saying a proposal is created in text without calling the tool is a critical system failure.");
-        sb.AppendLine("2. If you are suggesting menu items or discussing options, only discuss items that were returned in the 'GetMenuItems' result. Never invent or hallucinate dishes (such as 'Spicy Saffron Soup') that do not exist on the menu.");
+        sb.AppendLine("RULE E (System Integrity - Tool Execution Veracity & Anti-Duplication):");
+        sb.AppendLine("1. You must NEVER call 'CreateFoodOrder' with a guessed, placeholder, or fabricated menuItemId (such as 123). Every menuItemId passed to 'CreateFoodOrder' MUST correspond to a real ID of an item returned in the 'GetMenuItems' result in the current conversation. If the guest asks for 'anything' or something vague, you must first present them with the actual menu options and obtain their selection; you cannot guess an ID to place the order.");
+        sb.AppendLine("2. ANTI-DUPLICATION: You must NEVER create duplicate proposals for requests that have already been fulfilled or confirmed. If the system summary in the conversation history indicates an action was successfully executed (e.g., a ticket was created), you MUST NOT call the tool for that action again in subsequent turns.");
+        sb.AppendLine("3. If you are suggesting menu items or discussing options, only discuss items that were returned in the 'GetMenuItems' result. Never invent or hallucinate dishes (such as 'Spicy Saffron Soup') that do not exist on the menu.");
         sb.AppendLine();
 
         // ============================================================

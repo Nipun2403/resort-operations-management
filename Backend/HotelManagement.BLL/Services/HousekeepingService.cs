@@ -71,7 +71,7 @@ public class HousekeepingService : IHousekeepingService
                 throw new ArgumentException("You do not have an active booking for this room.");
         }
 
-        var existingTasks = await _housekeepingRepository.FindAsync(h => h.RoomId == roomId && h.Description == dto.Description && h.Status != HousekeepingStatus.Completed);
+        var existingTasks = await _housekeepingRepository.FindAsync(h => h.RoomId == roomId && h.Description != null && dto.Description != null && h.Description.ToLower() == dto.Description.ToLower() && h.Status != HousekeepingStatus.Completed);
         if (existingTasks.Any())
             throw new InvalidOperationException("An identical housekeeping task is already pending or in progress for this room.");
 
