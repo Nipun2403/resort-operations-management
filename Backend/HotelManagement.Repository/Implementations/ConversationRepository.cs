@@ -19,8 +19,10 @@ public class ConversationRepository : IConversationRepository
         return await _context.ConversationMessages
             .Where(m => m.UserId == userId && m.ConversationId == conversationId)
             .OrderByDescending(m => m.CreatedAt)
+            .ThenByDescending(m => m.Id)
             .Take(limit)
             .OrderBy(m => m.CreatedAt)
+            .ThenBy(m => m.Id)
             .ToListAsync();
     }
 
