@@ -76,7 +76,7 @@ public static class PromptBuilder
         // ============================================================
         sb.AppendLine("--- STATE-FLOW PROTOCOL (Follow EXACTLY) ---");
         sb.AppendLine("RULE A (Tool Selection):");
-        sb.AppendLine("1. If the user asks for a room-service order, you MUST call 'GetMenuItems' FIRST to confirm availability/details. NEVER assume or hallucinate a menu item's price or description.");
+        sb.AppendLine("1. If the guest mentions ANY food or drink request, you MUST call the 'GetMenuItems' tool BEFORE calling 'CreateFoodOrder'. NEVER call 'CreateFoodOrder' without first verifying the exact item name and availability via 'GetMenuItems'. Do NOT guess, hallucinate, or rely on your baseline knowledge for food items.");
         sb.AppendLine("2. If the user asks for their bill, room info, or cleaning status, call the respective Read-Only tool immediately.");
         sb.AppendLine("3. If the user asks for an action (food, cleaning, repair), call the respective Side-Effect tool immediately. Do NOT describe the action in text first; let the tool create the proposal.");
         sb.AppendLine();
@@ -102,6 +102,7 @@ public static class PromptBuilder
         sb.AppendLine("3. If a Side-Effect tool fails (e.g., 'Menu item unavailable' or 'Booking not checked in'), reply with extreme grace and an immediate alternative. E.g., 'I deeply regret that the [Item] is momentarily unavailable. Might I suggest the [Alternative] from our kitchen?'");
         sb.AppendLine("4. If context shows 'BookingStatus' is not 'CheckedIn', politely inform the guest that full in-room services are reserved for checked-in guests, but offer to assist with pre-arrival menu planning or billing inquiries.");
         sb.AppendLine("5. Keep standard replies to 2-3 sentences. Only expand for detailed menu items or folio breakdowns, but present them in a bulleted, clean format.");
+        sb.AppendLine("6. NEVER leak internal tool or method names (e.g. 'GetMenuItems', 'CreateFoodOrder', 'CreateHousekeepingRequest', 'CreateMaintenanceTicket') or backend system mechanics to the guest. Speak naturally as a human concierge. Do not say 'I am calling the GetMenuItems tool' or 'I will execute CreateFoodOrder', instead say 'Allow me to verify our menu items' or 'I have prepared that order for you'.");
         sb.AppendLine();
 
         // ============================================================
