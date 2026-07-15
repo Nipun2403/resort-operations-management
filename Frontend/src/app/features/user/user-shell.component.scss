@@ -203,47 +203,6 @@
       font-size: 28px;
     }
   }
-
-  .concierge-fab {
-    --mdc-fab-container-color: var(--color-primary-container);
-    --mdc-fab-label-text-color: var(--color-on-primary-container);
-    --mdc-fab-container-shape: 28px;
-    height: 48px;
-    min-width: 160px;
-    gap: 8px;
-    padding: 0 16px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-    .fab-label {
-      @include font-label-caps;
-      color: var(--color-on-primary-container);
-    }
-
-    mat-icon {
-      font-size: 24px;
-      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      color: var(--color-on-primary-container);
-
-      &.rotated {
-        transform: rotate(45deg);
-      }
-    }
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-    }
-
-    &.active {
-      background-color: var(--color-secondary-container);
-      --mdc-fab-label-text-color: var(--color-on-secondary-container);
-
-      mat-icon {
-        color: var(--color-on-secondary-container);
-      }
-    }
-  }
 }
 
 .content-canvas {
@@ -286,6 +245,10 @@
     display: flex;
     gap: 24px;
 
+    @media (min-width: 768px) {
+      margin-right: 200px;
+    }
+
     a {
       @include font-label-caps;
       font-size: 12px;
@@ -312,12 +275,13 @@
   -webkit-backdrop-filter: blur(4px);
   z-index: 1300;
   opacity: 0;
-  animation: fadeIn 200ms ease-out forwards;
-}
+  pointer-events: none;
+  transition: opacity 300ms ease-in-out;
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  &.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
 }
 
 .concierge-panel {
@@ -335,9 +299,9 @@
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
 
-  // Desktop: side panel (400px)
+  // Desktop: side panel (750px)
   @media (min-width: 1025px) {
-    width: 400px;
+    width: 750px;
     transform: translateX(100%);
     right: 0;
     border-radius: 16px 0 0 16px;
@@ -350,9 +314,9 @@
     }
   }
 
-  // Tablet: slide-over panel (90% width, max 480px)
+  // Tablet: slide-over panel (90% width, max 750px)
   @media (max-width: 1024px) and (min-width: 601px) {
-    width: min(90vw, 480px);
+    width: min(90vw, 750px);
     transform: translateX(100%);
     right: 0;
     border-radius: 16px 0 0 16px;
@@ -440,7 +404,7 @@
 
   .concierge-content {
     flex: 1;
-    overflow-y: auto;
+    overflow: hidden;
     padding: 0;
     display: flex;
     flex-direction: column;
@@ -448,9 +412,110 @@
   }
 }
 
-/* FAB rotation animation */
-.concierge-fab mat-icon.rotated {
-  transform: rotate(45deg);
+/* ==========================================================================
+   CONCIERGE FLOATING FAB
+   ========================================================================== */
+
+.concierge-fab {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  width: 56px;
+  height: 56px;
+  background-color: var(--color-secondary);
+  border: none;
+  border-radius: 28px;
+  color: var(--color-on-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  transition: all 0.4s cubic-bezier(0.2, 0, 0, 1);
+  z-index: 99;
+  overflow: hidden;
+  padding: 0 16px;
+  outline: none;
+
+  @media (min-width: 768px) {
+    bottom: 48px;
+    right: 48px;
+    width: 64px;
+    height: 64px;
+    border-radius: 32px;
+  }
+
+  &__icon {
+    font-size: 28px;
+    flex-shrink: 0;
+    transition: transform 0.5s ease;
+    font-variation-settings: 'wght' 300;
+
+    &.rotated {
+      transform: rotate(90deg);
+    }
+  }
+
+  &__label {
+    font-family: var(--font-body);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0;
+    max-width: 0;
+    white-space: nowrap;
+    transition: all 0.4s cubic-bezier(0.2, 0, 0, 1);
+    margin-left: 0;
+  }
+
+  &:hover {
+    width: 240px;
+    border-radius: 32px;
+    box-shadow: 0 12px 40px rgba(228, 194, 133, 0.3);
+
+    @media (max-width: 767px) {
+      width: 220px;
+    }
+  }
+
+  &:hover &__icon {
+    transform: rotate(90deg);
+  }
+
+  &:hover &__label {
+    opacity: 1;
+    max-width: 200px;
+    margin-left: 12px;
+  }
+
+  &.active {
+    background-color: var(--color-secondary-container);
+    color: var(--color-on-secondary-container);
+
+    .concierge-fab__icon {
+      color: var(--color-on-secondary-container);
+    }
+
+    .concierge-fab__label {
+      color: var(--color-on-secondary-container);
+    }
+  }
+
+  &.room-service-page {
+    @media (max-width: 767px) {
+      bottom: 96px;
+      width: 48px;
+      height: 48px;
+      border-radius: 24px;
+      right: 20px;
+      padding: 0;
+
+      .concierge-fab__icon {
+        font-size: 22px;
+      }
+    }
+  }
 }
 
 /* Concierge panel open state */
@@ -463,9 +528,4 @@ body:has(.concierge-panel.open) {
   @media (max-width: 1024px) {
     overflow: hidden;
   }
-}
-
-/* FAB active state rotation */
-.concierge-fab.active mat-icon {
-  transform: rotate(45deg);
 }

@@ -1,38 +1,28 @@
 <div class="shell-layout">
   <!-- Mobile Sidebar Backdrop -->
   @if (isMobile() && sidebarOpen()) {
-    <div class="backdrop" (click)="sidebarOpen.set(false)"></div>
+  <div class="backdrop" (click)="sidebarOpen.set(false)"></div>
   }
 
-  <!-- Concierge Slide Panel Backdrop (Mobile) -->
-  @if (isMobile() && showConcierge()) {
-    <div class="concierge-backdrop" (click)="closeConcierge()"></div>
-  }
+  <!-- Concierge Slide Panel Backdrop -->
+  <div class="concierge-backdrop" [class.visible]="showConcierge()" (click)="closeConcierge()"></div>
 
   <!-- Concierge Slide Panel -->
-  @if (showConcierge()) {
-    <aside class="concierge-panel" [class.mobile]="isMobile()" [class.open]="showConcierge()" role="dialog" aria-label="AI Concierge" aria-modal="true">
-      <header class="concierge-header">
-        <h2 class="concierge-title">AI Concierge</h2>
-        <button mat-icon-button (click)="closeConcierge()" aria-label="Close Concierge" class="concierge-close">
-          <mat-icon>close</mat-icon>
-        </button>
-      </header>
-      <div class="concierge-content">
-        <app-concierge-chat></app-concierge-chat>
-      </div>
-    </aside>
-  }
+  <aside class="concierge-panel" [class.mobile]="isMobile()" [class.open]="showConcierge()" role="dialog"
+    aria-label="AI Concierge" aria-modal="true">
+    <div class="concierge-content">
+      <app-concierge-chat (closeChat)="closeConcierge()"></app-concierge-chat>
+    </div>
+  </aside>
 
   <!-- Mobile Sidebar Backdrop -->
   @if (isMobile() && sidebarOpen()) {
-    <div class="backdrop" (click)="sidebarOpen.set(false)"></div>
+  <div class="backdrop" (click)="sidebarOpen.set(false)"></div>
   }
 
   <!-- SideNavBar -->
-  <nav class="sidebar"
-       [class.sidebar-mobile-open]="isMobile() && sidebarOpen()"
-       [class.sidebar-mobile-closed]="isMobile() && !sidebarOpen()">
+  <nav class="sidebar" [class.sidebar-mobile-open]="isMobile() && sidebarOpen()"
+    [class.sidebar-mobile-closed]="isMobile() && !sidebarOpen()">
     <!-- Header/Brand -->
     <div class="brand-container">
       <h1 class="brand-title">The Private Corridor</h1>
@@ -67,21 +57,15 @@
     <header class="top-app-bar">
       <div class="app-bar-left">
         @if (isMobile()) {
-          <button class="mobile-menu-btn" (click)="sidebarOpen.set(!sidebarOpen())" aria-label="Toggle Navigation">
-            <span class="material-symbols-outlined">menu</span>
-          </button>
+        <button class="mobile-menu-btn" (click)="sidebarOpen.set(!sidebarOpen())" aria-label="Toggle Navigation">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
         }
         <a class="brand-logo" routerLink="/home">Aetheris</a>
       </div>
 
       <!-- Actions -->
       <div class="app-bar-right">
-        <!-- Concierge FAB -->
-        <button mat-fab extended class="concierge-fab" (click)="toggleConcierge()" [class.active]="showConcierge()" aria-label="Toggle AI Concierge" aria-expanded="{{ showConcierge() }}">
-          <mat-icon [class.rotated]="showConcierge()">smart_toy</mat-icon>
-          <span class="fab-label">Concierge</span>
-        </button>
-
         <button class="profile-btn" [matMenuTriggerFor]="userMenu" aria-label="Open user menu">
           <span class="material-symbols-outlined">account_circle</span>
         </button>
@@ -105,10 +89,17 @@
     <footer class="shell-footer">
       <p class="footer-copyright">© 2024 Aetheris Ultra-Luxury Resort. All Rights Reserved.</p>
       <div class="footer-links">
-        <a href="#">Privacy</a>
-        <a href="#">Concierge</a>
-        <a href="#">Legal</a>
+        <a routerLink="/privacy">Privacy</a>
+        <a routerLink="/terms">Legal</a>
       </div>
     </footer>
   </div>
+
+  <!-- Concierge FAB -->
+  <button class="concierge-fab" (click)="toggleConcierge()" [class.active]="showConcierge()"
+    [class.room-service-page]="isRoomServiceRoute()"
+    aria-label="Toggle AI Concierge" [attr.aria-expanded]="showConcierge()">
+    <span class="concierge-fab__icon material-symbols-outlined" [class.rotated]="showConcierge()">smart_toy</span>
+    <span class="concierge-fab__label">Atlas</span>
+  </button>
 </div>
