@@ -9,6 +9,7 @@ using System.Text;
 using Microsoft.OpenApi.Models;
 using HotelManagement.BLL.Interfaces;
 using HotelManagement.BLL.Services;
+using HotelManagement.BLL.Services.Concierge;
 using HotelManagement.Repository.Implementations;
 using HotelManagement.Repository.Interfaces;
 using QuestPDF.Infrastructure;
@@ -20,6 +21,9 @@ using HotelManagement.API.Utilities;
 using HotelManagement.BLL.Options;
 using HotelManagement.BLL.Workers;
 using Microsoft.Extensions.Options;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Exporter.Prometheus;
+using OpenTelemetry.Resources;
 
 // Set QuestPDF community licence (free for non-commercial / open-source use)
 QuestPDF.Settings.License = LicenseType.Community;
@@ -86,6 +90,9 @@ builder.Services.AddScoped<IAuditLogRepository, AuditLogRepository>();
 builder.Services.AddScoped<IMaintenanceRepository, MaintenanceRepository>();
 builder.Services.AddScoped<IReceiptRepository, ReceiptRepository>();
 builder.Services.AddScoped<IAnalyticsRepository, AnalyticsRepository>();
+builder.Services.AddScoped<IConciergeActionLogRepository, ConciergeActionLogRepository>();
+builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
+builder.Services.AddScoped<IConciergeProposalRepository, ConciergeProposalRepository>();
 #endregion
 
 #region Services
@@ -110,6 +117,14 @@ builder.Services.AddScoped<IAuditLogService, AuditLogService>();
 builder.Services.AddScoped<IMaintenanceService, MaintenanceService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 builder.Services.AddScoped<IImageUploadService, ImageUploadService>();
+
+// Concierge
+builder.Services.Configure<OpenAIOptions>(builder.Configuration.GetSection("OpenAI"));
+builder.Services.Configure<ConciergeOptions>(builder.Configuration.GetSection("Concierge"));
+builder.Services.AddScoped<IConciergeService, ConciergeService>();
+builder.Services.AddScoped<IConversationStore, PostgresConversationStore>();
+builder.Services.AddScoped<IProposalStore, PostgresProposalStore>();
+builder.Services.AddScoped<IConciergeActionLogRepository, ConciergeActionLogRepository>();
 #endregion
 
 #region Email & PDF
@@ -124,6 +139,7 @@ builder.Services.AddHostedService<ImageValidationWorker>();
 builder.Services.AddHostedService<OrphanImageCleanupWorker>();
 builder.Services.AddHostedService<BlobCleanupWorker>();
 builder.Services.AddHostedService<FeedbackReminderWorker>();
+builder.Services.AddHostedService<HotelManagement.BLL.Workers.ProposalCleanupWorker>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserService, HotelManagement.API.Services.CurrentUserService>();
 builder.Services.AddScoped<IAuditUserProvider>(sp => (IAuditUserProvider)sp.GetRequiredService<ICurrentUserService>());
@@ -153,8 +169,29 @@ builder.Services.AddRateLimiter(options =>
         opt.PermitLimit = 20;
         opt.QueueLimit = 0;
     });
+    options.AddTokenBucketLimiter("ConciergePolicy", opt =>
+    {
+        opt.TokenLimit = 30;
+        opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        opt.QueueLimit = 5;
+        opt.ReplenishmentPeriod = TimeSpan.FromMinutes(1);
+        opt.TokensPerPeriod = 30;
+    });
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 });
+#endregion
+
+#region OpenTelemetry Metrics
+builder.Services.AddOpenTelemetry()
+    .WithMetrics(metrics =>
+    {
+        metrics
+            .AddMeter("HotelManagement.Concierge")
+            .AddRuntimeInstrumentation()
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddPrometheusExporter();
+    });
 #endregion
 
 #region Controllers & Routing
@@ -288,6 +325,14 @@ app.UseCors("AllowAll");
 app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Concierge-specific rate limiting
+app.MapControllerRoute(
+    name: "concierge",
+    pattern: "api/v1/concierge/{action}",
+    defaults: new { controller = "Concierge" })
+    .RequireRateLimiting("ConciergePolicy");
+
 app.MapControllers().RequireRateLimiting("GlobalPolicy");
 app.MapHub<HotelManagement.API.Hubs.NotificationHub>("/notifications").RequireCors("AllowAll");
 

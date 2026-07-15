@@ -122,8 +122,8 @@ public class AmenitiesControllerTests
     [Test]
     public async Task UpdateAmenity_ShouldReturnOk_WhenValid()
     {
-        var request = new CreateUpdateAmenityDTO { Name = "Updated" };
-        _mockAmenityService.Setup(s => s.UpdateAmenityAsync(1, request)).Returns(Task.CompletedTask);
+        var request = new CreateUpdateAmenityDTO { Name = "Updated", IsAvailable = true };
+        _mockAmenityService.Setup(s => s.UpdateAmenityAsync(1, request, true)).Returns(Task.CompletedTask);
 
         var result = await _controller.UpdateAmenity(1, request) as OkObjectResult;
 
@@ -134,8 +134,8 @@ public class AmenitiesControllerTests
     [Test]
     public async Task UpdateAmenity_ShouldReturnNotFound_OnArgumentException()
     {
-        var request = new CreateUpdateAmenityDTO { Name = "Updated" };
-        _mockAmenityService.Setup(s => s.UpdateAmenityAsync(1, request)).ThrowsAsync(new ArgumentException("Amenity not found."));
+        var request = new CreateUpdateAmenityDTO { Name = "Updated", IsAvailable = true };
+        _mockAmenityService.Setup(s => s.UpdateAmenityAsync(1, request, true)).ThrowsAsync(new ArgumentException("Amenity not found."));
 
         var result = await _controller.UpdateAmenity(1, request) as NotFoundObjectResult;
 
@@ -143,28 +143,4 @@ public class AmenitiesControllerTests
         Assert.That(result.StatusCode, Is.EqualTo(404));
         Assert.That(result.Value, Is.EqualTo("Amenity not found."));
     }
-
-    [Test]
-    public async Task UpdateAmenityStatus_ShouldReturnOk_WhenValid()
-    {
-        _mockAmenityService.Setup(s => s.UpdateAmenityStatusAsync(1, true)).Returns(Task.CompletedTask);
-
-        var result = await _controller.UpdateAmenityStatus(1, true) as OkObjectResult;
-
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result.StatusCode, Is.EqualTo(200));
-    }
-
-    [Test]
-    public async Task UpdateAmenityStatus_ShouldReturnNotFound_OnArgumentException()
-    {
-        _mockAmenityService.Setup(s => s.UpdateAmenityStatusAsync(1, true)).ThrowsAsync(new ArgumentException("Amenity not found."));
-
-        var result = await _controller.UpdateAmenityStatus(1, true) as NotFoundObjectResult;
-
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result.StatusCode, Is.EqualTo(404));
-    }
-
-
 }

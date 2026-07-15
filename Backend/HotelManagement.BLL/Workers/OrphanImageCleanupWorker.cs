@@ -25,12 +25,12 @@ public class OrphanImageCleanupWorker : BackgroundService
     {
         _logger.LogInformation("OrphanImageCleanupWorker started.");
 
-        using var timer = new PeriodicTimer(TimeSpan.FromHours(1));
-
-        while (await timer.WaitForNextTickAsync(ct))
+        while (!ct.IsCancellationRequested)
         {
             try
             {
+                await Task.Delay(TimeSpan.FromHours(1), ct);
+
                 using var scope = _scopeFactory.CreateScope();
                 var options = scope.ServiceProvider.GetRequiredService<IOptions<AzureStorageOptions>>().Value;
                 var blobServiceClient = scope.ServiceProvider.GetRequiredService<BlobServiceClient>();
@@ -81,7 +81,7 @@ public class OrphanImageCleanupWorker : BackgroundService
                     _logger.LogInformation("Orphan cleanup: expired {Count} sessions and deleted blobs.", allExpired.Count);
                 }
             }
-            catch (OperationCanceledException)
+            catch (OperationCanceledException) when (ct.IsCancellationRequested)
             {
                 break;
             }

@@ -71,7 +71,7 @@ public class HousekeepingService : IHousekeepingService
                 throw new ArgumentException("You do not have an active booking for this room.");
         }
 
-        var existingTasks = await _housekeepingRepository.FindAsync(h => h.RoomId == roomId && h.Description == dto.Description && h.Status != HousekeepingStatus.Completed);
+        var existingTasks = await _housekeepingRepository.FindAsync(h => h.RoomId == roomId && h.Description != null && dto.Description != null && h.Description.ToLower() == dto.Description.ToLower() && h.Status != HousekeepingStatus.Completed);
         if (existingTasks.Any())
             throw new InvalidOperationException("An identical housekeeping task is already pending or in progress for this room.");
 
@@ -250,6 +250,22 @@ public class HousekeepingService : IHousekeepingService
             filter = h => h.Status != HousekeepingStatus.Completed;
 
         var records = await _housekeepingRepository.GetPaginatedResultAsync(pageNumber, pageSize, filter, orderBy);
+        var dtos = _mapper.Map<IEnumerable<HousekeepingDTO>>(records.Data);
+        return new PaginatedResult<HousekeepingDTO>
+        {
+            TotalCount = records.TotalCount,
+            PageNumber = records.PageNumber,
+            PageSize = records.PageSize,
+            Data = dtos
+        };
+    }
+
+    public async Task<PaginatedResult<HousekeepingDTO>> GetActiveTasksAsync(int pageNumber, int pageSize, int roomId)
+    {
+        System.Linq.Expressions.Expression<Func<Housekeeping, bool>> filter = 
+            h => h.RoomId == roomId && h.Status != HousekeepingStatus.Completed;
+
+        var records = await _housekeepingRepository.GetPaginatedResultAsync(pageNumber, pageSize, filter);
         var dtos = _mapper.Map<IEnumerable<HousekeepingDTO>>(records.Data);
         return new PaginatedResult<HousekeepingDTO>
         {

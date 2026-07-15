@@ -27,7 +27,7 @@ public class RoomTypesControllerTests
     public async Task GetRoomTypes_ShouldReturnOk()
     {
         var resultDto = new PaginatedResult<RoomTypeDTO>();
-        _mockRoomTypeService.Setup(s => s.GetRoomTypesAsync(1, 10, false, null, false)).ReturnsAsync(resultDto);
+        _mockRoomTypeService.Setup(s => s.GetRoomTypesAsync(1, 10, false, null, null, false)).ReturnsAsync(resultDto);
         var result = await _controller.GetRoomTypes(false, 1, 10) as OkObjectResult;
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(200));

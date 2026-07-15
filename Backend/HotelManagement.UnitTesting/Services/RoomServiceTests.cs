@@ -43,7 +43,7 @@ public class RoomServiceTests
     {
         var rooms = new List<Room> { new Room { Id = 1 } };
         var paged = new PaginatedResult<Room> { TotalCount = 1, PageNumber = 1, PageSize = 10, Data = rooms };
-        _mockRoomRepo.Setup(r => r.GetRoomsWithTypesAsync(false)).ReturnsAsync(rooms);
+        _mockRoomRepo.Setup(r => r.GetPaginatedRoomsAsync(1, 10, false, null, null, null, false)).ReturnsAsync(paged);
         _mockMapper.Setup(m => m.Map<IEnumerable<RoomDTO>>(rooms)).Returns(new List<RoomDTO> { new RoomDTO { Id = 1 } });
 
         var result = await _roomService.GetRoomsAsync(1, 10, includeRetired: false);
@@ -56,14 +56,18 @@ public class RoomServiceTests
     {
         var rooms = new List<Room>
         {
-            new Room { Id = 1, RoomTypeId = 2, RoomNumber = "101" },
             new Room { Id = 2, RoomTypeId = 2, RoomNumber = "102" },
-            new Room { Id = 3, RoomTypeId = 3, RoomNumber = "103" }
+            new Room { Id = 1, RoomTypeId = 2, RoomNumber = "101" }
         };
-        _mockRoomRepo.Setup(r => r.GetRoomsWithTypesAsync(false)).ReturnsAsync(rooms);
+        var paged = new PaginatedResult<Room> { TotalCount = 2, PageNumber = 1, PageSize = 10, Data = rooms };
+        _mockRoomRepo.Setup(r => r.GetPaginatedRoomsAsync(1, 10, false, 2, null, "RoomNumber", true)).ReturnsAsync(paged);
 
-        _mockMapper.Setup(m => m.Map<IEnumerable<RoomDTO>>(It.IsAny<IEnumerable<Room>>()))
-            .Returns((IEnumerable<Room> src) => src.Select(r => new RoomDTO { Id = r.Id, RoomNumber = r.RoomNumber }));
+        _mockMapper.Setup(m => m.Map<IEnumerable<RoomDTO>>(rooms))
+            .Returns(new List<RoomDTO> 
+            { 
+                new RoomDTO { Id = 2, RoomNumber = "102" },
+                new RoomDTO { Id = 1, RoomNumber = "101" }
+            });
 
         // Act with roomTypeId = 2, sortBy = "RoomNumber", sortDescending = true
         var result = await _roomService.GetRoomsAsync(1, 10, roomTypeId: 2, includeRetired: false, sortBy: "RoomNumber", sortDescending: true);
@@ -128,6 +132,7 @@ public class RoomServiceTests
 
         _mockRoomRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(inactiveRoom);
         _mockRoomTypeRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(activeType);
+        _mockMapper.Setup(m => m.Map<RoomDTO>(inactiveRoom)).Returns(new RoomDTO { Id = 1, RoomNumber = "101" });
 
         await _roomService.UpdateRoomAsync(1, dto);
 

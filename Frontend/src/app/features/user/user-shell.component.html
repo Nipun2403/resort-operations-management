@@ -1,18 +1,33 @@
 <div class="shell-layout">
   <!-- Mobile Sidebar Backdrop -->
   @if (isMobile() && sidebarOpen()) {
-    <div class="backdrop" (click)="sidebarOpen.set(false)"></div>
+  <div class="backdrop" (click)="sidebarOpen.set(false)"></div>
+  }
+
+  <!-- Concierge Slide Panel Backdrop -->
+  <div class="concierge-backdrop" [class.visible]="showConcierge()" (click)="closeConcierge()"></div>
+
+  <!-- Concierge Slide Panel -->
+  <aside class="concierge-panel" [class.mobile]="isMobile()" [class.open]="showConcierge()" role="dialog"
+    aria-label="AI Concierge" aria-modal="true">
+    <div class="concierge-content">
+      <app-concierge-chat (closeChat)="closeConcierge()"></app-concierge-chat>
+    </div>
+  </aside>
+
+  <!-- Mobile Sidebar Backdrop -->
+  @if (isMobile() && sidebarOpen()) {
+  <div class="backdrop" (click)="sidebarOpen.set(false)"></div>
   }
 
   <!-- SideNavBar -->
-  <nav class="sidebar"
-       [class.sidebar-mobile-open]="isMobile() && sidebarOpen()"
-       [class.sidebar-mobile-closed]="isMobile() && !sidebarOpen()">
+  <nav class="sidebar" [class.sidebar-mobile-open]="isMobile() && sidebarOpen()"
+    [class.sidebar-mobile-closed]="isMobile() && !sidebarOpen()">
     <!-- Header/Brand -->
     <div class="brand-container">
       <h1 class="brand-title">The Private Corridor</h1>
     </div>
-    
+
     <!-- Navigation Links -->
     <ul class="nav-links">
       <li>
@@ -42,9 +57,9 @@
     <header class="top-app-bar">
       <div class="app-bar-left">
         @if (isMobile()) {
-          <button class="mobile-menu-btn" (click)="sidebarOpen.set(!sidebarOpen())" aria-label="Toggle Navigation">
-            <span class="material-symbols-outlined">menu</span>
-          </button>
+        <button class="mobile-menu-btn" (click)="sidebarOpen.set(!sidebarOpen())" aria-label="Toggle Navigation">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
         }
         <a class="brand-logo" routerLink="/home">Aetheris</a>
       </div>
@@ -74,10 +89,17 @@
     <footer class="shell-footer">
       <p class="footer-copyright">© 2024 Aetheris Ultra-Luxury Resort. All Rights Reserved.</p>
       <div class="footer-links">
-        <a href="#">Privacy</a>
-        <a href="#">Concierge</a>
-        <a href="#">Legal</a>
+        <a routerLink="/privacy">Privacy</a>
+        <a routerLink="/terms">Legal</a>
       </div>
     </footer>
   </div>
+
+  <!-- Concierge FAB -->
+  <button class="concierge-fab" (click)="toggleConcierge()" [class.active]="showConcierge()"
+    [class.room-service-page]="isRoomServiceRoute()"
+    aria-label="Toggle AI Concierge" [attr.aria-expanded]="showConcierge()">
+    <span class="concierge-fab__icon material-symbols-outlined" [class.rotated]="showConcierge()">smart_toy</span>
+    <span class="concierge-fab__label">Atlas</span>
+  </button>
 </div>

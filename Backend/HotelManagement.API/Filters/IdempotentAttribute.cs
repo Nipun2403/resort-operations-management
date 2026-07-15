@@ -11,6 +11,8 @@ namespace HotelManagement.API.Filters;
 
 public sealed class IdempotentAttribute : ActionFilterAttribute
 {
+    private const string ItemsKey = "IdempotentAttribute.ProcessedKeys";
+
     public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
         // Skip if endpoint opts out
@@ -39,6 +41,16 @@ public sealed class IdempotentAttribute : ActionFilterAttribute
         var effectiveKey = string.IsNullOrEmpty(userId)
             ? $"anon:{rawKey}"
             : $"{userId}:{rawKey}";
+
+        // Prevent double-execution within same request (global filter + action attribute)
+        var processedKeys = context.HttpContext.Items[ItemsKey] as HashSet<string> ?? new HashSet<string>();
+        if (processedKeys.Contains(effectiveKey))
+        {
+            await next();
+            return;
+        }
+        processedKeys.Add(effectiveKey);
+        context.HttpContext.Items[ItemsKey] = processedKeys;
 
         var dbContext = context.HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>();
 

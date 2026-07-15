@@ -108,7 +108,7 @@ public class AuditLogServiceTests
             
         _mockMapper.Setup(m => m.Map<IEnumerable<AuditLogDTO>>(logs)).Returns(new List<AuditLogDTO> { new AuditLogDTO { Id = 1 } });
 
-        var result = await _auditLogService.GetAuditLogsAsync(1, 10, "Action", true);
+        var result = await _auditLogService.GetAuditLogsAsync(1, 10, null, "Action", true);
 
         Assert.That(result.Data.Count(), Is.EqualTo(1));
     }

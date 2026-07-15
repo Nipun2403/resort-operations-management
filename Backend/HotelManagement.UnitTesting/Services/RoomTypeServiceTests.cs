@@ -24,6 +24,7 @@ public class RoomTypeServiceTests
     private Mock<IRoomRepository> _mockRoomRepo;
     private Mock<IMapper> _mockMapper;
     private Mock<ICurrentUserService> _mockCurrentUserService;
+    private Mock<IImageUploadService> _mockImageUploadService;
     private RoomTypeService _roomTypeService;
 
     [SetUp]
@@ -34,13 +35,15 @@ public class RoomTypeServiceTests
         _mockRoomRepo = new Mock<IRoomRepository>();
         _mockMapper = new Mock<IMapper>();
         _mockCurrentUserService = new Mock<ICurrentUserService>();
+        _mockImageUploadService = new Mock<IImageUploadService>();
 
         _roomTypeService = new RoomTypeService(
             _mockRoomTypeRepo.Object,
             _mockBookingRepo.Object,
             _mockMapper.Object,
             _mockCurrentUserService.Object,
-            _mockRoomRepo.Object
+            _mockRoomRepo.Object,
+            _mockImageUploadService.Object
         );
     }
 
@@ -150,7 +153,16 @@ public class RoomTypeServiceTests
     public async Task UpdateRoomTypeAsync_ShouldUpdateAndReturn()
     {
         var existingType = new RoomType { Id = 1, Name = "Old", IsActive = true };
-        var dto = new UpdateRoomTypeDTO { Name = "New", BasePrice = 150m, MaxOccupancy = 4, Description = "NewDesc", ImageUrl = "newurl", SquareFootage = 300, BedConfiguration = "Queen" };
+        var dto = new UpdateRoomTypeDTO 
+        { 
+            Name = "New", 
+            BasePrice = 150m, 
+            MaxOccupancy = 4, 
+            Description = "NewDesc", 
+            ImageUrls = new List<string> { "newurl" }, 
+            SquareFootage = 300, 
+            BedConfiguration = new Dictionary<string, int> { { "Queen", 1 } } 
+        };
 
         _mockRoomTypeRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(existingType);
         _mockMapper.Setup(m => m.Map<RoomTypeDTO>(existingType)).Returns(new RoomTypeDTO { Id = 1, Name = "New" });
@@ -161,9 +173,9 @@ public class RoomTypeServiceTests
         Assert.That(existingType.BasePrice, Is.EqualTo(150m));
         Assert.That(existingType.MaxOccupancy, Is.EqualTo(4));
         Assert.That(existingType.Description, Is.EqualTo("NewDesc"));
-        Assert.That(existingType.ImageUrl, Is.EqualTo("newurl"));
+        Assert.That(existingType.ImageUrls, Is.EquivalentTo(new List<string> { "newurl" }));
         Assert.That(existingType.SquareFootage, Is.EqualTo(300));
-        Assert.That(existingType.BedConfiguration, Is.EqualTo("Queen"));
+        Assert.That(existingType.BedConfigurationJson, Is.EqualTo("{\"Queen\":1}"));
         _mockRoomTypeRepo.Verify(r => r.Update(existingType), Times.Once);
         _mockRoomTypeRepo.Verify(r => r.SaveChangesAsync(), Times.Once);
     }
@@ -171,8 +183,28 @@ public class RoomTypeServiceTests
     [Test]
     public async Task UpdateRoomTypeAsync_ShouldUpdateNothing_IfDtoPropertiesAreNull()
     {
-        var existingType = new RoomType { Id = 1, Name = "Old", IsActive = true, BasePrice = 100m, MaxOccupancy = 2, Description = "Desc", ImageUrl = "url", SquareFootage = 200, BedConfiguration = "King" };
-        var dto = new UpdateRoomTypeDTO { Name = null, BasePrice = null, MaxOccupancy = null, Description = null, ImageUrl = null, SquareFootage = null, BedConfiguration = null };
+        var existingType = new RoomType 
+        { 
+            Id = 1, 
+            Name = "Old", 
+            IsActive = true, 
+            BasePrice = 100m, 
+            MaxOccupancy = 2, 
+            Description = "Desc", 
+            ImageUrls = new List<string> { "url" }, 
+            SquareFootage = 200, 
+            BedConfigurationJson = "{\"King\":1}" 
+        };
+        var dto = new UpdateRoomTypeDTO 
+        { 
+            Name = null, 
+            BasePrice = null, 
+            MaxOccupancy = null, 
+            Description = null, 
+            ImageUrls = null, 
+            SquareFootage = null, 
+            BedConfiguration = null 
+        };
 
         _mockRoomTypeRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(existingType);
         _mockMapper.Setup(m => m.Map<RoomTypeDTO>(existingType)).Returns(new RoomTypeDTO { Id = 1, Name = "Old" });
@@ -183,9 +215,9 @@ public class RoomTypeServiceTests
         Assert.That(existingType.BasePrice, Is.EqualTo(100m));
         Assert.That(existingType.MaxOccupancy, Is.EqualTo(2));
         Assert.That(existingType.Description, Is.EqualTo("Desc"));
-        Assert.That(existingType.ImageUrl, Is.EqualTo("url"));
+        Assert.That(existingType.ImageUrls, Is.EquivalentTo(new List<string> { "url" }));
         Assert.That(existingType.SquareFootage, Is.EqualTo(200));
-        Assert.That(existingType.BedConfiguration, Is.EqualTo("King"));
+        Assert.That(existingType.BedConfigurationJson, Is.EqualTo("{\"King\":1}"));
         _mockRoomTypeRepo.Verify(r => r.Update(existingType), Times.Once);
         _mockRoomTypeRepo.Verify(r => r.SaveChangesAsync(), Times.Once);
     }

@@ -33,9 +33,9 @@ public class BookingsControllerTests
     public async Task GetBookings_ShouldReturnOk_WhenSuccessful()
     {
         var resultDto = new PaginatedResult<BookingDTO>();
-        _mockBookingService.Setup(s => s.GetBookingsAsync(null, 1, 10, null, false)).ReturnsAsync(resultDto);
+        _mockBookingService.Setup(s => s.GetBookingsAsync(null, null, 1, 10, null, false, null, null)).ReturnsAsync(resultDto);
 
-        var result = await _controller.GetBookings(null, 1, 10) as OkObjectResult;
+        var result = await _controller.GetBookings(null, null, 1, 10) as OkObjectResult;
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(200));
@@ -44,9 +44,9 @@ public class BookingsControllerTests
     [Test]
     public async Task GetBookings_ShouldReturnUnauthorized_WhenUnauthorizedAccessExceptionThrown()
     {
-        _mockBookingService.Setup(s => s.GetBookingsAsync(null, 1, 10, null, false)).ThrowsAsync(new UnauthorizedAccessException("No access"));
+        _mockBookingService.Setup(s => s.GetBookingsAsync(null, null, 1, 10, null, false, null, null)).ThrowsAsync(new UnauthorizedAccessException("No access"));
 
-        var result = await _controller.GetBookings(null, 1, 10) as UnauthorizedObjectResult;
+        var result = await _controller.GetBookings(null, null, 1, 10) as UnauthorizedObjectResult;
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(401));

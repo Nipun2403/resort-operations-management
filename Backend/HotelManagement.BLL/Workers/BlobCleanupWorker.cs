@@ -34,14 +34,14 @@ public class BlobCleanupWorker : BackgroundService
             _logger.LogError(ex, "Initial blob cleanup run failed.");
         }
 
-        using var timer = new PeriodicTimer(TimeSpan.FromHours(1));
-        while (await timer.WaitForNextTickAsync(ct))
+        while (!ct.IsCancellationRequested)
         {
             try
             {
+                await Task.Delay(TimeSpan.FromHours(1), ct);
                 await CleanupOrphanedBlobs(ct);
             }
-            catch (OperationCanceledException)
+            catch (OperationCanceledException) when (ct.IsCancellationRequested)
             {
                 break;
             }

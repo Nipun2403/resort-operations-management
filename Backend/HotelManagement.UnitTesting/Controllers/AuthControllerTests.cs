@@ -107,7 +107,7 @@ public class AuthControllerTests
     }
 
     [Test]
-    public void GetMe_ShouldReturnOk_WithUserClaims()
+    public async Task GetMe_ShouldReturnOk_WithUserClaims()
     {
         var claims = new List<Claim>
         {
@@ -118,21 +118,21 @@ public class AuthControllerTests
         
         _controller.ControllerContext.HttpContext.User = claimsPrincipal;
 
-        var result = _controller.GetMe() as OkObjectResult;
+        var result = await _controller.GetMe() as OkObjectResult;
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(200));
     }
 
     [Test]
-    public void GetMe_ShouldReturnOk_WithUnauthenticatedUser()
+    public async Task GetMe_ShouldReturnUnauthorized_WithUnauthenticatedUser()
     {
         var claimsPrincipal = new ClaimsPrincipal(); // No identity
         _controller.ControllerContext.HttpContext.User = claimsPrincipal;
 
-        var result = _controller.GetMe() as OkObjectResult;
+        var result = await _controller.GetMe() as UnauthorizedObjectResult;
 
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.StatusCode, Is.EqualTo(200));
+        Assert.That(result.StatusCode, Is.EqualTo(401));
     }
 }

@@ -27,7 +27,7 @@ public class MenuItemsControllerTests
     public async Task GetMenuItems_ShouldReturnOk()
     {
         var resultDto = new PaginatedResult<MenuItemDTO>();
-        _mockMenuItemService.Setup(s => s.GetMenuItemsAsync(1, 10, false, null, false)).ReturnsAsync(resultDto);
+        _mockMenuItemService.Setup(s => s.GetMenuItemsAsync(1, 10, false, null, null, false)).ReturnsAsync(resultDto);
 
         var result = await _controller.GetMenuItems(1, 10) as OkObjectResult;
 

@@ -60,7 +60,7 @@ public class MaintenanceServiceTests
             new MaintenanceTask { Id = 2, Status = MaintenanceStatus.InProgress }
         };
         var paged = new PaginatedResult<MaintenanceTask> { TotalCount = 2, PageNumber = 1, PageSize = 10, Data = tasks };
-        _mockMaintenanceRepo.Setup(r => r.GetPaginatedResultAsync(1, 10, It.IsAny<Expression<Func<MaintenanceTask, bool>>>()))
+        _mockMaintenanceRepo.Setup(r => r.GetPaginatedResultAsync(1, 10, It.IsAny<Expression<Func<MaintenanceTask, bool>>>(), It.IsAny<Func<IQueryable<MaintenanceTask>, IOrderedQueryable<MaintenanceTask>>>()))
             .ReturnsAsync(paged);
 
         var dtos = new List<MaintenanceTaskDTO>
@@ -69,6 +69,7 @@ public class MaintenanceServiceTests
             new MaintenanceTaskDTO { Id = 2 }
         };
         _mockMapper.Setup(m => m.Map<IEnumerable<MaintenanceTaskDTO>>(tasks)).Returns(dtos);
+        _mockCurrentUserService.Setup(s => s.IsInRole("Admin")).Returns(true);
 
         // Act
         var result = await _maintenanceService.GetActiveTasksAsync(1, 10);
@@ -199,7 +200,7 @@ public class MaintenanceServiceTests
             new Booking { BookingRooms = new List<BookingRoom> { new BookingRoom { RoomId = 2 } }, BookingStatus = BookingStatus.CheckedIn }  // Wrong room
         };
         var pagedBookings = new PaginatedResult<Booking> { Data = bookings };
-        _mockBookingRepo.Setup(r => r.GetPaginatedBookingsWithDetailsAsync(1, 100, It.IsAny<Expression<Func<Booking, bool>>>(), null)).ReturnsAsync(pagedBookings);
+        _mockBookingRepo.Setup(r => r.GetPaginatedBookingsWithDetailsAsync(1, 100, It.IsAny<IEnumerable<Expression<Func<Booking, bool>>>>(), null)).ReturnsAsync(pagedBookings);
 
         // Act & Assert
         Assert.ThrowsAsync<ArgumentException>(() => _maintenanceService.CreateTicketAsync(1, dto));
@@ -224,7 +225,7 @@ public class MaintenanceServiceTests
             new Booking { BookingRooms = new List<BookingRoom> { new BookingRoom { RoomId = 1 } }, BookingStatus = BookingStatus.CheckedIn } // Match!
         };
         var pagedBookings = new PaginatedResult<Booking> { Data = bookings };
-        _mockBookingRepo.Setup(r => r.GetPaginatedBookingsWithDetailsAsync(1, 100, It.IsAny<Expression<Func<Booking, bool>>>(), null)).ReturnsAsync(pagedBookings);
+        _mockBookingRepo.Setup(r => r.GetPaginatedBookingsWithDetailsAsync(1, 100, It.IsAny<IEnumerable<Expression<Func<Booking, bool>>>>(), null)).ReturnsAsync(pagedBookings);
 
         MaintenanceTask? savedTask = null;
         _mockMaintenanceRepo.Setup(r => r.AddAsync(It.IsAny<MaintenanceTask>()))
@@ -285,6 +286,7 @@ public class MaintenanceServiceTests
                 return new PaginatedResult<MaintenanceTask> { TotalCount = q.Count(), PageNumber = p1, PageSize = p2, Data = q.ToList() };
             });
         _mockMapper.Setup(m => m.Map<IEnumerable<MaintenanceTaskDTO>>(It.IsAny<IEnumerable<MaintenanceTask>>())).Returns(new List<MaintenanceTaskDTO> { new MaintenanceTaskDTO { Id = 1 } });
+        _mockCurrentUserService.Setup(s => s.IsInRole("Admin")).Returns(true);
 
         var result = await _maintenanceService.GetAllTasksAsync(1, 10, null, "Status", true);
 
@@ -304,6 +306,7 @@ public class MaintenanceServiceTests
                 return new PaginatedResult<MaintenanceTask> { TotalCount = q.Count(), PageNumber = p1, PageSize = p2, Data = q.ToList() };
             });
         _mockMapper.Setup(m => m.Map<IEnumerable<MaintenanceTaskDTO>>(It.IsAny<IEnumerable<MaintenanceTask>>())).Returns(new List<MaintenanceTaskDTO> { new MaintenanceTaskDTO { Id = 1 } });
+        _mockCurrentUserService.Setup(s => s.IsInRole("Admin")).Returns(true);
 
         var result = await _maintenanceService.GetActiveTasksAsync(1, 10, "Status", true);
 
@@ -364,9 +367,10 @@ public class MaintenanceServiceTests
     {
         var tasks = new List<MaintenanceTask> { new MaintenanceTask { Id = 1 } };
         var paged = new PaginatedResult<MaintenanceTask> { TotalCount = 1, PageNumber = 1, PageSize = 10, Data = tasks };
-        _mockMaintenanceRepo.Setup(r => r.GetPaginatedResultAsync(1, 10, null, null))
+        _mockMaintenanceRepo.Setup(r => r.GetPaginatedResultAsync(1, 10, null, It.IsAny<Func<IQueryable<MaintenanceTask>, IOrderedQueryable<MaintenanceTask>>>()))
             .ReturnsAsync(paged);
         _mockMapper.Setup(m => m.Map<IEnumerable<MaintenanceTaskDTO>>(tasks)).Returns(new List<MaintenanceTaskDTO> { new MaintenanceTaskDTO { Id = 1 } });
+        _mockCurrentUserService.Setup(s => s.IsInRole("Admin")).Returns(true);
 
         var result = await _maintenanceService.GetAllTasksAsync(1, 10, null, null, false);
 
@@ -378,9 +382,10 @@ public class MaintenanceServiceTests
     {
         var tasks = new List<MaintenanceTask> { new MaintenanceTask { Id = 1 } };
         var paged = new PaginatedResult<MaintenanceTask> { TotalCount = 1, PageNumber = 1, PageSize = 10, Data = tasks };
-        _mockMaintenanceRepo.Setup(r => r.GetPaginatedResultAsync(1, 10, It.IsAny<Expression<Func<MaintenanceTask, bool>>>(), null))
+        _mockMaintenanceRepo.Setup(r => r.GetPaginatedResultAsync(1, 10, It.IsAny<Expression<Func<MaintenanceTask, bool>>>(), It.IsAny<Func<IQueryable<MaintenanceTask>, IOrderedQueryable<MaintenanceTask>>>()))
             .ReturnsAsync(paged);
         _mockMapper.Setup(m => m.Map<IEnumerable<MaintenanceTaskDTO>>(tasks)).Returns(new List<MaintenanceTaskDTO> { new MaintenanceTaskDTO { Id = 1 } });
+        _mockCurrentUserService.Setup(s => s.IsInRole("Admin")).Returns(true);
 
         var result = await _maintenanceService.GetActiveTasksAsync(1, 10, null, false);
 

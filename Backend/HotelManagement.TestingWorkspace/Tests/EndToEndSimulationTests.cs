@@ -61,9 +61,9 @@ public class EndToEndSimulationTests : IClassFixture<CustomWebApplicationFactory
             { 
                 Name = $"Test Suite {i}", 
                 BasePrice = i == 5 ? -100 : 150 + (i * 10), // Edge case: invalid price on 5
-                Capacity = i == 9 ? 1000 : 2,               // Edge case: massive capacity
+                MaxOccupancy = i == 9 ? 1000 : 2,            // Edge case: massive capacity
                 Description = $"Suite number {i}",
-                BedConfiguration = "1 King"
+                BedConfiguration = new Dictionary<string, int> { { "King", 1 } }
             };
 
             var response = await _client.PostAsJsonAsync("/api/v1/room-types", dto);
@@ -102,7 +102,7 @@ public class EndToEndSimulationTests : IClassFixture<CustomWebApplicationFactory
         _client.DefaultRequestHeaders.Authorization = null; // Anonymous
         var bookReq = new CreateBookingRequestDTO 
         { 
-            RoomTypeId = 1, 
+            RoomTypeIds = new List<int> { 1 }, 
             CheckInDate = DateTime.UtcNow.AddDays(1), 
             CheckOutDate = DateTime.UtcNow.AddDays(3),
             GuestName = "Automated Tester",
@@ -157,7 +157,7 @@ public class EndToEndSimulationTests : IClassFixture<CustomWebApplicationFactory
 
         foreach (var ep in endpoints)
         {
-            var res = await _client.GetAsync(ep);
+            var res = await _client.GetAsync(new Uri(ep, UriKind.Relative));
             _logger.LogExperimentStep(DateTime.UtcNow.ToString("T"), "Automated Sweeper", "Coverage Ping", $"GET {ep}", "null", "200 OK (or 400)", res.StatusCode.ToString(), "No specific data modified.");
             Assert.True(res.IsSuccessStatusCode || res.StatusCode == System.Net.HttpStatusCode.BadRequest);
         }

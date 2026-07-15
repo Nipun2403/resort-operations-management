@@ -40,4 +40,12 @@ public class CurrentUserService : ICurrentUserService, IAuditUserProvider
     {
         return _httpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated ?? false;
     }
+
+    public int? GetUserId()
+    {
+        var userIdClaim = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (int.TryParse(userIdClaim, out var userId))
+            return userId;
+        return null;
+    }
 }

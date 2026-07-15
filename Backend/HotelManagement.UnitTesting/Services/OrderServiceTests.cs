@@ -128,8 +128,8 @@ public class OrderServiceTests
     [Test]
     public void CreateOrderAsync_ShouldThrow_IfBookingNotFound()
     {
-        var dto = new CreateFoodOrderDTO { BookingId = 99 };
-        _mockBookingRepo.Setup(r => r.GetByIdAsync(99)).ReturnsAsync((Booking?)null);
+        var dto = new CreateFoodOrderDTO { BookingId = 99, RoomId = 10 };
+        _mockBookingRepo.Setup(r => r.GetBookingWithDetailsAsync(99)).ReturnsAsync((Booking?)null);
 
         var ex = Assert.ThrowsAsync<ArgumentException>(() => _orderService.CreateOrderAsync(dto));
         Assert.That(ex.Message, Does.Contain("Booking not found"));
@@ -138,9 +138,9 @@ public class OrderServiceTests
     [Test]
     public void CreateOrderAsync_ShouldThrow_IfNotCheckedIn()
     {
-        var dto = new CreateFoodOrderDTO { BookingId = 1 };
-        var booking = new Booking { Id = 1, BookingStatus = BookingStatus.Booked };
-        _mockBookingRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(booking);
+        var dto = new CreateFoodOrderDTO { BookingId = 1, RoomId = 10 };
+        var booking = new Booking { Id = 1, BookingStatus = BookingStatus.Booked, BookingRooms = new List<BookingRoom> { new BookingRoom { RoomId = 10 } } };
+        _mockBookingRepo.Setup(r => r.GetBookingWithDetailsAsync(1)).ReturnsAsync(booking);
 
         var ex = Assert.ThrowsAsync<InvalidOperationException>(() => _orderService.CreateOrderAsync(dto));
         Assert.That(ex.Message, Does.Contain("currently checked in"));
@@ -149,12 +149,12 @@ public class OrderServiceTests
     [Test]
     public void CreateOrderAsync_ShouldThrow_IfPaymentPaid()
     {
-        var dto = new CreateFoodOrderDTO { BookingId = 1 };
-        var booking = new Booking { Id = 1, BookingStatus = BookingStatus.CheckedIn, PaymentStatus = PaymentStatus.Paid };
-        _mockBookingRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(booking);
+        var dto = new CreateFoodOrderDTO { BookingId = 1, RoomId = 10 };
+        var booking = new Booking { Id = 1, BookingStatus = BookingStatus.CheckedIn, ServicePaymentStatus = PaymentStatus.Paid, BookingRooms = new List<BookingRoom> { new BookingRoom { RoomId = 10 } } };
+        _mockBookingRepo.Setup(r => r.GetBookingWithDetailsAsync(1)).ReturnsAsync(booking);
 
         var ex = Assert.ThrowsAsync<InvalidOperationException>(() => _orderService.CreateOrderAsync(dto));
-        Assert.That(ex.Message, Does.Contain("already been paid"));
+        Assert.That(ex.Message, Does.Contain("already been settled"));
     }
 
     [Test]
@@ -163,11 +163,12 @@ public class OrderServiceTests
         var dto = new CreateFoodOrderDTO
         {
             BookingId = 1,
+            RoomId = 10,
             Items = new List<CreateFoodOrderItemDTO> { new CreateFoodOrderItemDTO { MenuItemId = 5, Quantity = 1 } }
         };
-        var booking = new Booking { Id = 1, BookingStatus = BookingStatus.CheckedIn };
+        var booking = new Booking { Id = 1, BookingStatus = BookingStatus.CheckedIn, BookingRooms = new List<BookingRoom> { new BookingRoom { RoomId = 10 } } };
 
-        _mockBookingRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(booking);
+        _mockBookingRepo.Setup(r => r.GetBookingWithDetailsAsync(1)).ReturnsAsync(booking);
         _mockMenuItemRepo.Setup(r => r.GetByIdAsync(5)).ReturnsAsync((MenuItem?)null);
 
         var ex = Assert.ThrowsAsync<ArgumentException>(() => _orderService.CreateOrderAsync(dto));
@@ -180,12 +181,13 @@ public class OrderServiceTests
         var dto = new CreateFoodOrderDTO
         {
             BookingId = 1,
+            RoomId = 10,
             Items = new List<CreateFoodOrderItemDTO> { new CreateFoodOrderItemDTO { MenuItemId = 5, Quantity = 1 } }
         };
-        var booking = new Booking { Id = 1, BookingStatus = BookingStatus.CheckedIn };
+        var booking = new Booking { Id = 1, BookingStatus = BookingStatus.CheckedIn, BookingRooms = new List<BookingRoom> { new BookingRoom { RoomId = 10 } } };
         var menuItem = new MenuItem { Id = 5, Name = "Pizza", IsAvailable = false };
 
-        _mockBookingRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(booking);
+        _mockBookingRepo.Setup(r => r.GetBookingWithDetailsAsync(1)).ReturnsAsync(booking);
         _mockMenuItemRepo.Setup(r => r.GetByIdAsync(5)).ReturnsAsync(menuItem);
 
         var ex = Assert.ThrowsAsync<ArgumentException>(() => _orderService.CreateOrderAsync(dto));
@@ -198,17 +200,18 @@ public class OrderServiceTests
         var dto = new CreateFoodOrderDTO
         {
             BookingId = 1,
+            RoomId = 10,
             Items = new List<CreateFoodOrderItemDTO>
             {
                 new CreateFoodOrderItemDTO { MenuItemId = 5, Quantity = 2 },
                 new CreateFoodOrderItemDTO { MenuItemId = 6, Quantity = 1 }
             }
         };
-        var booking = new Booking { Id = 1, BookingStatus = BookingStatus.CheckedIn };
+        var booking = new Booking { Id = 1, BookingStatus = BookingStatus.CheckedIn, BookingRooms = new List<BookingRoom> { new BookingRoom { RoomId = 10 } } };
         var pizza = new MenuItem { Id = 5, Name = "Pizza", IsAvailable = true, Price = 15m };
         var soda = new MenuItem { Id = 6, Name = "Soda", IsAvailable = true, Price = 5m };
 
-        _mockBookingRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(booking);
+        _mockBookingRepo.Setup(r => r.GetBookingWithDetailsAsync(1)).ReturnsAsync(booking);
         _mockMenuItemRepo.Setup(r => r.GetByIdAsync(5)).ReturnsAsync(pizza);
         _mockMenuItemRepo.Setup(r => r.GetByIdAsync(6)).ReturnsAsync(soda);
 
@@ -250,19 +253,28 @@ public class OrderServiceTests
         var dto = new CreateFoodOrderDTO
         {
             BookingId = 1,
+            RoomId = 10,
             Items = new List<CreateFoodOrderItemDTO> { new CreateFoodOrderItemDTO { MenuItemId = 5, Quantity = 1 } }
         };
-        var booking = new Booking { Id = 1, BookingStatus = BookingStatus.CheckedIn, BookingRooms = new List<BookingRoom> { new BookingRoom { RoomId = 101 } } };
+        var booking = new Booking { Id = 1, BookingStatus = BookingStatus.CheckedIn, BookingRooms = new List<BookingRoom> { new BookingRoom { RoomId = 10, Room = new Room { RoomNumber = "101" } } } };
         var pizza = new MenuItem { Id = 5, Name = "Pizza", IsAvailable = true, Price = 15m };
 
-        _mockBookingRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(booking);
+        _mockBookingRepo.Setup(r => r.GetBookingWithDetailsAsync(1)).ReturnsAsync(booking);
         _mockMenuItemRepo.Setup(r => r.GetByIdAsync(5)).ReturnsAsync(pizza);
 
+        var order = new FoodOrder
+        {
+            Id = 1,
+            BookingId = 1,
+            RoomId = 10,
+            Room = new Room { RoomNumber = "101" }
+        };
+        _mockFoodOrderRepo.Setup(r => r.GetOrderWithDetailsByIdAsync(It.IsAny<int>())).ReturnsAsync(order);
         _mockMapper.Setup(m => m.Map<FoodOrderDTO>(It.IsAny<FoodOrder>())).Returns(new FoodOrderDTO { BookingId = 1 });
 
         await _orderService.CreateOrderAsync(dto);
 
-        _mockNotificationService.Verify(n => n.SendKitchenAlertAsync(It.Is<string>(s => s.Contains("Rooms 101"))), Times.Once);
+        _mockNotificationService.Verify(n => n.SendKitchenAlertAsync(It.Is<string>(s => s.Contains("Room 101"))), Times.Once);
     }
 
     [Test]
@@ -330,21 +342,22 @@ public class OrderServiceTests
         var dto = new CreateFoodOrderDTO
         {
             BookingId = 1,
+            RoomId = 10,
             Items = new List<CreateFoodOrderItemDTO> { new CreateFoodOrderItemDTO { MenuItemId = 5, Quantity = 2 } }
         };
-        var booking = new Booking { Id = 1, BookingStatus = BookingStatus.CheckedIn, PaymentStatus = PaymentStatus.Pending };
-        _mockBookingRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(booking);
+        var booking = new Booking { Id = 1, BookingStatus = BookingStatus.CheckedIn, ServicePaymentStatus = PaymentStatus.Pending, BookingRooms = new List<BookingRoom> { new BookingRoom { RoomId = 10 } } };
+        _mockBookingRepo.Setup(r => r.GetBookingWithDetailsAsync(1)).ReturnsAsync(booking);
 
         // Simulate an identical pending order
         var activeOrders = new List<FoodOrder>
-    {
-        new FoodOrder
         {
-            BookingId = 1,
-            OrderStatus = FoodOrderStatus.Pending,
-            OrderItems = new List<FoodOrderItem> { new FoodOrderItem { MenuItemId = 5, Quantity = 2 } }
-        }
-    };
+            new FoodOrder
+            {
+                BookingId = 1,
+                OrderStatus = FoodOrderStatus.Pending,
+                OrderItems = new List<FoodOrderItem> { new FoodOrderItem { MenuItemId = 5, Quantity = 2 } }
+            }
+        };
         _mockFoodOrderRepo.Setup(r => r.GetActiveOrdersWithDetailsAsync()).ReturnsAsync(activeOrders);
 
         // Act & Assert

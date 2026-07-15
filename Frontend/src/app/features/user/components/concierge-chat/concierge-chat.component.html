@@ -1,0 +1,162 @@
+<div class="concierge-chat" role="log" aria-live="polite" aria-label="Concierge conversation">
+  <!-- Header -->
+  <header class="chat-header">
+    <div class="header-left">
+      <button mat-icon-button (click)="closeChat.emit()" class="chat-close-btn" aria-label="Close Concierge">
+        <mat-icon>close</mat-icon>
+      </button>
+      <h1 class="chat-title">ATLAS</h1>
+      @if (context(); as ctx) {
+      <div class="header-divider"></div>
+      <div class="context-chips">
+        @if (ctx.bookingId) {
+        <span class="context-chip">BOOKING #{{ ctx.bookingId }}</span>
+        }
+        @if (ctx.roomNumber) {
+        <span class="context-chip">ROOM {{ ctx.roomNumber }}</span>
+        }
+        @if (ctx.bookingStatus) {
+        <span class="context-chip status" [class.checked-in]="ctx.bookingStatus === 'CheckedIn'">
+          @if (ctx.bookingStatus === 'CheckedIn') {
+          <span class="status-dot"></span>
+          }
+          {{ ctx.bookingStatus | uppercase }}
+        </span>
+        }
+      </div>
+      }
+    </div>
+
+    <button mat-button (click)="clearChat()" [disabled]="loading()" title="Clear chat history"
+      aria-label="Clear chat history" class="clear-archive-btn">
+      <mat-icon>delete_sweep</mat-icon>
+      <span class="btn-text">CLEAR CHAT</span>
+    </button>
+  </header>
+
+  <!-- Messages -->
+  <div #messagesContainer class="messages">
+    @for (msg of messages(); track $index) {
+    <div class="message" [class.message-user]="msg.role === 'user'" [class.message-assistant]="msg.role === 'assistant'"
+      [class.message-system]="msg.role === 'system'" [class.thinking]="loading() && $index === messages().length - 1"
+      role="article" [attr.aria-label]="msg.role + ' message'">
+      <div class="bubble">
+        @if (msg.role === 'assistant') {
+        <div class="bubble-header-label">Atlas</div>
+        }
+        @if (msg.role === 'system') {
+        <div class="bubble-header-label">SYSTEM</div>
+        }
+
+        <p class="message-content">{{ msg.content }}</p>
+
+        <!-- Proposals awaiting confirmation -->
+        @if (msg.proposals?.length) {
+        <div class="proposals-grid">
+          @for (prop of msg.proposals; track prop.proposalId) {
+          <div class="proposal-card" [class.confirmed]="msg.proposalStatus === 'confirmed' || getDecision(prop.proposalId) === 'accepted'"
+            [class.cancelled]="msg.proposalStatus === 'cancelled' || getDecision(prop.proposalId) === 'rejected'">
+            <div class="proposal-card-header">
+              <span class="proposal-tag">PROPOSAL {{ $index === 0 ? 'ALPHA' : $index === 1 ? 'BETA' : 'GAMMA' }}</span>
+              @if ((!msg.proposalStatus || msg.proposalStatus === 'pending') && !getDecision(prop.proposalId)) {
+              <span class="proposal-countdown">
+                <mat-icon>timer</mat-icon>
+                {{ formatTimeRemaining(getTimeRemaining(prop)) }}
+              </span>
+              }
+              @if (getDecision(prop.proposalId) === 'accepted') {
+              <span class="proposal-countdown" style="color: var(--color-secondary);">
+                <mat-icon>check_circle</mat-icon> ACCEPTED
+              </span>
+              }
+              @if (getDecision(prop.proposalId) === 'rejected') {
+              <span class="proposal-countdown" style="color: var(--color-error);">
+                <mat-icon>cancel</mat-icon> REJECTED
+              </span>
+              }
+            </div>
+            <h4 class="proposal-action-title">{{ prop.action }}</h4>
+            <p class="proposal-summary">{{ prop.summary }}</p>
+
+            @if ((!msg.proposalStatus || msg.proposalStatus === 'pending') && !getDecision(prop.proposalId)) {
+            <div class="proposal-card-actions">
+              <button mat-button (click)="stageAccept(prop.proposalId)" [disabled]="loading()"
+                class="confirm-single-btn">
+                CONFIRM
+              </button>
+              <button mat-icon-button (click)="stageReject(prop.proposalId)" [disabled]="loading()"
+                aria-label="Dismiss proposal" class="dismiss-single-btn">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+            }
+          </div>
+          }
+        </div>
+
+        @if (msg.proposalStatus === 'cancelled') {
+        <div class="proposal-status cancelled">
+          <mat-icon>cancel</mat-icon>
+          <span>Proposal cancelled</span>
+        </div>
+        }
+
+        @if (msg.proposalStatus === 'confirmed') {
+        <div class="proposal-status confirmed">
+          <mat-icon>check_circle</mat-icon>
+          <span>Proposal confirmed & executed</span>
+        </div>
+        }
+        }
+
+      </div>
+      <div class="timestamp">
+        {{ msg.timestamp | date:'shortTime' }}
+      </div>
+    </div>
+    }
+
+    <!-- Thinking indicator -->
+    @if (loading()) {
+    <div class="message message-assistant thinking">
+      <div class="bubble">
+        <div class="typing-indicator" aria-label="Thinking">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions">
+    @for (action of quickActions; track action.label) {
+    <button (click)="useQuickAction(action.prompt)" [disabled]="loading() || pendingProposals().length > 0"
+      aria-label="Quick action: {{ action.label }}">
+      {{ action.label }}
+    </button>
+    }
+  </div>
+
+  <!-- Input Area -->
+  <div class="input-area">
+    <div class="input-wrapper" [class.disabled]="loading()">
+      <mat-form-field appearance="outline">
+        <mat-label>Ask me anything...</mat-label>
+        <input matInput [formControl]="messageControl" (keydown.enter)="sendMessage()"
+          placeholder="e.g., 'I'd like a burger and extra towels'" aria-label="Your message to the concierge">
+        <button mat-icon-button matSuffix (click)="sendMessage()"
+          [disabled]="messageControl.invalid || loading() || pendingProposals().length > 0" aria-label="Send message"
+          class="send-btn">
+          <mat-icon>arrow_upward</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+
+    <div class="secure-channel-footer">
+      <span>Aetheris Private Network • Encrypted Session</span>
+    </div>
+  </div>
+</div>

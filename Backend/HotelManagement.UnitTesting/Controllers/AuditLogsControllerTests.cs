@@ -34,9 +34,9 @@ public class AuditLogsControllerTests
             PageNumber = 1,
             PageSize = 10
         };
-        _mockAuditLogService.Setup(s => s.GetAuditLogsAsync(1, 10, "Action", false)).ReturnsAsync(resultDto);
+        _mockAuditLogService.Setup(s => s.GetAuditLogsAsync(1, 10, null, "Action", false)).ReturnsAsync(resultDto);
 
-        var result = await _controller.GetAuditLogs(1, 10, "Action", false) as OkObjectResult;
+        var result = await _controller.GetAuditLogs(1, 10, null, "Action", false) as OkObjectResult;
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(200));
@@ -47,11 +47,11 @@ public class AuditLogsControllerTests
     public async Task GetAuditLogs_ShouldCapPageSizeAt100()
     {
         var resultDto = new PaginatedResult<AuditLogDTO> { PageSize = 100 };
-        _mockAuditLogService.Setup(s => s.GetAuditLogsAsync(1, 100, null, false)).ReturnsAsync(resultDto);
+        _mockAuditLogService.Setup(s => s.GetAuditLogsAsync(1, 100, null, null, false)).ReturnsAsync(resultDto);
 
         var result = await _controller.GetAuditLogs(1, 1000) as OkObjectResult;
 
-        _mockAuditLogService.Verify(s => s.GetAuditLogsAsync(1, 100, null, false), Times.Once);
+        _mockAuditLogService.Verify(s => s.GetAuditLogsAsync(1, 100, null, null, false), Times.Once);
         Assert.That(result, Is.Not.Null);
     }
 

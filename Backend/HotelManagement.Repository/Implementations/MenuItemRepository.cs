@@ -2,7 +2,7 @@ using HotelManagement.DAL.Context;
 using HotelManagement.DAL.Entities;
 using HotelManagement.Repository.Interfaces;
 using HotelManagement.Repository.Models;
-using HotelManagement.Repository.Utilities;   // for OrderByDynamic
+using HotelManagement.Repository.Utilities;
 using Microsoft.EntityFrameworkCore;
 
 namespace HotelManagement.Repository.Implementations;
@@ -18,22 +18,34 @@ public class MenuItemRepository : GenericRepository<MenuItem>, IMenuItemReposito
         return await query.ToListAsync();
     }
 
-    // NEW IMPLEMENTATION
     public async Task<PaginatedResult<MenuItem>> GetPaginatedMenuItemsAsync(
         int pageNumber,
         int pageSize,
         bool? isAvailable,
+        string? category,
         string? searchQuery,
         string? sortBy,
         bool sortDescending)
     {
         var query = _dbSet.AsQueryable();
 
-        // 1. Availability filter (if provided)
         if (isAvailable.HasValue && isAvailable == true)
             query = query.Where(a => a.IsAvailable);
 
-        // 2. Search filter (case-insensitive) on Name and Category
+        if (!string.IsNullOrWhiteSpace(category))
+        {
+            var cleanCategory = category.Trim().ToLower();
+            if (cleanCategory.EndsWith('s') && cleanCategory.Length > 1)
+            {
+                var singular = cleanCategory.Substring(0, cleanCategory.Length - 1);
+                query = query.Where(m => m.Category.ToLower() == cleanCategory || m.Category.ToLower() == singular);
+            }
+            else
+            {
+                query = query.Where(m => m.Category.ToLower() == cleanCategory);
+            }
+        }
+
         if (!string.IsNullOrWhiteSpace(searchQuery))
         {
             var lowerQuery = searchQuery.ToLower();
@@ -43,13 +55,11 @@ public class MenuItemRepository : GenericRepository<MenuItem>, IMenuItemReposito
             );
         }
 
-        // 3. Sorting (dynamic)
         if (!string.IsNullOrEmpty(sortBy))
         {
             query = query.OrderByDynamic(sortBy, sortDescending);
         }
 
-        // 4. Pagination
         var totalCount = await query.CountAsync();
         var items = await query
             .Skip((pageNumber - 1) * pageSize)
