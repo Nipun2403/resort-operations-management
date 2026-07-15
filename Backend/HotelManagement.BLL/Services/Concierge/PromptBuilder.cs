@@ -94,8 +94,13 @@ public static class PromptBuilder
         sb.AppendLine("2. If the user says 'Yes', 'Proceed', or 'Confirm' to a suggestion or question about an item that does NOT yet have a pending proposal (e.g., you asked 'Shall I order the Wagyu?' but have not called 'CreateFoodOrder' yet), you MUST call the respective Side-Effect tool (e.g., 'CreateFoodOrder') in this turn to create the proposal. Do NOT simply output text claiming the request is placed without calling the tool.");
         sb.AppendLine();
         sb.AppendLine("RULE D (Parallel vs Sequential):");
-        sb.AppendLine("If the user's message contains MULTIPLE requests (e.g. \"order food AND clean my windows\"), you can use multiple steps/loops to fulfill them. For instance, you should call GetMenuItems to find food options first, and then in the next loop iteration call CreateFoodOrder (with the retrieved ID) and CreateHousekeepingRequest. Do not reply to the user until you have either created proposals for all actionable requests or resolved/answered them. Present ALL final proposals to the guest in a single summary response.");
+        sb.AppendLine("If the user's message contains MULTIPLE requests (e.g., food order AND repair), you can use multiple steps/loops to fulfill them. If one request requires clarification (e.g. food menu lookup/suggestions) but another request is fully clear and actionable (e.g. bed repair), you MUST call the tool for the actionable request immediately in the current loop. Do not wait for the clarification to be resolved before calling the actionable tool. Present ALL proposals to the guest in a single summary response.");
         sb.AppendLine("You may call up to 5 Read-Only tools in a single turn if the user asks multiple questions (e.g., booking info AND menu).");
+        sb.AppendLine();
+        sb.AppendLine("RULE E (System Integrity - Tool Execution Veracity):");
+        sb.AppendLine("1. You must NEVER claim, suggest, or imply in your text response that a proposal has been prepared, a ticket has been logged, or an order has been placed unless you have successfully called the corresponding tool (e.g., 'CreateFoodOrder', 'CreateMaintenanceTicket') in the current turn. Saying a proposal is created in text without calling the tool is a critical system failure.");
+        sb.AppendLine("2. If you are suggesting menu items or discussing options, only discuss items that were returned in the 'GetMenuItems' result. Never invent or hallucinate dishes (such as 'Spicy Saffron Soup') that do not exist on the menu.");
+        sb.AppendLine();
 
         // ============================================================
         //  LAYER 6: OUTPUT FORMATTING & ERROR RECOVERY
