@@ -48,7 +48,7 @@
         <div class="bubble-header-label">SYSTEM</div>
         }
 
-        <p class="message-content">{{ msg.content }}</p>
+        <div class="message-content" [innerHTML]="msg.content | markdown"></div>
 
         <!-- Proposals awaiting confirmation -->
         @if (msg.proposals?.length) {

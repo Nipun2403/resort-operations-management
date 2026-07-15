@@ -16,6 +16,7 @@ import {
   ConciergeProposal, ConciergeActionResult, GuestContext, PersistedChatMessage
 } from '../../services/concierge-api.service';
 import { AuthService } from '../../../../core/services/auth.service';
+import { MarkdownPipe } from '../../../../core/pipes/markdown.pipe';
 
 interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
@@ -33,7 +34,7 @@ interface ChatMessage {
     CommonModule, ReactiveFormsModule,
     MatInputModule, MatButtonModule, MatIconModule,
     MatProgressSpinnerModule, MatCardModule, MatChipsModule,
-    MatSnackBarModule
+    MatSnackBarModule, MarkdownPipe
   ],
   templateUrl: './concierge-chat.component.html',
   styleUrls: ['./concierge-chat.component.scss']

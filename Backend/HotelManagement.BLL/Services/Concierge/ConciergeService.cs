@@ -128,6 +128,10 @@ public class ConciergeService : IConciergeService
 
         while (requiresAnotherCompletion && loopCount < maxLoops)
         {
+            if (loopCount > 0)
+            {
+                await Task.Delay(500, ct);
+            }
             loopCount++;
             var completion = await _chatClient.CompleteChatAsync(messages, options, ct);
             var response = completion.Value;
@@ -164,12 +168,23 @@ public class ConciergeService : IConciergeService
                     _logger.LogDebug("Tool call: {FunctionName}", call.FunctionName);
                     if (ConciergeTools.SideEffectToolNames.Contains(call.FunctionName))
                     {
-                        var proposal = await CreateProposalAsync(convId, call, context, ct);
-                        proposals.Add(proposal);
-                        _logger.LogInformation("Created proposal: {ProposalId} for {FunctionName}", 
-                            proposal.ProposalId, call.FunctionName);
-                        
-                        messages.Add(new ToolChatMessage(call.Id, $"Proposal created (pending confirmation): {proposal.Summary}."));
+                        try
+                        {
+                            await ValidateToolArgsAsync(call.FunctionName, call.FunctionArguments.ToString(), userId, convId, ct);
+                            var proposal = await CreateProposalAsync(convId, call, context, ct);
+                            proposals.Add(proposal);
+                            _logger.LogInformation("Created proposal: {ProposalId} for {FunctionName}", 
+                                proposal.ProposalId, call.FunctionName);
+                            
+                            messages.Add(new ToolChatMessage(call.Id, $"Proposal created (pending confirmation): {proposal.Summary}."));
+                        }
+                        catch (ConciergeValidationException ex)
+                        {
+                            _logger.LogWarning("Proposal validation failed during chat processing: user={UserId}, tool={ToolName}, error={Error}", 
+                                userId, call.FunctionName, ex.Message);
+                            
+                            messages.Add(new ToolChatMessage(call.Id, $"FAIL: {ex.Message}"));
+                        }
                     }
                     else
                     {
@@ -238,7 +253,7 @@ public class ConciergeService : IConciergeService
         {
             try
             {
-                await ValidateToolArgsAsync(proposal.ToolName, proposal.ArgumentsJson, ct);
+                await ValidateToolArgsAsync(proposal.ToolName, proposal.ArgumentsJson, userId, conversationId, ct);
             }
             catch (ConciergeValidationException ex)
             {
@@ -323,7 +338,7 @@ public class ConciergeService : IConciergeService
         return entities.Select(e => new ConciergeProposalDTO
         {
             ProposalId = e.Id.ToString(),
-            Action = e.ToolName,
+            Action = GetActionLabel(e.ToolName),
             Summary = e.Summary,
             ArgumentsJson = e.ArgumentsJson,
             ExpiresAt = e.ExpiresAt
@@ -438,7 +453,7 @@ public class ConciergeService : IConciergeService
         var proposal = new ConciergeProposalDTO
         {
             ProposalId = Guid.NewGuid().ToString(),
-            Action = call.FunctionName,
+            Action = GetActionLabel(call.FunctionName),
             Summary = summary,
             ArgumentsJson = args,
             ExpiresAt = DateTime.UtcNow.AddMinutes(5)
@@ -504,12 +519,12 @@ public class ConciergeService : IConciergeService
         catch { return Task.FromResult("Maintenance ticket"); }
     }
 
-    private async Task ValidateToolArgsAsync(string toolName, string argsJson, CancellationToken ct)
+    private async Task ValidateToolArgsAsync(string toolName, string argsJson, int userId, string convId, CancellationToken ct)
     {
         try
         {
             if (toolName == "CreateFoodOrder")
-                await ValidateFoodOrderArgsAsync(argsJson, ct);
+                await ValidateFoodOrderArgsAsync(argsJson, userId, convId, ct);
         }
         catch (JsonException)
         {
@@ -517,7 +532,7 @@ public class ConciergeService : IConciergeService
         }
     }
 
-    private async Task ValidateFoodOrderArgsAsync(string argsJson, CancellationToken ct)
+    private async Task ValidateFoodOrderArgsAsync(string argsJson, int userId, string convId, CancellationToken ct)
     {
         var args = JsonSerializer.Deserialize<CreateFoodOrderToolArgs>(argsJson);
         if (args == null)
@@ -526,6 +541,14 @@ public class ConciergeService : IConciergeService
 
         var errors = new Dictionary<string, string[]>();
         var itemErrors = new List<string>();
+
+        // Enforce that GetMenuItems must have been successfully called first in this conversation
+        var actionLogs = await _auditLog.GetByConversationAsync(userId, convId);
+        var hasCalledGetMenu = actionLogs.Any(log => log.ToolName == "GetMenuItems" && log.Success);
+        if (!hasCalledGetMenu)
+        {
+            throw new ConciergeValidationException("Cannot place a food order without first calling GetMenuItems to search and verify available menu items in this conversation.");
+        }
 
         foreach (var item in args.Items)
         {
@@ -702,5 +725,16 @@ public class ConciergeService : IConciergeService
         }
 
         return toolCalls;
+    }
+
+    private static string GetActionLabel(string toolName)
+    {
+        return toolName switch
+        {
+            "CreateFoodOrder" => "Room Service Order",
+            "CreateHousekeepingRequest" => "Housekeeping Request",
+            "CreateMaintenanceTicket" => "Maintenance Request",
+            _ => toolName
+        };
     }
 }

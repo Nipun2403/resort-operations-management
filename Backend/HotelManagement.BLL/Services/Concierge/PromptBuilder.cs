@@ -80,6 +80,9 @@ public static class PromptBuilder
         sb.AppendLine("2. If the user asks for their bill, room info, or cleaning status, call the respective Read-Only tool immediately.");
         sb.AppendLine("3. If the user asks for an action (food, cleaning, repair), call the respective Side-Effect tool immediately. Do NOT describe the action in text first; let the tool create the proposal.");
         sb.AppendLine();
+        sb.AppendLine("RULE A-2 (Anti-Hallucination for Food Mentions):");
+        sb.AppendLine("You must NEVER mention, suggest, or recommend ANY specific food or drink item by name in your text responses unless you have called 'GetMenuItems' in this turn and the item appeared in the tool results. If the guest asks for food and you have not yet queried the menu, say something like: 'Allow me to check our current culinary offerings for you' and call GetMenuItems immediately. Do NOT invent dish names, do NOT suggest items from your general knowledge, and do NOT list example dishes. Only reference items that were returned by the GetMenuItems tool.");
+        sb.AppendLine();
         sb.AppendLine("RULE B (Handling the Proposal Response):");
         sb.AppendLine("When you call one or more Side-Effect tools, the system returns a tool message for each: 'Proposal created (pending confirmation)...'.");
         sb.AppendLine("Upon receiving these tool messages, you MUST: (1) NOT call any further tools in this same turn. (2) Craft a single, elegant confirmation prompt listing all pending proposals. Example: 'I have prepared your requests for [Summary 1] and [Summary 2]. To finalize these, simply reply with \"Confirm\" or \"Yes\" to confirm all, or use the buttons below to confirm/dismiss individually.'");
@@ -90,7 +93,7 @@ public static class PromptBuilder
         sb.AppendLine();
         // MARKER: [Chatbot Progression Regression] Reverted to 111c5ca state to resolve the double proposal issue. Subsequent prompt modifications to support sequential food orders broke parallel proposal execution.
         sb.AppendLine("RULE D (Parallel vs Sequential):");
-        sb.AppendLine("If the user's message contains MULTIPLE action requests (e.g. \"order food AND get extra pillows\"), you MUST call ALL relevant Side-Effect tools in the SAME turn. Do NOT handle only one and forget the other. Each tool call will generate its own proposal. Present ALL proposals to the guest in a single response and ask them to confirm or dismiss each one.");
+        sb.AppendLine("If the user's message contains MULTIPLE action requests (e.g. \"order food AND get extra pillows\"), you MUST call ALL relevant Side-Effect tools in the SAME turn. Do NOT handle only one and forget the other. If one of those requests is food-related, you MUST call 'GetMenuItems' first in that same turn to verify the menu items before suggesting any specific dishes in your response. Each tool call will generate its own proposal. Present ALL proposals to the guest in a single response and ask them to confirm or dismiss each one.");
         sb.AppendLine("You may call up to 5 Read-Only tools in a single turn if the user asks multiple questions (e.g., booking info AND menu).");
 
         // ============================================================
@@ -103,6 +106,7 @@ public static class PromptBuilder
         sb.AppendLine("4. If context shows 'BookingStatus' is not 'CheckedIn', politely inform the guest that full in-room services are reserved for checked-in guests, but offer to assist with pre-arrival menu planning or billing inquiries.");
         sb.AppendLine("5. Keep standard replies to 2-3 sentences. Only expand for detailed menu items or folio breakdowns, but present them in a bulleted, clean format.");
         sb.AppendLine("6. NEVER leak internal tool or method names (e.g. 'GetMenuItems', 'CreateFoodOrder', 'CreateHousekeepingRequest', 'CreateMaintenanceTicket') or backend system mechanics to the guest. Speak naturally as a human concierge. Do not say 'I am calling the GetMenuItems tool' or 'I will execute CreateFoodOrder', instead say 'Allow me to verify our menu items' or 'I have prepared that order for you'.");
+        sb.AppendLine("7. Use clean, elegant Markdown formatting to structure your responses: (a) Use **bold** for specific dish names, ingredients, or important statuses. (b) Use bulleted lists for options or menu suggestions. (c) Keep spacing clean and readable. Do NOT use markdown headings (# or ##) or raw HTML.");
         sb.AppendLine();
 
         // ============================================================
