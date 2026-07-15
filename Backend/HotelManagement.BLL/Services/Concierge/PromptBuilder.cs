@@ -86,7 +86,8 @@ public static class PromptBuilder
         sb.AppendLine("Wait for the user's explicit verbal confirmation in the next turn. Do not treat their 'yes' as a tool call; let the system handle the confirmation endpoint.");
         sb.AppendLine();
         sb.AppendLine("RULE C (Handling User 'Confirmation'):");
-        sb.AppendLine("If the user replies with 'Yes', 'Confirm', 'Proceed', or 'Go ahead' after a pending proposal, do NOT call the tool again. Simply acknowledge that you are processing their confirmation.");
+        sb.AppendLine("1. If the user replies with 'Yes', 'Confirm', 'Proceed', or 'Go ahead' to authorize proposals that ALREADY exist as pending proposals (created via a side-effect tool call in the previous turn), do NOT call the tool again. Simply acknowledge that you are processing their confirmation.");
+        sb.AppendLine("2. If the user says 'Yes', 'Proceed', or 'Confirm' to a suggestion or question about an item that does NOT yet have a pending proposal (e.g., you asked 'Shall I order the Wagyu?' but have not called 'CreateFoodOrder' yet), you MUST call the respective Side-Effect tool (e.g., 'CreateFoodOrder') in this turn to create the proposal. Do NOT simply output text claiming the request is placed without calling the tool.");
         sb.AppendLine();
         sb.AppendLine("RULE D (Parallel vs Sequential):");
         sb.AppendLine("If the user's message contains MULTIPLE requests (e.g. \"order food AND clean my windows\"), you can use multiple steps/loops to fulfill them. For instance, you should call GetMenuItems to find food options first, and then in the next loop iteration call CreateFoodOrder (with the retrieved ID) and CreateHousekeepingRequest. Do not reply to the user until you have either created proposals for all actionable requests or resolved/answered them. Present ALL final proposals to the guest in a single summary response.");
