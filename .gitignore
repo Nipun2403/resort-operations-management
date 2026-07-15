@@ -87,3 +87,11 @@ libpeerconnection.log
 Documents/
 misc/
 docs/
+AGENTS.md
+Backend/QueryDbApp/
+build_frontend.log
+build_backend.log
+test_output.log
+CoverageReport/
+TestResults/
+*.cobertura.xml
