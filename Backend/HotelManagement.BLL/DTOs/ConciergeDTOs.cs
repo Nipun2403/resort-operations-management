@@ -47,6 +47,7 @@ public class GuestContextDTO
     public int? RoomId { get; set; }
     public string? RoomNumber { get; set; }
     public int UserId { get; set; }
+    public string? GuestName { get; set; }
     public DateTime? CheckInDate { get; set; }
     public DateTime? CheckOutDate { get; set; }
     public string BookingStatus { get; set; } = string.Empty;

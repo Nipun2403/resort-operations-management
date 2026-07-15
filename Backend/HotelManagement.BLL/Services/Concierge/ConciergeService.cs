@@ -563,6 +563,7 @@ var summaryCompletion = await _chatClient.CompleteChatAsync(
         {
             UserId = userId,
             BookingId = active.Id,
+            GuestName = active.GuestName,
             RoomId = roomId,
             RoomNumber = roomNumber,
             CheckInDate = active.CheckInDate,
