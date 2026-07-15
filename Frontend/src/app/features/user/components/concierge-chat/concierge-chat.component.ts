@@ -53,6 +53,9 @@ export class ConciergeChatComponent implements OnInit, OnDestroy, AfterViewInit 
   loading = signal(false);
   context = signal<GuestContext | null>(null);
 
+  // Local staging for batch proposal decisions
+  stagedDecisions = signal<Map<string, 'accepted' | 'rejected'>>(new Map());
+
   messageControl = new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(1000)] });
 
   quickActions = [
@@ -180,10 +183,66 @@ export class ConciergeChatComponent implements OnInit, OnDestroy, AfterViewInit 
     });
   }
 
-  confirmProposals(proposalId?: string): void {
-    const idsToConfirm = proposalId ? [proposalId] : this.pendingProposals().map(p => p.proposalId);
-    if (idsToConfirm.length === 0 || this.loading()) return;
+  stageAccept(proposalId: string): void {
+    this.stagedDecisions.update(map => {
+      const updated = new Map(map);
+      updated.set(proposalId, 'accepted');
+      return updated;
+    });
+    this.checkAllDecided();
+  }
 
+  stageReject(proposalId: string): void {
+    this.stagedDecisions.update(map => {
+      const updated = new Map(map);
+      updated.set(proposalId, 'rejected');
+      return updated;
+    });
+    this.checkAllDecided();
+  }
+
+  getDecision(proposalId: string): 'accepted' | 'rejected' | undefined {
+    return this.stagedDecisions().get(proposalId);
+  }
+
+  private checkAllDecided(): void {
+    const pending = this.pendingProposals();
+    const decisions = this.stagedDecisions();
+    if (pending.length === 0) return;
+
+    const allDecided = pending.every(p => decisions.has(p.proposalId));
+    if (allDecided) {
+      this.executeDecisions();
+    }
+  }
+
+  private executeDecisions(): void {
+    const decisions = this.stagedDecisions();
+    const accepted = this.pendingProposals().filter(p => decisions.get(p.proposalId) === 'accepted');
+    const rejected = this.pendingProposals().filter(p => decisions.get(p.proposalId) === 'rejected');
+
+    // Mark rejected proposals in messages
+    if (rejected.length > 0) {
+      const rejectedIds = rejected.map(p => p.proposalId);
+      this.messages.update(msgs => msgs.map(msg => {
+        if (msg.proposals?.some(p => rejectedIds.includes(p.proposalId))) {
+          return { ...msg, proposalStatus: 'cancelled' };
+        }
+        return msg;
+      }));
+    }
+
+    if (accepted.length === 0) {
+      // All rejected — clear state and notify
+      this.pendingProposals.set([]);
+      this.stagedDecisions.set(new Map());
+      this.saveConversation();
+      this.showToast('All proposals dismissed');
+      return;
+    }
+
+    // Send accepted proposals to backend for execution
+    const idsToConfirm = accepted.map(p => p.proposalId);
     this.loading.set(true);
 
     this.api.confirm({
@@ -195,13 +254,11 @@ export class ConciergeChatComponent implements OnInit, OnDestroy, AfterViewInit 
     ).subscribe({
       next: (response) => {
         this.pendingProposals.set([]);
+        this.stagedDecisions.set(new Map());
 
         this.messages.update(msgs => msgs.map(msg => {
           if (msg.proposals?.some(p => idsToConfirm.includes(p.proposalId))) {
-            return {
-              ...msg,
-              proposalStatus: 'confirmed'
-            };
+            return { ...msg, proposalStatus: 'confirmed' };
           }
           return msg;
         }));
@@ -212,21 +269,14 @@ export class ConciergeChatComponent implements OnInit, OnDestroy, AfterViewInit 
     });
   }
 
+  /** @deprecated — kept for single-proposal backward compat if needed */
+  confirmProposals(proposalId?: string): void {
+    const ids = proposalId ? [proposalId] : this.pendingProposals().map(p => p.proposalId);
+    ids.forEach(id => this.stageAccept(id));
+  }
+
   dismissProposal(proposalId: string): void {
-    this.pendingProposals.update(p => p.filter(p => p.proposalId !== proposalId));
-
-    this.messages.update(msgs => msgs.map(msg => {
-      if (msg.proposals?.some(p => p.proposalId === proposalId)) {
-        return {
-          ...msg,
-          proposalStatus: 'cancelled'
-        };
-      }
-      return msg;
-    }));
-
-    this.saveConversation();
-    this.showToast('Proposal dismissed');
+    this.stageReject(proposalId);
   }
 
   getTimeRemaining(proposal: ConciergeProposal): number {
