@@ -58,7 +58,7 @@
             [class.cancelled]="msg.proposalStatus === 'cancelled' || getDecision(prop.proposalId) === 'rejected'">
             <div class="proposal-card-header">
               <span class="proposal-tag">PROPOSAL {{ $index === 0 ? 'ALPHA' : $index === 1 ? 'BETA' : 'GAMMA' }}</span>
-              @if (!msg.proposalStatus && !getDecision(prop.proposalId)) {
+              @if ((!msg.proposalStatus || msg.proposalStatus === 'pending') && !getDecision(prop.proposalId)) {
               <span class="proposal-countdown">
                 <mat-icon>timer</mat-icon>
                 {{ formatTimeRemaining(getTimeRemaining(prop)) }}
@@ -78,7 +78,7 @@
             <h4 class="proposal-action-title">{{ prop.action }}</h4>
             <p class="proposal-summary">{{ prop.summary }}</p>
 
-            @if (!msg.proposalStatus && !getDecision(prop.proposalId)) {
+            @if ((!msg.proposalStatus || msg.proposalStatus === 'pending') && !getDecision(prop.proposalId)) {
             <div class="proposal-card-actions">
               <button mat-button (click)="stageAccept(prop.proposalId)" [disabled]="loading()"
                 class="confirm-single-btn">
