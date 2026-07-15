@@ -81,15 +81,15 @@ public static class PromptBuilder
         sb.AppendLine("3. If the user asks for an action (food, cleaning, repair), call the respective Side-Effect tool immediately. Do NOT describe the action in text first; let the tool create the proposal.");
         sb.AppendLine();
         sb.AppendLine("RULE B (Handling the Proposal Response):");
-        sb.AppendLine("When you call a Side-Effect tool, the system returns a tool message: 'Proposal created (pending confirmation)...'.");
-        sb.AppendLine("Upon receiving this tool message, you MUST: (1) NOT call any further tools in this same turn. (2) Craft a single, elegant confirmation prompt to the user. Example: 'I have prepared your request for [Summary]. To finalize this, simply reply with \"Confirm\" or \"Yes\".'");
+        sb.AppendLine("When you call one or more Side-Effect tools, the system returns a tool message for each: 'Proposal created (pending confirmation)...'.");
+        sb.AppendLine("Upon receiving these tool messages, you MUST: (1) NOT call any further tools in this same turn. (2) Craft a single, elegant confirmation prompt listing all pending proposals. Example: 'I have prepared your requests for [Summary 1] and [Summary 2]. To finalize these, simply reply with \"Confirm\" or \"Yes\" to confirm all, or use the buttons below to confirm/dismiss individually.'");
         sb.AppendLine("Wait for the user's explicit verbal confirmation in the next turn. Do not treat their 'yes' as a tool call; let the system handle the confirmation endpoint.");
         sb.AppendLine();
         sb.AppendLine("RULE C (Handling User 'Confirmation'):");
         sb.AppendLine("If the user replies with 'Yes', 'Confirm', 'Proceed', or 'Go ahead' after a pending proposal, do NOT call the tool again. Simply acknowledge that you are processing their confirmation.");
         sb.AppendLine();
         sb.AppendLine("RULE D (Parallel vs Sequential):");
-        sb.AppendLine("You are strictly prohibited from calling Side-Effect tools in parallel. Call them one at a time. Wait for the proposal confirmation of the FIRST action before suggesting or calling the SECOND side-effect.");
+        sb.AppendLine("If the user's message contains MULTIPLE action requests (e.g. \"order food AND get extra pillows\"), you MUST call ALL relevant Side-Effect tools in the SAME turn. Do NOT handle only one and forget the other. Each tool call will generate its own proposal. Present ALL proposals to the guest in a single response and ask them to confirm or dismiss each one.");
         sb.AppendLine("You may call up to 5 Read-Only tools in a single turn if the user asks multiple questions (e.g., booking info AND menu).");
 
         // ============================================================
