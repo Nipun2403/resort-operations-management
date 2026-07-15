@@ -266,11 +266,36 @@ public class ConciergeService : IConciergeService
 
         await _proposalRepo.MarkConfirmedAsync(proposalIds, userId, conversationId);
 
+        var guestCtx = await BuildGuestContextAsync(ct);
+        var systemPrompt = PromptBuilder.BuildSystemPrompt(guestCtx);
+        var historyMessages = await _conversationRepo.GetRecentAsync(userId, convKey, 16);
+        var history = historyMessages.ToList();
+
+        var summaryMessages = new List<ChatMessage>
+        {
+            new SystemChatMessage(systemPrompt)
+        };
+
+        for (int i = 0; i < history.Count - 1; i += 2)
+        {
+            if (history[i].Role == "user" && history[i + 1].Role == "assistant")
+            {
+                summaryMessages.Add(new UserChatMessage(history[i].Content));
+                summaryMessages.Add(new AssistantChatMessage(history[i + 1].Content));
+            }
+        }
+
         var summaryParts = actions.Select(a => $"{(a.Success ? "OK" : "FAIL")}: {a.ResultSummary ?? a.Error}");
-        var summaryPrompt = $"The following actions were executed:\n{string.Join("\n", summaryParts)}\n\nSummarize what was accomplished in a warm, friendly way.";
-var summaryCompletion = await _chatClient.CompleteChatAsync(
-            new[] { new SystemChatMessage(summaryPrompt) }, 
-            options: new ChatCompletionOptions { Temperature = 0.3f }, 
+        var confirmationContext = $"[SYSTEM: The guest just confirmed and the following actions were executed:\n"
+            + $"{string.Join("\n", summaryParts)}\n"
+            + $"Summarize what was accomplished in a warm, friendly way. Then, check the conversation history above — if there are any "
+            + $"UNRESOLVED requests the guest made earlier (such as a food order still pending clarification), "
+            + $"follow up on those now so they are not forgotten. Do NOT ignore them.]";
+        summaryMessages.Add(new UserChatMessage(confirmationContext));
+
+        var summaryCompletion = await _chatClient.CompleteChatAsync(
+            summaryMessages,
+            options: new ChatCompletionOptions { Temperature = 0.3f },
             cancellationToken: ct);
 
         var reply = summaryCompletion.Value.Content[0].Text;

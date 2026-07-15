@@ -54,27 +54,37 @@
         @if (msg.proposals?.length) {
         <div class="proposals-grid">
           @for (prop of msg.proposals; track prop.proposalId) {
-          <div class="proposal-card" [class.confirmed]="msg.proposalStatus === 'confirmed'"
-            [class.cancelled]="msg.proposalStatus === 'cancelled'">
+          <div class="proposal-card" [class.confirmed]="msg.proposalStatus === 'confirmed' || getDecision(prop.proposalId) === 'accepted'"
+            [class.cancelled]="msg.proposalStatus === 'cancelled' || getDecision(prop.proposalId) === 'rejected'">
             <div class="proposal-card-header">
               <span class="proposal-tag">PROPOSAL {{ $index === 0 ? 'ALPHA' : $index === 1 ? 'BETA' : 'GAMMA' }}</span>
-              @if (!msg.proposalStatus || msg.proposalStatus === 'pending') {
+              @if ((!msg.proposalStatus || msg.proposalStatus === 'pending') && !getDecision(prop.proposalId)) {
               <span class="proposal-countdown">
                 <mat-icon>timer</mat-icon>
                 {{ formatTimeRemaining(getTimeRemaining(prop)) }}
+              </span>
+              }
+              @if (getDecision(prop.proposalId) === 'accepted') {
+              <span class="proposal-countdown" style="color: var(--color-secondary);">
+                <mat-icon>check_circle</mat-icon> ACCEPTED
+              </span>
+              }
+              @if (getDecision(prop.proposalId) === 'rejected') {
+              <span class="proposal-countdown" style="color: var(--color-error);">
+                <mat-icon>cancel</mat-icon> REJECTED
               </span>
               }
             </div>
             <h4 class="proposal-action-title">{{ prop.action }}</h4>
             <p class="proposal-summary">{{ prop.summary }}</p>
 
-            @if (!msg.proposalStatus || msg.proposalStatus === 'pending') {
+            @if ((!msg.proposalStatus || msg.proposalStatus === 'pending') && !getDecision(prop.proposalId)) {
             <div class="proposal-card-actions">
-              <button mat-button (click)="confirmProposals(prop.proposalId)" [disabled]="loading()"
+              <button mat-button (click)="stageAccept(prop.proposalId)" [disabled]="loading()"
                 class="confirm-single-btn">
-                CONFIRM & EXECUTE
+                CONFIRM
               </button>
-              <button mat-icon-button (click)="dismissProposal(prop.proposalId)" [disabled]="loading()"
+              <button mat-icon-button (click)="stageReject(prop.proposalId)" [disabled]="loading()"
                 aria-label="Dismiss proposal" class="dismiss-single-btn">
                 <mat-icon>close</mat-icon>
               </button>

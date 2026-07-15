@@ -193,7 +193,7 @@ public class MaintenanceService : IMaintenanceService
                 throw new ArgumentException("You do not have an active booking for this room to request maintenance.");
         }
 
-        var existingTasks = await _maintenanceRepository.FindAsync(m => m.RoomId == roomId && m.Description == dto.Description && m.Status != MaintenanceStatus.Completed);
+        var existingTasks = await _maintenanceRepository.FindAsync(m => m.RoomId == roomId && m.Description.ToLower() == dto.Description.ToLower() && m.Status != MaintenanceStatus.Completed);
         if (existingTasks.Any())
             throw new InvalidOperationException("An identical maintenance ticket is already pending or in progress for this room.");
 
