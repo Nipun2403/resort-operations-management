@@ -43,7 +43,13 @@ import { ImageApiService } from '../../../../features/admin/services/image-api.s
           class="upload-btn"
         >
           <mat-icon aria-hidden="true">cloud_upload</mat-icon>
-          {{ uploadPhase() === 'uploading' ? 'Uploading...' : uploadPhase() === 'validating' ? 'Validating...' : 'Choose Image' }}
+          {{
+            uploadPhase() === 'uploading'
+              ? 'Uploading...'
+              : uploadPhase() === 'validating'
+                ? 'Validating...'
+                : 'Choose Image'
+          }}
         </button>
         @if (isUploading()) {
           <mat-spinner diameter="20" class="upload-spinner"></mat-spinner>
@@ -84,75 +90,77 @@ import { ImageApiService } from '../../../../features/admin/services/image-api.s
       }
     </div>
   `,
-  styles: [`
-    .image-upload-or-url {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      padding: 8px 0;
-    }
-    .upload-area {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .upload-btn {
-      font-family: var(--font-body, 'Inter', sans-serif);
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--color-secondary);
-      border: 1px solid var(--color-secondary);
-      background: transparent;
-      padding: 12px 32px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      white-space: nowrap;
-    }
-    .upload-btn:hover:not([disabled]) {
-      background-color: rgba(228, 194, 133, 0.1);
-    }
-    .upload-btn[disabled] {
-      opacity: 0.3;
-      cursor: not-allowed;
-    }
-    .upload-btn mat-icon {
-      font-size: 20px;
-      width: 20px;
-      height: 20px;
-      color: var(--color-secondary);
-    }
-    .upload-spinner {
-      display: inline-block;
-    }
-    .or-divider {
-      text-align: center;
-      color: #888;
-      font-size: 0.9em;
-    }
-    .url-field {
-      width: 100%;
-    }
-    .preview {
-      max-width: 200px;
-      border-radius: 4px;
-      overflow: hidden;
-      border: 1px solid rgba(228, 194, 133, 0.2);
-    }
-    .preview img {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-    .error-message {
-      color: #f44336;
-      font-size: 0.85em;
-    }
-  `],
+  styles: [
+    `
+      .image-upload-or-url {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding: 8px 0;
+      }
+      .upload-area {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .upload-btn {
+        font-family: var(--font-body, 'Inter', sans-serif);
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--color-secondary);
+        border: 1px solid var(--color-secondary);
+        background: transparent;
+        padding: 12px 32px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
+      }
+      .upload-btn:hover:not([disabled]) {
+        background-color: rgba(228, 194, 133, 0.1);
+      }
+      .upload-btn[disabled] {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+      .upload-btn mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        color: var(--color-secondary);
+      }
+      .upload-spinner {
+        display: inline-block;
+      }
+      .or-divider {
+        text-align: center;
+        color: #888;
+        font-size: 0.9em;
+      }
+      .url-field {
+        width: 100%;
+      }
+      .preview {
+        max-width: 200px;
+        border-radius: 4px;
+        overflow: hidden;
+        border: 1px solid rgba(228, 194, 133, 0.2);
+      }
+      .preview img {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+      .error-message {
+        color: #f44336;
+        font-size: 0.85em;
+      }
+    `,
+  ],
 })
 export class ImageUploadOrUrlComponent {
   readonly value = input<string>('');
@@ -208,36 +216,49 @@ export class ImageUploadOrUrlComponent {
       sizeBytes: file.size,
     };
 
-    this.imageApi.requestUploadSas(dto).pipe(
-      switchMap(sas =>
-        this.uploadToAzure(sas.uploadUrl, file).pipe(
-          switchMap(() => {
-            this.uploadPhase.set('validating');
-            return this.imageApi.confirmUpload(sas.sessionId);
-          }),
-          switchMap(() => this.pollUntilConfirmed(sas.sessionId)),
-          map(() => sas.blobUrl),
+    this.imageApi
+      .requestUploadSas(dto)
+      .pipe(
+        switchMap((sas) =>
+          this.uploadToAzure(sas.uploadUrl, file).pipe(
+            switchMap(() => {
+              this.uploadPhase.set('validating');
+              return this.imageApi.confirmUpload(sas.sessionId);
+            }),
+            switchMap(() => this.pollUntilConfirmed(sas.sessionId)),
+            map(() => sas.blobUrl),
+          ),
         ),
-      ),
-      catchError(err => {
-        const msg = this.getFriendlyErrorMessage(err);
-        this.snackBar.open(msg, 'Close', { duration: 5000, panelClass: 'error-snackbar', verticalPosition: 'top', horizontalPosition: 'end' });
-        return of(null);
-      }),
-      finalize(() => {
-        input.value = '';
-        this.isUploading.set(false);
-        this.uploadPhase.set('idle');
-        this.isUploadingChange.emit(false);
-      }),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(url => {
-      if (url) {
-        this.currentUrl.set(url);
-        this.valueChange.emit(url);
-        this.snackBar.open('Upload successful!', 'Close', { duration: 3000, panelClass: 'success-snackbar', verticalPosition: 'top', horizontalPosition: 'end' });
-      }
-    });
+        catchError((err) => {
+          const msg = this.getFriendlyErrorMessage(err);
+          this.snackBar.open(msg, 'Close', {
+            duration: 5000,
+            panelClass: 'error-snackbar',
+            verticalPosition: 'top',
+            horizontalPosition: 'end',
+          });
+          return of(null);
+        }),
+        finalize(() => {
+          input.value = '';
+          this.isUploading.set(false);
+          this.uploadPhase.set('idle');
+          this.isUploadingChange.emit(false);
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((url) => {
+        if (url) {
+          this.currentUrl.set(url);
+          this.valueChange.emit(url);
+          this.snackBar.open('Upload successful!', 'Close', {
+            duration: 3000,
+            panelClass: 'success-snackbar',
+            verticalPosition: 'top',
+            horizontalPosition: 'end',
+          });
+        }
+      });
   }
 
   private uploadToAzure(url: string, file: File): Observable<void> {
@@ -250,17 +271,17 @@ export class ImageUploadOrUrlComponent {
     const path = window.location.pathname;
     if (path.includes('amenities')) return 'Amenity';
     if (path.includes('menu')) return 'MenuItem';
-    if (path.includes('room-types')) return 'RoomType';
+    if (path.includes('room-type')) return 'RoomType';
     return 'Amenity';
   }
 
   private pollUntilConfirmed(sessionId: string): Observable<string> {
     return interval(1000).pipe(
       switchMap(() => this.imageApi.getStatus(sessionId)),
-      takeWhile(s => s.status === 'Pending', true),
-      filter(s => s.status !== 'Pending'),
+      takeWhile((s) => s.status === 'Pending', true),
+      filter((s) => s.status !== 'Pending'),
       timeout(30000),
-      map(s => {
+      map((s) => {
         if (s.status === 'Confirmed') return 'confirmed';
         throw s.rejectionReason ?? 'Upload was rejected';
       }),
@@ -268,7 +289,13 @@ export class ImageUploadOrUrlComponent {
   }
 
   private getFriendlyErrorMessage(err: unknown): string {
-    const msg = typeof err === 'string' ? err : (err as any)?.rejectionReason ?? (err as any)?.error?.error ?? (err as any)?.message ?? '';
+    const msg =
+      typeof err === 'string'
+        ? err
+        : ((err as any)?.rejectionReason ??
+          (err as any)?.error?.error ??
+          (err as any)?.message ??
+          '');
     if (msg.includes('rejected') || msg.includes('not match')) {
       return `File was rejected: ${msg}`;
     }

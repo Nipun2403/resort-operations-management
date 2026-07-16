@@ -1,0 +1,11 @@
+using 'main.bicep'
+
+param location = 'centralindia'
+param uniqueSuffix = 'demo1'
+param pgAdminPassword = 'YourSecurePassword123!'
+param myPublicIP = 'x.x.x.x/32'
+param storageAccountKey = 'your-nsdeply00-storage-key'
+param openRouterKey = 'your-groq-api-key'
+param emailSmtpPass = 'your-gmail-app-password'
+param jwtKey = 'your-64-char-base64-jwt-key'
+param webPubSubConnectionString = 'Endpoint=https://wps-hotel-mgmt-demo1.webpubsub.azure.com;AccessKey=xxx;Version=1.0'

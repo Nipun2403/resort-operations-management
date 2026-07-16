@@ -60,6 +60,7 @@ export class KitchenDashboardComponent {
       { value: 'Preparing', label: 'Preparing' },
       { value: 'Delivered', label: 'Delivered' },
     ],
+    showMyTasksToggle: false,
     getLocation: (t: Task) => t.location,
     getDescription: (t: Task) => t.description,
     getDetailSections: (t: Task) => {

@@ -44,6 +44,7 @@ PublishOutput/
 # User secrets and local configurations
 appsettings.Local.json
 appsettings.Development.json
+.env.local
 
 # Logs
 [Ll]ogs/

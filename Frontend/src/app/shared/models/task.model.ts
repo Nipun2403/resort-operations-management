@@ -36,4 +36,5 @@ export interface TaskDashboardConfig<T extends Task = Task> {
   getLocation: (task: T) => string;
   getDescription: (task: T) => string;
   getDetailSections: (task: T) => DetailSection[];
+  showMyTasksToggle?: boolean;
 }

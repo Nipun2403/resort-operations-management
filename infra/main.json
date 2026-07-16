@@ -1,0 +1,1407 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.45.15.27210",
+      "templateHash": "10705530302132649185"
+    }
+  },
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "centralindia",
+      "metadata": {
+        "description": "Deployment location"
+      }
+    },
+    "uniqueSuffix": {
+      "type": "string",
+      "metadata": {
+        "description": "Unique suffix for resource names (e.g., demo1)"
+      }
+    },
+    "pgAdminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "PostgreSQL admin password"
+      }
+    },
+    "myPublicIP": {
+      "type": "string",
+      "metadata": {
+        "description": "Your public IP for firewall (CIDR)"
+      }
+    },
+    "storageAccountKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Storage account key for nsdeply00"
+      }
+    },
+    "openRouterKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Groq API key (OpenAI-compatible)"
+      }
+    },
+    "emailSmtpPass": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Gmail SMTP app password"
+      }
+    },
+    "jwtKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "JWT signing key (base64, 64 chars)"
+      }
+    },
+    "webPubSubConnectionString": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Web PubSub connection string"
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "[format('log-analytics-{0}', parameters('uniqueSuffix'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "name": {
+            "value": "[format('log-hotel-mgmt-{0}', parameters('uniqueSuffix'))]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.45.15.27210",
+              "templateHash": "12928149170731443715"
+            }
+          },
+          "parameters": {
+            "name": {
+              "type": "string",
+              "metadata": {
+                "description": "Log Analytics workspace name"
+              }
+            },
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]",
+              "metadata": {
+                "description": "Location"
+              }
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.OperationalInsights/workspaces",
+              "apiVersion": "2022-10-01",
+              "name": "[parameters('name')]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "sku": {
+                  "name": "PerGB2018"
+                },
+                "retentionInDays": 30
+              }
+            }
+          ],
+          "outputs": {
+            "workspaceId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('name'))]"
+            },
+            "workspaceKey": {
+              "type": "string",
+              "value": "[listKeys(resourceId('Microsoft.OperationalInsights/workspaces', parameters('name')), '2022-10-01').primarySharedKey]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "[format('ca-env-{0}', parameters('uniqueSuffix'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "name": {
+            "value": "[format('env-hotel-mgmt-{0}', parameters('uniqueSuffix'))]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "logAnalyticsWorkspaceId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('log-analytics-{0}', parameters('uniqueSuffix'))), '2025-04-01').outputs.workspaceId.value]"
+          },
+          "logAnalyticsWorkspaceKey": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('log-analytics-{0}', parameters('uniqueSuffix'))), '2025-04-01').outputs.workspaceKey.value]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.45.15.27210",
+              "templateHash": "13697709463813267089"
+            }
+          },
+          "parameters": {
+            "name": {
+              "type": "string",
+              "metadata": {
+                "description": "Container Apps Environment name"
+              }
+            },
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]",
+              "metadata": {
+                "description": "Location"
+              }
+            },
+            "logAnalyticsWorkspaceId": {
+              "type": "string",
+              "metadata": {
+                "description": "Log Analytics Workspace ID"
+              }
+            },
+            "logAnalyticsWorkspaceKey": {
+              "type": "securestring",
+              "metadata": {
+                "description": "Log Analytics Workspace Key"
+              }
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.App/managedEnvironments",
+              "apiVersion": "2023-05-01",
+              "name": "[parameters('name')]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "appLogsConfiguration": {
+                  "destination": "log-analytics",
+                  "logAnalyticsConfiguration": {
+                    "customerId": "[parameters('logAnalyticsWorkspaceId')]",
+                    "sharedKey": "[parameters('logAnalyticsWorkspaceKey')]"
+                  }
+                }
+              }
+            }
+          ],
+          "outputs": {
+            "environmentId": {
+              "type": "string",
+              "value": "[resourceId('Microsoft.App/managedEnvironments', parameters('name'))]"
+            }
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', format('log-analytics-{0}', parameters('uniqueSuffix')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "[format('acr-{0}', parameters('uniqueSuffix'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "name": {
+            "value": "[format('acrhotelmgmt{0}', parameters('uniqueSuffix'))]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.45.15.27210",
+              "templateHash": "2765033082406485507"
+            }
+          },
+          "parameters": {
+            "name": {
+              "type": "string",
+              "metadata": {
+                "description": "ACR name (globally unique)"
+              }
+            },
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]",
+              "metadata": {
+                "description": "Location"
+              }
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.ContainerRegistry/registries",
+              "apiVersion": "2023-01-01",
+              "name": "[parameters('name')]",
+              "location": "[parameters('location')]",
+              "sku": {
+                "name": "Basic"
+              },
+              "properties": {
+                "adminUserEnabled": true,
+                "publicNetworkAccess": "Enabled"
+              }
+            }
+          ],
+          "outputs": {
+            "acrName": {
+              "type": "string",
+              "value": "[parameters('name')]"
+            },
+            "acrLoginServer": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.ContainerRegistry/registries', parameters('name')), '2023-01-01').loginServer]"
+            },
+            "acrPassword": {
+              "type": "string",
+              "value": "[listCredentials(resourceId('Microsoft.ContainerRegistry/registries', parameters('name')), '2023-01-01').passwords[0].value]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "[format('webpubsub-{0}', parameters('uniqueSuffix'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "name": {
+            "value": "[format('wps-hotel-mgmt-{0}', parameters('uniqueSuffix'))]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.45.15.27210",
+              "templateHash": "13989586125863707411"
+            }
+          },
+          "parameters": {
+            "name": {
+              "type": "string",
+              "metadata": {
+                "description": "Web PubSub name"
+              }
+            },
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]",
+              "metadata": {
+                "description": "Location"
+              }
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.SignalRService/webPubSub",
+              "apiVersion": "2023-02-01-preview",
+              "name": "[parameters('name')]",
+              "location": "[parameters('location')]",
+              "sku": {
+                "name": "Free_F1",
+                "tier": "Free",
+                "capacity": 1
+              },
+              "properties": {
+                "features": [
+                  {
+                    "flag": "EnableConnectivityLogs",
+                    "value": "True"
+                  }
+                ],
+                "networkACLs": {
+                  "defaultAction": "Allow",
+                  "publicNetwork": {
+                    "allow": [
+                      "All"
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "[format('postgresql-{0}', parameters('uniqueSuffix'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "serverName": {
+            "value": "[format('pg-hotel-mgmt-{0}', parameters('uniqueSuffix'))]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "adminLogin": {
+            "value": "pgadmin"
+          },
+          "adminPassword": {
+            "value": "[parameters('pgAdminPassword')]"
+          },
+          "myPublicIP": {
+            "value": "[parameters('myPublicIP')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.45.15.27210",
+              "templateHash": "7107200683234097074"
+            }
+          },
+          "parameters": {
+            "serverName": {
+              "type": "string",
+              "metadata": {
+                "description": "PostgreSQL server name (globally unique)"
+              }
+            },
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]",
+              "metadata": {
+                "description": "Location"
+              }
+            },
+            "adminLogin": {
+              "type": "string",
+              "defaultValue": "pgadmin",
+              "metadata": {
+                "description": "Admin login name"
+              }
+            },
+            "adminPassword": {
+              "type": "securestring",
+              "metadata": {
+                "description": "Admin password"
+              }
+            },
+            "myPublicIP": {
+              "type": "string",
+              "metadata": {
+                "description": "Your public IP for firewall (CIDR)"
+              }
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.DBforPostgreSQL/flexibleServers",
+              "apiVersion": "2023-12-01-preview",
+              "name": "[parameters('serverName')]",
+              "location": "[parameters('location')]",
+              "sku": {
+                "name": "Standard_B1ms",
+                "tier": "Burstable"
+              },
+              "properties": {
+                "administratorLogin": "[parameters('adminLogin')]",
+                "administratorLoginPassword": "[parameters('adminPassword')]",
+                "version": "16",
+                "storage": {
+                  "storageSizeGB": 32,
+                  "autoGrow": "Enabled",
+                  "tier": "P4"
+                },
+                "backup": {
+                  "backupRetentionDays": 7,
+                  "geoRedundantBackup": "Disabled"
+                },
+                "highAvailability": {
+                  "mode": "Disabled"
+                },
+                "network": {
+                  "publicNetworkAccess": "Enabled"
+                }
+              }
+            },
+            {
+              "type": "Microsoft.DBforPostgreSQL/flexibleServers/firewallRules",
+              "apiVersion": "2023-12-01-preview",
+              "name": "[format('{0}/{1}', parameters('serverName'), 'allow-azure-services')]",
+              "properties": {
+                "startIpAddress": "0.0.0.0",
+                "endIpAddress": "0.0.0.0"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.DBforPostgreSQL/flexibleServers', parameters('serverName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.DBforPostgreSQL/flexibleServers/firewallRules",
+              "apiVersion": "2023-12-01-preview",
+              "name": "[format('{0}/{1}', parameters('serverName'), 'allow-my-ip')]",
+              "properties": {
+                "startIpAddress": "[parameters('myPublicIP')]",
+                "endIpAddress": "[parameters('myPublicIP')]"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.DBforPostgreSQL/flexibleServers', parameters('serverName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.DBforPostgreSQL/flexibleServers/databases",
+              "apiVersion": "2023-12-01-preview",
+              "name": "[format('{0}/{1}', parameters('serverName'), 'HotelManagement')]",
+              "properties": {
+                "charset": "utf8",
+                "collation": "en_US.utf8"
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.DBforPostgreSQL/flexibleServers', parameters('serverName'))]"
+              ]
+            }
+          ],
+          "outputs": {
+            "serverFqdn": {
+              "type": "string",
+              "value": "[reference(resourceId('Microsoft.DBforPostgreSQL/flexibleServers', parameters('serverName')), '2023-12-01-preview').fullyQualifiedDomainName]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "[format('backend-app-{0}', parameters('uniqueSuffix'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "name": {
+            "value": "[format('hotel-api-{0}', parameters('uniqueSuffix'))]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "environmentId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('ca-env-{0}', parameters('uniqueSuffix'))), '2025-04-01').outputs.environmentId.value]"
+          },
+          "acrName": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('acr-{0}', parameters('uniqueSuffix'))), '2025-04-01').outputs.acrName.value]"
+          },
+          "acrLoginServer": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('acr-{0}', parameters('uniqueSuffix'))), '2025-04-01').outputs.acrLoginServer.value]"
+          },
+          "pgFqdn": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('postgresql-{0}', parameters('uniqueSuffix'))), '2025-04-01').outputs.serverFqdn.value]"
+          },
+          "pgAdminPassword": {
+            "value": "[parameters('pgAdminPassword')]"
+          },
+          "storageAccountKey": {
+            "value": "[parameters('storageAccountKey')]"
+          },
+          "openRouterKey": {
+            "value": "[parameters('openRouterKey')]"
+          },
+          "emailSmtpPass": {
+            "value": "[parameters('emailSmtpPass')]"
+          },
+          "jwtKey": {
+            "value": "[parameters('jwtKey')]"
+          },
+          "webPubSubConnectionString": {
+            "value": "[parameters('webPubSubConnectionString')]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.45.15.27210",
+              "templateHash": "13668431437563125810"
+            }
+          },
+          "parameters": {
+            "name": {
+              "type": "string",
+              "metadata": {
+                "description": "Backend Container App name"
+              }
+            },
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]",
+              "metadata": {
+                "description": "Location"
+              }
+            },
+            "environmentId": {
+              "type": "string",
+              "metadata": {
+                "description": "Container Apps Environment ID"
+              }
+            },
+            "acrName": {
+              "type": "string",
+              "metadata": {
+                "description": "ACR name"
+              }
+            },
+            "acrLoginServer": {
+              "type": "string",
+              "metadata": {
+                "description": "ACR login server"
+              }
+            },
+            "pgFqdn": {
+              "type": "string",
+              "metadata": {
+                "description": "PostgreSQL FQDN"
+              }
+            },
+            "pgAdminPassword": {
+              "type": "securestring",
+              "metadata": {
+                "description": "PostgreSQL admin password"
+              }
+            },
+            "storageAccountKey": {
+              "type": "securestring",
+              "metadata": {
+                "description": "Storage account key"
+              }
+            },
+            "openRouterKey": {
+              "type": "securestring",
+              "metadata": {
+                "description": "Groq API key"
+              }
+            },
+            "emailSmtpPass": {
+              "type": "securestring",
+              "metadata": {
+                "description": "Gmail SMTP app password"
+              }
+            },
+            "jwtKey": {
+              "type": "securestring",
+              "metadata": {
+                "description": "JWT signing key"
+              }
+            },
+            "webPubSubConnectionString": {
+              "type": "securestring",
+              "metadata": {
+                "description": "Web PubSub connection string"
+              }
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.App/containerApps",
+              "apiVersion": "2023-05-01",
+              "name": "[parameters('name')]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "managedEnvironmentId": "[parameters('environmentId')]",
+                "configuration": {
+                  "registries": [
+                    {
+                      "server": "[parameters('acrLoginServer')]",
+                      "username": "[parameters('acrName')]",
+                      "passwordSecretRef": "acr-password"
+                    }
+                  ],
+                  "secrets": [
+                    {
+                      "name": "jwt-key",
+                      "value": "[parameters('jwtKey')]"
+                    },
+                    {
+                      "name": "openrouter-key",
+                      "value": "[parameters('openRouterKey')]"
+                    },
+                    {
+                      "name": "email-smtp-pass",
+                      "value": "[parameters('emailSmtpPass')]"
+                    },
+                    {
+                      "name": "db-password",
+                      "value": "[parameters('pgAdminPassword')]"
+                    },
+                    {
+                      "name": "storage-key",
+                      "value": "[parameters('storageAccountKey')]"
+                    },
+                    {
+                      "name": "webpubsub-connection",
+                      "value": "[parameters('webPubSubConnectionString')]"
+                    }
+                  ],
+                  "ingress": {
+                    "external": true,
+                    "targetPort": 8080,
+                    "allowInsecure": false,
+                    "transport": "auto"
+                  }
+                },
+                "template": {
+                  "containers": [
+                    {
+                      "name": "backend",
+                      "image": "[format('{0}/hotel-api:v1', parameters('acrLoginServer'))]",
+                      "command": [
+                        "dotnet",
+                        "HotelManagement.API.dll"
+                      ],
+                      "resources": {
+                        "cpu": "[json('0.5')]",
+                        "memory": "1Gi"
+                      },
+                      "env": [
+                        {
+                          "name": "ASPNETCORE_ENVIRONMENT",
+                          "value": "Production"
+                        },
+                        {
+                          "name": "ASPNETCORE_URLS",
+                          "value": "http://+:8080"
+                        },
+                        {
+                          "name": "Jwt__Key",
+                          "secretRef": "jwt-key"
+                        },
+                        {
+                          "name": "Jwt__Issuer",
+                          "value": "HotelManagementAPI"
+                        },
+                        {
+                          "name": "Jwt__Audience",
+                          "value": "HotelManagementClients"
+                        },
+                        {
+                          "name": "OpenAI__ApiKey",
+                          "secretRef": "openrouter-key"
+                        },
+                        {
+                          "name": "OpenAI__Endpoint",
+                          "value": "https://api.groq.com/openai/v1"
+                        },
+                        {
+                          "name": "OpenAI__Model",
+                          "value": "openai/gpt-oss-20b"
+                        },
+                        {
+                          "name": "OpenAI__MaxTokens",
+                          "value": "6000"
+                        },
+                        {
+                          "name": "OpenAI__Temperature",
+                          "value": "0.1"
+                        },
+                        {
+                          "name": "Email__SmtpHost",
+                          "value": "smtp.gmail.com"
+                        },
+                        {
+                          "name": "Email__SmtpPort",
+                          "value": "465"
+                        },
+                        {
+                          "name": "Email__SmtpUser",
+                          "value": "king26devil@gmail.com"
+                        },
+                        {
+                          "name": "Email__SmtpPass",
+                          "secretRef": "email-smtp-pass"
+                        },
+                        {
+                          "name": "Email__SenderEmail",
+                          "value": "king26devil@gmail.com"
+                        },
+                        {
+                          "name": "Email__SenderName",
+                          "value": "Aetheris"
+                        },
+                        {
+                          "name": "AzureStorage__AccountUrl",
+                          "value": "https://nsdeply00.blob.core.windows.net"
+                        },
+                        {
+                          "name": "AzureStorage__AccountKey",
+                          "secretRef": "storage-key"
+                        },
+                        {
+                          "name": "AzureStorage__ContainerName",
+                          "value": "images"
+                        },
+                        {
+                          "name": "AzureStorage__QueueName",
+                          "value": "image-validation-queue"
+                        },
+                        {
+                          "name": "AzureStorage__SasExpiryMinutes",
+                          "value": "15"
+                        },
+                        {
+                          "name": "AzureStorage__MaxSizeBytes",
+                          "value": "10485760"
+                        },
+                        {
+                          "name": "AzureStorage__MaxImagesPerRoomType",
+                          "value": "5"
+                        },
+                        {
+                          "name": "ConnectionStrings__DefaultConnection",
+                          "value": "[format('Host={0};Database=HotelManagement;Username=pgadmin;Password={1};SSL Mode=Require;Trust Server Certificate=true', parameters('pgFqdn'), parameters('pgAdminPassword'))]"
+                        },
+                        {
+                          "name": "WebPubSub__ConnectionString",
+                          "secretRef": "webpubsub-connection"
+                        },
+                        {
+                          "name": "AllowedHosts",
+                          "value": "*"
+                        }
+                      ]
+                    }
+                  ],
+                  "scale": {
+                    "minReplicas": 1,
+                    "maxReplicas": 3,
+                    "rules": [
+                      {
+                        "name": "http-rule",
+                        "http": {
+                          "metadata": {
+                            "concurrentRequests": "50"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', format('acr-{0}', parameters('uniqueSuffix')))]",
+        "[resourceId('Microsoft.Resources/deployments', format('ca-env-{0}', parameters('uniqueSuffix')))]",
+        "[resourceId('Microsoft.Resources/deployments', format('postgresql-{0}', parameters('uniqueSuffix')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "[format('frontend-app-{0}', parameters('uniqueSuffix'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "name": {
+            "value": "[format('hotel-web-{0}', parameters('uniqueSuffix'))]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "environmentId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('ca-env-{0}', parameters('uniqueSuffix'))), '2025-04-01').outputs.environmentId.value]"
+          },
+          "acrName": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('acr-{0}', parameters('uniqueSuffix'))), '2025-04-01').outputs.acrName.value]"
+          },
+          "acrLoginServer": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('acr-{0}', parameters('uniqueSuffix'))), '2025-04-01').outputs.acrLoginServer.value]"
+          },
+          "acrPassword": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('acr-{0}', parameters('uniqueSuffix'))), '2025-04-01').outputs.acrPassword.value]"
+          },
+          "apiBaseUrl": {
+            "value": "[format('https://hotel-api-{0}.azurecontainerapps.io/api/v1', parameters('uniqueSuffix'))]"
+          },
+          "signalrHubUrl": {
+            "value": "[format('https://hotel-api-{0}.azurecontainerapps.io/notifications', parameters('uniqueSuffix'))]"
+          },
+          "webPubSubEndpoint": {
+            "value": "[format('https://wps-hotel-mgmt-{0}.webpubsub.azure.com', parameters('uniqueSuffix'))]"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.45.15.27210",
+              "templateHash": "652389367405414317"
+            }
+          },
+          "parameters": {
+            "name": {
+              "type": "string",
+              "metadata": {
+                "description": "Frontend Container App name"
+              }
+            },
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]",
+              "metadata": {
+                "description": "Location"
+              }
+            },
+            "environmentId": {
+              "type": "string",
+              "metadata": {
+                "description": "Container Apps Environment ID"
+              }
+            },
+            "acrName": {
+              "type": "string",
+              "metadata": {
+                "description": "ACR name"
+              }
+            },
+            "acrLoginServer": {
+              "type": "string",
+              "metadata": {
+                "description": "ACR login server"
+              }
+            },
+            "acrPassword": {
+              "type": "securestring",
+              "metadata": {
+                "description": "ACR admin password"
+              }
+            },
+            "webPubSubEndpoint": {
+              "type": "string",
+              "metadata": {
+                "description": "Web PubSub endpoint"
+              }
+            },
+            "apiBaseUrl": {
+              "type": "string",
+              "metadata": {
+                "description": "Backend API URL"
+              }
+            },
+            "signalrHubUrl": {
+              "type": "string",
+              "metadata": {
+                "description": "SignalR Hub URL"
+              }
+            }
+          },
+          "resources": [
+            {
+              "type": "Microsoft.App/containerApps",
+              "apiVersion": "2023-05-01",
+              "name": "[parameters('name')]",
+              "location": "[parameters('location')]",
+              "properties": {
+                "managedEnvironmentId": "[parameters('environmentId')]",
+                "configuration": {
+                  "registries": [
+                    {
+                      "server": "[parameters('acrLoginServer')]",
+                      "username": "[parameters('acrName')]",
+                      "passwordSecretRef": "acr-password"
+                    }
+                  ],
+                  "secrets": [
+                    {
+                      "name": "acr-password",
+                      "value": "[parameters('acrPassword')]"
+                    }
+                  ],
+                  "ingress": {
+                    "external": true,
+                    "targetPort": 80,
+                    "allowInsecure": false,
+                    "transport": "auto"
+                  }
+                },
+                "template": {
+                  "containers": [
+                    {
+                      "name": "frontend",
+                      "image": "[format('{0}/hotel-web:v1', parameters('acrLoginServer'))]",
+                      "resources": {
+                        "cpu": "[json('0.25')]",
+                        "memory": "512Mi"
+                      },
+                      "env": [
+                        {
+                          "name": "API_BASE_URL",
+                          "value": "[parameters('apiBaseUrl')]"
+                        },
+                        {
+                          "name": "SIGNALR_HUB_URL",
+                          "value": "[parameters('signalrHubUrl')]"
+                        },
+                        {
+                          "name": "WEB_PUBSUB_ENDPOINT",
+                          "value": "[parameters('webPubSubEndpoint')]"
+                        }
+                      ]
+                    }
+                  ],
+                  "scale": {
+                    "minReplicas": 1,
+                    "maxReplicas": 3,
+                    "rules": [
+                      {
+                        "name": "http-rule",
+                        "http": {
+                          "metadata": {
+                            "concurrentRequests": "100"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', format('acr-{0}', parameters('uniqueSuffix')))]",
+        "[resourceId('Microsoft.Resources/deployments', format('ca-env-{0}', parameters('uniqueSuffix')))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2025-04-01",
+      "name": "[format('jobs-{0}', parameters('uniqueSuffix'))]",
+      "properties": {
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "mode": "Incremental",
+        "parameters": {
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "environmentId": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('ca-env-{0}', parameters('uniqueSuffix'))), '2025-04-01').outputs.environmentId.value]"
+          },
+          "acrName": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('acr-{0}', parameters('uniqueSuffix'))), '2025-04-01').outputs.acrName.value]"
+          },
+          "acrLoginServer": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('acr-{0}', parameters('uniqueSuffix'))), '2025-04-01').outputs.acrLoginServer.value]"
+          },
+          "acrPassword": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('acr-{0}', parameters('uniqueSuffix'))), '2025-04-01').outputs.acrPassword.value]"
+          },
+          "pgFqdn": {
+            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('postgresql-{0}', parameters('uniqueSuffix'))), '2025-04-01').outputs.serverFqdn.value]"
+          },
+          "pgAdminPassword": {
+            "value": "[parameters('pgAdminPassword')]"
+          },
+          "storageAccountKey": {
+            "value": "[parameters('storageAccountKey')]"
+          },
+          "storageAccountName": {
+            "value": "nsdeply00"
+          }
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "metadata": {
+            "_generator": {
+              "name": "bicep",
+              "version": "0.45.15.27210",
+              "templateHash": "10304640910084494855"
+            }
+          },
+          "parameters": {
+            "location": {
+              "type": "string",
+              "defaultValue": "[resourceGroup().location]",
+              "metadata": {
+                "description": "Location"
+              }
+            },
+            "environmentId": {
+              "type": "string",
+              "metadata": {
+                "description": "Container Apps Environment ID"
+              }
+            },
+            "acrName": {
+              "type": "string",
+              "metadata": {
+                "description": "ACR name"
+              }
+            },
+            "acrLoginServer": {
+              "type": "string",
+              "metadata": {
+                "description": "ACR login server"
+              }
+            },
+            "acrPassword": {
+              "type": "securestring",
+              "metadata": {
+                "description": "ACR admin password"
+              }
+            },
+            "pgFqdn": {
+              "type": "string",
+              "metadata": {
+                "description": "PostgreSQL FQDN"
+              }
+            },
+            "pgAdminPassword": {
+              "type": "securestring",
+              "metadata": {
+                "description": "PostgreSQL admin password"
+              }
+            },
+            "storageAccountKey": {
+              "type": "securestring",
+              "metadata": {
+                "description": "Storage account key"
+              }
+            },
+            "storageAccountName": {
+              "type": "string",
+              "defaultValue": "nsdeply00",
+              "metadata": {
+                "description": "Storage account name"
+              }
+            }
+          },
+          "variables": {
+            "commonSecrets": [
+              {
+                "name": "storage-connection-string",
+                "value": "[format('DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1};EndpointSuffix={2}', parameters('storageAccountName'), parameters('storageAccountKey'), environment().suffixes.storage)]"
+              },
+              {
+                "name": "db-connection",
+                "value": "[format('Host={0};Database=HotelManagement;Username=pgadmin;Password={1};SSL Mode=Require;Trust Server Certificate=true', parameters('pgFqdn'), parameters('pgAdminPassword'))]"
+              },
+              {
+                "name": "acr-password",
+                "value": "[parameters('acrPassword')]"
+              },
+              {
+                "name": "storage-key",
+                "value": "[parameters('storageAccountKey')]"
+              }
+            ],
+            "commonRegistry": [
+              {
+                "server": "[parameters('acrLoginServer')]",
+                "username": "[parameters('acrName')]",
+                "passwordSecretRef": "acr-password"
+              }
+            ],
+            "commonContainerEnv": [
+              {
+                "name": "ASPNETCORE_ENVIRONMENT",
+                "value": "Production"
+              },
+              {
+                "name": "AzureStorage__AccountUrl",
+                "value": "https://nsdeply00.blob.core.windows.net"
+              },
+              {
+                "name": "AzureStorage__AccountKey",
+                "secretRef": "storage-key"
+              },
+              {
+                "name": "AzureStorage__ContainerName",
+                "value": "images"
+              },
+              {
+                "name": "AzureStorage__QueueName",
+                "value": "image-validation-queue"
+              },
+              {
+                "name": "ConnectionStrings__DefaultConnection",
+                "secretRef": "db-connection"
+              }
+            ]
+          },
+          "resources": [
+            {
+              "type": "Microsoft.App/jobs",
+              "apiVersion": "2023-05-01",
+              "name": "image-validation-job",
+              "location": "[parameters('location')]",
+              "properties": {
+                "environmentId": "[parameters('environmentId')]",
+                "configuration": {
+                  "triggerType": "Event",
+                  "replicaCompletionCount": 1,
+                  "parallelism": 1,
+                  "triggerConfig": {
+                    "source": "azure-queue",
+                    "queueName": "image-validation-queue",
+                    "connectionStringSecretRef": "storage-connection-string",
+                    "pollInterval": "10s"
+                  },
+                  "registries": "[variables('commonRegistry')]",
+                  "secrets": "[variables('commonSecrets')]"
+                },
+                "template": {
+                  "containers": [
+                    {
+                      "name": "worker",
+                      "image": "[format('{0}/hotel-api:v1', parameters('acrLoginServer'))]",
+                      "command": [
+                        "dotnet",
+                        "HotelManagement.API.dll",
+                        "--worker",
+                        "ImageValidation"
+                      ],
+                      "resources": {
+                        "cpu": "[json('0.25')]",
+                        "memory": "512Mi"
+                      },
+                      "env": "[variables('commonContainerEnv')]"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "Microsoft.App/jobs",
+              "apiVersion": "2023-05-01",
+              "name": "orphan-cleanup-job",
+              "location": "[parameters('location')]",
+              "properties": {
+                "environmentId": "[parameters('environmentId')]",
+                "configuration": {
+                  "triggerType": "Schedule",
+                  "triggerConfig": {
+                    "schedule": "0 2 * * *"
+                  },
+                  "registries": "[variables('commonRegistry')]",
+                  "secrets": "[variables('commonSecrets')]"
+                },
+                "template": {
+                  "containers": [
+                    {
+                      "name": "worker",
+                      "image": "[format('{0}/hotel-api:v1', parameters('acrLoginServer'))]",
+                      "command": [
+                        "dotnet",
+                        "HotelManagement.API.dll",
+                        "--worker",
+                        "OrphanCleanup"
+                      ],
+                      "resources": {
+                        "cpu": "[json('0.25')]",
+                        "memory": "512Mi"
+                      },
+                      "env": "[variables('commonContainerEnv')]"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "Microsoft.App/jobs",
+              "apiVersion": "2023-05-01",
+              "name": "blob-cleanup-job",
+              "location": "[parameters('location')]",
+              "properties": {
+                "environmentId": "[parameters('environmentId')]",
+                "configuration": {
+                  "triggerType": "Schedule",
+                  "triggerConfig": {
+                    "schedule": "0 * * * *"
+                  },
+                  "registries": "[variables('commonRegistry')]",
+                  "secrets": "[variables('commonSecrets')]"
+                },
+                "template": {
+                  "containers": [
+                    {
+                      "name": "worker",
+                      "image": "[format('{0}/hotel-api:v1', parameters('acrLoginServer'))]",
+                      "command": [
+                        "dotnet",
+                        "HotelManagement.API.dll",
+                        "--worker",
+                        "BlobCleanup"
+                      ],
+                      "resources": {
+                        "cpu": "[json('0.25')]",
+                        "memory": "512Mi"
+                      },
+                      "env": "[variables('commonContainerEnv')]"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "Microsoft.App/jobs",
+              "apiVersion": "2023-05-01",
+              "name": "proposal-cleanup-job",
+              "location": "[parameters('location')]",
+              "properties": {
+                "environmentId": "[parameters('environmentId')]",
+                "configuration": {
+                  "triggerType": "Schedule",
+                  "triggerConfig": {
+                    "schedule": "*/5 * * * *"
+                  },
+                  "registries": "[variables('commonRegistry')]",
+                  "secrets": "[variables('commonSecrets')]"
+                },
+                "template": {
+                  "containers": [
+                    {
+                      "name": "worker",
+                      "image": "[format('{0}/hotel-api:v1', parameters('acrLoginServer'))]",
+                      "command": [
+                        "dotnet",
+                        "HotelManagement.API.dll",
+                        "--worker",
+                        "ProposalCleanup"
+                      ],
+                      "resources": {
+                        "cpu": "[json('0.25')]",
+                        "memory": "512Mi"
+                      },
+                      "env": "[variables('commonContainerEnv')]"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "Microsoft.App/jobs",
+              "apiVersion": "2023-05-01",
+              "name": "idempotency-cleanup-job",
+              "location": "[parameters('location')]",
+              "properties": {
+                "environmentId": "[parameters('environmentId')]",
+                "configuration": {
+                  "triggerType": "Schedule",
+                  "triggerConfig": {
+                    "schedule": "* * * * *"
+                  },
+                  "registries": "[variables('commonRegistry')]",
+                  "secrets": "[variables('commonSecrets')]"
+                },
+                "template": {
+                  "containers": [
+                    {
+                      "name": "worker",
+                      "image": "[format('{0}/hotel-api:v1', parameters('acrLoginServer'))]",
+                      "command": [
+                        "dotnet",
+                        "HotelManagement.API.dll",
+                        "--worker",
+                        "IdempotencyCleanup"
+                      ],
+                      "resources": {
+                        "cpu": "[json('0.25')]",
+                        "memory": "512Mi"
+                      },
+                      "env": "[variables('commonContainerEnv')]"
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', format('acr-{0}', parameters('uniqueSuffix')))]",
+        "[resourceId('Microsoft.Resources/deployments', format('ca-env-{0}', parameters('uniqueSuffix')))]",
+        "[resourceId('Microsoft.Resources/deployments', format('postgresql-{0}', parameters('uniqueSuffix')))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "backendUrl": {
+      "type": "string",
+      "value": "[format('https://hotel-api-{0}.azurecontainerapps.io', parameters('uniqueSuffix'))]"
+    },
+    "frontendUrl": {
+      "type": "string",
+      "value": "[format('https://hotel-web-{0}.azurecontainerapps.io', parameters('uniqueSuffix'))]"
+    },
+    "acrName": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Resources/deployments', format('acr-{0}', parameters('uniqueSuffix'))), '2025-04-01').outputs.acrName.value]"
+    },
+    "acrLoginServer": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Resources/deployments', format('acr-{0}', parameters('uniqueSuffix'))), '2025-04-01').outputs.acrLoginServer.value]"
+    }
+  }
+}

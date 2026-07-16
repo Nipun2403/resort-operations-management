@@ -1,5 +1,5 @@
 export const environment = {
-  baseUrl: 'http://localhost:5264/api/v1',
-  signalrHubUrl: 'http://localhost:5264/notifications'
+  baseUrl: 'https://hotel-api-demo1.ambitiousmushroom-274454dc.centralindia.azurecontainerapps.io/api/v1',
+  signalrHubUrl: 'https://hotel-api-demo1.ambitiousmushroom-274454dc.centralindia.azurecontainerapps.io/notifications',
+  webPubSubEndpoint: 'https://wps-hotel-mgmt-demo1.webpubsub.azure.com'
 };
-

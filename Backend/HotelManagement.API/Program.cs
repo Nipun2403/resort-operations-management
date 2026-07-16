@@ -193,6 +193,7 @@ builder.Services.AddOpenTelemetry()
 #endregion
 
 #region Controllers & Routing
+builder.Services.AddHealthChecks();
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.AddControllers(options =>
 {
@@ -260,10 +261,13 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAll",
         policy =>
         {
-            policy.WithOrigins("http://localhost:4200", "http://localhost:4201")
-                  .AllowAnyMethod()
-                  .AllowAnyHeader()
-                  .AllowCredentials();
+            policy.SetIsOriginAllowed(origin =>
+                  origin.EndsWith(".azurecontainerapps.io", StringComparison.OrdinalIgnoreCase) ||
+                  origin.StartsWith("http://localhost", StringComparison.OrdinalIgnoreCase) ||
+                  origin.StartsWith("https://localhost", StringComparison.OrdinalIgnoreCase))
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials();
         });
 });
 #endregion
@@ -312,8 +316,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 
     // Seed the main database
-    HotelManagement.API.Utilities.MainDatabaseSeeder.Seed(app.Services);
 }
+HotelManagement.API.Utilities.MainDatabaseSeeder.Seed(app.Services);
 
 // app.UseHttpsRedirection();
 app.UseMiddleware<GlobalExceptionMiddleware>();
@@ -331,10 +335,54 @@ app.MapControllerRoute(
     defaults: new { controller = "Concierge" })
     .RequireRateLimiting("ConciergePolicy");
 
+app.MapHealthChecks("/health");
 app.MapControllers().RequireRateLimiting("GlobalPolicy");
 app.MapHub<HotelManagement.API.Hubs.NotificationHub>("/notifications").RequireCors("AllowAll");
 
-app.Run();
+// Worker dispatch — must be checked before app.Run() so workers don't start HTTP listener
+if (args.Contains("--worker"))
+{
+    var workerIndex = Array.IndexOf(args, "--worker");
+    if (workerIndex + 1 >= args.Length)
+    {
+        await Console.Error.WriteLineAsync("Error: --worker requires a worker type argument");
+        Environment.Exit(1);
+        return;
+    }
+
+    var workerType = args[workerIndex + 1];
+    using var scope = app.Services.CreateScope();
+    var sp = scope.ServiceProvider;
+    var logger = sp.GetRequiredService<ILogger<Program>>();
+
+    try
+    {
+        logger.LogInformation("Starting worker: {WorkerType}", workerType);
+
+        BackgroundService worker = workerType switch
+        {
+            "ImageValidation" => sp.GetRequiredService<ImageValidationWorker>(),
+            "OrphanCleanup" => sp.GetRequiredService<OrphanImageCleanupWorker>(),
+            "BlobCleanup" => sp.GetRequiredService<BlobCleanupWorker>(),
+            "ProposalCleanup" => sp.GetRequiredService<ProposalCleanupWorker>(),
+            "IdempotencyCleanup" => sp.GetRequiredService<HotelManagement.API.Services.IdempotencyCleanupService>(),
+            _ => throw new ArgumentException($"Unknown worker type: {workerType}")
+        };
+
+        await worker.StartAsync(CancellationToken.None);
+        await (worker.ExecuteTask ?? Task.CompletedTask);
+        logger.LogInformation("Worker {WorkerType} completed successfully", workerType);
+        Environment.Exit(0);
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "Worker {WorkerType} failed", workerType);
+        Environment.Exit(1);
+    }
+    return;
+}
+
+await app.RunAsync();
 #endregion
 
 #region Custom Utilities & Binders
@@ -400,5 +448,4 @@ public class CustomDateTimeModelBinderProvider : Microsoft.AspNetCore.Mvc.ModelB
     }
 }
 
-public partial class Program { }
 #endregion
