@@ -464,7 +464,7 @@ public class ConciergeService : IConciergeService
             Id = Guid.Parse(proposal.ProposalId),
             ConversationId = convId,
             UserId = ctx.UserId,
-            ToolName = proposal.Action,
+            ToolName = call.FunctionName,
             ArgumentsJson = proposal.ArgumentsJson,
             Summary = proposal.Summary,
             Status = "pending",
