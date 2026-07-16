@@ -1,0 +1,95 @@
+<div class="feedback-page">
+  <main class="content-canvas">
+    <header class="page-header">
+      <div class="header-card glass-panel">
+        <div class="fleuron text-secondary">❦</div>
+        <h1 class="page-title italic">How Was Your Stay?</h1>
+        @if (validation(); as v) {
+          <p class="page-subtitle">Booking #BK-{{ v.bookingId }} &middot; {{ v.guestName }}</p>
+        } @else {
+          <p class="page-subtitle">We would be honoured to hear about your experience.</p>
+        }
+      </div>
+    </header>
+
+    <section class="form-section">
+      <div class="glass-panel form-panel">
+        @if (loading()) {
+          <div class="state-panel">
+            <p class="state-text">Loading your feedback form&hellip;</p>
+          </div>
+        } @else if (error()) {
+          <div class="state-panel">
+            <span class="material-symbols-outlined state-icon">error_outline</span>
+            <h3 class="state-title italic">Unable to Load Feedback Form</h3>
+            <p class="state-text">{{ error() }}</p>
+          </div>
+        } @else if (submitted()) {
+          <div class="success-panel">
+            <span class="material-symbols-outlined success-icon">drafts</span>
+            <h3 class="success-title italic">Thank You</h3>
+            <p class="success-text">Your feedback has been received. We appreciate you taking the time to share your experience with us.</p>
+          </div>
+        } @else if (validation()?.alreadySubmitted) {
+          <div class="state-panel">
+            <span class="material-symbols-outlined state-icon text-secondary">check_circle</span>
+            <h3 class="state-title italic">Feedback Already Submitted</h3>
+            <p class="state-text">You've already shared your feedback for this stay. Thank you!</p>
+          </div>
+        } @else {
+          <h3 class="column-title uppercase">Share Your Experience</h3>
+
+          <form [formGroup]="feedbackForm" class="correspondence-form">
+            <div class="form-group">
+              <label class="input-label" for="feedback-rating">Rating</label>
+              <div class="select-wrapper">
+                <select id="feedback-rating" formControlName="rating" class="underline-input underline-select">
+                  <option [ngValue]="5">5 &ndash; Excellent</option>
+                  <option [ngValue]="4">4 &ndash; Good</option>
+                  <option [ngValue]="3">3 &ndash; Average</option>
+                  <option [ngValue]="2">2 &ndash; Poor</option>
+                  <option [ngValue]="1">1 &ndash; Terrible</option>
+                </select>
+                <span class="material-symbols-outlined select-arrow">expand_more</span>
+              </div>
+              <div class="input-underline"></div>
+            </div>
+
+            <div class="form-group">
+              <label class="input-label" for="feedback-comments">Comments (Optional)</label>
+              <textarea
+                id="feedback-comments"
+                formControlName="comments"
+                rows="4"
+                maxlength="500"
+                placeholder="Tell us about your stay..."
+                class="underline-input underline-textarea"
+              ></textarea>
+              <div class="input-underline"></div>
+              <span class="char-count">{{ feedbackForm.value.comments?.length || 0 }}/500</span>
+            </div>
+
+            <div class="form-actions">
+              <button
+                type="button"
+                [disabled]="feedbackForm.invalid || submitting()"
+                (click)="submitFeedback()"
+                class="submit-btn"
+              >
+                <span class="btn-text">
+                  @if (submitting()) { Submitting&hellip; } @else { Submit Feedback }
+                </span>
+                <div class="btn-hover-bg"></div>
+              </button>
+            </div>
+          </form>
+        }
+      </div>
+    </section>
+
+    <footer class="footer-note">
+      <div class="line-separator"></div>
+      <p class="footer-note-text italic">We look forward to welcoming you back to Aetheris.</p>
+    </footer>
+  </main>
+</div>

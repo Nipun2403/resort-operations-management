@@ -42,6 +42,13 @@ public class EmailService : IEmailService
         await SendAsync(guestEmail, guestName, subject, html);
     }
 
+    public async Task SendFeedbackReminderAsync(int bookingId, string guestName, string guestEmail, Guid token)
+    {
+        var subject = $"How was your stay? – Aetheris Collection (#BK-{bookingId})";
+        var html = BuildFeedbackReminderHtml(bookingId, guestName, token);
+        await SendAsync(guestEmail, guestName, subject, html);
+    }
+
     // ── Private helpers ───────────────────────────────────────────────────────
 
     private async Task SendAsync(string toAddress, string toName, string subject, string htmlBody)
@@ -210,5 +217,29 @@ public class EmailService : IEmailService
       <span class=""badge"">Cancelled</span>";
 
         return Wrap("Booking Cancellation", body);
+    }
+
+    private string BuildFeedbackReminderHtml(int bookingId, string guestName, Guid token)
+    {
+        var baseUrl = _config["Frontend:BaseUrl"] ?? "http://localhost:4200";
+        var feedbackUrl = $"{baseUrl}/feedback/submit?token={token}";
+
+        var body = $@"
+      <h2>How Was Your Stay?</h2>
+      <p style=""color:#c4c7c7;margin-bottom:24px;font-size:14px;"">
+        Dear {System.Net.WebUtility.HtmlEncode(guestName)}, we'd love to hear about your recent stay with us.
+        Your feedback helps us improve the experience for every guest.
+      </p>
+      <div class=""row""><span class=""label"">Booking ID</span><span class=""value"">#BK-{bookingId}</span></div>
+      <p style=""margin:24px 0;text-align:center;"">
+        <a href=""{feedbackUrl}"" style=""display:inline-block;padding:12px 28px;background:#e4c285;color:#131411;text-decoration:none;border-radius:4px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;font-size:13px;"">
+          Share Your Feedback
+        </a>
+      </p>
+      <p style=""margin-top:24px;font-size:13px;color:#8e9192;"">
+        This link is unique to your stay and does not require signing in. Thank you for choosing Aetheris Collection.
+      </p>";
+
+        return Wrap("We'd Love Your Feedback", body);
     }
 }

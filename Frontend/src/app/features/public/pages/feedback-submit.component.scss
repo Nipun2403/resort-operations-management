@@ -1,0 +1,275 @@
+@use '../../../../styles/theme/index' as *;
+
+.feedback-page {
+  overflow-x: hidden;
+  position: relative;
+  min-height: 80vh;
+}
+
+.content-canvas {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 10rem var(--margin-desktop) var(--section-gap);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  @media (max-width: 768px) {
+    padding: 6rem var(--margin-mobile) 4rem;
+  }
+}
+
+// ── Header ────────────────────────────────────────
+.page-header {
+  text-align: center;
+  margin-bottom: 4rem;
+  width: 100%;
+
+  .header-card {
+    padding: 4rem 2rem;
+    border: 1px solid rgba(228, 194, 133, 0.15);
+  }
+
+  .fleuron {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .page-title {
+    @include font-display-lg;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    color: var(--color-on-surface);
+    margin-bottom: 1.5rem;
+  }
+
+  .page-subtitle {
+    @include font-body-lg;
+    color: var(--color-on-surface-variant);
+    font-size: clamp(0.9rem, 3vw, 1.125rem);
+    margin: 0;
+  }
+}
+
+// ── Form Panel ────────────────────────────────────
+.form-section {
+  width: 100%;
+}
+
+.form-panel {
+  @include glass-panel;
+  padding: 4rem;
+
+  @media (max-width: 768px) {
+    padding: 2.5rem 1.5rem;
+  }
+}
+
+.column-title {
+  @include font-label-caps;
+  color: var(--color-secondary);
+  margin-bottom: 3rem;
+  letter-spacing: 0.3em;
+  font-size: 0.85rem;
+}
+
+.correspondence-form {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.form-group {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  .input-label {
+    @include font-label-caps;
+    color: rgba(228, 194, 133, 0.6);
+    font-size: 0.625rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.15em;
+  }
+
+  .underline-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(196, 199, 199, 0.2);
+    padding: 0.75rem 0;
+    color: var(--color-on-surface);
+    @include font-body-md;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.3s;
+
+    &::placeholder {
+      color: rgba(196, 199, 199, 0.3);
+    }
+
+    &:focus {
+      border-color: transparent;
+    }
+  }
+
+  .input-underline {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: var(--color-secondary);
+    transform: scaleX(0);
+    transform-origin: bottom right;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .underline-input:focus + .input-underline {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+  }
+
+  .select-wrapper {
+    position: relative;
+    width: 100%;
+
+    .underline-select {
+      appearance: none;
+      -webkit-appearance: none;
+      padding-right: 2rem;
+      cursor: pointer;
+
+      option {
+        background-color: var(--color-surface);
+        color: var(--color-on-surface);
+      }
+    }
+
+    .select-arrow {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--color-secondary);
+      pointer-events: none;
+    }
+  }
+
+  .underline-textarea {
+    resize: none;
+  }
+
+  .char-count {
+    align-self: flex-end;
+    font-size: 0.7rem;
+    color: rgba(196, 199, 199, 0.4);
+    margin-top: 0.35rem;
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+// ── Submit Button ─────────────────────────────────
+.submit-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem 3rem;
+  background: var(--color-secondary);
+  color: var(--color-surface);
+  border: none;
+  @include font-label-caps;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  cursor: pointer;
+  width: 100%;
+  overflow: hidden;
+  transition: box-shadow 0.5s ease;
+
+  @media (min-width: 768px) {
+    width: auto;
+  }
+
+  &:hover {
+    box-shadow: 0 0 30px rgba(228, 194, 133, 0.3);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .btn-text {
+    position: relative;
+    z-index: 10;
+  }
+
+  .btn-hover-bg {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(100%);
+    transition: transform 0.3s ease-out;
+  }
+
+  &:hover .btn-hover-bg {
+    transform: translateY(0);
+  }
+}
+
+// ── State / Success Panels ────────────────────────
+.state-panel,
+.success-panel {
+  text-align: center;
+  padding: 2rem 0;
+
+  .state-icon,
+  .success-icon {
+    font-size: 4rem;
+    color: var(--color-secondary);
+    margin-bottom: 2rem;
+  }
+
+  .state-title,
+  .success-title {
+    @include font-headline-md;
+    color: var(--color-secondary);
+    margin-bottom: 1.5rem;
+  }
+
+  .state-text,
+  .success-text {
+    @include font-body-md;
+    color: rgba(228, 226, 221, 0.7);
+    line-height: 1.8;
+  }
+}
+
+// ── Footer Note ───────────────────────────────────
+.footer-note {
+  margin-top: 6rem;
+  text-align: center;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    margin-top: 3rem;
+  }
+
+  .line-separator {
+    width: 120px;
+    height: 1px;
+    background: rgba(228, 194, 133, 0.3);
+    margin: 0 auto 2.5rem;
+  }
+
+  .footer-note-text {
+    @include font-headline-sm;
+    color: var(--color-on-surface-variant);
+    opacity: 0.8;
+    font-size: clamp(1rem, 4vw, 1.25rem);
+  }
+}

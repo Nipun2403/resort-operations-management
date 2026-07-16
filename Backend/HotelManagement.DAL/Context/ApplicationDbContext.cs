@@ -30,6 +30,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<BookingRoom> BookingRooms => Set<BookingRoom>();
     public DbSet<IdempotentRequest> IdempotentRequests => Set<IdempotentRequest>();
     public DbSet<UploadSession> UploadSessions => Set<UploadSession>();
+    public DbSet<FeedbackReminder> FeedbackReminders => Set<FeedbackReminder>();
     public DbSet<ConciergeActionLog> ConciergeActionLogs => Set<ConciergeActionLog>();
     public DbSet<ConversationMessage> ConversationMessages => Set<ConversationMessage>();
     public DbSet<ConciergeProposal> ConciergeProposals => Set<ConciergeProposal>();
@@ -113,6 +114,20 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<Feedback>()
             .HasIndex(f => f.BookingId)
             .IsUnique();
+
+        modelBuilder.Entity<FeedbackReminder>()
+            .HasIndex(r => r.BookingId)
+            .IsUnique();
+
+        modelBuilder.Entity<FeedbackReminder>()
+            .HasIndex(r => r.Token)
+            .IsUnique();
+
+        modelBuilder.Entity<FeedbackReminder>()
+            .HasOne(r => r.Booking)
+            .WithMany()
+            .HasForeignKey(r => r.BookingId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<RoomType>()
             .Property(r => r.BasePrice)

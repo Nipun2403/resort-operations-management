@@ -10,10 +10,12 @@ namespace HotelManagement.API.Controllers;
 public class FeedbackController : ControllerBase
 {
     private readonly IFeedbackService _feedbackService;
+    private readonly IFeedbackReminderService _feedbackReminderService;
 
-    public FeedbackController(IFeedbackService feedbackService)
+    public FeedbackController(IFeedbackService feedbackService, IFeedbackReminderService feedbackReminderService)
     {
         _feedbackService = feedbackService;
+        _feedbackReminderService = feedbackReminderService;
     }
 
     [HttpGet]
@@ -48,6 +50,36 @@ public class FeedbackController : ControllerBase
         {
             var result = await _feedbackService.SubmitFeedbackAsync(dto);
             return Ok(result);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpGet("public/validate/{token}")]
+    [AllowAnonymous]
+    public async Task<IActionResult> ValidateReminderToken(Guid token)
+    {
+        var result = await _feedbackReminderService.ValidateTokenAsync(token);
+        if (!result.IsValid) return NotFound(result);
+        return Ok(result);
+    }
+
+    [HttpPost("public/submit")]
+    [AllowAnonymous]
+    public async Task<IActionResult> SubmitFeedbackByToken([FromBody] SubmitFeedbackByTokenDTO dto)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
+        try
+        {
+            var result = await _feedbackReminderService.SubmitFeedbackWithTokenAsync(dto.Token, dto.Rating, dto.Comments);
+            return Ok(result);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
         }
         catch (ArgumentException ex)
         {

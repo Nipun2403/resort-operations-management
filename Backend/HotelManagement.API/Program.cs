@@ -108,6 +108,7 @@ builder.Services.AddScoped<IHousekeepingService, HousekeepingService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IMenuItemService, MenuItemService>();
 builder.Services.AddScoped<IFeedbackService, FeedbackService>();
+builder.Services.AddScoped<IFeedbackReminderService, FeedbackReminderService>();
 builder.Services.AddScoped<IBillingService, BillingService>();
 builder.Services.AddScoped<IAmenityService, AmenityService>();
 builder.Services.AddScoped<IBookingService, BookingService>();
@@ -137,6 +138,7 @@ builder.Services.AddHostedService<HotelManagement.API.Services.IdempotencyCleanu
 builder.Services.AddHostedService<ImageValidationWorker>();
 builder.Services.AddHostedService<OrphanImageCleanupWorker>();
 builder.Services.AddHostedService<BlobCleanupWorker>();
+builder.Services.AddHostedService<FeedbackReminderWorker>();
 builder.Services.AddHostedService<HotelManagement.BLL.Workers.ProposalCleanupWorker>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUserService, HotelManagement.API.Services.CurrentUserService>();

@@ -237,6 +237,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/public/pages/contact.component')
           .then(m => m.ContactComponent)
       },
+      {
+        path: 'feedback/submit',
+        loadComponent: () => import('./features/public/pages/feedback-submit.component')
+          .then(m => m.FeedbackSubmitComponent)
+      },
       { path: '**', redirectTo: '/error/404' }
     ]
   },
