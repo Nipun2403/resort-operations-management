@@ -11,6 +11,8 @@ public static class InputSanitizer
         @"(?i)assistant\s*:",
         @"(?i)you\s+are\s+(not\s+)?(a\s+)?(concierge|assistant)",
         @"(?i)forget\s+(everything|all)",
+        @"(?i)developer\s*mode",
+        @"(?i)jailbreak",
     };
 
     public static string Sanitize(string input)
