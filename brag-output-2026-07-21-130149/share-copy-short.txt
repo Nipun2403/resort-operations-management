@@ -1,0 +1,7 @@
+AETHERIS — Private Estate & Refuge. Command Center Included.
+
+60-second tour: booking & rooms → guest portal w/ Atlas AI concierge → admin command center → operations engine.
+
+Angular 22 / .NET 10 / PostgreSQL / SignalR
+
+→ https://github.com/peewee/Hotel_Management_Full

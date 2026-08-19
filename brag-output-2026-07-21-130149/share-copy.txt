@@ -1,0 +1,13 @@
+AETHERIS — Private Estate & Refuge. Command Center Included.
+
+Built for the guest who books a $4,000/night suite and expects the concierge to know their name before they say it.
+
+60-second tour of AETHERIS: public booking & room gallery → guest portal with Atlas AI concierge (billing, housekeeping, maintenance) → admin command center with analytics & feedback → operations engine — kitchen, housekeeping, and maintenance — all orchestrated through a single platform.
+
+Full-stack: Angular 22 / .NET 10 / PostgreSQL / SignalR
+Deployed on Azure Container Apps
+
+↓ Watch the video
+https://github.com/peewee/Hotel_Management_Full
+
+#AETHERIS #HospitalityTech #Angular #DotNet #Azure

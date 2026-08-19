@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;500;600&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: #131411; }
+      body { font-family: 'Manrope', sans-serif; color: #e4e2dd; }
+      .scene { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px; }
+      .gold { color: #e4c285; }
+      .playfair { font-family: 'Playfair Display', serif; }
+      .center { display: flex; align-items: center; justify-content: center; text-align: center; }
+      .fullscreen-img { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px; object-fit: cover; }
+      .fullscreen-contain { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px; object-fit: contain; background: #131411; }
+      .label-overlay {
+        position: absolute;
+        bottom: 60px; left: 60px;
+        font-family: 'Manrope', sans-serif;
+        font-weight: 500; font-size: 14px;
+        letter-spacing: 0.2em; text-transform: uppercase;
+        color: #e4c285;
+        background: rgba(19, 20, 17, 0.75);
+        padding: 10px 20px;
+        border-radius: 6px;
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        border: 1px solid rgba(228, 194, 133, 0.2);
+      }
+      .header-label {
+        position: absolute;
+        top: 40px; left: 60px;
+        font-family: 'Manrope', sans-serif;
+        font-weight: 500; font-size: 13px;
+        letter-spacing: 0.25em; text-transform: uppercase;
+        color: #e4c285;
+        background: rgba(19, 20, 17, 0.7);
+        padding: 8px 18px;
+        border-radius: 6px;
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        border: 1px solid rgba(228, 194, 133, 0.15);
+      }
+      .slam-label {
+        position: absolute;
+        top: 60px; left: 60px;
+        font-family: 'Manrope', sans-serif;
+        font-weight: 600; font-size: 20px;
+        letter-spacing: 0.25em; text-transform: uppercase;
+        color: #e4c285;
+        background: rgba(19, 20, 17, 0.8);
+        padding: 12px 24px;
+        border-radius: 8px;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(228, 194, 133, 0.2);
+      }
+      .scroll-container {
+        position: absolute; top: 0; left: 0;
+        width: 1920px; height: 1080px;
+        overflow: hidden;
+      }
+      .scroll-container img {
+        position: absolute; top: 0; left: 0;
+        width: 1920px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="66" data-width="1920" data-height="1080" style="position:relative;width:1920px;height:1080px;overflow:hidden;background:#131411;">
+
+      <!-- ===== Scene 1: Hook — 0–4s ===== -->
+      <div id="scene-1" class="clip scene center" data-start="0" data-duration="4" data-track-index="1" style="flex-direction: column; gap: 16px;">
+        <div id="hook-line-1" class="playfair gold" style="font-size: 48px; font-style: italic; opacity: 0;">Behind every silent peak…</div>
+        <div id="hook-line-2" class="playfair gold" style="font-size: 40px; opacity: 0;">…is a command center.</div>
+      </div>
+
+      <!-- ===== Scene 2: Public Website — 4–22s ===== -->
+      <div id="scene-2" class="clip scene" data-start="4" data-duration="18" data-track-index="2" style="background: #131411;">
+        <!-- Home scroll (4–7) -->
+        <div id="home-scroll" class="scroll-container" style="z-index: 1;">
+          <img id="home-img" src="assets/screenshots/home-fullpage.png" alt="Home page" style="opacity: 0;" />
+        </div>
+        <div id="s2-home-label" class="label-overlay" style="opacity: 0; z-index: 11;">CURATED FOR THE FEW</div>
+        <!-- Rooms catalogue full scroll (7–10.5) -->
+        <div id="rooms-scroll" class="scroll-container" style="z-index: 2; opacity: 0;">
+          <img id="rooms-img" src="assets/screenshots/rooms-catalogue.png" alt="Rooms catalogue" />
+        </div>
+        <div id="s2-rooms-label" class="label-overlay" style="opacity: 0; z-index: 12;">ROOMS</div>
+        <!-- Room detail carousel (10.5–13) -->
+        <img id="s2-room-detail" class="fullscreen-img" src="assets/screenshots/room-detail-carousel.png" alt="Room detail" style="opacity: 0; z-index: 3;" />
+        <div id="s2-detail-label" class="label-overlay" style="opacity: 0; z-index: 13;">SUITE GALLERY</div>
+        <!-- Experiences full scroll (13–18) -->
+        <div id="exp-scroll" class="scroll-container" style="z-index: 4; opacity: 0;">
+          <img id="exp-img" src="assets/screenshots/experiences.png" alt="Experiences" />
+        </div>
+        <div id="s2-exp-label" class="label-overlay" style="opacity: 0; z-index: 14;">EXPERIENCES</div>
+      </div>
+
+      <!-- ===== Scene 3: Guest Journey — 22–39s ===== -->
+      <div id="scene-3" class="clip scene" data-start="22" data-duration="17" data-track-index="3" style="background: #131411;">
+        <div id="s3-header" class="header-label" style="opacity: 0; z-index: 10;">THE PRIVATE CORRIDOR</div>
+        <img id="s3-dashboard" class="fullscreen-img" src="assets/screenshots/user-dashboard.png" alt="User Dashboard" style="opacity: 0; z-index: 1;" />
+        <img id="s3-bookings" class="fullscreen-img" src="assets/screenshots/user-bookings.png" alt="User Bookings" style="opacity: 0; z-index: 2;" />
+        <img id="s3-atlas" class="fullscreen-img" src="assets/screenshots/user-atlas-concierge.png" alt="Atlas AI Concierge" style="opacity: 0; z-index: 3;" />
+        <div id="s3-atlas-callout" class="slam-label" style="opacity: 0; z-index: 20;">AI CONCIERGE</div>
+        <!-- Room service cameo -->
+        <img id="s3-room-service" class="fullscreen-img" src="assets/screenshots/room-service-menu.png" alt="Room Service" style="opacity: 0; z-index: 4;" />
+        <div id="s3-rs-callout" class="slam-label" style="opacity: 0; z-index: 21;">ROOM SERVICE</div>
+      </div>
+
+      <!-- ===== Scene 4: Admin Command — 39–53s ===== -->
+      <div id="scene-4" class="clip scene" data-start="39" data-duration="14" data-track-index="4" style="background: #131411;">
+        <img id="s4-dashboard" class="fullscreen-img" src="assets/screenshots/admin-dashboard.png" alt="Admin Dashboard" style="opacity: 0; z-index: 1;" />
+        <img id="s4-rooms" class="fullscreen-img" src="assets/screenshots/admin-room-management.png" alt="Room Management" style="opacity: 0; z-index: 2;" />
+        <img id="s4-analytics" class="fullscreen-img" src="assets/screenshots/admin-analytics.png" alt="Analytics" style="opacity: 0; z-index: 3;" />
+        <img id="s4-feedback" class="fullscreen-img" src="assets/screenshots/admin-feedback.png" alt="Feedback" style="opacity: 0; z-index: 4;" />
+        <div id="s4-label-dashboard" class="header-label" style="opacity: 0; z-index: 20;">ADMIN DASHBOARD</div>
+        <div id="s4-label-rooms" class="header-label" style="opacity: 0; z-index: 20;">ROOM MANAGEMENT</div>
+        <div id="s4-label-analytics" class="header-label" style="opacity: 0; z-index: 20;">ANALYTICS</div>
+        <div id="s4-label-feedback" class="header-label" style="opacity: 0; z-index: 20;">FEEDBACK</div>
+      </div>
+
+      <!-- ===== Scene 5: Portal Carousel — 53–62s ===== -->
+      <div id="scene-5" class="clip scene" data-start="53" data-duration="9" data-track-index="5" style="background: #131411;">
+        <img id="s5-kitchen" class="fullscreen-img" src="assets/screenshots/kitchen-dashboard.png" alt="Kitchen" style="opacity: 0; z-index: 1;" />
+        <img id="s5-housekeeping" class="fullscreen-img" src="assets/screenshots/housekeeping-dashboard.png" alt="Housekeeping" style="opacity: 0; z-index: 2;" />
+        <img id="s5-maintenance" class="fullscreen-img" src="assets/screenshots/maintenance-dashboard.png" alt="Maintenance" style="opacity: 0; z-index: 3;" />
+        <div id="s5-label-kitchen" class="slam-label" style="opacity: 0; z-index: 20;">KITCHEN</div>
+        <div id="s5-label-hk" class="slam-label" style="opacity: 0; z-index: 20;">HOUSEKEEPING</div>
+        <div id="s5-label-maint" class="slam-label" style="opacity: 0; z-index: 20;">MAINTENANCE</div>
+      </div>
+
+      <!-- ===== Scene 6: Outro — 62–66s ===== -->
+      <div id="scene-6" class="clip scene center" data-start="62" data-duration="4" data-track-index="6" style="flex-direction: column; gap: 20px;">
+        <div id="outro-logo" class="playfair gold" style="font-size: 72px; letter-spacing: -0.02em; line-height: 1.1; opacity: 0;">AETHERIS</div>
+        <div id="outro-tagline" style="font-family: 'Manrope', sans-serif; font-size: 18px; font-weight: 300; letter-spacing: 0.02em; color: #e4e2dd; opacity: 0;">Private Estate &amp; Refuge. Command Center Included.</div>
+      </div>
+
+    </div>
+
+    <!-- ===== Audio: Music ===== -->
+    <audio id="bg-music" data-start="0" data-duration="66" data-track-index="10" data-volume="0.20" src="assets/music/happy-beats-business-moves-vol-12-by-ende-dot-app.mp3"></audio>
+
+    <!-- ===== Audio: SFX Scene 3 ===== -->
+    <audio id="sfx-guest-1" data-start="25.5" data-duration="0.6" data-track-index="11" data-volume="0.50" src="assets/sfx/casino/card-slide-1.ogg"></audio>
+    <audio id="sfx-guest-2" data-start="29.5" data-duration="0.6" data-track-index="12" data-volume="0.50" src="assets/sfx/casino/card-slide-1.ogg"></audio>
+    <audio id="sfx-guest-3" data-start="37.0" data-duration="0.6" data-track-index="13" data-volume="0.55" src="assets/sfx/interface/switch_005.ogg"></audio>
+    <audio id="sfx-guest-4" data-start="39.0" data-duration="0.4" data-track-index="14" data-volume="0.55" src="assets/sfx/interface/switch_005.ogg"></audio>
+
+    <!-- ===== Audio: SFX Scene 4 ===== -->
+    <audio id="sfx-admin-1" data-start="43.0" data-duration="0.4" data-track-index="15" data-volume="0.65" src="assets/sfx/interface/switch_005.ogg"></audio>
+    <audio id="sfx-admin-2" data-start="46.0" data-duration="0.4" data-track-index="16" data-volume="0.65" src="assets/sfx/interface/switch_006.ogg"></audio>
+    <audio id="sfx-admin-3" data-start="49.0" data-duration="0.4" data-track-index="17" data-volume="0.65" src="assets/sfx/interface/switch_005.ogg"></audio>
+
+    <!-- ===== Audio: SFX Scene 5 ===== -->
+    <audio id="sfx-carousel-1" data-start="53.5" data-duration="0.4" data-track-index="18" data-volume="0.70" src="assets/sfx/interface/switch_005.ogg"></audio>
+    <audio id="sfx-carousel-2" data-start="56.5" data-duration="0.4" data-track-index="19" data-volume="0.70" src="assets/sfx/interface/switch_005.ogg"></audio>
+    <audio id="sfx-carousel-3" data-start="59.5" data-duration="0.4" data-track-index="20" data-volume="0.75" src="assets/sfx/interface/switch_006.ogg"></audio>
+
+    <!-- ===== Audio: SFX Scene 6 ===== -->
+    <audio id="sfx-bell" data-start="63.0" data-duration="1.5" data-track-index="21" data-volume="0.80" src="assets/sfx/impact/impactBell_heavy_000.ogg"></audio>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+
+      const tl = gsap.timeline({ paused: true });
+
+      // ==== Scene 1: Hook (0–4) ====
+      tl.fromTo("#hook-line-1", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, 0.3);
+      tl.fromTo("#hook-line-2", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }, 2.0);
+
+      // ==== Scene 2: Public Website (4–22) — cinematic slow scrolls ====
+      // Home scroll: gentle fade in, slow parallax pan (4.3 → 8.2)
+      tl.fromTo("#home-img", { opacity: 0 }, { opacity: 1, duration: 0.8, ease: "power2.in" }, 4.3);
+      tl.to("#home-img", { y: -3730, duration: 4, ease: "none" }, 4.5);
+      tl.fromTo("#s2-home-label", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 7.0);
+      tl.to("#home-scroll", { opacity: 0, duration: 0.5, ease: "power2.in" }, 7.8);
+      tl.to("#s2-home-label", { opacity: 0, duration: 0.3, ease: "power2.in" }, 7.8);
+      // Rooms catalogue full scroll (8.5 → 12.8)
+      tl.fromTo("#rooms-scroll", { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power2.in" }, 8.5);
+      tl.to("#rooms-img", { y: -2355, duration: 4, ease: "none" }, 8.8);
+      tl.fromTo("#s2-rooms-label", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 11.5);
+      tl.to("#rooms-scroll", { opacity: 0, duration: 0.4, ease: "power2.in" }, 12.5);
+      tl.to("#s2-rooms-label", { opacity: 0, duration: 0.3, ease: "power2.in" }, 12.5);
+      // Room detail carousel (13.0 → 15.0)
+      tl.fromTo("#s2-room-detail", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, 13.0);
+      tl.fromTo("#s2-detail-label", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 13.3);
+      tl.to("#s2-room-detail", { opacity: 0, duration: 0.4, ease: "power2.in" }, 14.6);
+      tl.to("#s2-detail-label", { opacity: 0, duration: 0.3, ease: "power2.in" }, 14.6);
+      // Experiences full scroll (15.5 → 21.5)
+      tl.fromTo("#exp-scroll", { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power2.in" }, 15.5);
+      tl.to("#exp-img", { y: -2752, duration: 6, ease: "none" }, 15.8);
+      tl.fromTo("#s2-exp-label", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 19.5);
+
+      // ==== Scene 3: Guest Journey (22–39) ====
+      // Header
+      tl.fromTo("#s3-header", { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 22.3);
+      // Dashboard (22.5 → 26)
+      tl.fromTo("#s3-dashboard", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, 22.5);
+      tl.to("#s3-dashboard", { opacity: 0, duration: 0.4, ease: "power2.in" }, 25.5);
+      // Bookings (26 → 30)
+      tl.fromTo("#s3-bookings", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, 26.0);
+      tl.to("#s3-bookings", { opacity: 0, duration: 0.4, ease: "power2.in" }, 29.5);
+      // Atlas Concierge with real responses (30 → 37)
+      tl.fromTo("#s3-atlas", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, 30.0);
+      tl.fromTo("#s3-atlas-callout", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(1.5)" }, 34.0);
+      tl.to("#s3-atlas", { opacity: 0, duration: 0.4, ease: "power2.in" }, 36.5);
+      tl.to("#s3-atlas-callout", { opacity: 0, duration: 0.3, ease: "power2.in" }, 36.5);
+      // Room service cameo (37 → 39)
+      tl.fromTo("#s3-room-service", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, 37.0);
+      tl.fromTo("#s3-rs-callout", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(1.5)" }, 37.3);
+      tl.to("#s3-rs-callout", { opacity: 0, duration: 0.2, ease: "power2.in" }, 38.5);
+
+      // ==== Scene 4: Admin Command (39–53) ====
+      // Dashboard (39.5 → 43)
+      tl.fromTo("#s4-dashboard", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, 39.5);
+      tl.fromTo("#s4-label-dashboard", { opacity: 0, y: -8 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 40.0);
+      tl.to("#s4-dashboard", { opacity: 0, duration: 0.4, ease: "power2.in" }, 42.5);
+      tl.to("#s4-label-dashboard", { opacity: 0, duration: 0.3, ease: "power2.in" }, 42.5);
+      // Room Management (43 → 46)
+      tl.fromTo("#s4-rooms", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, 43.0);
+      tl.fromTo("#s4-label-rooms", { opacity: 0, y: -8 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 43.5);
+      tl.to("#s4-rooms", { opacity: 0, duration: 0.4, ease: "power2.in" }, 45.5);
+      tl.to("#s4-label-rooms", { opacity: 0, duration: 0.3, ease: "power2.in" }, 45.5);
+      // Analytics (46 → 49)
+      tl.fromTo("#s4-analytics", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, 46.0);
+      tl.fromTo("#s4-label-analytics", { opacity: 0, y: -8 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 46.5);
+      tl.to("#s4-analytics", { opacity: 0, duration: 0.4, ease: "power2.in" }, 48.5);
+      tl.to("#s4-label-analytics", { opacity: 0, duration: 0.3, ease: "power2.in" }, 48.5);
+      // Feedback (49 → 53)
+      tl.fromTo("#s4-feedback", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, 49.0);
+      tl.fromTo("#s4-label-feedback", { opacity: 0, y: -8 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 49.5);
+
+      // ==== Scene 5: Portal Carousel (53–62) ====
+      // Kitchen (53 → 56)
+      tl.fromTo("#s5-kitchen", { opacity: 0, scale: 0.97 }, { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" }, 53.3);
+      tl.fromTo("#s5-label-kitchen", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.3, ease: "back.out(1.5)" }, 53.5);
+      tl.to("#s5-kitchen", { opacity: 0, duration: 0.3, ease: "power2.in" }, 55.7);
+      tl.to("#s5-label-kitchen", { opacity: 0, duration: 0.2, ease: "power2.in" }, 55.7);
+      // Housekeeping (56 → 59)
+      tl.fromTo("#s5-housekeeping", { opacity: 0, scale: 0.97 }, { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" }, 56.0);
+      tl.fromTo("#s5-label-hk", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.3, ease: "back.out(1.5)" }, 56.3);
+      tl.to("#s5-housekeeping", { opacity: 0, duration: 0.3, ease: "power2.in" }, 58.7);
+      tl.to("#s5-label-hk", { opacity: 0, duration: 0.2, ease: "power2.in" }, 58.7);
+      // Maintenance (59 → 62)
+      tl.fromTo("#s5-maintenance", { opacity: 0, scale: 0.97 }, { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" }, 59.0);
+      tl.fromTo("#s5-label-maint", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.3, ease: "back.out(1.5)" }, 59.3);
+
+      // ==== Scene 6: Outro (62–66) ====
+      tl.fromTo("#outro-logo", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.9, ease: "back.out(1.3)" }, 62.5);
+      tl.fromTo("#outro-tagline", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 63.5);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

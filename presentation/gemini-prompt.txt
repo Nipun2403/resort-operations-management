@@ -1,0 +1,446 @@
+# GEMINI PROMPT FOR GOOGLE SLIDES — AETHERIS 5-MINUTE CAPSTONE PRESENTATION
+
+---
+
+## DESIGN SYSTEM
+
+**Color Palette (Light Theme — distinct from dark portal):**
+- Background: `#FDFBF7` (warm off-white)
+- Surface: `#FFFFFF` (pure white)
+- Primary Text: `#1A1A1A` (near-black)
+- Secondary Text: `#4A4A4A` (dark gray)
+- Accent Gold: `#C8A84E` (muted gold — lighter than portal)
+- Accent Gold Dark: `#B8963E` (for hover/emphasis)
+- Border/Divider: `#E8E4DC` (warm gray)
+- Success Green: `#2D7D46`
+- Error Red: `#C0392B`
+- Glass Effect: `rgba(200, 168, 78, 0.08)` (subtle gold tint)
+
+**Typography:**
+- Headlines: **Playfair Display** (if unavailable → Georgia, serif)
+- Body/UI: **Manrope** (if unavailable → Inter, -apple-system, sans-serif)
+- Code/Technical: **JetBrains Mono** (if unavailable → Menlo, monospace)
+
+**Visual Language:**
+- Generous white space (60px margins minimum)
+- Subtle gold accent lines (2px) under section headers
+- Card-based layouts with 8px radius, 1px border
+- No gradients — flat, editorial aesthetic
+- Icon style: Material Symbols Outlined (Google Fonts)
+
+---
+
+## SLIDE DECK STRUCTURE (12 SLIDES)
+
+---
+
+### SLIDE 1 — TITLE SLIDE
+**Layout:** Centered, generous vertical spacing
+
+**Content:**
+```
+Aetheris
+Agentic AI for Luxury Hospitality
+
+Internship Capstone Presentation
+[Your Name]  |  [Date]
+```
+
+**Speaker Notes:**
+> "Good morning. Presenting Aetheris — a luxury hospitality platform where guest-facing AI executes real operations, staff dashboards update in real-time without polling, and every change on every entity is auto-audited with zero developer effort."
+
+---
+
+### SLIDE 2 — THE MARKET GAP
+**Layout:** Three-column comparison card layout
+
+**Columns:**
+
+| Legacy PMS (Opera, Cloudbeds) | Modern SaaS (Mews, SkyTouch) | **Aetheris** |
+|---|---|---|
+| On-premise / manual deploy | SaaS only | **IaC (Bicep), hybrid-ready** |
+| FAQ bot / no AI | Basic chat assistant | **Agentic AI with proposals** |
+| 30-60s polling | WebSocket (limited) | **SignalR fan-out, sub-second** |
+| Triggers/manual audit | Limited audit | **ORM-level CDC, zero-touch** |
+| Extension/MIME check | MIME check | **Magic-byte validation** |
+| Payments only idempotency | Partial | **Every mutation** |
+| Template/themeable | Themeable | **Custom design system** |
+
+**Visual:** Aetheris column highlighted with gold border + subtle glow
+
+**Speaker Notes:**
+> "Three tiers in the market. Legacy PMS requires months to implement. Modern SaaS improves UX but keeps the same architecture. Aetheris rethinks the stack: AI that acts, real-time by default, observability as architecture — not afterthought."
+
+---
+
+### SLIDE 3 — ARCHITECTURE OVERVIEW
+**Layout:** Left = diagram, Right = bullet specs
+
+**Left Side (Diagram - text-based):**
+```
+┌─────────────────────────────────────────┐
+│           CLIENT (Angular 22)           │
+│  Guest | FrontDesk | Admin | Ops (6)    │
+└─────────────────┬───────────────────────┘
+                  ▼
+┌─────────────────────────────────────────┐
+│        API LAYER (ASP.NET Core 10)      │
+│  Controllers | SignalR Hub | Middleware │
+└─────────────────┬───────────────────────┘
+                  ▼
+┌─────────────────────────────────────────┐
+│       BLL (Domain Services + DTOs)      │
+│  19 Services | 5 Workers | AutoMapper   │
+└─────────────────┬───────────────────────┘
+                  ▼
+┌─────────────────────────────────────────┐
+│       REPOSITORY (Generic + Specific)   │
+│  13 Repos | Pagination | Dynamic Order  │
+└─────────────────┬───────────────────────┘
+                  ▼
+┌─────────────────────────────────────────┐
+│         DAL (EF Core + PostgreSQL)      │
+│  18 Entities | 47 Migrations | Enums    │
+└─────────────────────────────────────────┘
+```
+
+**Right Side (Specs):**
+- **Pattern:** Clean N-tier + DDD — API → BLL → Repository → DAL
+- **Enforcement:** Project-reference level — zero circular dependencies
+- **Validation:** GitNexus structural analysis (acyclic)
+- **Auth:** JWT (HMAC-SHA256) + BCrypt + SignalR token passthrough
+- **Roles:** 6 RBAC roles → 16 protected controllers
+- **Workers:** 5 BackgroundService orchestrators
+- **Migrations:** 47 EF Core — schema evolution as code
+- **Tests:** 29 NUnit+Moq (93% BLL) + xUnit E2E + Vitest
+- **Infra:** 100% Bicep IaC — Azure Container Apps, Managed PostgreSQL, Blob/Queue, SignalR Service
+- **Observability:** Serilog → Log Analytics, OpenTelemetry → Prometheus
+
+**Speaker Notes:**
+> "Strict unidirectional dependency flow. Each layer only knows the one below it. EF Core lives only in DAL — swap persistence without touching business logic. Domain services in BLL are pure C# — unit testable without database. Infrastructure is fully codified in Bicep — zero console clicks, drift-free deployments."
+
+---
+
+### SLIDE 4 — DEMO FLOW MAP
+**Layout:** Horizontal flow with 4 desktop cards + arrows
+
+**Visual Flow:**
+```
+┌──────────────┐   ┌──────────────┐   ┌──────────────┐   ┌──────────────┐
+│  DESKTOP 1   │──▶│  DESKTOP 2   │──▶│  DESKTOP 3   │──▶│  DESKTOP 4   │
+│   GUEST      │   │   ADMIN      │   │  FRONT DESK  │   │    OPS       │
+│              │   │              │   │              │   │              │
+│ • Public UI  │   │ • KPIs       │   │ • Movements  │   │ • SignalR    │
+│ • ATLAS AI   │   │ • Analytics  │   │ • Search     │   │ • Menu Toggle│
+│ • Audit/PDF  │   │ • Room Grid  │   │              │   │              │
+└──────────────┘   └──────────────┘   └──────────────┘   └──────────────┘
+     60s               75s               35s               35s
+```
+
+**Timing Bar (bottom):**
+`0:00 ──── 0:30 ──── 1:30 ──────── 2:45 ──────── 3:20 ──────── 3:55 ──────── 5:00`
+`Intro     Guest          Admin           Front         Ops           Close`
+`                                                     Desk`
+
+**Speaker Notes:**
+> "Four desktops, pre-logged, each showing a different role's perspective. I'll swipe between them live — you'll see the same data flow across Guest → Admin → Front Desk → Operations in real-time."
+
+---
+
+### SLIDE 5 — DIFFERENTIATOR 1: ATLAS AGENTIC AI
+**Layout:** Two-column — Left = flow, Right = capabilities
+
+**Left Column — The Flow:**
+```
+Guest Message: "burger, pillows, AC broken"
+                    │
+                    ▼
+        ┌───────────┴───────────┐
+        ▼                       ▼                       ▼
+┌───────────────┐      ┌───────────────┐      ┌───────────────┐
+│ create_food   │      │ create_house- │      │ create_mainte-│
+│ _order        │      │ keeping_req   │      │ nance_ticket  │
+│ (Side-effect) │      │ (Side-effect) │      │ (Side-effect) │
+└───────┬───────┘      └───────┬───────┘      └───────┬───────┘
+        │                      │                      │
+        └──────────────┬───────┴──────────────────────┘
+                       ▼
+            ┌─────────────────────┐
+            │  3 PROPOSALS        │
+            │  5-min TTL each     │
+            │  Idempotency keys   │
+            │  Require CONFIRM    │
+            └──────────┬──────────┘
+                       ▼
+            ┌─────────────────────┐
+            │  BLL Execution      │
+            │  OrderService       │
+            │  HousekeepingSvc    │
+            │  MaintenanceSvc     │
+            └──────────┬──────────┘
+                       ▼
+            ┌─────────────────────┐
+            │  SignalR Fan-out    │
+            │  Kitchen / HK / Mnt │
+            │  <500ms p99         │
+            └─────────────────────┘
+```
+
+**Right Column — Capabilities:**
+- **8 OpenAI Tools** — 3 side-effect, 5 read-only
+- **Guest-scoped tenancy** — booking context via `ICurrentUserService`, IDs never leave trust boundary
+- **Proposal/Confirmation pattern** — human-in-the-loop, 5-min TTL, auto-expiry
+- **Prompt injection defense** — regex sanitizer pre-LLM (`ignore previous`, `system:`, `assistant:`)
+- **Idempotency per turn** — `X-Idempotency-Key` replays cached response on duplicate
+- **Full correlation-ID audit** — every tool call, proposal, confirmation → `ConciergeActionLog`
+- **Self-auditing** — audit log audits itself
+- **Context awareness** — room, booking, folio hydrated server-side
+
+**Speaker Notes:**
+> "ATLAS isn't a chatbot — it's an agentic execution engine. One message fans out to three domain services via proposals the guest must confirm. No auto-execution. Every tool call is audited with correlation IDs. The LLM never sees booking IDs — only action parameters. This is function calling with guardrails, not retrieval-augmented generation."
+
+---
+
+### SLIDE 6 — DIFFERENTIATOR 2: REAL-TIME OPERATIONS
+**Layout:** Two-panel — SignalR Architecture + Live Proof
+
+**Left Panel — SignalR Architecture:**
+```
+┌─────────────┐     ┌──────────────────┐     ┌─────────────────┐
+│  ATLAS      │────▶│  Azure SignalR   │────▶│  Kitchen Group  │
+│  Confirms   │     │  Service         │     │  (WebSocket)    │
+└─────────────┘     │  (Managed,       │     └─────────────────┘
+                    │   Auto-scale)    │
+                    └────────┬─────────┘
+                             │
+              ┌──────────────┼──────────────┐
+              ▼              ▼              ▼
+        ┌──────────┐  ┌──────────┐  ┌──────────┐
+        │Housekeep │  │Maintenan │  │  Admin   │
+        │   ing    │  │   ce     │  │ Dashboard│
+        └──────────┘  └──────────┘  └──────────┘
+        
+• No polling • Auto-reconnect • Exponential backoff
+• Sub-second eventual consistency • 6 role-based groups
+```
+
+**Right Panel — Live Proof (what audience sees):**
+| Action | Kitchen | Housekeeping | Maintenance |
+|--------|---------|--------------|-------------|
+| ATLAS: "burger" | ✅ Order #1047 appears | — | — |
+| ATLAS: "pillows" | — | ✅ Task appears | — |
+| ATLAS: "AC broken" | — | — | ✅ Ticket appears |
+| Kitchen taps "Preparing" | ✅ Optimistic UI | ✅ Synced | ✅ Synced |
+
+**Key Metric:** `<500ms p99` end-to-end (confirm → broadcast → render)
+
+**Speaker Notes:**
+> "Real-time isn't a feature — it's the default. Azure SignalR Service handles connection management, auto-scaling, reconnection. Six role-based groups. When ATLAS confirms, three departments receive alerts in under 500ms. No polling, no staleness. The kitchen tapping 'Preparing' broadcasts optimistically — instant feedback, server confirmation, then sync."
+
+---
+
+### SLIDE 7 — DIFFERENTIATOR 3: ZERO-TOUCH OBSERVABILITY
+**Layout:** Three cards — Audit, Idempotency, Image Security
+
+**Card 1 — ORM-Level Audit (CDC):**
+```
+SaveChangesAsync Override
+        │
+        ├─▶ Added    → NewValues (JSONB)
+        ├─▶ Modified → OldValues + NewValues (JSONB diff)
+        └─▶ Deleted  → OldValues (JSONB)
+        
+Enrichment: Actor (IAuditUserProvider) + Timestamp + Entity + PK
+Storage: PostgreSQL JSONB (indexed, injection-safe)
+Coverage: 18 entity types • Self-auditing • Zero attributes
+```
+
+**Card 2 — End-to-End Idempotency:**
+```
+X-Idempotency-Key (UUID) on EVERY mutation
+        │
+        ├─▶ Action Filter intercepts
+        ├─▶ Key exists? → Replay cached response (status + body)
+        ├─▶ New? → Execute → Store response in IdempotentRequest table
+        └─▶ Cleanup Worker: 48h TTL
+        
+Race condition: PK conflict on insert → silent fall-through → cached response
+Coverage: POST/PUT/PATCH globally • Opt-out attribute for Auth
+```
+
+**Card 3 — Magic-Byte Image Validation:**
+```
+Upload → SAS URL (15-min, Write+Create only)
+        │
+        ├─▶ Extension whitelist (jpg/png/webp)
+        ├─▶ Size limit (10MB)
+        ├─▶ Queue message → ImageValidationWorker (2s poll)
+        ├─▶ Read first 512 bytes from blob
+        ├─▶ Validate magic bytes:
+        │     JPEG:  FF D8 FF
+        │     PNG:   89 50 4E 47 0D 0A 1A 0A
+        │     WebP:  52 49 46 46 ... 57 45 42 50
+        ├─▶ Size mismatch check (declared vs actual)
+        └─▶ Reject → Delete blob + Log reason
+        
+Workers: Validation • Orphan Cleanup (hourly) • Blob Cleanup (hourly)
+```
+
+**Speaker Notes:**
+> "Three pillars of observability you didn't see. Audit: every change on every entity captured at the ORM layer — JSONB diff, impossible to bypass. Idempotency: every mutation carries a key — duplicate retry replays exact response, zero double-charges. Image security: we read magic bytes from the blob itself, not extensions. Renamed `.exe` → `.jpg` gets caught and deleted. Three background workers keep storage clean."
+
+---
+
+### SLIDE 8 — TECH DEPTH (WHAT YOU DIDN'T SEE)
+**Layout:** Dense but scannable bullet grid (4 columns × 3 rows)
+
+| Platform Hardening | Security & Auth | Data & Quality | Infra & Ops |
+|---|---|---|---|
+| 47 EF Core migrations | BCrypt + JWT HMAC-SHA256 | 29 NUnit+Moq (93% BLL) | 100% Bicep IaC |
+| Schema evolution as code | SignalR token passthrough | xUnit WebApplicationFactory E2E | Azure Container Apps |
+| Generic Repository pattern | 6 RBAC roles → 16 controllers | Vitest frontend tests | Managed PostgreSQL |
+| Dynamic ordering (expression trees) | Multi-tier rate limiting | GitNexus acyclic validation | Blob + Queue Storage |
+| Pagination (standardized) | Global fixed-window (100/10s) | Serilog → Log Analytics | SignalR Service |
+| Soft deletes (IsActive) | Image upload token bucket | OpenTelemetry → Prometheus | Private endpoints |
+| Concurrency tokens (RowVersion) | ATLAS concierge token bucket | Health checks endpoint | Managed identities |
+| JSONB audit storage | Prompt injection sanitizer | Zero circular dependencies | Zero-drift deployments |
+
+**Speaker Notes:**
+> "The iceberg under the waterline. 47 migrations — schema as code. 93% BLL coverage with pure unit tests — no database. GitNexus validates architecture acyclicity on every build. Bicep codifies all Azure resources — private endpoints, managed identities, zero console clicks. Rate limiting at three tiers. OpenTelemetry metrics exported to Prometheus. This is production-grade, not a prototype."
+
+---
+
+### SLIDE 9 — FRONT DESK & OPERATIONAL INTELLIGENCE
+**Layout:** Two side-by-side screenshots (described) + bullets
+
+**Left — Today's Movements (Front Desk Dashboard):**
+```
+┌────────────────────────────────────────┐
+│ TODAY'S MOVEMENTS                      │
+├──────────┬────────┬────────┬───────────┤
+│  Room    │ Guest  │ Status │ Requests  │
+├──────────┼────────┼────────┼───────────┤
+│  301     │ Smith  │ Arrive │ Late CK   │
+│  304     │ Jones  │ Depart │ —         │
+│  307     │ Chen   │ Arrive │ Pillows   │
+└──────────┴────────┴────────┴───────────┘
+Pre-shift situational awareness • Zero surprise rushes
+```
+
+**Right — Global Guest Search:**
+```
+Search: "john" → Instant results across:
+• Email • Name • Phone • Booking ID
+
+Click → Context-preserving deep link:
+Check-in | Extend | Cancel | Folio | History
+Zero context switching • Single-interaction resolution
+```
+
+**Market Reality Callout (bottom):**
+> *Legacy PMS: 5 clicks, 3 screens, printed reports. Aetheris: 1 search, 1 click, real-time intelligence.*
+
+**Speaker Notes:**
+> "Front desk starts their shift with Today's Movements — arrivals, departures, special requests. No printed reports. When the phone rings, global search resolves the guest instantly across email, name, phone, booking ID. One click preserves context to check-in, extend, cancel, or view folio. Built for the overwhelmed front desk."
+
+---
+
+### SLIDE 10 — CLOSE: THREE STRATEGIC DIFFERENTIATORS
+**Layout:** Large numbered cards, centered
+
+**Card 1:**
+```
+1. EXECUTION > SUGGESTION
+ATLAS commits transactions — not just conversations.
+Real orders. Real tickets. Real revenue.
+```
+
+**Card 2:**
+```
+2. REAL-TIME BY DEFAULT
+SignalR fan-out everywhere. No polling. No staleness.
+Sub-second eventual consistency across 6 roles.
+```
+
+**Card 3:**
+```
+3. ZERO-TOUCH OBSERVABILITY
+Every change audited. Every upload validated.
+Every retry idempotent. Compliance without developer tax.
+```
+
+**Bottom:**
+```
+Deployed: hotel-web-demo1.ambitiousmushroom-274454dc.centralindia.azurecontainerapps.io
+Credentials provided. Open for technical deep-dive in Q&A.
+```
+
+**Speaker Notes:**
+> "Aetheris proves luxury hospitality doesn't need legacy PMS compromise. Agentic AI that executes. Staff dashboards with true real-time consistency. Auditability as a cross-cutting architectural concern. Infrastructure as code, security by default, observability built-in. This is production-grade code — deployed on Azure, load-tested, pen-tested patterns. Architecture scales from boutique to enterprise brand. Three things to remember: Execution over suggestion. Real-time by default. Zero-touch observability. Thank you."
+
+---
+
+### SLIDE 11 — APPENDIX: MARKET COMPARISON MATRIX
+**Layout:** Full comparison table (for Q&A reference)
+
+| Capability | Legacy PMS (Opera/Cloudbeds) | Modern SaaS (Mews/SkyTouch) | **Aetheris** |
+|---|---|---|---|
+| **AI Concierge** | FAQ bot / none | Basic chat | **Agentic execution with proposals** |
+| **Real-Time Ops** | Polling (30-60s) | WebSocket (some) | **SignalR fan-out, sub-second** |
+| **Audit Trail** | Triggers / manual | Limited | **ORM-level CDC, zero-touch, JSONB** |
+| **Image Security** | Extension check | MIME check | **Magic-byte validation** |
+| **Idempotency** | Payments only | Partial | **Every mutation globally** |
+| **Deployment** | On-prem / manual | SaaS only | **IaC (Bicep), hybrid-ready** |
+| **Design System** | Template | Themeable | **Custom tokens, glass-morphism** |
+| **Architecture** | Monolithic | Modular | **Clean N-tier + DDD, validated** |
+| **Testing** | Manual / limited | Unit tests | **93% BLL + E2E + Vitest** |
+| **Observability** | Logs only | Basic metrics | **OpenTelemetry + Prometheus** |
+
+**Speaker Notes:** *Reference slide for Q&A. Not shown unless asked.*
+
+---
+
+### SLIDE 12 — APPENDIX: Q&A HOOKS BY AUDIENCE
+**Layout:** 6 cards in 2×3 grid
+
+| Sales | HR | Architect |
+|---|---|---|
+| "ATLAS turns 'I want...' into **committed revenue in 3 clicks** — reduces booking abandonment." | "Audit trail = **compliance-ready, zero dev tax**. Staff dashboards = **reduced cognitive load, lower burnout**." | "Clean N-tier. **Domain services reusable**. EF Core **only in DAL**. **Swappable persistence**. GitNexus-validated acyclic." |
+
+| Cloud Engineer | AI Director | Delivery |
+|---|---|---|
+| "Azure-native: Container Apps, Managed PostgreSQL, Blob+Queue, SignalR Service. **Bicep IaC, managed identities, private endpoints**." | "**Function calling with proposal/confirmation**. **Guest-scoped tenancy**. **Pre-LLM sanitization**. **Full correlation-ID audit**." | "**Generic CRUD component** powers 8 management pages. **New entity = config, not code**. **Design system = consistent velocity**." |
+
+**Speaker Notes:** *Reference for Q&A. Memorize 1-2 per role.*
+
+---
+
+## BUILD INSTRUCTIONS FOR GEMINI
+
+1. **Create 12 slides** in order above
+2. **Apply light theme** — `#FDFBF7` background, `#1A1A1A` text, `#C8A84E` accent
+3. **Fonts:** Playfair Display (headlines), Manrope (body), JetBrains Mono (code)
+4. **Cards:** 8px radius, 1px `#E8E4DC` border, subtle gold accent line (2px) under headers
+5. **Diagrams:** Use text-based boxes/arrows (Google Slides shapes) — monospace font
+6. **Tables:** Clean, minimal borders, header row gold accent
+7. **Speaker Notes:** Copy exactly from each slide's "Speaker Notes" section
+8. **Slide 11 & 12:** Mark as **Hidden** (skip during presentation, available for Q&A)
+
+---
+
+## QUALITY CHECKLIST
+
+- [ ] All 12 slides created
+- [ ] Light theme applied consistently
+- [ ] Fonts correct (or fallbacks noted)
+- [ ] Gold accent `#C8A84E` used throughout
+- [ ] Speaker notes populated on every slide
+- [ ] Slides 11-12 hidden
+- [ ] Diagrams render cleanly (no overflow)
+- [ ] Tables readable at presentation scale
+- [ ] No dark theme leakage from portal screenshots
+- [ ] Export as .pptx for offline backup
+
+---
+
+*Prompt v1 — Ready for Gemini in Google Slides*
